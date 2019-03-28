@@ -7,7 +7,7 @@ import numpy as np
 from copy import deepcopy
 import pickle
 import dm3_lib as dm3
-import Utilities
+import utils
 import mat_op
 
 
@@ -242,7 +242,7 @@ class SuchSoftware:
             for x in range(self.num_columns, self.search_size):
 
                 pos = np.unravel_index(self.search_mat.argmax(), (self.N + 2 * (self.r + self.overhead), self.M + 2 * (self.r + self.overhead)))
-                column_portrait, x_fit, y_fit = Utilities.cm_fit(self.im_mat, pos[1], pos[0], self.r)
+                column_portrait, x_fit, y_fit = utils.cm_fit(self.im_mat, pos[1], pos[0], self.r)
 
                 x_fit_real_coor = x_fit - self.r - self.overhead
                 y_fit_real_coor = y_fit - self.r - self.overhead
@@ -284,7 +284,7 @@ class SuchSoftware:
 
                 pos = np.unravel_index(self.search_mat.argmax(),
                                        (self.N + 2 * (self.r + self.overhead), self.M + 2 * (self.r + self.overhead)))
-                column_portrait, x_fit, y_fit = Utilities.cm_fit(self.im_mat, pos[1], pos[0], self.r)
+                column_portrait, x_fit, y_fit = utils.cm_fit(self.im_mat, pos[1], pos[0], self.r)
 
                 x_fit_real_coor = x_fit - self.r - self.overhead
                 y_fit_real_coor = y_fit - self.r - self.overhead
@@ -1466,7 +1466,7 @@ class SuchSoftware:
         if found < n:
             print('Did not go to plan!')
 
-        indices, distances = Utilities.sort_neighbours(indices, distances, n)
+        indices, distances = utils.sort_neighbours(indices, distances, n)
 
         return indices, distances, n
 
@@ -1509,10 +1509,10 @@ class SuchSoftware:
             for y in range(0, SuchSoftware.num_poss):
 
                 if SuchSoftware.radii[y] <= other_radii:
-                    self.columns[i].prob_vector[y] = self.columns[i].prob_vector[y] * Utilities.normal_dist(
+                    self.columns[i].prob_vector[y] = self.columns[i].prob_vector[y] * utils.normal_dist(
                         SuchSoftware.radii[y], other_radii, self.dist_1_std)
                 else:
-                    self.columns[i].prob_vector[y] = self.columns[i].prob_vector[y] * Utilities.normal_dist(
+                    self.columns[i].prob_vector[y] = self.columns[i].prob_vector[y] * utils.normal_dist(
                         SuchSoftware.radii[y], other_radii, self.dist_2_std)
 
             self.renorm_prop(i)
@@ -1525,7 +1525,7 @@ class SuchSoftware:
             self.reset_prop_vector(i)
 
         for x in range(0, SuchSoftware.num_poss):
-            self.columns[i].prob_vector[x] = self.columns[i].prob_vector[x] * Utilities.normal_dist(
+            self.columns[i].prob_vector[x] = self.columns[i].prob_vector[x] * utils.normal_dist(
                 self.columns[i].peak_gamma, SuchSoftware.intensities[self.alloy][x], self.dist_8_std)
 
         self.renorm_prop(i)
@@ -1560,7 +1560,7 @@ class SuchSoftware:
 
                 x_pluss = x + 1
 
-            alpha[x] = Utilities.find_angle(a[x], a[x_pluss], b[x], b[x_pluss])
+            alpha[x] = utils.find_angle(a[x], a[x_pluss], b[x], b[x_pluss])
 
         # Deal with cases where the angle is over pi radians:
         max_index = alpha.argmax()
@@ -1577,20 +1577,20 @@ class SuchSoftware:
         symmetry_4 = np.pi / 2
         symmetry_5 = 2 * np.pi / 5
 
-        correction_factor_3 = Utilities.normal_dist(alpha.max(), symmetry_3, self.dist_3_std)
-        correction_factor_4 = Utilities.normal_dist(alpha.max(), 2 * symmetry_4, self.dist_4_std)
-        correction_factor_5 = Utilities.normal_dist(alpha.min(), symmetry_5, self.dist_5_std)
+        correction_factor_3 = utils.normal_dist(alpha.max(), symmetry_3, self.dist_3_std)
+        correction_factor_4 = utils.normal_dist(alpha.max(), 2 * symmetry_4, self.dist_4_std)
+        correction_factor_5 = utils.normal_dist(alpha.min(), symmetry_5, self.dist_5_std)
 
         if alpha.min() < symmetry_5:
-            correction_factor_5 = Utilities.normal_dist(symmetry_5, symmetry_5, self.dist_5_std)
+            correction_factor_5 = utils.normal_dist(symmetry_5, symmetry_5, self.dist_5_std)
 
         self.columns[i].prob_vector = self.columns[i].prob_vector *\
             [correction_factor_3, correction_factor_3, 1.0, correction_factor_4, 1.0,
              correction_factor_5, 1.0]
         self.renorm_prop(i)
 
-        correction_factor_3 = Utilities.normal_dist(alpha.min(), symmetry_3, self.dist_3_std)
-        correction_factor_4 = Utilities.normal_dist(alpha.min(), symmetry_4, self.dist_4_std)
+        correction_factor_3 = utils.normal_dist(alpha.min(), symmetry_3, self.dist_3_std)
+        correction_factor_4 = utils.normal_dist(alpha.min(), symmetry_4, self.dist_4_std)
 
         self.columns[i].prob_vector = self.columns[i].prob_vector *\
             [correction_factor_3, correction_factor_3, 1.0,
@@ -1914,12 +1914,12 @@ class SuchSoftware:
 
             for x in range(1, n):
 
-                alpha[x - 1] = Utilities.find_angle(a[0], a[x], b[0], b[x])
+                alpha[x - 1] = utils.find_angle(a[0], a[x], b[0], b[x])
 
-                if Utilities.vector_cross_product_magnitude(a[0], a[x], b[0], b[x]) < 0:
+                if utils.vector_cross_product_magnitude(a[0], a[x], b[0], b[x]) < 0:
                     alpha[x - 1] = 2 * np.pi - alpha[x - 1]
 
-            alpha, indices = Utilities.dual_sort(alpha, indices)
+            alpha, indices = utils.dual_sort(alpha, indices)
 
             for x in range(0, n - 1):
                 sorted_indices[x + 1] = indices[x]
@@ -1941,13 +1941,13 @@ class SuchSoftware:
 
                 indices[x - 1] = self.columns[i].neighbour_indices[x]
 
-                alpha[x - 1] = Utilities.find_angle(a[0], a[x], b[0], b[x])
+                alpha[x - 1] = utils.find_angle(a[0], a[x], b[0], b[x])
 
-                if Utilities.vector_cross_product_magnitude(a[0], a[x], b[0], b[x]) < 0:
+                if utils.vector_cross_product_magnitude(a[0], a[x], b[0], b[x]) < 0:
 
                     alpha[x - 1] = 2 * np.pi - alpha[x - 1]
 
-            alpha, indices = Utilities.dual_sort(alpha, indices)
+            alpha, indices = utils.dual_sort(alpha, indices)
 
             for x in range(0, n - 1):
 
@@ -1988,12 +1988,12 @@ class SuchSoftware:
 
             for x in range(1, n):
 
-                alpha[x - 1] = Utilities.find_angle(a[0], a[x], b[0], b[x])
+                alpha[x - 1] = utils.find_angle(a[0], a[x], b[0], b[x])
 
-                if Utilities.vector_cross_product_magnitude(a[0], a[x], b[0], b[x]) > 0:
+                if utils.vector_cross_product_magnitude(a[0], a[x], b[0], b[x]) > 0:
                     alpha[x - 1] = 2 * np.pi - alpha[x - 1]
 
-            alpha, indices = Utilities.dual_sort(alpha, indices)
+            alpha, indices = utils.dual_sort(alpha, indices)
 
             for x in range(0, n - 1):
                 sorted_indices[x + 1] = indices[x]
@@ -2015,13 +2015,13 @@ class SuchSoftware:
 
                 indices[x - 1] = self.columns[i].neighbour_indices[x]
 
-                alpha[x - 1] = Utilities.find_angle(a[0], a[x], b[0], b[x])
+                alpha[x - 1] = utils.find_angle(a[0], a[x], b[0], b[x])
 
-                if Utilities.vector_cross_product_magnitude(a[0], a[x], b[0], b[x]) > 0:
+                if utils.vector_cross_product_magnitude(a[0], a[x], b[0], b[x]) > 0:
 
                     alpha[x - 1] = 2 * np.pi - alpha[x - 1]
 
-            alpha, indices = Utilities.dual_sort(alpha, indices)
+            alpha, indices = utils.dual_sort(alpha, indices)
 
             for x in range(0, n - 1):
 
