@@ -10,8 +10,6 @@ import graph
 class SuchSoftware:
     """Structure data from a HAADF-STEM .dm3 image and perform analysis."""
 
-    # Class constants
-
     # Number of elements in the probability vectors
     selections = 7
 
@@ -41,7 +39,7 @@ class SuchSoftware:
     def __init__(self, filename_full):
 
         # Import image data. The dm3 type object is discarded after image matrix is stored because holding the dm3
-        # in memory will clog the system buffer and mess up the pickle process
+        # in memory will clog the system buffer and mess up the pickle process when saving the class instance
         self.filename_full = filename_full
 
         self.im_mat = None
@@ -56,8 +54,8 @@ class SuchSoftware:
 
         # Data matrices: These hold much of the information gathered by the different algorithms
         self.search_mat = self.im_mat
-        self.column_centre_mat = np.zeros((self.N, self.M, 2), dtype=type(self.im_mat))
-        self.column_circumference_mat = np.zeros((self.N, self.M), dtype=type(self.im_mat))
+        self.column_centre_mat = np.zeros((self.im_height, self.im_width, 2), dtype=type(self.im_mat))
+        self.column_circumference_mat = np.zeros((self.im_height, self.im_width), dtype=type(self.im_mat))
         self.fft_im_mat = mat_op.gen_fft(self.im_mat)
 
         # Alloy info: This vector is used to multiply away elements in the AtomicColumn.prob_vector that are not in
@@ -151,7 +149,7 @@ class SuchSoftware:
 
         if self.alloy == 0:
 
-            for x in range(0, SuchSoftware.num_poss):
+            for x in range(0, SuchSoftware.selections):
                 if x == 2 or x == 4 or x == 6:
                     self.alloy_mat[x] = 0
                 else:
@@ -159,7 +157,7 @@ class SuchSoftware:
 
         elif self.alloy == 1:
 
-            for x in range(0, SuchSoftware.num_poss):
+            for x in range(0, SuchSoftware.selections):
                 if x == 2 or x == 4 or x == 1 or x == 6:
                     self.alloy_mat[x] = 0
                 else:
@@ -179,6 +177,20 @@ class SuchSoftware:
         self.r = int(100 / self.scale)
         self.over_r = int(6 * (self.r / 10))
 
+    def calc_avg_gamma(self):
+
+        if self.num_columns > 0:
+
+            self.im_mat = mat_op.gen_framed_mat(self.im_mat, self.r)
+
+            for x in range(0, self.num_columns):
+
+                self.columns[x].avg_gamma, self.columns[x].peak_gamma = mat_op.average(self.im_mat, self.columns[x].x +
+                                                                                       self.r, self.columns[x].y +
+                                                                                       self.r, self.r)
+
+            self.im_mat = mat_op.gen_de_framed_mat(self.im_mat, self.r)
+
     # Importing and exporting instances
     def save(self, filename_full):
         with open(filename_full, 'wb') as f:
@@ -192,7 +204,59 @@ class SuchSoftware:
 
     # Algorithms
     def column_finder(self, search_type='s'):
-        pass
+        """Find local peaks in self.im_mat and store them as AtomicColumn types in self.columns.
+
+        keyword arguments:
+        search_type = string that determines the stopping mechanism of the algorithm (default 's')
+
+        Argument search_type is a string, and valid inputs are 's' and 't'. 's' is default.
+        The method assumes that the object is not in a 'empty'-loaded state.
+        search_type='s' will search until it finds self.search_size number of columns.
+        search_type='t' will search until self.search_mat.max() is less than self.threshold.
+        """
+
+        counter = self.num_columns
+        self.column_circumference_mat = mat_op.gen_framed_mat(self.column_circumference_mat, self.r + self.overhead)
+        self.search_mat = mat_op.gen_framed_mat(self.search_mat, self.r + self.overhead)
+        self.im_mat = mat_op.gen_framed_mat(self.im_mat, self.r + self.overhead)
+
+        for x in range(self.num_columns, self.search_size):
+
+            pos = np.unravel_index(self.search_mat.argmax(),
+                                   (self.N + 2 * (self.r + self.overhead), self.M + 2 * (self.r + self.overhead)))
+            column_portrait, x_fit, y_fit = utils.cm_fit(self.im_mat, pos[1], pos[0], self.r)
+
+            x_fit_real_coor = x_fit - self.r - self.overhead
+            y_fit_real_coor = y_fit - self.r - self.overhead
+
+            self.search_mat = mat_op.delete_pixels(self.search_mat, x_fit, y_fit, self.r + self.overhead)
+
+            if counter == 0:
+                self.columns[0] = AtomicColumn(counter, x_fit_real_coor, y_fit_real_coor, self.r,
+                                               np.max(column_portrait), 0, SuchSoftware.num_poss)
+            else:
+                dummy = AtomicColumn(counter, x_fit_real_coor, y_fit_real_coor, self.r, np.max(column_portrait), 0,
+                                     SuchSoftware.num_poss)
+                self.columns = np.append(self.columns, dummy)
+
+                self.reset_prop_vector(x)
+
+            self.column_centre_mat[y_fit_real_coor, x_fit_real_coor, 0] = 1
+            self.column_centre_mat[y_fit_real_coor, x_fit_real_coor, 1] = counter
+            self.column_circumference_mat = mat_op.draw_circle(self.column_circumference_mat, x_fit, y_fit, self.r)
+
+            print(str(counter) + ': (' + str(x_fit_real_coor) + ', ' + str(y_fit_real_coor) + ') | (' + str(
+                pos[1]) + ', ' + str(pos[0]) + ')')
+            self.num_columns = self.num_columns + 1
+            self.num_un = self.num_un + 1
+            counter = counter + 1
+
+        self.column_circumference_mat = mat_op.gen_de_framed_mat(self.column_circumference_mat,
+                                                                 self.r + self.overhead)
+        self.search_mat = mat_op.gen_de_framed_mat(self.search_mat, self.r + self.overhead)
+        self.im_mat = mat_op.gen_de_framed_mat(self.im_mat, self.r + self.overhead)
+        self.calc_avg_gamma()
+        self.summarize_stats()
 
     def column_analyser(self, i, search_type='s'):
         pass
