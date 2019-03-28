@@ -7,7 +7,7 @@ import numpy as np
 from copy import deepcopy
 import pickle
 import dm3_lib as dm3
-import Utilities
+import utils
 import mat_op
 
 
