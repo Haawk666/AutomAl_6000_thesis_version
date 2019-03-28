@@ -1,6 +1,6 @@
 # Utilities script
 # -------------------------------------------
-# This script contains a collection of static functions that are abstracted away from Core.py
+# This script contains a collection of static functions that are abstracted away from core.py
 
 import numpy as np
 import scipy.optimize as opt

@@ -1,6 +1,6 @@
 # UI.py
 # -------------------------------------------
-# This file contains the user interface functionality. MainUi calls on SuchSoftware in Core.py, but SuchSoftware never
+# This file contains the user interface functionality. MainUi calls on SuchSoftware in core.py, but SuchSoftware never
 # calls on MainUi. This is an attempt to keep SuchSoftware independent and thus callable in other hypothetical contexts,
 # all though this inhibits the possibility to display "progress information" to the user when SuchSoftware is running
 # tasks...
@@ -10,8 +10,8 @@ import sys
 import numpy as np
 import numpy.core._dtype_ctypes  # This is needed because of a bug in pyinstaller
 import mat_op
-import Core
-import UI_elements
+import core
+import GUI_elements
 
 
 class MainUi(QtWidgets.QMainWindow):
@@ -20,7 +20,7 @@ class MainUi(QtWidgets.QMainWindow):
         super().__init__()
 
         # Initialize in an 'empty state'
-        self.project_instance = Core.SuchSoftware('empty')
+        self.project_instance = core.SuchSoftware('empty')
         self.project_loaded = False
         self.savefile = None
         self.control_instance = None
@@ -30,9 +30,9 @@ class MainUi(QtWidgets.QMainWindow):
         self.previous_overlay_obj = None
 
         # Lists of graphical objects
-        dummy_instance = UI_elements.InteractivePosColumn(0, 0, 0, 0)
+        dummy_instance = GUI_elements.InteractivePosColumn(0, 0, 0, 0)
         self.pos_objects = np.ndarray([1], dtype=type(dummy_instance))
-        dummy_instance = UI_elements.InteractiveOverlayColumn(0, 0, 0, 0)
+        dummy_instance = GUI_elements.InteractiveOverlayColumn(0, 0, 0, 0)
         self.overlay_objects = np.ndarray([1], dtype=type(dummy_instance))
 
         self.boarder_line_objects = np.ndarray([1], dtype=type(QtWidgets.QGraphicsLineItem()))
@@ -109,7 +109,7 @@ class MainUi(QtWidgets.QMainWindow):
         self.font_tiny.setPixelSize(9)
 
         # Create menu bar
-        UI_elements.MenuBar(self.menuBar(), self)
+        GUI_elements.MenuBar(self.menuBar(), self)
 
         # Generate elements
         self.setWindowTitle(
@@ -156,7 +156,7 @@ class MainUi(QtWidgets.QMainWindow):
 
         # Generate control window
 
-        self.control_window = UI_elements.ControlWindow(obj=self)
+        self.control_window = GUI_elements.ControlWindow(obj=self)
 
         self.info_display_area = QtWidgets.QScrollArea()
         self.info_display_area.setWidget(self.control_window)
@@ -182,7 +182,7 @@ class MainUi(QtWidgets.QMainWindow):
         filename = QtWidgets.QFileDialog.getOpenFileName(self, 'Select dm3', '')
         if filename[0]:
             self.statusBar().showMessage('Working...')
-            self.project_instance = Core.SuchSoftware(filename[0])
+            self.project_instance = core.SuchSoftware(filename[0])
             self.control_instance = None
             self.project_loaded = True
             self.update_display()
@@ -195,7 +195,7 @@ class MainUi(QtWidgets.QMainWindow):
         if filename[0]:
             self.statusBar().showMessage('Working...')
             print(filename[0])
-            self.project_instance = Core.SuchSoftware.load(filename[0])
+            self.project_instance = core.SuchSoftware.load(filename[0])
             self.control_instance = None
             self.project_loaded = True
             self.savefile = filename[0]
@@ -291,7 +291,7 @@ class MainUi(QtWidgets.QMainWindow):
 
             if self.project_instance.columns[self.selected_column].neighbour_indices is not None:
 
-                dialog = UI_elements.SetIndicesDialog()
+                dialog = GUI_elements.SetIndicesDialog()
                 dialog.reference_object(self, self.selected_column)
                 dialog.gen_layout()
                 dialog.exec_()
@@ -302,7 +302,7 @@ class MainUi(QtWidgets.QMainWindow):
 
             if self.project_instance.columns[self.selected_column].neighbour_indices is not None:
 
-                dialog = UI_elements.SetIndicesManuallyDialog()
+                dialog = GUI_elements.SetIndicesManuallyDialog()
                 dialog.reference_object(self, self.selected_column)
                 dialog.gen_layout()
                 dialog.exec_()
@@ -467,7 +467,7 @@ class MainUi(QtWidgets.QMainWindow):
 
                 self.project_instance.columns[self.selected_column].h_index = y
 
-                for x in range(0, Core.SuchSoftware.num_poss):
+                for x in range(0, core.SuchSoftware.num_poss):
 
                     if y == 6:
                         self.project_instance.columns[self.selected_column].prob_vector[x] = 0.0
@@ -559,7 +559,7 @@ class MainUi(QtWidgets.QMainWindow):
             self.project_instance.columns[x].is_in_precipitate = False
             self.project_instance.columns[x].set_by_user = False
 
-            for y in range(0, Core.SuchSoftware.num_poss):
+            for y in range(0, core.SuchSoftware.num_poss):
                 self.project_instance.columns[x].prob_vector[y] = 1.0
 
             self.project_instance.renorm_prop(x)
@@ -723,7 +723,7 @@ class MainUi(QtWidgets.QMainWindow):
         if filename[0]:
             self.statusBar().showMessage('Working...')
             print(filename[0])
-            self.control_instance = Core.SuchSoftware.load(filename[0])
+            self.control_instance = core.SuchSoftware.load(filename[0])
             self.statusBar().showMessage('Ready')
         else:
             self.control_instance = None
@@ -1198,13 +1198,13 @@ class MainUi(QtWidgets.QMainWindow):
 
         r = self.project_instance.r
 
-        dummy_instance = UI_elements.InteractivePosColumn(0, 0, 0, 0)
+        dummy_instance = GUI_elements.InteractivePosColumn(0, 0, 0, 0)
         self.pos_objects = np.ndarray([1], dtype=type(dummy_instance))
 
         if self.project_instance.num_columns > 0:
             for i in range(0, self.project_instance.num_columns):
 
-                custom_ellipse_pos = UI_elements.InteractivePosColumn(0, 0, 2 * r, 2 * r)
+                custom_ellipse_pos = GUI_elements.InteractivePosColumn(0, 0, 2 * r, 2 * r)
                 custom_ellipse_pos.moveBy(self.project_instance.columns[i].x - r,
                                           self.project_instance.columns[i].y - r)
                 custom_ellipse_pos.reference_object(self, i)
@@ -1242,13 +1242,13 @@ class MainUi(QtWidgets.QMainWindow):
 
             r = self.project_instance.r
 
-            dummy_instance = UI_elements.InteractiveOverlayColumn(0, 0, 0, 0)
+            dummy_instance = GUI_elements.InteractiveOverlayColumn(0, 0, 0, 0)
             self.overlay_objects = np.ndarray([1], dtype=type(dummy_instance))
 
             if self.project_instance.num_columns > 0:
                 for i in range(0, self.project_instance.num_columns):
 
-                    custom_ellipse_overlay = UI_elements.InteractiveOverlayColumn(0, 0, r, r)
+                    custom_ellipse_overlay = GUI_elements.InteractiveOverlayColumn(0, 0, r, r)
                     custom_ellipse_overlay.moveBy(self.project_instance.columns[i].x - np.round(r / 2),
                                                   self.project_instance.columns[i].y - np.round(r / 2))
                     custom_ellipse_overlay.reference_object(self, i)
@@ -1401,7 +1401,7 @@ class MainUi(QtWidgets.QMainWindow):
 
             for i in range(0, self.project_instance.num_columns):
 
-                custom_ellipse_overlay = UI_elements.InteractiveGraphVertex(0, 0, r, r)
+                custom_ellipse_overlay = GUI_elements.InteractiveGraphVertex(0, 0, r, r)
                 custom_ellipse_overlay.moveBy(2 * scale_factor * self.project_instance.columns[i].x - np.round(r / 2),
                                               2 * scale_factor * self.project_instance.columns[i].y - np.round(r / 2))
                 custom_ellipse_overlay.reference_object(self, i)
@@ -1469,7 +1469,7 @@ class MainUi(QtWidgets.QMainWindow):
 
             for i in range(0, self.project_instance.num_columns):
 
-                custom_ellipse_overlay = UI_elements.InteractiveGraphVertex(0, 0, r, r)
+                custom_ellipse_overlay = GUI_elements.InteractiveGraphVertex(0, 0, r, r)
                 custom_ellipse_overlay.moveBy(2 * scale_factor * self.project_instance.columns[i].x - np.round(r / 2),
                                               2 * scale_factor * self.project_instance.columns[i].y - np.round(r / 2))
                 custom_ellipse_overlay.reference_object(self, i)
@@ -1594,7 +1594,5 @@ class MainUi(QtWidgets.QMainWindow):
                         self.graphicScene_3.addItem(line)
 
 
-app = QtWidgets.QApplication(sys.argv)
-program = MainUi()
-sys.exit(app.exec_())
+
 

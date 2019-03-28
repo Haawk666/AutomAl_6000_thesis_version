@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets, QtGui, QtCore
 import numpy as np
-import Core
+import core
 
 
 class InteractivePosColumn(QtWidgets.QGraphicsEllipseItem):
@@ -1426,7 +1426,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.ui_obj.graphicsView_6.setScene(self.ui_obj.graphicScene_6)
         self.ui_obj.graphicsView_7.setScene(self.ui_obj.graphicScene_7)
 
-        self.ui_obj.project_instance = Core.SuchSoftware('empty')
+        self.ui_obj.project_instance = core.SuchSoftware('empty')
         self.ui_obj.project_loaded = False
         self.ui_obj.savefile = None
         self.ui_obj.selected_column = -1
