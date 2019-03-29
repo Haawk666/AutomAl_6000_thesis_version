@@ -34,6 +34,8 @@ class Vertex:
         self.is_edge_column = False
         self.show_in_overlay = True
         self.prob_vector = np.ndarray([self.num_selections], dtype=np.float64)
+        self.collapsed_prob_vector = np.zeros([self.num_selections], dtype=int)
+        self.collapsed_prob_vector[self.num_selections - 1] = 1
         self.neighbour_indices = []
 
         # The prob_vector is ordered to represent the elements in order of their radius:
@@ -70,6 +72,13 @@ class Vertex:
         if not bias == -1:
             self.prob_vector[bias] = 1.1
 
+        self.collapsed_prob_vector = np.zeros([self.num_selections], dtype=int)
+
+        if not bias == -1:
+            self.collapsed_prob_vector[bias] = 1
+        else:
+            self.collapsed_prob_vector[self.num_selections - 1] = 1
+
         self.renorm_prob_vector()
         self.define_species()
 
@@ -100,6 +109,9 @@ class Vertex:
         else:
             self.atomic_species = self.species_strings[h_index]
             self.h_index = h_index
+
+        self.collapsed_prob_vector = np.zeros([self.num_selections], dtype=int)
+        self.collapsed_prob_vector[h_index] = 1
 
         self.analyse_prob_vector_confidence()
 

@@ -47,7 +47,12 @@ class SuchSoftware:
         self.im_width = 0
 
         if not (filename_full == 'Empty' or filename_full == 'empty'):
-            self.load_image()
+            dm3f = dm3.DM3(self.filename_full)
+            self.im_mat = dm3f.imagedata
+            (self.scale, junk) = dm3f.pxsize
+            self.scale = 1000 * self.scale
+            self.im_mat = mat_op.normalize_static(self.im_mat)
+            (self.im_height, self.im_width) = self.im_mat.shape
 
         # Data matrices: These hold much of the information gathered by the different algorithms
         self.search_mat = self.im_mat
@@ -147,15 +152,6 @@ class SuchSoftware:
         # Initialize an empty graph
         self.graph = graph.AtomicGraph()
 
-    def load_image(self):
-
-        dm3f = dm3.DM3(self.filename_full)
-        self.im_mat = dm3f.imagedata
-        (self.scale, junk) = dm3f.pxsize
-        self.scale = 1000 * self.scale
-        self.im_mat = mat_op.normalize_static(self.im_mat)
-        (self.im_height, self.im_width) = self.im_mat.shape
-
     def set_alloy_mat(self, alloy=0):
 
         self.alloy = alloy
@@ -246,4 +242,276 @@ class SuchSoftware:
         self.im_mat = mat_op.gen_de_framed_mat(self.im_mat, self.r + self.overhead)
         self.calc_avg_gamma()
         self.summarize_stats()
+
+    def calc_avg_gamma(self):
+
+        if self.num_columns > 0:
+
+            self.im_mat = mat_op.gen_framed_mat(self.im_mat, self.r)
+
+            for x in range(0, self.num_columns):
+
+                self.graph.vertices[x].avg_gamma, self.graph.vertices[x].peak_gamma =\
+                    mat_op.average(self.im_mat, self.graph.vertices[x].im_coor_x + self.r,
+                                   self.graph.vertices[x].im_coor_y + self.r, self.r)
+
+            self.im_mat = mat_op.gen_de_framed_mat(self.im_mat, self.r)
+
+    def summarize_stats(self):
+
+        self.avg_peak_gamma = 0
+        self.avg_avg_gamma = 0
+
+        self.num_inconsistencies = 0
+        self.num_popular = 0
+        self.num_unpopular = 0
+
+        self.number_percentage_si = 0.0
+        self.number_percentage_cu = 0.0
+        self.number_percentage_zn = 0.0
+        self.number_percentage_al = 0.0
+        self.number_percentage_ag = 0.0
+        self.number_percentage_mg = 0.0
+        self.number_percentage_un = 0.0
+
+        self.precipitate_number_percentage_si = 0.0
+        self.precipitate_number_percentage_cu = 0.0
+        self.precipitate_number_percentage_zn = 0.0
+        self.precipitate_number_percentage_al = 0.0
+        self.precipitate_number_percentage_ag = 0.0
+        self.precipitate_number_percentage_mg = 0.0
+        self.precipitate_number_percentage_un = 0.0
+
+        self.avg_si_peak_gamma = 0.0
+        self.avg_cu_peak_gamma = 0.0
+        self.avg_zn_peak_gamma = 0.0
+        self.avg_al_peak_gamma = 0.0
+        self.avg_ag_peak_gamma = 0.0
+        self.avg_mg_peak_gamma = 0.0
+        self.avg_un_peak_gamma = 0.0
+
+        self.avg_si_avg_gamma = 0.0
+        self.avg_cu_avg_gamma = 0.0
+        self.avg_zn_avg_gamma = 0.0
+        self.avg_al_avg_gamma = 0.0
+        self.avg_ag_avg_gamma = 0.0
+        self.avg_mg_avg_gamma = 0.0
+        self.avg_un_avg_gamma = 0.0
+
+        self.num_si = 0
+        self.num_cu = 0
+        self.num_zn = 0
+        self.num_al = 0
+        self.num_ag = 0
+        self.num_mg = 0
+        self.num_un = 0
+
+        self.num_precipitate_si = 0
+        self.num_precipitate_cu = 0
+        self.num_precipitate_zn = 0
+        self.num_precipitate_al = 0
+        self.num_precipitate_ag = 0
+        self.num_precipitate_mg = 0
+        self.num_precipitate_un = 0
+
+        self.num_precipitate_columns = 0
+
+        if self.num_columns > 0:
+
+            for x in range(0, self.num_columns):
+
+                self.avg_peak_gamma += self.graph.vertices[x].peak_gamma
+                self.avg_avg_gamma += self.graph.vertices[x].avg_gamma
+
+                if self.graph.vertices[x].is_unpopular and not self.graph.vertices[x].is_edge_column:
+                    self.num_unpopular += 1
+                    self.num_inconsistencies += 1
+
+                if self.graph.vertices[x].is_popular and not self.graph.vertices[x].is_edge_column:
+                    self.num_popular += 1
+                    self.num_inconsistencies += 1
+
+                if self.graph.vertices[x].neighbour_indices is not None and not self.graph.vertices[x].is_edge_column:
+                    for y in range(0, self.graph.vertices[x].n()):
+                        if self.graph.vertices[x].level ==\
+                                self.graph.vertices[self.graph.vertices[x].neighbour_indices[y]].level:
+                            self.num_inconsistencies += 1
+
+                if self.graph.vertices[x].h_index == 0:
+                    self.num_si += 1
+                    self.number_percentage_si += 1
+                    self.avg_si_peak_gamma += self.graph.vertices[x].peak_gamma
+                    self.avg_si_avg_gamma += self.graph.vertices[x].avg_gamma
+                    if self.graph.vertices[x].is_in_precipitate:
+                        self.num_precipitate_columns += 1
+                        self.num_precipitate_si += 1
+                        self.precipitate_number_percentage_si += 1
+                elif self.graph.vertices[x].h_index == 1:
+                    self.num_cu += 1
+                    self.number_percentage_cu += 1
+                    self.avg_cu_peak_gamma += self.graph.vertices[x].peak_gamma
+                    self.avg_cu_avg_gamma += self.graph.vertices[x].avg_gamma
+                    if self.graph.vertices[x].is_in_precipitate:
+                        self.num_precipitate_columns += 1
+                        self.num_precipitate_cu += 1
+                        self.precipitate_number_percentage_cu += 1
+                elif self.graph.vertices[x].h_index == 2:
+                    self.num_zn += 1
+                    self.number_percentage_zn += 1
+                    self.avg_zn_peak_gamma += self.graph.vertices[x].peak_gamma
+                    self.avg_zn_avg_gamma += self.graph.vertices[x].avg_gamma
+                    if self.graph.vertices[x].is_in_precipitate:
+                        self.num_precipitate_columns += 1
+                        self.num_precipitate_zn +=1
+                        self.precipitate_number_percentage_zn += 1
+                elif self.graph.vertices[x].h_index == 3:
+                    self.num_al += 1
+                    self.number_percentage_al += 1
+                    self.avg_al_peak_gamma += self.graph.vertices[x].peak_gamma
+                    self.avg_al_avg_gamma += self.graph.vertices[x].avg_gamma
+                    if self.graph.vertices[x].is_in_precipitate:
+                        self.num_precipitate_columns += 1
+                        self.num_precipitate_al += 1
+                        self.precipitate_number_percentage_al += 1
+                elif self.graph.vertices[x].h_index == 4:
+                    self.num_ag += 1
+                    self.number_percentage_ag += 1
+                    self.avg_ag_peak_gamma += self.graph.vertices[x].peak_gamma
+                    self.avg_ag_avg_gamma += self.graph.vertices[x].avg_gamma
+                    if self.graph.vertices[x].is_in_precipitate:
+                        self.num_precipitate_columns += 1
+                        self.num_precipitate_ag += 1
+                        self.precipitate_number_percentage_ag += 1
+                elif self.graph.vertices[x].h_index == 5:
+                    self.num_mg += 1
+                    self.number_percentage_mg += 1
+                    self.avg_mg_peak_gamma += self.graph.vertices[x].peak_gamma
+                    self.avg_mg_avg_gamma += self.graph.vertices[x].avg_gamma
+                    if self.graph.vertices[x].is_in_precipitate:
+                        self.num_precipitate_columns += 1
+                        self.num_precipitate_mg += 1
+                        self.precipitate_number_percentage_mg += 1
+                elif self.graph.vertices[x].h_index == 6:
+                    self.num_un += 1
+                    self.number_percentage_un += 1
+                    self.avg_un_peak_gamma += self.graph.vertices[x].peak_gamma
+                    self.avg_un_avg_gamma += self.graph.vertices[x].avg_gamma
+                    if self.graph.vertices[x].is_in_precipitate:
+                        self.num_precipitate_columns += 1
+                        self.num_precipitate_un += 1
+                        self.precipitate_number_percentage_un += 1
+                else:
+                    print('Error in summarize_stats()')
+
+            self.avg_peak_gamma = self.avg_peak_gamma / self.num_columns
+            self.avg_avg_gamma = self.avg_avg_gamma / self.num_columns
+
+            if not self.num_si == 0:
+                self.avg_si_peak_gamma = self.avg_si_peak_gamma / self.num_si
+                self.avg_si_avg_gamma = self.avg_si_avg_gamma / self.num_si
+
+            if not self.num_cu == 0:
+                self.avg_cu_peak_gamma = self.avg_cu_peak_gamma / self.num_cu
+                self.avg_cu_avg_gamma = self.avg_cu_avg_gamma / self.num_cu
+
+            if not self.num_zn == 0:
+                self.avg_zn_peak_gamma = self.avg_zn_peak_gamma / self.num_zn
+                self.avg_zn_avg_gamma = self.avg_zn_avg_gamma / self.num_zn
+
+            if not self.num_al == 0:
+                self.avg_al_peak_gamma = self.avg_al_peak_gamma / self.num_al
+                self.avg_al_avg_gamma = self.avg_al_avg_gamma / self.num_al
+
+            if not self.num_ag == 0:
+                self.avg_ag_peak_gamma = self.avg_ag_peak_gamma / self.num_ag
+                self.avg_ag_avg_gamma = self.avg_ag_avg_gamma / self.num_ag
+
+            if not self.num_mg == 0:
+                self.avg_mg_peak_gamma = self.avg_mg_peak_gamma / self.num_mg
+                self.avg_mg_avg_gamma = self.avg_mg_avg_gamma / self.num_mg
+
+            if not self.num_un == 0:
+                self.avg_un_peak_gamma = self.avg_un_peak_gamma / self.num_un
+                self.avg_un_avg_gamma = self.avg_un_avg_gamma / self.num_un
+
+            self.number_percentage_si = self.number_percentage_si / self.num_columns
+            self.number_percentage_cu = self.number_percentage_cu / self.num_columns
+            self.number_percentage_zn = self.number_percentage_zn / self.num_columns
+            self.number_percentage_al = self.number_percentage_al / self.num_columns
+            self.number_percentage_ag = self.number_percentage_ag / self.num_columns
+            self.number_percentage_mg = self.number_percentage_mg / self.num_columns
+            self.number_percentage_un = self.number_percentage_un / self.num_columns
+
+            if not self.num_precipitate_columns == 0:
+                self.precipitate_number_percentage_si =\
+                    self.precipitate_number_percentage_si / self.num_precipitate_columns
+                self.precipitate_number_percentage_cu =\
+                    self.precipitate_number_percentage_cu / self.num_precipitate_columns
+                self.precipitate_number_percentage_zn =\
+                    self.precipitate_number_percentage_zn / self.num_precipitate_columns
+                self.precipitate_number_percentage_al =\
+                    self.precipitate_number_percentage_al / self.num_precipitate_columns
+                self.precipitate_number_percentage_ag =\
+                    self.precipitate_number_percentage_ag / self.num_precipitate_columns
+                self.precipitate_number_percentage_mg =\
+                    self.precipitate_number_percentage_mg / self.num_precipitate_columns
+                self.precipitate_number_percentage_un =\
+                    self.precipitate_number_percentage_un / self.num_precipitate_columns
+
+        self.build_stat_string()
+
+    def build_stat_string(self):
+
+        self.display_stats_string = ('Statistics:\n\n'
+            'Number of detected columns: ' + str(self.num_columns) + '\n'
+            'Number of detected precipitate columns: ' + str(self.num_precipitate_columns) + '\n\n'
+            'Number of inconsistencies: ' + str(self.num_inconsistencies) + '\n'
+            'Number of popular: ' + str(self.num_popular) + '\n'
+            'Number of unpopular: ' + str(self.num_unpopular) + '\n'
+            'Chi: ' + str(self.chi) + '\n\n'
+            'Average peak intensity: ' + str(self.avg_peak_gamma) + '\n'
+            'Average average intensity: ' + str(self.avg_avg_gamma) + '\n\n'
+            'Average Si peak intensity: ' + str(self.avg_si_peak_gamma) + '\n'
+            'Average Cu peak intensity: ' + str(self.avg_cu_peak_gamma) + '\n'
+            'Average Zn peak intensity: ' + str(self.avg_zn_peak_gamma) + '\n'
+            'Average Al peak intensity: ' + str(self.avg_al_peak_gamma) + '\n'
+            'Average Ag peak intensity: ' + str(self.avg_ag_peak_gamma) + '\n'
+            'Average Mg peak intensity: ' + str(self.avg_mg_peak_gamma) + '\n'
+            'Average Un peak intensity: ' + str(self.avg_un_peak_gamma) + '\n\n'
+            'Average Si average intensity: ' + str(self.avg_si_avg_gamma) + '\n'
+            'Average Cu average intensity: ' + str(self.avg_cu_avg_gamma) + '\n'
+            'Average Zn average intensity: ' + str(self.avg_zn_avg_gamma) + '\n'
+            'Average Al average intensity: ' + str(self.avg_al_avg_gamma) + '\n'
+            'Average Ag average intensity: ' + str(self.avg_ag_avg_gamma) + '\n'
+            'Average Mg average intensity: ' + str(self.avg_mg_avg_gamma) + '\n'
+            'Average Un average intensity: ' + str(self.avg_un_avg_gamma) + '\n\n'
+            'Number of Si-columns: ' + str(self.num_si) + '\n'
+            'Number of Cu-columns: ' + str(self.num_cu) + '\n'
+            'Number of Zn-columns: ' + str(self.num_zn) + '\n'
+            'Number of Al-columns: ' + str(self.num_al) + '\n'
+            'Number of Ag-columns: ' + str(self.num_ag) + '\n'
+            'Number of Mg-columns: ' + str(self.num_mg) + '\n'
+            'Number of Un-columns: ' + str(self.num_un) + '\n\n'
+            'Number procentage of Si: ' + str(self.number_percentage_si) + '\n'
+            'Number procentage of Cu: ' + str(self.number_percentage_cu) + '\n'
+            'Number procentage of Zn: ' + str(self.number_percentage_zn) + '\n'
+            'Number procentage of Al: ' + str(self.number_percentage_al) + '\n'
+            'Number procentage of Ag: ' + str(self.number_percentage_ag) + '\n'
+            'Number procentage of Mg: ' + str(self.number_percentage_mg) + '\n'
+            'Number procentage of Un: ' + str(self.number_percentage_un) + '\n\n'
+            'Number of precipitate Si-columns: ' + str(self.num_precipitate_si) + '\n'
+            'Number of precipitate Cu-columns: ' + str(self.num_precipitate_cu) + '\n'
+            'Number of precipitate Zn-columns: ' + str(self.num_precipitate_zn) + '\n'
+            'Number of precipitate Al-columns: ' + str(self.num_precipitate_al) + '\n'
+            'Number of precipitate Ag-columns: ' + str(self.num_precipitate_ag) + '\n'
+            'Number of precipitate Mg-columns: ' + str(self.num_precipitate_mg) + '\n'
+            'Number of precipitate Un-columns: ' + str(self.num_precipitate_un) + '\n\n'
+            'Number procentage of precipitate Si: ' + str(self.precipitate_number_percentage_si) + '\n'
+            'Number procentage of precipitate Cu: ' + str(self.precipitate_number_percentage_cu) + '\n'
+            'Number procentage of precipitate Zn: ' + str(self.precipitate_number_percentage_zn) + '\n'
+            'Number procentage of precipitate Al: ' + str(self.precipitate_number_percentage_al) + '\n'
+            'Number procentage of precipitate Ag: ' + str(self.precipitate_number_percentage_ag) + '\n'
+            'Number procentage of precipitate Mg: ' + str(self.precipitate_number_percentage_mg) + '\n'
+            'Number procentage of precipitate Un: ' + str(self.precipitate_number_percentage_un) + '\n\n')
+
 
