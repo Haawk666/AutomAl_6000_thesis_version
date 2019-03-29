@@ -14,7 +14,7 @@ import core
 import GUI_elements
 
 
-class MainUi(QtWidgets.QMainWindow):
+class MainUI(QtWidgets.QMainWindow):
 
     def __init__(self):
         super().__init__()

@@ -15,6 +15,6 @@ from PyQt5 import QtWidgets
 import sys
 
 app = QtWidgets.QApplication(sys.argv)
-program = GUI.MainUi()
+program = GUI.MainUI()
 sys.exit(app.exec_())
 
