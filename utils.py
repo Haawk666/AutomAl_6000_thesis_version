@@ -113,7 +113,7 @@ def gaussian_fit(mat, x_0, y_0, r):
 def cm_fit(mat, x_0, y_0, r):
     # "Centre of mass" fit. Calculates the centre of mass of the pixels in the circle centred at (x_0, y_0) with radius
     # r.
-    portrait_mat = np.zeros((2 * r + 1, 2 * r + 1), dtype=type(mat))
+    portrait_mat = mat[x_0 - r:x_0 + r, y_0 - r:y_0 + r]
     counter = 0
     total_mass = 0
     weighted_x_sum = 0
@@ -121,8 +121,6 @@ def cm_fit(mat, x_0, y_0, r):
     for x_i in range(x_0 - r, x_0 + r):
         for y_i in range(y_0 - r, y_0 + r):
             distance = np.sqrt((x_0 - x_i)**2 + (y_0 - y_i)**2)
-            # create "portrait" of column weighted as distance from centre to prevent "bleed" from neighbouring atoms
-            portrait_mat[y_i - y_0 + r, x_i - x_0 + r] = mat[y_i, x_i]
             if distance <= r:
                 total_mass = total_mass + mat[y_i, x_i]
                 weighted_x_sum = weighted_x_sum + mat[y_i, x_i]*x_i

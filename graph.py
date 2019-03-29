@@ -54,6 +54,9 @@ class Vertex:
 
         return n
 
+    def reset_prob_vector(self):
+        pass
+
 
 class Edge:
 

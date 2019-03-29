@@ -44,16 +44,8 @@ def gen_framed_mat(mat, r):
 
 
 def gen_de_framed_mat(temp_mat, r):
-    # Takes a matrix that is assumed to contain a frame with junk or superfluous data with width r. Returns the central
-    # matrix. Used to de-frame a matrix.
-    (n, m) = temp_mat.shape
-    n = n - (2 * r)
-    m = m - (2 * r)
-    mat = np.zeros((n, m), dtype=temp_mat.dtype)
-    for i in range(0, n - 1):
-        for j in range(0, m - 1):
-            mat[i, j] = temp_mat[i + r, j + r]
-    return mat
+    (height, width) = temp_mat.shape
+    return temp_mat[r:height - r, r:width - r]
 
 
 def delete_pixels(mat, x_0, y_0, r):

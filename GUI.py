@@ -467,7 +467,7 @@ class MainUi(QtWidgets.QMainWindow):
 
                 self.project_instance.columns[self.selected_column].h_index = y
 
-                for x in range(0, core.SuchSoftware.num_poss):
+                for x in range(0, core.SuchSoftware.num_selections):
 
                     if y == 6:
                         self.project_instance.columns[self.selected_column].prob_vector[x] = 0.0
@@ -559,7 +559,7 @@ class MainUi(QtWidgets.QMainWindow):
             self.project_instance.columns[x].is_in_precipitate = False
             self.project_instance.columns[x].set_by_user = False
 
-            for y in range(0, core.SuchSoftware.num_poss):
+            for y in range(0, core.SuchSoftware.num_selections):
                 self.project_instance.columns[x].prob_vector[y] = 1.0
 
             self.project_instance.renorm_prop(x)
@@ -839,7 +839,7 @@ class MainUi(QtWidgets.QMainWindow):
         self.project_instance.columns[self.selected_column].x = x_coor
         self.project_instance.columns[self.selected_column].y = y_coor
 
-        if self.project_instance.M - r > x_coor > r and self.project_instance.N - r > y_coor > r:
+        if self.project_instance.im_width - r > x_coor > r and self.project_instance.im_height - r > y_coor > r:
 
             self.project_instance.columns[self.selected_column].avg_gamma, self.project_instance.columns[
                 self.selected_column].peak_gamma = mat_op.average(self.project_instance.im_mat, x_coor, y_coor, r)
@@ -1169,8 +1169,8 @@ class MainUi(QtWidgets.QMainWindow):
 
         # Update labels
         self.control_window.lbl_num_detected_columns.setText('Number of detected columns: ' + str(self.project_instance.num_columns))
-        self.control_window.lbl_image_width.setText('Image width (pixels): ' + str(self.project_instance.M))
-        self.control_window.lbl_image_height.setText('Image height (pixels): ' + str(self.project_instance.N))
+        self.control_window.lbl_image_width.setText('Image width (pixels): ' + str(self.project_instance.im_width))
+        self.control_window.lbl_image_height.setText('Image height (pixels): ' + str(self.project_instance.im_height))
         self.control_window.lbl_atomic_radii.setText('Approx atomic radii (pixels): ' + str(self.project_instance.r))
         self.control_window.lbl_detection_threshold.setText('Detection threshold value: ' + str(self.project_instance.threshold))
         self.control_window.lbl_search_matrix_peak.setText('Search matrix peak: ' + str(np.max(self.project_instance.search_mat)))
