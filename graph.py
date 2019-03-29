@@ -87,9 +87,7 @@ class Vertex:
         self.prob_vector = self.collapsed_prob_vector
 
     def renorm_prob_vector(self):
-
         vector_sum = np.sum(self.prob_vector)
-
         if vector_sum == 0.0:
             pass
         else:
@@ -171,12 +169,24 @@ class AtomicGraph:
         self.vertices = []
         self.vertex_indices = []
         self.edges = []
+
+        # Stats
         self.chi = 0
         self.num_vertices = len(self.vertices)
         self.num_particle_vertices = 0
         self.num_inconsistencies = 0
         self.num_popular = 0
         self.num_unpopular = 0
+
+    def summarize_stats(self):
+
+        self.num_vertices = len(self.vertices)
+        for x in range(0, self.num_vertices):
+            if self.vertices[x].is_popular:
+                self.num_popular += 1
+            if self.vertices[x].is_unpopular:
+                self.num_unpopular += 1
+        self.calc_chi()
 
     def add_vertex(self, vertex):
 
@@ -192,5 +202,42 @@ class AtomicGraph:
         raise NotImplemented
 
     def calc_chi(self):
+        # set self.chi adn self.num_inconsistencies
         pass
+
+    def reset_vertex_properties(self):
+        self.edges = []
+        self.chi = 0
+        self.num_particle_vertices = 0
+        self.num_inconsistencies = 0
+        self.num_popular = 0
+        self.num_unpopular = 0
+
+        self.reset_all_flags()
+
+        for x in range(0, self.num_vertices):
+            if not self.vertices[x].set_by_user:
+                self.vertices[x].level = 0
+                self.vertices[x].reset_prob_vector(bias=self.vertices[x].num_selections - 1)
+                self.vertices[x].is_in_precipitate = False
+                self.vertices[x].is_unpopular = False
+                self.vertices[x].is_popular = False
+                self.vertices[x].is_edge_column = False
+                self.vertices[x].show_in_overlay = True
+
+        self.summarize_stats()
+
+    def reset_all_flags(self):
+        for x in range(0, self.num_vertices):
+            self.vertices[x].flag_1 = False
+            self.vertices[x].flag_2 = False
+            self.vertices[x].flag_3 = False
+            self.vertices[x].flag_4 = False
+
+    def invert_levels(self):
+        for x in range(0, self.num_vertices):
+            if self.vertices[x].level == 0:
+                self.vertices[x].level = 1
+            elif self.vertices[x].level == 1:
+                self.vertices[x].level = 0
 

@@ -483,15 +483,17 @@ class MainUi(QtWidgets.QMainWindow):
     def set_level_trigger(self):
 
         if self.project_loaded and not (self.selected_column == -1):
-            items = ('down', 'up')
+            items = ('down', 'up', 'other')
             item, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Level", items, 0, False)
             if ok_pressed and item:
                 if item == 'down':
-                    self.project_instance.columns[self.selected_column].level = 0
-                else:
-                    self.project_instance.columns[self.selected_column].level = 1
+                    self.project_instance.graph.vertices[self.selected_column].level = 0
+                elif item == 'up':
+                    self.project_instance.graph.vertices[self.selected_column].level = 1
+                elif item == 'other':
+                    self.project_instance.graph.vertices[self.selected_column].level = 2
                 self.control_window.lbl_column_level.setText(
-                    'Level: ' + str(self.project_instance.columns[self.selected_column].level))
+                    'Level: ' + str(self.project_instance.graph.vertices[self.selected_column].level))
                 self.overlay_objects[self.selected_column] = self.set_species_colors(
                     self.overlay_objects[self.selected_column], self.selected_column)
 
@@ -503,7 +505,7 @@ class MainUi(QtWidgets.QMainWindow):
             if ok_pressed and item:
                 self.statusBar().showMessage('Working...')
                 self.project_instance.redraw_search_mat()
-                self.project_instance.column_finder(item)
+                self.project_instance.column_detection(item)
                 self.update_display()
 
     def restart_detection_trigger(self):
@@ -511,7 +513,7 @@ class MainUi(QtWidgets.QMainWindow):
         if self.project_loaded:
             self.statusBar().showMessage('Working...')
             self.deselect_trigger()
-            self.project_instance.delete_columns()
+            self.project_instance.reset_graph()
             self.previous_pos_obj = None
             self.previous_overlay_obj = None
             self.update_display()
@@ -527,7 +529,7 @@ class MainUi(QtWidgets.QMainWindow):
                 if ok_pressed and item:
                     self.statusBar().showMessage('Analyzing... This may take a long time...')
                     sys.setrecursionlimit(10000)
-                    self.project_instance.column_analyser(self.selected_column, item)
+                    self.project_instance.column_characterization(self.selected_column, item)
                     self.update_central_widget()
 
             else:
@@ -537,36 +539,23 @@ class MainUi(QtWidgets.QMainWindow):
                 if ok_pressed and item:
                     self.statusBar().showMessage('Analyzing... This may take a long time...')
                     sys.setrecursionlimit(10000)
-                    self.project_instance.column_analyser(self.selected_column, item)
+                    self.project_instance.column_characterization(self.selected_column, item)
                     self.update_central_widget()
 
     def restart_analysis_trigger(self):
 
-        # This is a temporary function:
-        for x in range(0, self.project_instance.num_columns):
-            self.project_instance.columns[x].confidence = 0.0
-            self.project_instance.columns[x].h_index = 6
-            self.project_instance.columns[x].is_in_precipitate = False
-            self.project_instance.columns[x].set_by_user = False
-
-            for y in range(0, core.SuchSoftware.num_selections):
-                self.project_instance.columns[x].prob_vector[y] = 1.0
-
-            self.project_instance.renorm_prop(x)
-            self.project_instance.redefine_species(x)
-            self.project_instance.columns[x].level = 0
+        self.project_instance.reset_vertex_properties()
 
         self.project_instance.precipitate_boarder = np.ndarray([1], dtype=int)
         self.project_instance.boarder_size = 0
-        self.project_instance.summarize_stats()
-        self.project_instance.reset_all_flags()
+        self.project_instance.graph.reset_all_flags()
         self.update_display()
         self.statusBar().showMessage('Reset all prob_vector\'s')
 
     def invert_levels_trigger(self):
 
         if self.project_loaded:
-            self.project_instance.invert_levels()
+            self.project_instance.graph.invert_levels()
             self.update_central_widget()
 
     def image_correction_trigger(self):
@@ -687,17 +676,17 @@ class MainUi(QtWidgets.QMainWindow):
         if self.project_loaded and not self.selected_column == -1:
             string = 'Column report:' +\
                 '   Index: ' + str(self.selected_column) +\
-                '\n   flag 1: ' + str(self.project_instance.columns[self.selected_column].flag_1) +\
-                '\n   flag 2: ' + str(self.project_instance.columns[self.selected_column].flag_2) +\
-                '\n   flag 3: ' + str(self.project_instance.columns[self.selected_column].flag_3) +\
-                '\n   flag 4: ' + str(self.project_instance.columns[self.selected_column].flag_4) +\
-                '\n   Set by User: ' + str(self.project_instance.columns[self.selected_column].set_by_user) +\
-                '\n   Is_edge_columns: ' + str(self.project_instance.columns[self.selected_column].is_edge_column) +\
-                '\n   Is Popular: ' + str(self.project_instance.columns[self.selected_column].is_popular) +\
-                '\n   Is unpopular: ' + str(self.project_instance.columns[self.selected_column].is_unpopular) +\
-                '\n   Is in precipitate: ' + str(self.project_instance.columns[self.selected_column].is_in_precipitate) +\
-                '\n   h_index: ' + str(self.project_instance.columns[self.selected_column].h_index) +\
-                '\n   species: ' + self.project_instance.columns[self.selected_column].atomic_species
+                '\n   flag 1: ' + str(self.project_instance.graph.vertices[self.selected_column].flag_1) +\
+                '\n   flag 2: ' + str(self.project_instance.graph.vertices[self.selected_column].flag_2) +\
+                '\n   flag 3: ' + str(self.project_instance.graph.vertices[self.selected_column].flag_3) +\
+                '\n   flag 4: ' + str(self.project_instance.graph.vertices[self.selected_column].flag_4) +\
+                '\n   Set by User: ' + str(self.project_instance.graph.vertices[self.selected_column].set_by_user) +\
+                '\n   Is_edge_columns: ' + str(self.project_instance.graph.vertices[self.selected_column].is_edge_column) +\
+                '\n   Is Popular: ' + str(self.project_instance.graph.vertices[self.selected_column].is_popular) +\
+                '\n   Is unpopular: ' + str(self.project_instance.graph.vertices[self.selected_column].is_unpopular) +\
+                '\n   Is in precipitate: ' + str(self.project_instance.graph.vertices[self.selected_column].is_in_precipitate) +\
+                '\n   h_index: ' + str(self.project_instance.graph.vertices[self.selected_column].h_index) +\
+                '\n   species: ' + self.project_instance.graph.vertices[self.selected_column].atomic_species
 
             print(string)
 
@@ -705,7 +694,7 @@ class MainUi(QtWidgets.QMainWindow):
 
         if self.project_loaded:
 
-            self.project_instance.invert_levels(True)
+            self.project_instance.graph.invert_levels(True)
 
     def set_control_file_trigger(self):
 
@@ -732,21 +721,21 @@ class MainUi(QtWidgets.QMainWindow):
 
             for x in range(0, self.project_instance.num_columns):
 
-                if self.project_instance.columns[x].h_index == self.control_instance.columns[x].h_index:
+                if self.project_instance.graph.vertices[x].h_index == self.control_instance.columns[x].h_index:
                     pass
                 else:
                     deviations = deviations + 1
 
-                if self.project_instance.columns[x].is_unpopular or self.project_instance.columns[x].is_popular:
+                if self.project_instance.graph.vertices[x].is_unpopular or self.project_instance.graph.vertices[x].is_popular:
 
                     flags = flags + 1
-                    if self.project_instance.columns[x].h_index == self.control_instance.columns[x].h_index:
+                    if self.project_instance.graph.vertices[x].h_index == self.control_instance.columns[x].h_index:
                         erroneous_flags = erroneous_flags + 1
                     else:
                         correct_flags = correct_flags + 1
-                    if self.project_instance.columns[x].is_unpopular:
+                    if self.project_instance.graph.vertices[x].is_unpopular:
                         unpopular = unpopular + 1
-                    if self.project_instance.columns[x].is_popular:
+                    if self.project_instance.graph.vertices[x].is_popular:
                         popular = popular + 1
 
             undetected_errors = deviations - correct_flags
@@ -767,15 +756,16 @@ class MainUi(QtWidgets.QMainWindow):
 
             for x in range(0, self.project_instance.num_columns):
 
-                self.project_instance.columns[x].level = 0
+                self.project_instance.graph.vertices[x].level = 0
 
     def clear_flags_trigger(self):
 
         if self.project_loaded and self.project_instance.num_columns > 0:
 
-            self.project_instance.reset_all_flags()
+            self.project_instance.graph.reset_all_flags()
             self.update_central_widget()
 
+    @ staticmethod
     def there_is_no_help_trigger(self):
 
         message = QtWidgets.QMessageBox()
@@ -788,11 +778,11 @@ class MainUi(QtWidgets.QMainWindow):
 
             if self.control_window.chb_precipitate_column.isChecked():
 
-                self.project_instance.columns[self.selected_column].is_in_precipitate = True
+                self.project_instance.graph.vertices[self.selected_column].is_in_precipitate = True
 
             else:
 
-                self.project_instance.columns[self.selected_column].is_in_precipitate = False
+                self.project_instance.graph.vertices[self.selected_column].is_in_precipitate = False
 
             self.project_instance.summarize_stats()
 
@@ -801,9 +791,9 @@ class MainUi(QtWidgets.QMainWindow):
         if self.selected_column == -1:
             pass
         else:
-            self.project_instance.columns[self.selected_column].show_in_overlay = not self.project_instance.columns[
-                self.selected_column].show_in_overlay
-            if self.project_instance.columns[self.selected_column].show_in_overlay:
+            self.project_instance.graph.vertices[self.selected_column].show_in_overlay =\
+                not self.project_instance.graph.vertices[self.selected_column].show_in_overlay
+            if self.project_instance.graph.vertices[self.selected_column].show_in_overlay:
                 self.overlay_objects[self.selected_column].show()
             else:
                 self.overlay_objects[self.selected_column].hide()

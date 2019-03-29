@@ -42,7 +42,7 @@ class SuchSoftware:
 
         self.filename_full = filename_full
         self.im_mat = None
-        self.scale = 0
+        self.scale = 1
         self.im_height = 0
         self.im_width = 0
 
@@ -53,12 +53,12 @@ class SuchSoftware:
             self.scale = 1000 * self.scale
             self.im_mat = mat_op.normalize_static(self.im_mat)
             (self.im_height, self.im_width) = self.im_mat.shape
+            self.fft_im_mat = mat_op.gen_fft(self.im_mat)
 
         # Data matrices: These hold much of the information gathered by the different algorithms
         self.search_mat = self.im_mat
         self.column_centre_mat = np.zeros((self.im_height, self.im_width, 2), dtype=type(self.im_mat))
         self.column_circumference_mat = np.zeros((self.im_height, self.im_width), dtype=type(self.im_mat))
-        self.fft_im_mat = mat_op.gen_fft(self.im_mat)
 
         # Alloy info: This vector is used to multiply away elements in the AtomicColumn.prob_vector that are not in
         # the alloy being studied. Currently supported alloys are:
@@ -243,6 +243,9 @@ class SuchSoftware:
         self.calc_avg_gamma()
         self.summarize_stats()
 
+    def column_characterization(self, starting_index, search_type=0):
+        pass
+
     def calc_avg_gamma(self):
 
         if self.num_columns > 0:
@@ -259,7 +262,7 @@ class SuchSoftware:
 
     def summarize_stats(self):
 
-        self.graph.calc_chi()
+        self.graph.summarize_stats()
 
         self.avg_peak_gamma = 0
         self.avg_avg_gamma = 0
@@ -549,4 +552,16 @@ class SuchSoftware:
             for x in range(0, self.num_columns):
                 self.column_centre_mat[self.graph.vertices[x].im_coor_y, self.graph.vertices[x].im_coor_x, 0] = 1
                 self.column_centre_mat[self.graph.vertices[x].im_coor_y, self.graph.vertices[x].im_coor_x, 1] = x
+
+    def reset_graph(self):
+        self.graph = graph.AtomicGraph
+        self.num_columns = 0
+        self.redraw_centre_mat()
+        self.redraw_circumference_mat()
+        self.redraw_search_mat()
+        self.summarize_stats()
+
+    def reset_vertex_properties(self):
+        self.graph.reset_vertex_properties()
+        self.summarize_stats()
 
