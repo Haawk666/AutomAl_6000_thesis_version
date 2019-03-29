@@ -259,6 +259,8 @@ class SuchSoftware:
 
     def summarize_stats(self):
 
+        self.graph.calc_chi()
+
         self.avg_peak_gamma = 0
         self.avg_avg_gamma = 0
 
@@ -468,7 +470,7 @@ class SuchSoftware:
             'Number of inconsistencies: ' + str(self.num_inconsistencies) + '\n'
             'Number of popular: ' + str(self.num_popular) + '\n'
             'Number of unpopular: ' + str(self.num_unpopular) + '\n'
-            'Chi: ' + str(self.chi) + '\n\n'
+            'Chi: ' + str(self.graph.chi) + '\n\n'
             'Average peak intensity: ' + str(self.avg_peak_gamma) + '\n'
             'Average average intensity: ' + str(self.avg_avg_gamma) + '\n\n'
             'Average Si peak intensity: ' + str(self.avg_si_peak_gamma) + '\n'
@@ -514,4 +516,37 @@ class SuchSoftware:
             'Number procentage of precipitate Mg: ' + str(self.precipitate_number_percentage_mg) + '\n'
             'Number procentage of precipitate Un: ' + str(self.precipitate_number_percentage_un) + '\n\n')
 
+    def redraw_search_mat(self):
+
+        self.search_mat = self.im_mat
+        if self.num_columns > 0:
+            self.search_mat = mat_op.gen_framed_mat(self.search_mat, self.r + self.overhead)
+            for i in range(0, self.num_columns):
+                self.search_mat = mat_op.delete_pixels(self.search_mat,
+                                                       self.graph.vertices[i].im_coor_x + self.r + self.overhead,
+                                                       self.graph.vertices[i].im_coor_y + self.r + self.overhead,
+                                                       self.r + self.overhead)
+            self.search_mat = mat_op.gen_de_framed_mat(self.search_mat, self.r + self.overhead)
+
+    def redraw_circumference_mat(self):
+
+        self.column_circumference_mat = np.zeros((self.im_height, self.im_width), dtype=type(self.im_mat))
+        if self.num_columns > 0:
+            self.column_circumference_mat = mat_op.gen_framed_mat(self.column_circumference_mat, self.r + self.overhead)
+            for x in range(0, self.num_columns):
+                self.column_circumference_mat = mat_op.draw_circle(self.column_circumference_mat,
+                                                                   self.graph.vertices[x].im_coor_x + self.r +
+                                                                   self.overhead,
+                                                                   self.graph.vertices[x].im_coor_y + self.r +
+                                                                   self.overhead, self.r)
+            self.column_circumference_mat = mat_op.gen_de_framed_mat(self.column_circumference_mat, self.r +
+                                                                     self.overhead)
+
+    def redraw_centre_mat(self):
+
+        self.column_centre_mat = np.zeros((self.im_height, self.im_width, 2), dtype=type(self.im_mat))
+        if self.num_columns > 0:
+            for x in range(0, self.num_columns):
+                self.column_centre_mat[self.graph.vertices[x].im_coor_y, self.graph.vertices[x].im_coor_x, 0] = 1
+                self.column_centre_mat[self.graph.vertices[x].im_coor_y, self.graph.vertices[x].im_coor_x, 1] = x
 

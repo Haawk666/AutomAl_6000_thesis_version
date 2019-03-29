@@ -260,8 +260,10 @@ class MainUi(QtWidgets.QMainWindow):
                 self.project_instance.r = int(100 / scale)
                 self.project_instance.overhead = int(6 * (self.r / 10))
                 self.control_window.lbl_scale.setText('Scale (pm / pixel): ' + str(self.project_instance.scale))
-                self.control_window.lbl_atomic_radii.setText('Approx atomic radii (pixels): ' + str(self.project_instance.r))
-                self.control_window.lbl_overhead_radii.setText('Overhead (pixels): ' + str(self.project_instance.overhead))
+                self.control_window.lbl_atomic_radii.setText('Approx atomic radii (pixels): ' +
+                                                             str(self.project_instance.r))
+                self.control_window.lbl_overhead_radii.setText('Overhead (pixels): ' +
+                                                               str(self.project_instance.overhead))
                 self.project_instance.redraw_search_mat()
                 self.update_central_widget()
 
@@ -289,7 +291,7 @@ class MainUi(QtWidgets.QMainWindow):
 
         if self.project_loaded and not self.selected_column == -1:
 
-            if self.project_instance.columns[self.selected_column].neighbour_indices is not None:
+            if self.project_instance.graph.vertices[self.selected_column].neighbour_indices is not None:
 
                 dialog = GUI_elements.SetIndicesDialog()
                 dialog.reference_object(self, self.selected_column)
@@ -300,7 +302,7 @@ class MainUi(QtWidgets.QMainWindow):
 
         if self.project_loaded and not self.selected_column == -1:
 
-            if self.project_instance.columns[self.selected_column].neighbour_indices is not None:
+            if self.project_instance.graph.vertices[self.selected_column].neighbour_indices is not None:
 
                 dialog = GUI_elements.SetIndicesManuallyDialog()
                 dialog.reference_object(self, self.selected_column)
@@ -452,38 +454,26 @@ class MainUi(QtWidgets.QMainWindow):
 
             if ok_pressed and item:
 
-                self.project_instance.columns[self.selected_column].atomic_species = item
-
                 if item == 'Al':
-                    y = 3
+                    h = 3
                 elif item == 'Si':
-                    y = 0
+                    h = 0
                 elif item == 'Mg':
-                    y = 5
+                    h = 5
                 elif item == 'Cu':
-                    y = 1
+                    h = 1
                 else:
-                    y = 6
+                    h = 6
 
-                self.project_instance.columns[self.selected_column].h_index = y
+                self.project_instance.graph.vertices[self.selected_column].force_species(h)
 
-                for x in range(0, core.SuchSoftware.num_selections):
-
-                    if y == 6:
-                        self.project_instance.columns[self.selected_column].prob_vector[x] = 0.0
-                    elif x == y:
-                        self.project_instance.columns[self.selected_column].prob_vector[x] = 1.0
-                    else:
-                        self.project_instance.columns[self.selected_column].prob_vector[x] = 0.0
-
-                self.project_instance.columns[self.selected_column].set_by_user = True
-                self.project_instance.analyse_prop_vector(self.selected_column)
                 self.control_window.lbl_column_species.setText(
-                    'Atomic species: ' + self.project_instance.columns[self.selected_column].atomic_species)
+                    'Atomic species: ' + self.project_instance.graph.vertices[self.selected_column].atomic_species)
                 self.control_window.lbl_confidence.setText(
-                    'Confidence: ' + str(self.project_instance.columns[self.selected_column].confidence))
-                self.project_instance.columns[self.selected_column].flag_1 = False
-                self.overlay_objects[self.selected_column] = self.set_species_colors(self.overlay_objects[self.selected_column], self.selected_column)
+                    'Confidence: ' + str(self.project_instance.graph.vertices[self.selected_column].confidence))
+                self.project_instance.graph.vertices[self.selected_column].flag_1 = False
+                self.overlay_objects[self.selected_column] =\
+                    self.set_species_colors(self.overlay_objects[self.selected_column], self.selected_column)
 
                 self.control_window.draw_histogram()
 

@@ -82,6 +82,10 @@ class Vertex:
         self.renorm_prob_vector()
         self.define_species()
 
+    def collapse_prob_vector(self):
+        self.define_species()
+        self.prob_vector = self.collapsed_prob_vector
+
     def renorm_prob_vector(self):
 
         vector_sum = np.sum(self.prob_vector)
@@ -140,6 +144,14 @@ class Vertex:
 
         return h_index, is_certain
 
+    def force_species(self, h_index):
+        self.h_index = h_index
+        self.atomic_species = self.species_strings[h_index]
+        self.confidence = 1.0
+        self.set_by_user = True
+        self.reset_prob_vector(bias=h_index)
+        self.collapse_prob_vector()
+
 
 class Edge:
 
@@ -178,4 +190,7 @@ class AtomicGraph:
 
     def remove_vertex(self, vertex_index):
         raise NotImplemented
+
+    def calc_chi(self):
+        pass
 
