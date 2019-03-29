@@ -20,8 +20,8 @@ class InteractivePosColumn(QtWidgets.QGraphicsEllipseItem):
 
     def mouseReleaseEvent(self, event: 'QtWidgets.QGraphicsEllipseItem.mouseReleaseEvent'):
 
-        self.x_0 = int(self.x() + self.obj.project_instance.r)
-        self.y_0 = int(self.y() + self.obj.project_instance.r)
+        self.x_0 = np.floor(self.x() + self.obj.project_instance.r)
+        self.y_0 = np.floor(self.y() + self.obj.project_instance.r)
 
         if not self.obj.control_window.chb_move.isChecked():
 
@@ -89,8 +89,8 @@ class InteractiveOverlayColumn(QtWidgets.QGraphicsEllipseItem):
 
     def mouseReleaseEvent(self, event: 'QtWidgets.QGraphicsEllipseItem.mouseReleaseEvent'):
 
-        self.x_0 = int(self.x() + np.round(self.obj.project_instance.r / 2))
-        self.y_0 = int(self.y() + np.round(self.obj.project_instance.r / 2))
+        self.x_0 = np.floor(self.x() + np.round(self.obj.project_instance.r / 2))
+        self.y_0 = np.floor(self.y() + np.round(self.obj.project_instance.r / 2))
 
         if not self.obj.control_window.chb_move.isChecked():
 
@@ -150,8 +150,8 @@ class InteractiveGraphVertex(QtWidgets.QGraphicsEllipseItem):
 
     def mouseReleaseEvent(self, event: 'QtWidgets.QGraphicsEllipseItem.mouseReleaseEvent'):
 
-        self.x_0 = int(self.x() + np.round(self.obj.project_instance.r / 2))
-        self.y_0 = int(self.y() + np.round(self.obj.project_instance.r / 2))
+        self.x_0 = np.floor(self.x() + np.round(self.obj.project_instance.r / 2))
+        self.y_0 = np.floor(self.y() + np.round(self.obj.project_instance.r / 2))
         self.obj.selected_column = self.i
 
         if not self.obj.control_window.chb_move.isChecked():

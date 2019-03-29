@@ -241,3 +241,7 @@ class AtomicGraph:
             elif self.vertices[x].level == 1:
                 self.vertices[x].level = 0
 
+    def find_mesh(self, i, j):
+        # return list of indices of shape and number of edges
+        pass
+

@@ -816,18 +816,18 @@ class MainUI(QtWidgets.QMainWindow):
         y_coor = self.pos_objects[self.selected_column].y_0
         r = self.project_instance.r
 
-        self.project_instance.columns[self.selected_column].x = x_coor
-        self.project_instance.columns[self.selected_column].y = y_coor
+        self.project_instance.graph.vertices[self.selected_column].im_coor_x = x_coor
+        self.project_instance.graph.vertices[self.selected_column].im_coor_y = y_coor
 
         if self.project_instance.im_width - r > x_coor > r and self.project_instance.im_height - r > y_coor > r:
 
-            self.project_instance.columns[self.selected_column].avg_gamma, self.project_instance.columns[
+            self.project_instance.graph.vertices[self.selected_column].avg_gamma, self.project_instance.graph.vertices[
                 self.selected_column].peak_gamma = mat_op.average(self.project_instance.im_mat, x_coor, y_coor, r)
 
         else:
 
             self.project_instance.im_mat = mat_op.gen_framed_mat(self.project_instance.im_mat, r)
-            self.project_instance.columns[self.selected_column].avg_gamma, self.project_instance.columns[
+            self.project_instance.graph.vertices[self.selected_column].avg_gamma, self.project_instance.graph.vertices[
                 self.selected_column].peak_gamma = mat_op.average(self.project_instance.im_mat, x_coor + r, y_coor + r,
                                                                   r)
             self.project_instance.im_mat = mat_op.gen_de_framed_mat(self.project_instance.im_mat, r)
@@ -837,10 +837,11 @@ class MainUI(QtWidgets.QMainWindow):
         self.control_window.lbl_column_x_pos.setText('x: ' + str(self.pos_objects[self.selected_column].x_0))
         self.control_window.lbl_column_y_pos.setText('y: ' + str(self.pos_objects[self.selected_column].y_0))
         self.control_window.lbl_column_peak_gamma.setText(
-            'Peak gamma: ' + str(self.project_instance.columns[self.selected_column].peak_gamma))
+            'Peak gamma: ' + str(self.project_instance.graph.vertices[self.selected_column].peak_gamma))
         self.control_window.lbl_column_avg_gamma.setText(
-            'Avg gamma: ' + str(self.project_instance.columns[self.selected_column].avg_gamma))
-        self.control_window.lbl_neighbours.setText('Nearest neighbours: ' + str(self.project_instance.columns[self.selected_column].neighbour_indices))
+            'Avg gamma: ' + str(self.project_instance.graph.vertices[self.selected_column].avg_gamma))
+        self.control_window.lbl_neighbours.setText('Nearest neighbours: ' + str(self.project_instance.graph.vertices[
+            self.selected_column].neighbour_indices))
 
         self.cancel_move_trigger()
 
@@ -917,80 +918,80 @@ class MainUI(QtWidgets.QMainWindow):
 
         if self.project_loaded:
             for x in range(0, self.project_instance.num_columns):
-                if self.project_instance.columns[x].h_index == 0:
+                if self.project_instance.graph.vertices[x].h_index == 0:
                     if self.control_window.chb_si_columns.isChecked():
-                        self.project_instance.columns[x].show_in_overlay = True
+                        self.project_instance.graph.vertices[x].show_in_overlay = True
                         self.overlay_objects[x].show()
                     else:
-                        self.project_instance.columns[x].show_in_overlay = False
+                        self.project_instance.graph.vertices[x].show_in_overlay = False
                         self.overlay_objects[x].hide()
 
     def toggle_cu_trigger(self):
 
         if self.project_loaded:
             for x in range(0, self.project_instance.num_columns):
-                if self.project_instance.columns[x].h_index == 1:
+                if self.project_instance.graph.vertices[x].h_index == 1:
                     if self.control_window.chb_cu_columns.isChecked():
-                        self.project_instance.columns[x].show_in_overlay = True
+                        self.project_instance.graph.vertices[x].show_in_overlay = True
                         self.overlay_objects[x].show()
                     else:
-                        self.project_instance.columns[x].show_in_overlay = False
+                        self.project_instance.graph.vertices[x].show_in_overlay = False
                         self.overlay_objects[x].hide()
 
     def toggle_al_trigger(self):
 
         if self.project_loaded:
             for x in range(0, self.project_instance.num_columns):
-                if self.project_instance.columns[x].h_index == 3:
+                if self.project_instance.graph.vertices[x].h_index == 3:
                     if self.control_window.chb_al_columns.isChecked():
                         if self.control_window.chb_al_mesh.isChecked():
-                            self.project_instance.columns[x].show_in_overlay = True
+                            self.project_instance.graph.vertices[x].show_in_overlay = True
                             self.overlay_objects[x].show()
                         else:
-                            if self.project_instance.columns[x].is_in_precipitate:
-                                self.project_instance.columns[x].show_in_overlay = True
+                            if self.project_instance.graph.vertices[x].is_in_precipitate:
+                                self.project_instance.graph.vertices[x].show_in_overlay = True
                                 self.overlay_objects[x].show()
                             else:
-                                self.project_instance.columns[x].show_in_overlay = False
+                                self.project_instance.graph.vertices[x].show_in_overlay = False
                                 self.overlay_objects[x].hide()
                     else:
-                        self.project_instance.columns[x].show_in_overlay = False
+                        self.project_instance.graph.vertices[x].show_in_overlay = False
                         self.overlay_objects[x].hide()
 
     def toggle_ag_trigger(self):
 
         if self.project_loaded:
             for x in range(0, self.project_instance.num_columns):
-                if self.project_instance.columns[x].h_index == 4:
+                if self.project_instance.graph.vertices[x].h_index == 4:
                     if self.control_window.chb_ag_columns.isChecked():
-                        self.project_instance.columns[x].show_in_overlay = True
+                        self.project_instance.graph.vertices[x].show_in_overlay = True
                         self.overlay_objects[x].show()
                     else:
-                        self.project_instance.columns[x].show_in_overlay = False
+                        self.project_instance.graph.vertices[x].show_in_overlay = False
                         self.overlay_objects[x].hide()
 
     def toggle_mg_trigger(self):
 
         if self.project_loaded:
             for x in range(0, self.project_instance.num_columns):
-                if self.project_instance.columns[x].h_index == 5:
+                if self.project_instance.graph.vertices[x].h_index == 5:
                     if self.control_window.chb_mg_columns.isChecked():
-                        self.project_instance.columns[x].show_in_overlay = True
+                        self.project_instance.graph.vertices[x].show_in_overlay = True
                         self.overlay_objects[x].show()
                     else:
-                        self.project_instance.columns[x].show_in_overlay = False
+                        self.project_instance.graph.vertices[x].show_in_overlay = False
                         self.overlay_objects[x].hide()
 
     def toggle_un_trigger(self):
 
         if self.project_loaded:
             for x in range(0, self.project_instance.num_columns):
-                if self.project_instance.columns[x].h_index == 6:
+                if self.project_instance.graph.vertices[x].h_index == 6:
                     if self.control_window.chb_un_columns.isChecked():
-                        self.project_instance.columns[x].show_in_overlay = True
+                        self.project_instance.graph.vertices[x].show_in_overlay = True
                         self.overlay_objects[x].show()
                     else:
-                        self.project_instance.columns[x].show_in_overlay = False
+                        self.project_instance.graph.vertices[x].show_in_overlay = False
                         self.overlay_objects[x].hide()
 
     def toggle_column_trigger(self):
@@ -1019,11 +1020,11 @@ class MainUI(QtWidgets.QMainWindow):
 
                 for x in range(0, self.project_instance.num_columns):
 
-                    if self.project_instance.columns[x].is_in_precipitate:
-                        self.project_instance.columns[x].show_in_overlay = True
+                    if self.project_instance.graph.vertices[x].is_in_precipitate:
+                        self.project_instance.graph.vertices[x].show_in_overlay = True
                         self.overlay_objects[x].show()
                     else:
-                        self.project_instance.columns[x].show_in_overlay = False
+                        self.project_instance.graph.vertices[x].show_in_overlay = False
                         self.overlay_objects[x].hide()
 
             else:
@@ -1038,16 +1039,16 @@ class MainUI(QtWidgets.QMainWindow):
         else:
 
             self.control_window.lbl_column_index.setText('Column index: ' + str(i))
-            self.control_window.lbl_column_x_pos.setText('x: ' + str(self.project_instance.columns[i].x))
-            self.control_window.lbl_column_y_pos.setText('y: ' + str(self.project_instance.columns[i].y))
+            self.control_window.lbl_column_x_pos.setText('x: ' + str(self.project_instance.graph.vertices[i].im_coor_x))
+            self.control_window.lbl_column_y_pos.setText('y: ' + str(self.project_instance.graph.vertices[i].im_coor_y))
             self.control_window.lbl_column_peak_gamma.setText(
-                'Peak gamma: ' + str(self.project_instance.columns[i].peak_gamma))
-            self.control_window.lbl_column_avg_gamma.setText('Avg gamma: ' + str(self.project_instance.columns[i].avg_gamma))
+                'Peak gamma: ' + str(self.project_instance.graph.vertices[i].peak_gamma))
+            self.control_window.lbl_column_avg_gamma.setText('Avg gamma: ' + str(self.project_instance.graph.vertices[i].avg_gamma))
             self.control_window.lbl_column_species.setText(
-                'Atomic species: ' + self.project_instance.columns[i].atomic_species)
-            self.control_window.lbl_column_level.setText('Level: ' + str(self.project_instance.columns[i].level))
-            self.control_window.lbl_confidence.setText('Confidence: ' + str(self.project_instance.columns[i].confidence))
-            self.control_window.lbl_neighbours.setText('Nearest neighbours: ' + str(self.project_instance.columns[i].neighbour_indices))
+                'Atomic species: ' + self.project_instance.graph.vertices[i].atomic_species)
+            self.control_window.lbl_column_level.setText('Level: ' + str(self.project_instance.graph.vertices[i].level))
+            self.control_window.lbl_confidence.setText('Confidence: ' + str(self.project_instance.graph.vertices[i].confidence))
+            self.control_window.lbl_neighbours.setText('Nearest neighbours: ' + str(self.project_instance.graph.vertices[i].neighbour_indices))
 
             self.control_window.btn_new.setDisabled(False)
             self.control_window.btn_deselect.setDisabled(False)
@@ -1060,10 +1061,10 @@ class MainUI(QtWidgets.QMainWindow):
             self.control_window.chb_move.setDisabled(False)
 
             self.control_window.chb_show.blockSignals(True)
-            self.control_window.chb_show.setChecked(self.project_instance.columns[i].show_in_overlay)
+            self.control_window.chb_show.setChecked(self.project_instance.graph.vertices[i].show_in_overlay)
             self.control_window.chb_show.blockSignals(False)
             self.control_window.chb_precipitate_column.blockSignals(True)
-            self.control_window.chb_precipitate_column.setChecked(self.project_instance.columns[i].is_in_precipitate)
+            self.control_window.chb_precipitate_column.setChecked(self.project_instance.graph.vertices[i].is_in_precipitate)
             self.control_window.chb_precipitate_column.blockSignals(False)
             self.control_window.chb_move.blockSignals(True)
             self.control_window.chb_move.setChecked(False)
@@ -1074,11 +1075,11 @@ class MainUI(QtWidgets.QMainWindow):
 
             if not self.selected_column == -1 and self.control_window.debug_box.isVisible():
 
-                for x in range(0, self.project_instance.columns[self.selected_column].n()):
+                for x in range(0, self.project_instance.graph.vertices[self.selected_column].n()):
 
-                    if self.project_instance.columns[self.selected_column].neighbour_indices[x] == i:
+                    if self.project_instance.graph.vertices[self.selected_column].neighbour_indices[x] == i:
 
-                        shape, n = self.project_instance.find_shape(self.selected_column, i)
+                        shape, n = self.project_instance.graph.find_mesh(self.selected_column, i)
                         print(str(shape) + ': ' + str(i) + ' ' + str(self.selected_column))
 
             self.selected_column = i
@@ -1185,11 +1186,11 @@ class MainUI(QtWidgets.QMainWindow):
             for i in range(0, self.project_instance.num_columns):
 
                 custom_ellipse_pos = GUI_elements.InteractivePosColumn(0, 0, 2 * r, 2 * r)
-                custom_ellipse_pos.moveBy(self.project_instance.columns[i].x - r,
-                                          self.project_instance.columns[i].y - r)
+                custom_ellipse_pos.moveBy(self.project_instance.graph.vertices[i].im_coor_x - r,
+                                          self.project_instance.graph.vertices[i].im_coor_y - r)
                 custom_ellipse_pos.reference_object(self, i)
 
-                if self.project_instance.columns[i].show_in_overlay:
+                if self.project_instance.graph.vertices[i].show_in_overlay:
                     custom_ellipse_pos.setPen(self.red_pen)
                 else:
                     custom_ellipse_pos.setPen(self.dark_red_pen)
@@ -1229,8 +1230,8 @@ class MainUI(QtWidgets.QMainWindow):
                 for i in range(0, self.project_instance.num_columns):
 
                     custom_ellipse_overlay = GUI_elements.InteractiveOverlayColumn(0, 0, r, r)
-                    custom_ellipse_overlay.moveBy(self.project_instance.columns[i].x - np.round(r / 2),
-                                                  self.project_instance.columns[i].y - np.round(r / 2))
+                    custom_ellipse_overlay.moveBy(self.project_instance.graph.vertices[i].im_coor_x - np.round(r / 2),
+                                                  self.project_instance.graph.vertices[i].im_coor_y - np.round(r / 2))
                     custom_ellipse_overlay.reference_object(self, i)
                     custom_ellipse_overlay = self.set_species_colors(custom_ellipse_overlay, i)
 
@@ -1245,38 +1246,38 @@ class MainUI(QtWidgets.QMainWindow):
 
     def set_species_colors(self, column_object, i):
 
-        if self.project_instance.columns[i].atomic_species == 'Al':
+        if self.project_instance.graph.vertices[i].atomic_species == 'Al':
             column_object.setPen(self.pen_al)
             column_object.setBrush(self.brush_al)
-        elif self.project_instance.columns[i].atomic_species == 'Mg':
+        elif self.project_instance.graph.vertices[i].atomic_species == 'Mg':
             column_object.setPen(self.pen_mg)
             column_object.setBrush(self.brush_mg)
-        elif self.project_instance.columns[i].atomic_species == 'Si':
+        elif self.project_instance.graph.vertices[i].atomic_species == 'Si':
             column_object.setPen(self.pen_si)
             column_object.setBrush(self.brush_si)
-        elif self.project_instance.columns[i].atomic_species == 'Cu':
+        elif self.project_instance.graph.vertices[i].atomic_species == 'Cu':
             column_object.setPen(self.pen_cu)
             column_object.setBrush(self.brush_cu)
-        elif self.project_instance.columns[i].atomic_species == 'Zn':
+        elif self.project_instance.graph.vertices[i].atomic_species == 'Zn':
             column_object.setPen(self.pen_zn)
             column_object.setBrush(self.brush_zn)
-        elif self.project_instance.columns[i].atomic_species == 'Ag':
+        elif self.project_instance.graph.vertices[i].atomic_species == 'Ag':
             column_object.setPen(self.pen_ag)
             column_object.setBrush(self.brush_ag)
-        elif self.project_instance.columns[i].atomic_species == 'Un':
+        elif self.project_instance.graph.vertices[i].atomic_species == 'Un':
             column_object.setPen(self.pen_un)
             column_object.setBrush(self.brush_un)
         else:
             column_object.setPen(self.pen_un)
             column_object.setBrush(self.brush_un)
 
-        if self.project_instance.columns[i].level == 0:
+        if self.project_instance.graph.vertices[i].level == 0:
             pass
         else:
             column_object.setBrush(self.brush_black)
 
         if self.control_window.debug_box.isVisible():
-            if self.control_instance is not None and not self.project_instance.columns[i].h_index == self.control_instance.columns[i].h_index:
+            if self.control_instance is not None and not self.project_instance.graph.vertices[i].h_index == self.control_instance.graph.vertices[i].h_index:
                 column_object.setPen(self.pen_un)
 
             # if self.project_instance.columns[i].is_unpopular:
@@ -1285,7 +1286,7 @@ class MainUI(QtWidgets.QMainWindow):
             # if self.project_instance.columns[i].is_popular:
                 # column_object.setPen(self.pen_ag)
 
-        if self.project_instance.columns[i].show_in_overlay:
+        if self.project_instance.graph.vertices[i].show_in_overlay:
             column_object.show()
         else:
             column_object.hide()
@@ -1306,14 +1307,14 @@ class MainUI(QtWidgets.QMainWindow):
 
                 i_1 = i
 
-                if self.project_instance.columns[i].neighbour_indices is not None:
+                if self.project_instance.graph.vertices[i].neighbour_indices is not None:
 
-                    for y in range(0, self.project_instance.columns[i].n()):
+                    for y in range(0, self.project_instance.graph.vertices[i].n()):
 
-                        i_2 = self.project_instance.columns[i].neighbour_indices[y]
+                        i_2 = self.project_instance.graph.vertices[i].neighbour_indices[y]
 
-                        r_2 = QtCore.QPointF(2 * scale_factor * self.project_instance.columns[i_1].x, 2 * scale_factor * self.project_instance.columns[i_1].y)
-                        r_1 = QtCore.QPointF(2 * scale_factor * self.project_instance.columns[i_2].x, 2 * scale_factor * self.project_instance.columns[i_2].y)
+                        r_2 = QtCore.QPointF(2 * scale_factor * self.project_instance.graph.vertices[i_1].im_coor_x, 2 * scale_factor * self.project_instance.graph.vertices[i_1].im_coor_y)
+                        r_1 = QtCore.QPointF(2 * scale_factor * self.project_instance.graph.vertices[i_2].im_coor_x, 2 * scale_factor * self.project_instance.graph.vertices[i_2].im_coor_y)
 
                         r_vec = r_2 - r_1
                         r_mag = np.sqrt((r_2.x() - r_1.x())**2 + (r_2.y() - r_1.y())**2)
@@ -1343,23 +1344,23 @@ class MainUI(QtWidgets.QMainWindow):
                         # poly_1 = QtGui.QPolygonF(tri_1)
                         poly_2 = QtGui.QPolygonF(tri_2)
 
-                        line = QtWidgets.QGraphicsLineItem(2 * scale_factor * self.project_instance.columns[i_1].x,
-                                                           2 * scale_factor * self.project_instance.columns[i_1].y,
-                                                           2 * scale_factor * self.project_instance.columns[i_2].x,
-                                                           2 * scale_factor * self.project_instance.columns[i_2].y)
+                        line = QtWidgets.QGraphicsLineItem(2 * scale_factor * self.project_instance.graph.vertices[i_1].im_coor_x,
+                                                           2 * scale_factor * self.project_instance.graph.vertices[i_1].im_coor_y,
+                                                           2 * scale_factor * self.project_instance.graph.vertices[i_2].im_coor_x,
+                                                           2 * scale_factor * self.project_instance.graph.vertices[i_2].im_coor_y)
                         # head_1 = QtWidgets.QGraphicsPolygonItem(poly_1)
                         head_2 = QtWidgets.QGraphicsPolygonItem(poly_2)
 
                         is_reciprocated = False
                         is_same_lvl = False
 
-                        for x in range(0, self.project_instance.columns[i_2].n()):
+                        for x in range(0, self.project_instance.graph.vertices[i_2].n()):
 
-                            if self.project_instance.columns[i_2].neighbour_indices[x] == i:
+                            if self.project_instance.graph.vertices[i_2].neighbour_indices[x] == i:
 
                                 is_reciprocated = True
 
-                        if self.project_instance.columns[i_1].level == self.project_instance.columns[i_2].level:
+                        if self.project_instance.graph.vertices[i_1].level == self.project_instance.graph.vertices[i_2].level:
                             is_same_lvl = True
 
                         if is_reciprocated and not is_same_lvl:
@@ -1382,11 +1383,11 @@ class MainUI(QtWidgets.QMainWindow):
             for i in range(0, self.project_instance.num_columns):
 
                 custom_ellipse_overlay = GUI_elements.InteractiveGraphVertex(0, 0, r, r)
-                custom_ellipse_overlay.moveBy(2 * scale_factor * self.project_instance.columns[i].x - np.round(r / 2),
-                                              2 * scale_factor * self.project_instance.columns[i].y - np.round(r / 2))
+                custom_ellipse_overlay.moveBy(2 * scale_factor * self.project_instance.graph.vertices[i].im_coor_x - np.round(r / 2),
+                                              2 * scale_factor * self.project_instance.graph.vertices[i].im_coor_y - np.round(r / 2))
                 custom_ellipse_overlay.reference_object(self, i)
 
-                if self.project_instance.columns[i].level == 0:
+                if self.project_instance.graph.vertices[i].level == 0:
                     custom_ellipse_overlay.setBrush(self.brush_level_0)
                 else:
                     custom_ellipse_overlay.setBrush(self.brush_level_1)
@@ -1407,89 +1408,9 @@ class MainUI(QtWidgets.QMainWindow):
 
             self.graphicScene_7.setBackgroundBrush(self.brush_background_grey)
 
-            # Draw edges
-
-            for i in range(0, self.project_instance.num_columns):
-
-                i_1 = i
-
-                if self.project_instance.columns[i].neighbour_indices is not None:
-
-                    for y in range(0, 3):
-
-                        i_2 = self.project_instance.columns[i].neighbour_indices[y]
-                        line = QtWidgets.QGraphicsLineItem(2 * scale_factor * self.project_instance.columns[i_1].x,
-                                                           2 * scale_factor * self.project_instance.columns[i_1].y,
-                                                           2 * scale_factor * self.project_instance.columns[i_2].x,
-                                                           2 * scale_factor * self.project_instance.columns[i_2].y)
-
-                        is_reciprocated = False
-
-                        for x in range(0, self.project_instance.columns[i_2].n()):
-
-                            if self.project_instance.columns[i_2].neighbour_indices[x] == i:
-
-                                is_reciprocated = True
-
-                        if is_reciprocated:
-                            pen = QtGui.QPen(self.pen_connection)
-                        else:
-                            pen = QtGui.QPen(self.red_pen)
-
-                        if self.project_instance.columns[i_1].level == self.project_instance.columns[i_2].level:
-                            pen.setWidth(3)
-                        else:
-                            pen.setWidth(1)
-
-                        line.setPen(pen)
-
-                        self.graphicScene_7.addItem(line)
-
-            # Draw vertices
-
-            for i in range(0, self.project_instance.num_columns):
-
-                custom_ellipse_overlay = GUI_elements.InteractiveGraphVertex(0, 0, r, r)
-                custom_ellipse_overlay.moveBy(2 * scale_factor * self.project_instance.columns[i].x - np.round(r / 2),
-                                              2 * scale_factor * self.project_instance.columns[i].y - np.round(r / 2))
-                custom_ellipse_overlay.reference_object(self, i)
-
-                if self.project_instance.columns[i].level == 0:
-                    custom_ellipse_overlay.setBrush(self.brush_level_0)
-                else:
-                    custom_ellipse_overlay.setBrush(self.brush_level_1)
-
-                if self.project_instance.columns[i].is_unpopular:
-                    custom_ellipse_overlay.setPen(self.pen_inconsistent_unpopular)
-                elif self.project_instance.columns[i].is_popular:
-                    custom_ellipse_overlay.setPen(self.pen_inconsistent_popular)
-                else:
-                    custom_ellipse_overlay.setPen(self.pen_consistent)
-
-                custom_ellipse_overlay.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable)
-
-                self.graphicScene_7.addItem(custom_ellipse_overlay)
-
     def draw_boarder(self):
 
-        if self.project_loaded and self.project_instance.boarder_size > 0 and self.control_window.chb_boarders.isChecked():
-
-            for x in range(0, self.project_instance.boarder_size):
-
-                if x == self.project_instance.boarder_size - 1:
-                    y = 0
-                else:
-                    y = x + 1
-
-                i_1 = self.project_instance.precipitate_boarder[x]
-                i_2 = self.project_instance.precipitate_boarder[y]
-                line = QtWidgets.QGraphicsLineItem(self.project_instance.columns[i_1].x,
-                                                   self.project_instance.columns[i_1].y,
-                                                   self.project_instance.columns[i_2].x,
-                                                   self.project_instance.columns[i_2].y)
-                line.setPen(self.pen_boarder)
-
-                self.graphicScene_3.addItem(line)
+        pass
 
     def draw_connections(self, index=-1):
 
@@ -1499,32 +1420,32 @@ class MainUI(QtWidgets.QMainWindow):
 
                 for x in range(0, self.project_instance.num_columns):
 
-                    if not self.project_instance.columns[x].h_index == 6 and self.project_instance.columns[x].show_in_overlay and self.project_instance.columns[x].neighbour_indices is not None:
+                    if not self.project_instance.graph.vertices[x].h_index == 6 and self.project_instance.graph.vertices[x].show_in_overlay and self.project_instance.columns[x].neighbour_indices is not None:
 
                         n = 3
 
-                        if self.project_instance.columns[x].h_index == 0 or self.project_instance.columns[x].h_index == 1:
+                        if self.project_instance.graph.vertices[x].h_index == 0 or self.project_instance.graph.vertices[x].h_index == 1:
                             n = 3
-                        elif self.project_instance.columns[x].h_index == 3:
+                        elif self.project_instance.graph.vertices[x].h_index == 3:
                             n = 4
-                        elif self.project_instance.columns[x].h_index == 5:
+                        elif self.project_instance.graph.vertices[x].h_index == 5:
                             n = 5
 
                         for y in range(0, n):
 
                             i_1 = x
-                            i_2 = self.project_instance.columns[x].neighbour_indices[y]
-                            line = QtWidgets.QGraphicsLineItem(self.project_instance.columns[i_1].x,
-                                                               self.project_instance.columns[i_1].y,
-                                                               self.project_instance.columns[i_2].x,
-                                                               self.project_instance.columns[i_2].y)
+                            i_2 = self.project_instance.graph.vertices[x].neighbour_indices[y]
+                            line = QtWidgets.QGraphicsLineItem(self.project_instance.graph.vertices[i_1].im_coor_x,
+                                                               self.project_instance.graph.vertices[i_1].im_coor_y,
+                                                               self.project_instance.graph.vertices[i_2].im_coor_x,
+                                                               self.project_instance.graph.vertices[i_2].im_coor_y)
                             line.setPen(self.pen_connection)
 
                             self.graphicScene_3.addItem(line)
 
         else:
 
-            if self.project_loaded and self.project_instance.num_columns > 0 and self.project_instance.columns[index].neighbour_indices is not None:
+            if self.project_loaded and self.project_instance.num_columns > 0 and self.project_instance.graph.vertices[index].neighbour_indices is not None:
 
                 for j in range(0, self.neighbour_line_objects.shape[0]):
                     self.neighbour_line_objects[j].hide()
@@ -1542,11 +1463,11 @@ class MainUI(QtWidgets.QMainWindow):
                     for y in range(0, n):
 
                         i_1 = x
-                        i_2 = self.project_instance.columns[x].neighbour_indices[y]
-                        line = QtWidgets.QGraphicsLineItem(self.project_instance.columns[i_1].x,
-                                                           self.project_instance.columns[i_1].y,
-                                                           self.project_instance.columns[i_2].x,
-                                                           self.project_instance.columns[i_2].y)
+                        i_2 = self.project_instance.graph.vertices[x].neighbour_indices[y]
+                        line = QtWidgets.QGraphicsLineItem(self.project_instance.graph.vertices[i_1].im_coor_x,
+                                                           self.project_instance.graph.vertices[i_1].im_coor_y,
+                                                           self.project_instance.graph.vertices[i_2].im_coor_x,
+                                                           self.project_instance.graph.vertices[i_2].im_coor_y)
 
                         self.pen_connection.setWidth(2)
                         line.setPen(self.pen_connection)
