@@ -126,8 +126,8 @@ def cm_fit(mat, x_0, y_0, r):
                 weighted_x_sum = weighted_x_sum + mat[y_i, x_i]*x_i
                 weighted_y_sum = weighted_y_sum + mat[y_i, x_i]*y_i
                 counter = counter + 1
-    x_fit = int(np.floor(weighted_x_sum / total_mass))
-    y_fit = int(np.floor(weighted_y_sum / total_mass))
+    x_fit = weighted_x_sum / total_mass
+    y_fit = weighted_y_sum / total_mass
     return portrait_mat, x_fit, y_fit
 
 

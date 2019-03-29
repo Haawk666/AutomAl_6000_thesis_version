@@ -2,6 +2,9 @@
 import numpy as np
 import dm3_lib as dm3
 import mat_op
+import graph
+import pickle
+import utils
 
 
 class SuchSoftware:
@@ -31,6 +34,9 @@ class SuchSoftware:
     # Indexable list
     intensities = [intensities_0, intensities_1]
 
+    # Indexable species strings
+    species_strings = ['Si', 'Cu', 'Zn', 'Al', 'Ag', 'Mg', 'Un']
+
     # Constructor
     def __init__(self, filename_full):
 
@@ -40,24 +46,19 @@ class SuchSoftware:
         self.im_height = 0
         self.im_width = 0
 
-
-
+        if not (filename_full == 'Empty' or filename_full == 'empty'):
+            self.load_image()
 
         # Data matrices: These hold much of the information gathered by the different algorithms
         self.search_mat = self.im_mat
-        self.column_centre_mat = np.zeros((self.N, self.M, 2), dtype=type(self.im_mat))
-        self.column_circumference_mat = np.zeros((self.N, self.M), dtype=type(self.im_mat))
+        self.column_centre_mat = np.zeros((self.im_height, self.im_width, 2), dtype=type(self.im_mat))
+        self.column_circumference_mat = np.zeros((self.im_height, self.im_width), dtype=type(self.im_mat))
         self.fft_im_mat = mat_op.gen_fft(self.im_mat)
-        self.precipitate_boarder = np.ndarray([1], dtype=int)
-        self.structures_eye = np.ndarray([9], dtype=int)
-        self.the_eyes = np.ndarray([1], dtype=type(self.structures_eye))
-        self.structures_flower = np.ndarray([13], dtype=int)
-        self.the_flowers = np.ndarray([1], dtype=type(self.structures_flower))
 
         # Alloy info: This vector is used to multiply away elements in the AtomicColumn.prob_vector that are not in
         # the alloy being studied. Currently supported alloys are:
         # self.alloy = alloy
-        # 0 = Al-Si-Mg-(Cu)
+        # 0 = Al-Si-Mg-Cu
         # 1 = Al-Si-Mg
         self.alloy = 0
         self.alloy_mat = np.ndarray([SuchSoftware.num_selections], dtype=int)
@@ -70,7 +71,6 @@ class SuchSoftware:
         self.num_inconsistencies = 0
         self.num_popular = 0
         self.num_unpopular = 0
-        self.chi = 0.0
 
         self.num_al = 0
         self.num_mg = 0
@@ -144,6 +144,9 @@ class SuchSoftware:
         self.dist_5_std = 0.48
         self.dist_8_std = 1.2
 
+        # Initialize an empty graph
+        self.graph = graph.AtomicGraph()
+
     def load_image(self):
 
         dm3f = dm3.DM3(self.filename_full)
@@ -154,4 +157,93 @@ class SuchSoftware:
         (self.im_height, self.im_width) = self.im_mat.shape
 
     def set_alloy_mat(self, alloy=0):
+
+        self.alloy = alloy
+
+        if alloy == 0:
+
+            for x in range(0, SuchSoftware.num_selections):
+                if x == 2 or x == 4 or x == 6:
+                    self.alloy_mat[x] = 0
+                else:
+                    self.alloy_mat[x] = 1
+
+        elif alloy == 1:
+
+            for x in range(0, SuchSoftware.num_selections):
+                if x == 2 or x == 4 or x == 1 or x == 6:
+                    self.alloy_mat[x] = 0
+                else:
+                    self.alloy_mat[x] = 1
+
+        else:
+
+            print('Not a supported alloy number!')
+
+    def save(self, filename_full):
+        with open(filename_full, 'wb') as f:
+            pickle.dump(self, f, pickle.HIGHEST_PROTOCOL)
+
+    @staticmethod
+    def load(filename_full):
+        with open(filename_full, 'rb') as f:
+            obj = pickle.load(f)
+            return obj
+
+    def column_detection(self, search_type='s'):
+
+        cont = True
+        counter = self.num_columns
+        self.column_circumference_mat = mat_op.gen_framed_mat(self.column_circumference_mat, self.r + self.overhead)
+        self.search_mat = mat_op.gen_framed_mat(self.search_mat, self.r + self.overhead)
+        self.im_mat = mat_op.gen_framed_mat(self.im_mat, self.r + self.overhead)
+
+        while cont:
+
+            pos = np.unravel_index(self.search_mat.argmax(),
+                                   (self.im_height + 2 * (self.r + self.overhead),
+                                    self.im_width + 2 * (self.r + self.overhead)))
+            column_portrait, x_fit, y_fit = utils.cm_fit(self.im_mat, pos[1], pos[0], self.r)
+
+            x_fit_real_coor = x_fit - self.r - self.overhead
+            y_fit_real_coor = y_fit - self.r - self.overhead
+            x_fit_real_coor_pix = np.floor(x_fit_real_coor)
+            y_fit_real_coor_pix = np.floor(y_fit_real_coor)
+            x_fit_pix = np.floor(x_fit)
+            y_fit_pix = np.floor(y_fit)
+
+            self.search_mat = mat_op.delete_pixels(self.search_mat, x_fit_pix, y_fit_pix, self.r + self.overhead)
+
+            vertex = graph.Vertex(counter, x_fit_real_coor, y_fit_real_coor, self.r, np.max(column_portrait), 0,
+                                  num_selections=SuchSoftware.num_selections,
+                                  species_strings=SuchSoftware.species_strings,
+                                  certainty_threshold=self.certainty_threshold)
+            self.graph.add_vertex(vertex)
+
+            self.column_centre_mat[y_fit_real_coor_pix, x_fit_real_coor_pix, 0] = 1
+            self.column_centre_mat[y_fit_real_coor_pix, x_fit_real_coor_pix, 1] = counter
+            self.column_circumference_mat = mat_op.draw_circle(self.column_circumference_mat, x_fit_pix, y_fit_pix,
+                                                               self.r)
+
+            print(str(counter) + ': (' + str(x_fit_real_coor) + ', ' + str(y_fit_real_coor) + ') | (' + str(
+                pos[1]) + ', ' + str(pos[0]) + ')')
+
+            self.num_columns += 1
+            self.num_un += 1
+            counter += 1
+
+            if search_type == 's':
+                if counter >= self.search_size:
+                    cont = False
+            elif search_type == 't':
+                if np.max(self.search_mat) < self.threshold:
+                    cont = False
+            else:
+                print('Invalid search type sent to SuchSoftware.column_detection')
+
+        self.column_circumference_mat = mat_op.gen_de_framed_mat(self.column_circumference_mat, self.r + self.overhead)
+        self.search_mat = mat_op.gen_de_framed_mat(self.search_mat, self.r + self.overhead)
+        self.im_mat = mat_op.gen_de_framed_mat(self.im_mat, self.r + self.overhead)
+        self.calc_avg_gamma()
+        self.summarize_stats()
 
