@@ -11,8 +11,8 @@ class Vertex:
         self.i = index
         self.real_coor_x = x
         self.real_coor_y = y
-        self.im_coor_x = np.floor(x)
-        self.im_coor_y = np.floor(y)
+        self.im_coor_x = int(np.floor(x))
+        self.im_coor_y = int(np.floor(y))
         self.r = r
         self.peak_gamma = peak_gamma
         self.avg_gamma = avg_gamma

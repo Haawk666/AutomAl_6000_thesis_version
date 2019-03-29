@@ -203,10 +203,10 @@ class SuchSoftware:
 
             x_fit_real_coor = x_fit - self.r - self.overhead
             y_fit_real_coor = y_fit - self.r - self.overhead
-            x_fit_real_coor_pix = np.floor(x_fit_real_coor)
-            y_fit_real_coor_pix = np.floor(y_fit_real_coor)
-            x_fit_pix = np.floor(x_fit)
-            y_fit_pix = np.floor(y_fit)
+            x_fit_real_coor_pix = int(np.floor(x_fit_real_coor))
+            y_fit_real_coor_pix = int(np.floor(y_fit_real_coor))
+            x_fit_pix = int(np.floor(x_fit))
+            y_fit_pix = int(np.floor(y_fit))
 
             self.search_mat = mat_op.delete_pixels(self.search_mat, x_fit_pix, y_fit_pix, self.r + self.overhead)
 
@@ -335,12 +335,6 @@ class SuchSoftware:
                 if self.graph.vertices[x].is_popular and not self.graph.vertices[x].is_edge_column:
                     self.num_popular += 1
                     self.num_inconsistencies += 1
-
-                if self.graph.vertices[x].neighbour_indices is not None and not self.graph.vertices[x].is_edge_column:
-                    for y in range(0, self.graph.vertices[x].n()):
-                        if self.graph.vertices[x].level ==\
-                                self.graph.vertices[self.graph.vertices[x].neighbour_indices[y]].level:
-                            self.num_inconsistencies += 1
 
                 if self.graph.vertices[x].h_index == 0:
                     self.num_si += 1

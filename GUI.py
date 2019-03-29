@@ -1307,7 +1307,7 @@ class MainUI(QtWidgets.QMainWindow):
 
                 i_1 = i
 
-                if self.project_instance.graph.vertices[i].neighbour_indices is not None:
+                if not self.project_instance.graph.vertices[i].neighbour_indices == []:
 
                     for y in range(0, self.project_instance.graph.vertices[i].n()):
 
