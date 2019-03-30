@@ -247,7 +247,6 @@ class SuchSoftware:
         pass
 
     def calc_avg_gamma(self):
-
         if self.num_columns > 0:
 
             self.im_mat = mat_op.gen_framed_mat(self.im_mat, self.r)

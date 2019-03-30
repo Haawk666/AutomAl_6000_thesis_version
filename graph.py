@@ -47,11 +47,13 @@ class Vertex:
         # Ag
         # Mg
         # Un
-
+        self.species_strings = None
         if species_strings is None:
             self.species_strings = ['Si', 'Cu', 'Zn', 'Al', 'Ag', 'Mg', 'Un']
         else:
             self.species_strings = species_strings
+
+        self.reset_prob_vector(bias=self.num_selections - 1)
 
     def n(self):
 

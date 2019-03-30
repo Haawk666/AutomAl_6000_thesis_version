@@ -49,11 +49,11 @@ class InteractivePosColumn(QtWidgets.QGraphicsEllipseItem):
             self.obj.control_window.lbl_column_x_pos.setText('x: ' + str(self.x_0))
             self.obj.control_window.lbl_column_y_pos.setText('y: ' + str(self.y_0))
             self.obj.control_window.lbl_column_peak_gamma.setText(
-                'Peak gamma: ' + str(self.obj.project_instance.columns[self.i].peak_gamma))
+                'Peak gamma: ' + str(self.obj.project_instance.graph.vertices[self.i].peak_gamma))
             self.obj.control_window.lbl_column_species.setText(
-                'Atomic species: ' + self.obj.project_instance.columns[self.i].atomic_species)
-            self.obj.control_window.lbl_column_level.setText('Level: ' + str(self.obj.project_instance.columns[self.i].level))
-            self.obj.control_window.lbl_confidence.setText('Confidence: ' + str(self.obj.project_instance.columns[self.i].confidence))
+                'Atomic species: ' + self.obj.project_instance.graph.vertices[self.i].atomic_species)
+            self.obj.control_window.lbl_column_level.setText('Level: ' + str(self.obj.project_instance.graph.vertices[self.i].level))
+            self.obj.control_window.lbl_confidence.setText('Confidence: ' + str(self.obj.project_instance.graph.vertices[self.i].confidence))
 
         self.obj.selected_column = self.i
 
@@ -64,7 +64,7 @@ class InteractivePosColumn(QtWidgets.QGraphicsEllipseItem):
 
     def unselect(self):
 
-        if self.obj.project_instance.columns[self.i].show_in_overlay:
+        if self.obj.project_instance.graph.vertices[self.i].show_in_overlay:
             self.setPen(self.obj.red_pen)
         else:
             self.setPen(self.obj.dark_red_pen)
@@ -89,8 +89,8 @@ class InteractiveOverlayColumn(QtWidgets.QGraphicsEllipseItem):
 
     def mouseReleaseEvent(self, event: 'QtWidgets.QGraphicsEllipseItem.mouseReleaseEvent'):
 
-        self.x_0 = np.floor(self.x() + np.round(self.obj.project_instance.r / 2))
-        self.y_0 = np.floor(self.y() + np.round(self.obj.project_instance.r / 2))
+        self.x_0 = int(np.floor(self.x() + np.round(self.obj.project_instance.r / 2)))
+        self.y_0 = int(np.floor(self.y() + np.round(self.obj.project_instance.r / 2)))
 
         if not self.obj.control_window.chb_move.isChecked():
 
@@ -118,11 +118,11 @@ class InteractiveOverlayColumn(QtWidgets.QGraphicsEllipseItem):
             self.obj.control_window.lbl_column_x_pos.setText('x: ' + str(self.x_0))
             self.obj.control_window.lbl_column_y_pos.setText('y: ' + str(self.y_0))
             self.obj.control_window.lbl_column_peak_gamma.setText(
-                'Peak gamma: ' + str(self.obj.project_instance.columns[self.i].peak_gamma))
+                'Peak gamma: ' + str(self.obj.project_instance.graph.vertices[self.i].peak_gamma))
             self.obj.control_window.lbl_column_species.setText(
-                'Atomic species: ' + self.obj.project_instance.columns[self.i].atomic_species)
-            self.obj.control_window.lbl_column_level.setText('Level: ' + str(self.obj.project_instance.columns[self.i].level))
-            self.obj.control_window.lbl_confidence.setText('Confidence: ' + str(self.obj.project_instance.columns[self.i].confidence))
+                'Atomic species: ' + self.obj.project_instance.graph.vertices[self.i].atomic_species)
+            self.obj.control_window.lbl_column_level.setText('Level: ' + str(self.obj.project_instance.graph.vertices[self.i].level))
+            self.obj.control_window.lbl_confidence.setText('Confidence: ' + str(self.obj.project_instance.graph.vertices[self.i].confidence))
 
         self.obj.selected_column = self.i
 
@@ -150,8 +150,8 @@ class InteractiveGraphVertex(QtWidgets.QGraphicsEllipseItem):
 
     def mouseReleaseEvent(self, event: 'QtWidgets.QGraphicsEllipseItem.mouseReleaseEvent'):
 
-        self.x_0 = np.floor(self.x() + np.round(self.obj.project_instance.r / 2))
-        self.y_0 = np.floor(self.y() + np.round(self.obj.project_instance.r / 2))
+        self.x_0 = int(np.floor(self.x() + np.round(self.obj.project_instance.r / 2)))
+        self.y_0 = int(np.floor(self.y() + np.round(self.obj.project_instance.r / 2)))
         self.obj.selected_column = self.i
 
         if not self.obj.control_window.chb_move.isChecked():
@@ -180,11 +180,11 @@ class InteractiveGraphVertex(QtWidgets.QGraphicsEllipseItem):
             self.obj.control_window.lbl_column_x_pos.setText('x: ' + str(self.x_0))
             self.obj.control_window.lbl_column_y_pos.setText('y: ' + str(self.y_0))
             self.obj.control_window.lbl_column_peak_gamma.setText(
-                'Peak gamma: ' + str(self.obj.project_instance.columns[self.i].peak_gamma))
+                'Peak gamma: ' + str(self.obj.project_instance.graph.vertices[self.i].peak_gamma))
             self.obj.control_window.lbl_column_species.setText(
-                'Atomic species: ' + self.obj.project_instance.columns[self.i].atomic_species)
-            self.obj.control_window.lbl_column_level.setText('Level: ' + str(self.obj.project_instance.columns[self.i].level))
-            self.obj.control_window.lbl_confidence.setText('Confidence: ' + str(self.obj.project_instance.columns[self.i].confidence))
+                'Atomic species: ' + self.obj.project_instance.graph.vertices[self.i].atomic_species)
+            self.obj.control_window.lbl_column_level.setText('Level: ' + str(self.obj.project_instance.graph.vertices[self.i].level))
+            self.obj.control_window.lbl_confidence.setText('Confidence: ' + str(self.obj.project_instance.graph.vertices[self.i].confidence))
 
     def select(self):
         pass
@@ -234,7 +234,7 @@ class SetIndicesDialog(QtWidgets.QDialog):
 
         self.obj = obj
         self.i = i
-        self.indices = obj.project_instance.columns[i].neighbour_indices
+        self.indices = obj.project_instance.graph.vertices[i].neighbour_indices
 
     def gen_layout(self):
 
@@ -373,7 +373,7 @@ class SetIndicesDialog(QtWidgets.QDialog):
 
         if all_is_good:
 
-            self.obj.project_instance.columns[self.i].neighbour_indices = self.new_indices
+            self.obj.project_instance.graph.vertices[self.i].neighbour_indices = self.new_indices
 
             self.close()
 
@@ -429,7 +429,7 @@ class SetIndicesManuallyDialog(QtWidgets.QDialog):
 
         self.obj = obj
         self.i = i
-        self.indices = obj.project_instance.columns[i].neighbour_indices
+        self.indices = obj.project_instance.graph.vertices[i].neighbour_indices
 
     def gen_layout(self):
 
@@ -525,7 +525,7 @@ class SetIndicesManuallyDialog(QtWidgets.QDialog):
         self.new_indices[6] = int(self.Combo_7.text())
         self.new_indices[7] = int(self.Combo_8.text())
 
-        self.obj.project_instance.columns[self.i].neighbour_indices = self.new_indices
+        self.obj.project_instance.graph.vertices[self.i].neighbour_indices = self.new_indices
 
         self.close()
 
@@ -1226,13 +1226,13 @@ class ControlWindow(QtWidgets.QWidget):
             box_seperation = 10
             box_displacement = 25
 
-            si_box_height = int(100 * self.ui_obj.project_instance.columns[self.ui_obj.selected_column].prob_vector[0])
-            cu_box_height = int(100 * self.ui_obj.project_instance.columns[self.ui_obj.selected_column].prob_vector[1])
-            zn_box_height = int(100 * self.ui_obj.project_instance.columns[self.ui_obj.selected_column].prob_vector[2])
-            al_box_height = int(100 * self.ui_obj.project_instance.columns[self.ui_obj.selected_column].prob_vector[3])
-            ag_box_height = int(100 * self.ui_obj.project_instance.columns[self.ui_obj.selected_column].prob_vector[4])
-            mg_box_height = int(100 * self.ui_obj.project_instance.columns[self.ui_obj.selected_column].prob_vector[5])
-            un_box_height = int(100 * self.ui_obj.project_instance.columns[self.ui_obj.selected_column].prob_vector[6])
+            si_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].prob_vector[0])
+            cu_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].prob_vector[1])
+            zn_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].prob_vector[2])
+            al_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].prob_vector[3])
+            ag_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].prob_vector[4])
+            mg_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].prob_vector[5])
+            un_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].prob_vector[6])
 
         else:
 
