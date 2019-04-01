@@ -1,6 +1,7 @@
 # This file contains the classes of graph objects
 
 import numpy as np
+import utils
 
 
 class Vertex:
@@ -37,6 +38,7 @@ class Vertex:
         self.collapsed_prob_vector = np.zeros([self.num_selections], dtype=int)
         self.collapsed_prob_vector[self.num_selections - 1] = 1
         self.neighbour_indices = []
+        self.partner_indices = []
 
         # The prob_vector is ordered to represent the elements in order of their radius:
 
@@ -152,16 +154,96 @@ class Vertex:
         self.reset_prob_vector(bias=h_index)
         self.collapse_prob_vector()
 
+    def partners(self):
+        if not len(self.neighbour_indices) == 0:
+            self.partner_indices = []
+            for i in range(0, self.n()):
+                self.partner_indices.append(self.neighbour_indices[i])
+            return self.partner_indices
+
 
 class Edge:
 
     def __init__(self, vertex_a, vertex_b):
 
+        # Initialize and edge with direction from vertex a -> vertex b.
+
         self.vertex_a = vertex_a
         self.vertex_b = vertex_b
+        self.vector = np.array([self.vertex_b.real_coor_x - self.vertex_a.real_coor_x,
+                                self.vertex_b.real_coor_y - self.vertex_a.real_coor_y])
+        self.position_of_index_b_in_a = None
+        self.position_of_index_a_in_b = None
+        self.is_consistent_edge = True
+        self.edge_category = 0
+
+        self.find_self_map()
+        self.is_consistent()
+        self.determine_edge_category()
+
+    def determine_edge_category(self):
+        pass
+
+    def find_self_map(self):
+        pass
 
     def is_consistent(self):
-        pass
+        index_i = self.vertex_a.i
+        index_j = self.vertex_b.i
+
+        is_consistent = True
+        is_illegal_levels = False
+        is_reciprocated = True
+
+        if self.vertex_a.level == self.vertex_b.level:
+            is_illegal_levels = True
+            is_consistent = False
+
+        found_a = False
+
+        for ind in self.vertex_a.partners():
+            if ind == index_j:
+                found_a = True
+
+        if not found_a:
+            print('Unexpected error in graph.Edge.is_consistent()')
+            is_consistent = False
+            is_reciprocated = False
+
+        found_b = False
+
+        for ind in self.vertex_b.partners():
+            if ind == index_i:
+                found_b = True
+
+        if not found_b:
+            is_consistent = False
+            is_reciprocated = False
+
+        self.is_consistent_edge = is_consistent
+
+        return is_consistent, is_illegal_levels, is_reciprocated
+
+    def length(self):
+        # Find the length of the vector
+        delta_x = self.vertex_b.real_coor_x - self.vertex_a.real_coor_x
+        delta_y = self.vertex_b.real_coor_y - self.vertex_a.real_coor_y
+        arg = delta_x ** 2 + delta_y ** 2
+        return np.sqrt(arg)
+
+    def angle(self):
+        # Find the angle between the edge and the horizontal defined on [0, 2pi)
+        horizontal_unit_vector = np.array([0, 1])
+        norm_factor = 1 / self.length()
+        edge_unit_vector = norm_factor * self.vector
+        angle = utils.find_angle(horizontal_unit_vector[0], edge_unit_vector[0], horizontal_unit_vector[1],
+                                 edge_unit_vector[1])
+        cross_product = utils.vector_cross_product_magnitude(horizontal_unit_vector[0], edge_unit_vector[0],
+                                                             horizontal_unit_vector[1], edge_unit_vector[1])
+        if cross_product < 0:
+            angle = 2 * np.pi - angle
+
+        return angle
 
 
 class AtomicGraph:
