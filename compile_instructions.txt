@@ -1,0 +1,15 @@
+cd aacc
+
+pyi-makespec aacc.py
+
+edit aacc.spec with:
+
+'
+
+import sys
+
+sys.setrecursionlimit(5000)
+
+'
+
+pyinstaller aacc.spec

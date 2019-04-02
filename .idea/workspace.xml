@@ -1,0 +1,571 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="30e19c21-651c-42d8-9913-28ec51a34a6a" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/mat_op.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1241">
+              <caret line="75" selection-start-line="75" selection-end-line="75" />
+              <folding>
+                <element signature="e#366#384#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/AACC.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="272">
+              <caret line="18" column="21" selection-start-line="18" selection-start-column="21" selection-end-line="18" selection-end-column="21" />
+              <folding>
+                <element signature="e#436#446#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/GUI.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="357">
+              <caret line="189" column="49" selection-start-line="189" selection-start-column="49" selection-end-line="189" selection-end-column="49" />
+              <folding>
+                <element signature="e#424#466#0" expanded="true" />
+                <element signature="e#697#8128#0" />
+                <element signature="e#8187#8583#0" />
+                <element signature="e#8622#9093#0" />
+                <element signature="e#9132#9607#0" />
+                <element signature="e#9647#9800#0" />
+                <element signature="e#9852#9873#0" />
+                <element signature="e#9921#10498#0" />
+                <element signature="e#10548#10996#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/GUI_elements.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="20842">
+              <caret line="1228" selection-start-line="1228" selection-end-line="1228" />
+              <folding>
+                <element signature="e#0#42#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="3519">
+              <caret line="212" selection-start-line="212" selection-end-line="212" />
+              <folding>
+                <element signature="e#68#86#0" expanded="true" />
+                <element signature="e#8848#8852#0" />
+                <marker date="1553953941587" expanded="true" signature="8839:8858" ph="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/utils.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="714">
+              <caret line="112" column="29" selection-start-line="112" selection-start-column="29" selection-end-line="112" selection-end-column="29" />
+              <folding>
+                <element signature="e#160#178#0" expanded="true" />
+                <element signature="e#303#533#0" />
+                <element signature="e#592#758#0" />
+                <element signature="e#791#811#0" />
+                <element signature="e#849#1009#0" />
+                <element signature="e#1325#1706#0" />
+                <element signature="e#1757#2104#0" />
+                <element signature="e#2147#3763#0" />
+                <element signature="e#3800#4588#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/graph.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="3179">
+              <caret line="188" selection-start-line="188" selection-end-line="188" />
+              <folding>
+                <element signature="e#51#69#0" expanded="true" />
+                <marker date="1554133738604" expanded="true" signature="2601:2691" ph="..." />
+                <marker date="1554133738604" expanded="true" signature="2720:2729" ph="..." />
+                <marker date="1554133738604" expanded="true" signature="2974:2975" ph="..." />
+                <marker date="1554133738604" expanded="true" signature="5559:5578" ph="..." />
+                <marker date="1554133738604" expanded="true" signature="5602:5621" ph="..." />
+                <marker date="1554133738604" expanded="true" signature="5645:6580" ph="..." />
+                <marker date="1554133738604" expanded="true" signature="6873:6882" ph="..." />
+                <marker date="1554133738604" expanded="true" signature="7952:7961" ph="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/old_core_reference.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="3128">
+              <caret line="1863" column="21" selection-start-line="1863" selection-start-column="21" selection-end-line="1863" selection-end-column="21" />
+              <folding>
+                <element signature="e#239#257#0" expanded="true" />
+                <element signature="e#1357#1550#0" />
+                <element signature="e#2442#7621#0" />
+                <element signature="e#7677#13141#0" />
+                <element signature="e#13203#22020#0" />
+                <element signature="e#22059#22063#0" />
+                <element signature="e#22109#26391#0" />
+                <element signature="e#26437#26712#0" />
+                <element signature="e#26758#27248#0" />
+                <element signature="e#27323#34153#0" />
+                <element signature="e#34208#34822#0" />
+                <element signature="e#34863#35039#0" />
+                <element signature="e#35086#35290#0" />
+                <element signature="e#35334#35777#0" />
+                <element signature="e#35854#39512#0" />
+                <element signature="e#39566#40831#0" />
+                <element signature="e#40919#48047#0" />
+                <element signature="e#48122#49088#0" />
+                <element signature="e#49143#49508#0" />
+                <element signature="e#49557#49787#0" />
+                <element signature="e#49848#51430#0" />
+                <element signature="e#51479#52242#0" />
+                <element signature="e#52295#53076#0" />
+                <element signature="e#53127#53522#0" />
+                <element signature="e#53569#55785#0" />
+                <element signature="e#55831#57158#0" />
+                <element signature="e#57199#57522#0" />
+                <element signature="e#57578#58367#0" />
+                <element signature="e#58419#59211#0" />
+                <element signature="e#59250#60494#0" />
+                <element signature="e#60542#60966#0" />
+                <element signature="e#61007#61563#0" />
+                <element signature="e#61603#62146#0" />
+                <element signature="e#62190#62784#0" />
+                <element signature="e#62835#63642#0" />
+                <element signature="e#63686#64015#0" />
+                <element signature="e#68077#70430#0" />
+                <element signature="e#70482#72302#0" />
+                <element signature="e#72350#73114#0" />
+                <element signature="e#73169#74321#0" />
+                <element signature="e#74367#74543#0" />
+                <element signature="e#74607#75222#0" />
+                <element signature="e#75273#75446#0" />
+                <element signature="e#75487#75790#0" />
+                <element signature="e#75880#75974#0" />
+                <element signature="e#76064#76156#0" />
+                <element signature="e#76198#87187#0" />
+                <element signature="e#87231#91332#0" />
+                <element signature="e#91376#91380#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-12" />
+    <option name="width" value="405" />
+    <option name="height" value="996" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="AACC" type="b2602c69:ProjectViewProjectNode" />
+              <item name="AACC" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="AACC" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="AACC" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/AACC.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.AACC" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="7c484aa8-af59-408c-a835-da4f2ed0ee0e" name="Default Changelist" comment="" />
+      <created>1553803669319</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1553803669319</updated>
+    </task>
+    <task id="LOCAL-00001" summary="fix file naming">
+      <created>1553803783463</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1553803783463</updated>
+    </task>
+    <task id="LOCAL-00002" summary="fix file naming">
+      <created>1553803899965</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1553803899965</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Added dm3 reader">
+      <created>1553814242425</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1553814242425</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Added dm3 reader">
+      <created>1553818328110</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1553818328110</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Worked alot on core.py and graph.py">
+      <created>1553828861207</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1553828861207</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Continue restructure">
+      <created>1553864939233</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1553864939233</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Continue restructure">
+      <created>1553866895045</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1553866895045</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Continue restructure">
+      <created>1553869899103</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1553869899103</updated>
+    </task>
+    <task id="LOCAL-00009" summary="added function register">
+      <created>1553870944052</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1553870944052</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Finished refitting GUI.py to the restructured core">
+      <created>1553875266904</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1553875266904</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Finished refitting GUI.py to the restructured core">
+      <created>1553876451169</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1553876451169</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Finished refitting GUI_elements.py to the restructured core">
+      <created>1553954491811</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1553954491811</updated>
+    </task>
+    <task id="LOCAL-00013" summary="experimental">
+      <created>1553955283606</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1553955283606</updated>
+    </task>
+    <task id="LOCAL-00014" summary="experimental">
+      <created>1554029242762</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1554029242762</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Added some untested features to the classes of graph.py">
+      <created>1554134565656</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1554134565656</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Added an executable aacc.exe and compile instructions to repeat the process">
+      <created>1554179485940</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1554179485940</updated>
+    </task>
+    <task id="LOCAL-00017" summary="removed executable because it was too large for github">
+      <created>1554180792266</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1554180792266</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-7" y="-7" width="1295" height="672" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25119236" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.3283859" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.20964749" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.3469388" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="7" />
+      <window_info anchor="bottom" id="Terminal" order="8" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Python Console" order="10" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://C:/anaconda3/Lib/site-packages/numpy/core/fromnumeric.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="103">
+          <caret line="85" selection-start-line="85" selection-end-line="85" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mat_op.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1241">
+          <caret line="75" selection-start-line="75" selection-end-line="75" />
+          <folding>
+            <element signature="e#366#384#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/AACC.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="18" column="21" selection-start-line="18" selection-start-column="21" selection-end-line="18" selection-end-column="21" />
+          <folding>
+            <element signature="e#436#446#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/GUI_elements.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="20842">
+          <caret line="1228" selection-start-line="1228" selection-end-line="1228" />
+          <folding>
+            <element signature="e#0#42#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3519">
+          <caret line="212" selection-start-line="212" selection-end-line="212" />
+          <folding>
+            <element signature="e#68#86#0" expanded="true" />
+            <element signature="e#8848#8852#0" />
+            <marker date="1553953941587" expanded="true" signature="8839:8858" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="714">
+          <caret line="112" column="29" selection-start-line="112" selection-start-column="29" selection-end-line="112" selection-end-column="29" />
+          <folding>
+            <element signature="e#160#178#0" expanded="true" />
+            <element signature="e#303#533#0" />
+            <element signature="e#592#758#0" />
+            <element signature="e#791#811#0" />
+            <element signature="e#849#1009#0" />
+            <element signature="e#1325#1706#0" />
+            <element signature="e#1757#2104#0" />
+            <element signature="e#2147#3763#0" />
+            <element signature="e#3800#4588#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graph.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3179">
+          <caret line="188" selection-start-line="188" selection-end-line="188" />
+          <folding>
+            <element signature="e#51#69#0" expanded="true" />
+            <marker date="1554133738604" expanded="true" signature="2601:2691" ph="..." />
+            <marker date="1554133738604" expanded="true" signature="2720:2729" ph="..." />
+            <marker date="1554133738604" expanded="true" signature="2974:2975" ph="..." />
+            <marker date="1554133738604" expanded="true" signature="5559:5578" ph="..." />
+            <marker date="1554133738604" expanded="true" signature="5602:5621" ph="..." />
+            <marker date="1554133738604" expanded="true" signature="5645:6580" ph="..." />
+            <marker date="1554133738604" expanded="true" signature="6873:6882" ph="..." />
+            <marker date="1554133738604" expanded="true" signature="7952:7961" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/old_core_reference.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3128">
+          <caret line="1863" column="21" selection-start-line="1863" selection-start-column="21" selection-end-line="1863" selection-end-column="21" />
+          <folding>
+            <element signature="e#239#257#0" expanded="true" />
+            <element signature="e#1357#1550#0" />
+            <element signature="e#2442#7621#0" />
+            <element signature="e#7677#13141#0" />
+            <element signature="e#13203#22020#0" />
+            <element signature="e#22059#22063#0" />
+            <element signature="e#22109#26391#0" />
+            <element signature="e#26437#26712#0" />
+            <element signature="e#26758#27248#0" />
+            <element signature="e#27323#34153#0" />
+            <element signature="e#34208#34822#0" />
+            <element signature="e#34863#35039#0" />
+            <element signature="e#35086#35290#0" />
+            <element signature="e#35334#35777#0" />
+            <element signature="e#35854#39512#0" />
+            <element signature="e#39566#40831#0" />
+            <element signature="e#40919#48047#0" />
+            <element signature="e#48122#49088#0" />
+            <element signature="e#49143#49508#0" />
+            <element signature="e#49557#49787#0" />
+            <element signature="e#49848#51430#0" />
+            <element signature="e#51479#52242#0" />
+            <element signature="e#52295#53076#0" />
+            <element signature="e#53127#53522#0" />
+            <element signature="e#53569#55785#0" />
+            <element signature="e#55831#57158#0" />
+            <element signature="e#57199#57522#0" />
+            <element signature="e#57578#58367#0" />
+            <element signature="e#58419#59211#0" />
+            <element signature="e#59250#60494#0" />
+            <element signature="e#60542#60966#0" />
+            <element signature="e#61007#61563#0" />
+            <element signature="e#61603#62146#0" />
+            <element signature="e#62190#62784#0" />
+            <element signature="e#62835#63642#0" />
+            <element signature="e#63686#64015#0" />
+            <element signature="e#68077#70430#0" />
+            <element signature="e#70482#72302#0" />
+            <element signature="e#72350#73114#0" />
+            <element signature="e#73169#74321#0" />
+            <element signature="e#74367#74543#0" />
+            <element signature="e#74607#75222#0" />
+            <element signature="e#75273#75446#0" />
+            <element signature="e#75487#75790#0" />
+            <element signature="e#75880#75974#0" />
+            <element signature="e#76064#76156#0" />
+            <element signature="e#76198#87187#0" />
+            <element signature="e#87231#91332#0" />
+            <element signature="e#91376#91380#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/GUI.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="189" column="49" selection-start-line="189" selection-start-column="49" selection-end-line="189" selection-end-column="49" />
+          <folding>
+            <element signature="e#424#466#0" expanded="true" />
+            <element signature="e#697#8128#0" />
+            <element signature="e#8187#8583#0" />
+            <element signature="e#8622#9093#0" />
+            <element signature="e#9132#9607#0" />
+            <element signature="e#9647#9800#0" />
+            <element signature="e#9852#9873#0" />
+            <element signature="e#9921#10498#0" />
+            <element signature="e#10548#10996#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>
