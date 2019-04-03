@@ -689,6 +689,7 @@ class MainUI(QtWidgets.QMainWindow):
                 '\n   species: ' + self.project_instance.graph.vertices[self.selected_column].atomic_species
 
             print(string)
+            self.project_instance.graph.vertices[self.selected_column].print()
 
     def invert_precipitate_columns_trigger(self):
 

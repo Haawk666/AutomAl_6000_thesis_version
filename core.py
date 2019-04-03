@@ -244,7 +244,7 @@ class SuchSoftware:
         self.summarize_stats()
 
     def column_characterization(self, starting_index, search_type=0):
-        pass
+        self.graph.map_spatial_neighbours()
 
     def calc_avg_gamma(self):
         if self.num_columns > 0:

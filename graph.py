@@ -144,6 +144,10 @@ class Vertex:
         if h_value - nh_value < 0.00001:
             h_index = 6
 
+        if self.set_by_user:
+            self.confidence = 1.0
+            is_certain = True
+
         return h_index, is_certain
 
     def force_species(self, h_index):
@@ -160,6 +164,12 @@ class Vertex:
             for i in range(0, self.n()):
                 self.partner_indices.append(self.neighbour_indices[i])
             return self.partner_indices
+
+    def print(self):
+        print('\nVertex properties:\n----------')
+        print('Index: {}\nImage pos: ({}, {})\nReal pos: ({}, {})'.format(self.i, self.im_coor_x, self.im_coor_y,
+                                                                          self.real_coor_x, self.real_coor_y))
+        print('Atomic Species: {}\n'.format(self.atomic_species))
 
 
 class Edge:
@@ -188,6 +198,7 @@ class Edge:
         pass
 
     def is_consistent(self):
+
         index_i = self.vertex_a.i
         index_j = self.vertex_b.i
 
@@ -248,11 +259,13 @@ class Edge:
 
 class AtomicGraph:
 
-    def __init__(self):
+    def __init__(self, map_size=8):
 
         self.vertices = []
         self.vertex_indices = []
         self.edges = []
+
+        self.map_size = map_size
 
         # Stats
         self.chi = 0
@@ -329,3 +342,35 @@ class AtomicGraph:
         # return list of indices of shape and number of edges
         pass
 
+    def map_spatial_neighbours(self):
+
+        print('Starting spatial mapping:')
+
+        for i in range(0, self.num_vertices):
+
+            print('i: {}'.format(i))
+
+            all_distances = []
+            sorted_indices = []
+
+            for j in range(0, self.num_vertices):
+
+                all_distances.append(self.spatial_distance(i, j))
+
+            all_indices = np.array(all_distances)
+
+            for k in range(0, self.map_size):
+
+                index_of_min = all_indices.argmin()
+                sorted_indices.append(index_of_min)
+                all_indices[index_of_min] = all_indices.max() + 1
+
+            self.vertices[i].neighbour_indices = sorted_indices
+
+        print('Spatial mapping concluded!')
+
+    def spatial_distance(self, i, j):
+        delta_x = self.vertices[j].real_coor_x - self.vertices[i].real_coor_x
+        delta_y = self.vertices[j].real_coor_y - self.vertices[i].real_coor_y
+        arg = delta_x ** 2 + delta_y ** 2
+        return np.sqrt(arg)
