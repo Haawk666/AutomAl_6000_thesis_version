@@ -175,7 +175,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.terminal_display_area = QtWidgets.QScrollArea()
         self.terminal_display_area.setWidget(self.terminal_window)
         self.terminal_display_area.setWidgetResizable(True)
-        self.terminal_display_area.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+        self.terminal_display_area.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
 
         self.terminal_display = QtWidgets.QDockWidget()
         self.terminal_display.setWidget(self.terminal_display_area)
@@ -185,10 +185,19 @@ class MainUI(QtWidgets.QMainWindow):
         self.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.terminal_display)
 
         self.toggle_debug_mode_trigger(False)
+        self.debug_mode = False
         self.deselect_trigger()
 
         # Display
         self.show()
+
+    def receive_console_output(self, string):
+        self.terminal_window.appendPlainText(string)
+        self.terminal_window.repaint()
+
+    def report(self, string, force=False):
+        if self.debug_mode or force:
+            self.terminal_window.appendPlainText('GUI: ' + string)
 
     # Menu triggers:
     def new_trigger(self):
@@ -196,10 +205,11 @@ class MainUI(QtWidgets.QMainWindow):
         filename = QtWidgets.QFileDialog.getOpenFileName(self, 'Select dm3', '')
         if filename[0]:
             self.statusBar().showMessage('Working...')
-            self.project_instance = core.SuchSoftware(filename[0], self.terminal_window)
+            self.project_instance = core.SuchSoftware(filename[0], self.receive_console_output)
             self.control_instance = None
             self.project_loaded = True
             self.update_display()
+            self.report('Generated instance from {}'.format(filename[0]), force=True)
         else:
             self.statusBar().showMessage('Ready')
 
@@ -208,12 +218,18 @@ class MainUI(QtWidgets.QMainWindow):
         filename = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', '')
         if filename[0]:
             self.statusBar().showMessage('Working...')
-            print(filename[0])
             self.project_instance = core.SuchSoftware.load(filename[0])
+            self.project_instance.debug_obj = self.receive_console_output
+            if self.control_window.debug_box.isVisible():
+                self.project_instance.debug_mode = True
+            else:
+                self.project_instance.debug_mode = False
             self.control_instance = None
             self.project_loaded = True
             self.savefile = filename[0]
             self.update_display()
+            self.report('Loaded {}'.format(filename[0]), force=True)
+            self.report('Long ass string that is intended to display the word-wrap property of the terminal window', force=True)
         else:
             self.statusBar().showMessage('Ready')
 
@@ -227,8 +243,8 @@ class MainUI(QtWidgets.QMainWindow):
         if filename[0]:
             self.statusBar().showMessage('Working...')
             self.project_instance.save(filename[0])
-            print('Saved')
             self.update_display()
+            self.report('Saved project to {}'.format(filename[0]), force=True)
         else:
             self.statusBar().showMessage('Ready')
 
@@ -238,6 +254,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.cancel_move_trigger()
         self.deselect_trigger()
         self.control_window.empty_display()
+        self.report('Closed project')
 
     @staticmethod
     def exit_trigger():
@@ -1078,7 +1095,7 @@ class MainUI(QtWidgets.QMainWindow):
             self.control_window.btn_set_move.setDisabled(True)
             self.control_window.btn_cancel_move.setDisabled(True)
 
-            if not self.selected_column == -1 and self.control_window.debug_box.isVisible() and not self.project_instance.graph.vertices[self.selected_column] == []:
+            if not self.selected_column == -1 and self.control_window.debug_box.isVisible() and not self.project_instance.graph.vertices[self.selected_column].neighbour_indices == []:
 
                 for x in range(0, self.project_instance.graph.vertices[self.selected_column].n()):
 

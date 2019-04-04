@@ -9,6 +9,7 @@ class Terminal(QtWidgets.QPlainTextEdit):
         super().__init__(*args)
 
         self.setReadOnly(True)
+        self.setWordWrapMode(QtGui.QTextOption.NoWrap)
 
 
 class InteractivePosColumn(QtWidgets.QGraphicsEllipseItem):

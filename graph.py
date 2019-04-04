@@ -369,7 +369,7 @@ class AtomicGraph:
 
     def find_mesh(self, i, j):
         # return list of indices of shape and number of edges
-        pass
+        return 5, 6
 
     def map_spatial_neighbours(self):
 

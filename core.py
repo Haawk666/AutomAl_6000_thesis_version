@@ -160,7 +160,7 @@ class SuchSoftware:
     def report(self, string, force=False):
         if self.debug_mode or force:
             if self.debug_obj is not None:
-                self.debug_obj.appendPlainText(string)
+                self.debug_obj('core: ' + string)
             else:
                 print(string)
 
@@ -190,7 +190,10 @@ class SuchSoftware:
 
     def save(self, filename_full):
         with open(filename_full, 'wb') as f:
+            _ = self.debug_obj
+            self.debug_obj = None
             pickle.dump(self, f, pickle.HIGHEST_PROTOCOL)
+            self.debug_obj = _
 
     @staticmethod
     def load(filename_full):
@@ -264,19 +267,19 @@ class SuchSoftware:
     def column_characterization(self, starting_index, search_type=0):
 
         if search_type == 0:
-            self.report('Starting column characterization')
-            self.report('    Mapping spatial locality')
+            self.report('Starting column characterization', force=True)
+            self.report('    Mapping spatial locality', force=True)
             self.graph.map_spatial_neighbours()
-            self.report('    Spatial mapping complete')
-            self.report('    Analysing angles')
+            self.report('    Spatial mapping complete', force=True)
+            self.report('    Analysing angles', force=True)
             for i in range(0, self.num_columns):
                 if not self.graph.vertices[i].set_by_user:
                     graph_op.apply_angle_score(self.graph, i, self.dist_3_std, self.dist_4_std, self.dist_5_std,
                                                self.num_selections)
-                    self.report('    Angle analysis complete')
-                    self.report('    adding edges to graph')
+            self.report('    Angle analysis complete', force=True)
+            self.report('    adding edges to graph', force=True)
             self.graph.redraw_edges()
-            self.report('    Edges added')
+            self.report('    Edges added', force=True)
 
     def calc_avg_gamma(self):
         if self.num_columns > 0:
