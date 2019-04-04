@@ -522,25 +522,14 @@ class MainUI(QtWidgets.QMainWindow):
 
         if self.project_loaded and not self.selected_column == -1:
 
-            if self.control_window.debug_box.isVisible():
+            items = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '21', '22', '23', 'other')
+            item, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Search step", items, 0, False)
+            if ok_pressed and item:
+                self.statusBar().showMessage('Analyzing... This may take a long time...')
+                sys.setrecursionlimit(10000)
+                self.project_instance.column_characterization(self.selected_column)
+                self.update_central_widget()
 
-                items = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '21', '22', '23', 'other')
-                item, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Search step", items, 0, False)
-                if ok_pressed and item:
-                    self.statusBar().showMessage('Analyzing... This may take a long time...')
-                    sys.setrecursionlimit(10000)
-                    self.project_instance.column_characterization(self.selected_column, item)
-                    self.update_central_widget()
-
-            else:
-
-                items = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '21', '22', '23', 'other')
-                item, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Search step", items, 0, False)
-                if ok_pressed and item:
-                    self.statusBar().showMessage('Analyzing... This may take a long time...')
-                    sys.setrecursionlimit(10000)
-                    self.project_instance.column_characterization(self.selected_column, item)
-                    self.update_central_widget()
 
     def restart_analysis_trigger(self):
 
@@ -1304,80 +1293,62 @@ class MainUI(QtWidgets.QMainWindow):
             theta = np.pi / 4
             self.red_pen.setWidth(3)
 
-            for i in range(0, self.project_instance.num_columns):
+            for i in range(0, self.project_instance.graph.num_edges):
 
-                i_1 = i
+                if not self.project_instance.graph.edges[i].vertex_a.neighbour_indices == []:
 
-                if not self.project_instance.graph.vertices[i].neighbour_indices == []:
+                    r_2 = QtCore.QPointF(2 * scale_factor * self.project_instance.graph.edges[i].vertex_a.real_coor_x, 2 * scale_factor * self.project_instance.graph.edges[i].vertex_a.real_coor_y)
+                    r_1 = QtCore.QPointF(2 * scale_factor * self.project_instance.graph.edges[i].vertex_b.real_coor_x, 2 * scale_factor * self.project_instance.graph.edges[i].vertex_b.real_coor_y)
 
-                    for y in range(0, self.project_instance.graph.vertices[i].n()):
+                    r_vec = r_2 - r_1
+                    r_mag = np.sqrt((r_2.x() - r_1.x())**2 + (r_2.y() - r_1.y())**2)
+                    factor = r / (r_mag * 2)
 
-                        i_2 = self.project_instance.graph.vertices[i].neighbour_indices[y]
+                    k_1 = r_1 + factor * r_vec
+                    k_2 = r_1 + (1 - factor) * r_vec
 
-                        r_2 = QtCore.QPointF(2 * scale_factor * self.project_instance.graph.vertices[i_1].im_coor_x, 2 * scale_factor * self.project_instance.graph.vertices[i_1].im_coor_y)
-                        r_1 = QtCore.QPointF(2 * scale_factor * self.project_instance.graph.vertices[i_2].im_coor_x, 2 * scale_factor * self.project_instance.graph.vertices[i_2].im_coor_y)
+                    l_1 = factor * QtCore.QPointF(r_vec.x() * np.cos(theta) + r_vec.y() * np.sin(theta),
+                                                  - r_vec.x() * np.sin(theta) + r_vec.y() * np.cos(theta))
+                    l_1 = k_1 + l_1
 
-                        r_vec = r_2 - r_1
-                        r_mag = np.sqrt((r_2.x() - r_1.x())**2 + (r_2.y() - r_1.y())**2)
-                        factor = r / (r_mag * 2)
+                    l_2 = factor * QtCore.QPointF(r_vec.x() * np.cos(-theta) + r_vec.y() * np.sin(-theta),
+                                                  - r_vec.x() * np.sin(-theta) + r_vec.y() * np.cos(-theta))
+                    l_2 = k_1 + l_2
 
-                        k_1 = r_1 + factor * r_vec
-                        k_2 = r_1 + (1 - factor) * r_vec
+                    l_3 = - factor * QtCore.QPointF(r_vec.x() * np.cos(theta) + r_vec.y() * np.sin(theta),
+                                                    - r_vec.x() * np.sin(theta) + r_vec.y() * np.cos(theta))
+                    l_3 = k_2 + l_3
 
-                        l_1 = factor * QtCore.QPointF(r_vec.x() * np.cos(theta) + r_vec.y() * np.sin(theta),
-                                                      - r_vec.x() * np.sin(theta) + r_vec.y() * np.cos(theta))
-                        l_1 = k_1 + l_1
+                    l_4 = - factor * QtCore.QPointF(r_vec.x() * np.cos(-theta) + r_vec.y() * np.sin(-theta),
+                                                    - r_vec.x() * np.sin(-theta) + r_vec.y() * np.cos(-theta))
+                    l_4 = k_2 + l_4
 
-                        l_2 = factor * QtCore.QPointF(r_vec.x() * np.cos(-theta) + r_vec.y() * np.sin(-theta),
-                                                      - r_vec.x() * np.sin(-theta) + r_vec.y() * np.cos(-theta))
-                        l_2 = k_1 + l_2
+                    tri_1 = (k_1, l_1, l_2)
+                    tri_2 = (k_2, l_3, l_4)
+                    poly_1 = QtGui.QPolygonF(tri_1)
+                    # poly_2 = QtGui.QPolygonF(tri_2)
 
-                        l_3 = - factor * QtCore.QPointF(r_vec.x() * np.cos(theta) + r_vec.y() * np.sin(theta),
-                                                        - r_vec.x() * np.sin(theta) + r_vec.y() * np.cos(theta))
-                        l_3 = k_2 + l_3
+                    line = QtWidgets.QGraphicsLineItem(2 * scale_factor * self.project_instance.graph.edges[i].vertex_a.im_coor_x,
+                                                       2 * scale_factor * self.project_instance.graph.edges[i].vertex_a.im_coor_y,
+                                                       2 * scale_factor * self.project_instance.graph.edges[i].vertex_b.im_coor_x,
+                                                       2 * scale_factor * self.project_instance.graph.edges[i].vertex_b.im_coor_y)
+                    head_1 = QtWidgets.QGraphicsPolygonItem(poly_1)
+                    # head_2 = QtWidgets.QGraphicsPolygonItem(poly_2)
 
-                        l_4 = - factor * QtCore.QPointF(r_vec.x() * np.cos(-theta) + r_vec.y() * np.sin(-theta),
-                                                        - r_vec.x() * np.sin(-theta) + r_vec.y() * np.cos(-theta))
-                        l_4 = k_2 + l_4
+                    if self.project_instance.graph.edges[i].is_consistent_edge:
+                        pen = self.pen_connection
+                        brush = self.brush_connection
+                    else:
+                        pen = self.red_pen
+                        brush = self.red_brush
 
-                        tri_1 = (k_1, l_1, l_2)
-                        tri_2 = (k_2, l_3, l_4)
-                        # poly_1 = QtGui.QPolygonF(tri_1)
-                        poly_2 = QtGui.QPolygonF(tri_2)
+                    line.setPen(pen)
+                    head_1.setPen(pen)
+                    # head_2.setBrush(brush)
 
-                        line = QtWidgets.QGraphicsLineItem(2 * scale_factor * self.project_instance.graph.vertices[i_1].im_coor_x,
-                                                           2 * scale_factor * self.project_instance.graph.vertices[i_1].im_coor_y,
-                                                           2 * scale_factor * self.project_instance.graph.vertices[i_2].im_coor_x,
-                                                           2 * scale_factor * self.project_instance.graph.vertices[i_2].im_coor_y)
-                        # head_1 = QtWidgets.QGraphicsPolygonItem(poly_1)
-                        head_2 = QtWidgets.QGraphicsPolygonItem(poly_2)
-
-                        is_reciprocated = False
-                        is_same_lvl = False
-
-                        for x in range(0, self.project_instance.graph.vertices[i_2].n()):
-
-                            if self.project_instance.graph.vertices[i_2].neighbour_indices[x] == i:
-
-                                is_reciprocated = True
-
-                        if self.project_instance.graph.vertices[i_1].level == self.project_instance.graph.vertices[i_2].level:
-                            is_same_lvl = True
-
-                        if is_reciprocated and not is_same_lvl:
-                            pen = self.pen_connection
-                            brush = self.brush_connection
-                        else:
-                            pen = self.red_pen
-                            brush = self.red_brush
-
-                        line.setPen(pen)
-                        # head_1.setPen(pen)
-                        head_2.setBrush(brush)
-
-                        self.graphicScene_6.addItem(line)
-                        if not is_reciprocated or is_same_lvl:
-                            self.graphicScene_6.addItem(head_2)
+                    self.graphicScene_6.addItem(line)
+                    if not self.project_instance.graph.edges[i].is_consistent_edge:
+                        self.graphicScene_6.addItem(head_1)
 
             # Draw vertices
 

@@ -5,6 +5,7 @@ import mat_op
 import graph
 import pickle
 import utils
+import graph_op
 
 
 class SuchSoftware:
@@ -159,7 +160,7 @@ class SuchSoftware:
         if alloy == 0:
 
             for x in range(0, SuchSoftware.num_selections):
-                if x == 2 or x == 4 or x == 6:
+                if x == 2 or x == 4:
                     self.alloy_mat[x] = 0
                 else:
                     self.alloy_mat[x] = 1
@@ -167,7 +168,7 @@ class SuchSoftware:
         elif alloy == 1:
 
             for x in range(0, SuchSoftware.num_selections):
-                if x == 2 or x == 4 or x == 1 or x == 6:
+                if x == 2 or x == 4 or x == 1:
                     self.alloy_mat[x] = 0
                 else:
                     self.alloy_mat[x] = 1
@@ -190,6 +191,7 @@ class SuchSoftware:
 
         cont = True
         counter = self.num_columns
+        self.set_alloy_mat(self.alloy)
         self.column_circumference_mat = mat_op.gen_framed_mat(self.column_circumference_mat, self.r + self.overhead)
         self.search_mat = mat_op.gen_framed_mat(self.search_mat, self.r + self.overhead)
         self.im_mat = mat_op.gen_framed_mat(self.im_mat, self.r + self.overhead)
@@ -211,6 +213,7 @@ class SuchSoftware:
             self.search_mat = mat_op.delete_pixels(self.search_mat, x_fit_pix, y_fit_pix, self.r + self.overhead)
 
             vertex = graph.Vertex(counter, x_fit_real_coor, y_fit_real_coor, self.r, np.max(column_portrait), 0,
+                                  self.alloy_mat,
                                   num_selections=SuchSoftware.num_selections,
                                   species_strings=SuchSoftware.species_strings,
                                   certainty_threshold=self.certainty_threshold)
@@ -244,7 +247,20 @@ class SuchSoftware:
         self.summarize_stats()
 
     def column_characterization(self, starting_index, search_type=0):
-        self.graph.map_spatial_neighbours()
+
+        if search_type == 0:
+            print('Starting column characterization')
+            print('    Mapping spatial locality')
+            self.graph.map_spatial_neighbours()
+            print('    Spatial mapping compleete')
+            print('    Analysing angles')
+            for i in range(0, self.num_columns):
+                graph_op.apply_angle_score(self.graph, i, self.dist_3_std, self.dist_4_std, self.dist_5_std,
+                                           self.num_selections)
+            print('    Angle analysis complete')
+            print('    adding edges to graph')
+            self.graph.redraw_edges()
+            print('    Edges added')
 
     def calc_avg_gamma(self):
         if self.num_columns > 0:

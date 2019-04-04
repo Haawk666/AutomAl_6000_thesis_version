@@ -6,7 +6,7 @@ import utils
 
 class Vertex:
 
-    def __init__(self, index, x, y, r, peak_gamma, avg_gamma, num_selections=7, level=0, atomic_species='Un', h_index=6,
+    def __init__(self, index, x, y, r, peak_gamma, avg_gamma, alloy_mat, num_selections=7, level=0, atomic_species='Un', h_index=6,
                  species_strings=None, certainty_threshold=0.8):
 
         self.i = index
@@ -21,6 +21,7 @@ class Vertex:
         self.level = level
         self.atomic_species = atomic_species
         self.h_index = h_index
+        self.alloy_mat = alloy_mat
 
         self.confidence = 0.0
         self.certainty_threshold = certainty_threshold
@@ -91,8 +92,10 @@ class Vertex:
         self.prob_vector = self.collapsed_prob_vector
 
     def renorm_prob_vector(self):
+        for k in range(0, self.num_selections):
+            self.prob_vector[k] *= self.alloy_mat[k]
         vector_sum = np.sum(self.prob_vector)
-        if vector_sum == 0.0:
+        if vector_sum <= 0.00000001:
             pass
         else:
             correction_factor = 1 / vector_sum
@@ -169,22 +172,27 @@ class Vertex:
         print('\nVertex properties:\n----------')
         print('Index: {}\nImage pos: ({}, {})\nReal pos: ({}, {})'.format(self.i, self.im_coor_x, self.im_coor_y,
                                                                           self.real_coor_x, self.real_coor_y))
-        print('Atomic Species: {}\n'.format(self.atomic_species))
+        print('Atomic Species: {}'.format(self.atomic_species))
+        print('Probability vector: {}'.format(self.prob_vector))
 
 
 class Edge:
 
-    def __init__(self, vertex_a, vertex_b):
+    def __init__(self, vertex_a, vertex_b, index):
 
         # Initialize and edge with direction from vertex a -> vertex b.
 
         self.vertex_a = vertex_a
         self.vertex_b = vertex_b
+        self.i = index
         self.vector = np.array([self.vertex_b.real_coor_x - self.vertex_a.real_coor_x,
                                 self.vertex_b.real_coor_y - self.vertex_a.real_coor_y])
+        self.magnitude = self.length()
         self.position_of_index_b_in_a = None
         self.position_of_index_a_in_b = None
         self.is_consistent_edge = True
+        self.is_reciprocated = True
+        self.is_legal_levels = True
         self.edge_category = 0
 
         self.find_self_map()
@@ -232,8 +240,10 @@ class Edge:
             is_reciprocated = False
 
         self.is_consistent_edge = is_consistent
+        self.is_reciprocated = is_reciprocated
+        self.is_legal_levels = not is_illegal_levels
 
-        return is_consistent, is_illegal_levels, is_reciprocated
+        return is_consistent
 
     def length(self):
         # Find the length of the vector
@@ -271,6 +281,7 @@ class AtomicGraph:
         self.chi = 0
         self.num_vertices = len(self.vertices)
         self.num_particle_vertices = 0
+        self.num_edges = 0
         self.num_inconsistencies = 0
         self.num_popular = 0
         self.num_unpopular = 0
@@ -298,9 +309,32 @@ class AtomicGraph:
     def remove_vertex(self, vertex_index):
         raise NotImplemented
 
+    def add_edge(self, vertex_a, vertex_b, index):
+        self.edges.append(Edge(vertex_a, vertex_b, index))
+        self.num_edges += 1
+
+    def remove_edge(self, edge_index):
+        raise NotImplemented
+
+    def redraw_edges(self):
+        self.edges = []
+        self.num_edges = 0
+        for i in range(0, self.num_vertices):
+            self.vertices[i].partners()
+            for j in range(0, self.vertices[i].n()):
+                self.add_edge(self.vertices[i], self.vertices[self.vertices[i].partner_indices[j]], self.num_edges)
+        self.calc_chi()
+
     def calc_chi(self):
-        # set self.chi adn self.num_inconsistencies
-        pass
+        self.chi = 0
+        for i in range(0, self.num_edges):
+            if self.edges[i].is_consistent():
+                self.chi += 1
+        if self.num_edges == 0:
+            self.chi = 0
+        else:
+            self.chi = self.chi / self.num_edges
+        return self.chi
 
     def reset_vertex_properties(self):
         self.edges = []
@@ -344,11 +378,7 @@ class AtomicGraph:
 
     def map_spatial_neighbours(self):
 
-        print('Starting spatial mapping:')
-
         for i in range(0, self.num_vertices):
-
-            print('i: {}'.format(i))
 
             all_distances = []
             sorted_indices = []
@@ -367,10 +397,9 @@ class AtomicGraph:
 
             self.vertices[i].neighbour_indices = sorted_indices
 
-        print('Spatial mapping concluded!')
-
     def spatial_distance(self, i, j):
         delta_x = self.vertices[j].real_coor_x - self.vertices[i].real_coor_x
         delta_y = self.vertices[j].real_coor_y - self.vertices[i].real_coor_y
         arg = delta_x ** 2 + delta_y ** 2
         return np.sqrt(arg)
+

@@ -3,6 +3,15 @@ import numpy as np
 import core
 
 
+class Terminal(QtWidgets.QPlainTextEdit):
+
+    def __init__(self, *args):
+        super().__init__(*args)
+
+        self.setReadOnly(True)
+        self.autoFillBackground()
+
+
 class InteractivePosColumn(QtWidgets.QGraphicsEllipseItem):
 
     def __init__(self, *args):
