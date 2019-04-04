@@ -10,6 +10,9 @@ import graph_op
 
 class SuchSoftware:
 
+    # Version
+    version = [0, 0, 0]
+
     # Number of elements in the probability vectors
     num_selections = 7
 
@@ -164,6 +167,22 @@ class SuchSoftware:
             else:
                 print(string)
 
+    def vertex_report(self, i):
+        self.report('Vertex properties: ------------', force=True)
+        self.report('    Index: {}'.format(self.graph.vertices[i].i), force=True)
+        self.report('    Image pos: ({}, {})'.format(self.graph.vertices[i].im_coor_x,
+                                                     self.graph.vertices[i].im_coor_y), force=True)
+        self.report('    Real pos: ({}, {})'.format(self.graph.vertices[i].real_coor_x,
+                                                    self.graph.vertices[i].real_coor_y), force=True)
+        self.report('    Atomic Species: {}'.format(self.graph.vertices[i].atomic_species), force=True)
+        self.report('    Probability vector: {}'.format(self.graph.vertices[i].prob_vector), force=True)
+
+    def image_report(self):
+        self.summarize_stats()
+        self.report('Project properties: ---------', force=True)
+        for line in iter(self.display_stats_string.splitlines()):
+            self.report('    {}'.format(line), force=True)
+
     def set_alloy_mat(self, alloy=0):
 
         self.alloy = alloy
@@ -203,9 +222,9 @@ class SuchSoftware:
 
     def column_detection(self, search_type='s'):
         if self.num_columns == 0:
-            self.report('Starting column detection. Search mode is {}'.format(search_type))
+            self.report('Starting column detection. Search mode is {}'.format(search_type), force=True)
         else:
-            self.report('Continuing column detection. Search mode is {}'.format(search_type))
+            self.report('Continuing column detection. Search mode is {}'.format(search_type), force=True)
         cont = True
         counter = self.num_columns
         self.set_alloy_mat(self.alloy)
@@ -241,8 +260,8 @@ class SuchSoftware:
             self.column_circumference_mat = mat_op.draw_circle(self.column_circumference_mat, x_fit_pix, y_fit_pix,
                                                                self.r)
 
-            print(str(counter) + ': (' + str(x_fit_real_coor) + ', ' + str(y_fit_real_coor) + ') | (' + str(
-                pos[1]) + ', ' + str(pos[0]) + ')')
+            self.report(str(counter) + ': (' + str(x_fit_real_coor) + ', ' + str(y_fit_real_coor) + ') | (' + str(
+                pos[1]) + ', ' + str(pos[0]) + ')', force=False)
 
             self.num_columns += 1
             self.num_un += 1
@@ -262,7 +281,7 @@ class SuchSoftware:
         self.im_mat = mat_op.gen_de_framed_mat(self.im_mat, self.r + self.overhead)
         self.calc_avg_gamma()
         self.summarize_stats()
-        self.report('Column detection complete! Found {} columns'.format(self.num_columns))
+        self.report('Column detection complete! Found {} columns'.format(self.num_columns), force=True)
 
     def column_characterization(self, starting_index, search_type=0):
 

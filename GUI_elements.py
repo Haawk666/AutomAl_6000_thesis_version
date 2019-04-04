@@ -3,6 +3,14 @@ import numpy as np
 import core
 
 
+class EmittingStream(QtCore.QObject):
+
+    textWritten = QtCore.pyqtSignal(str)
+
+    def write(self, text):
+        self.textWritten.emit(str(text))
+
+
 class Terminal(QtWidgets.QPlainTextEdit):
 
     def __init__(self, *args):

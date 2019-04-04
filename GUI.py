@@ -19,6 +19,8 @@ class MainUI(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
 
+        self.version = [0, 0, 0]
+
         # Initialize in an 'empty state'
         self.project_instance = core.SuchSoftware('empty')
         self.project_loaded = False
@@ -180,7 +182,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.terminal_display = QtWidgets.QDockWidget()
         self.terminal_display.setWidget(self.terminal_display_area)
         self.terminal_display.setWindowTitle('Terminal stream')
-        self.terminal_display.setMinimumWidth(300)
+        self.terminal_display.setMinimumWidth(400)
 
         self.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.terminal_display)
 
@@ -190,6 +192,13 @@ class MainUI(QtWidgets.QMainWindow):
 
         # Display
         self.show()
+
+        # Intro
+        self.report('Welcome to AACC by Haakon Tvedt', force=True)
+        self.report('    GUI version: {}.{}.{}'.format(self.version[0], self.version[1], self.version[2]), force=True)
+        self.report('    core version: {}.{}.{}'.format(core.SuchSoftware.version[0],
+                                                        core.SuchSoftware.version[1],
+                                                        core.SuchSoftware.version[2]), force=True)
 
     def receive_console_output(self, string):
         self.terminal_window.appendPlainText(string)
@@ -229,7 +238,6 @@ class MainUI(QtWidgets.QMainWindow):
             self.savefile = filename[0]
             self.update_display()
             self.report('Loaded {}'.format(filename[0]), force=True)
-            self.report('Long ass string that is intended to display the word-wrap property of the terminal window', force=True)
         else:
             self.statusBar().showMessage('Ready')
 
@@ -254,7 +262,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.cancel_move_trigger()
         self.deselect_trigger()
         self.control_window.empty_display()
-        self.report('Closed project')
+        self.report('Closed project', force=True)
 
     @staticmethod
     def exit_trigger():
@@ -408,7 +416,7 @@ class MainUI(QtWidgets.QMainWindow):
     def view_image_title_trigger(self):
 
         if self.project_loaded:
-            print(str(self.project_instance.filename_full))
+            self.report(str(self.project_instance.filename_full), force=True)
             message = QtWidgets.QMessageBox()
             message.setText(str(self.project_instance.filename_full))
             message.exec_()
@@ -416,12 +424,7 @@ class MainUI(QtWidgets.QMainWindow):
     def show_stats_trigger(self):
 
         if self.project_loaded:
-            self.project_instance.summarize_stats()
-            print(self.project_instance.display_stats_string)
-            print(str(self.project_instance.num_inconsistencies))
-            message = QtWidgets.QMessageBox()
-            message.setText(self.project_instance.display_stats_string)
-            message.exec_()
+            self.project_instance.image_report()
 
     def toggle_image_control_trigger(self, state):
 
@@ -693,24 +696,8 @@ class MainUI(QtWidgets.QMainWindow):
 
     def add_mark_trigger(self):
 
-        print('---')
         if self.project_loaded and not self.selected_column == -1:
-            string = 'Column report:' +\
-                '   Index: ' + str(self.selected_column) +\
-                '\n   flag 1: ' + str(self.project_instance.graph.vertices[self.selected_column].flag_1) +\
-                '\n   flag 2: ' + str(self.project_instance.graph.vertices[self.selected_column].flag_2) +\
-                '\n   flag 3: ' + str(self.project_instance.graph.vertices[self.selected_column].flag_3) +\
-                '\n   flag 4: ' + str(self.project_instance.graph.vertices[self.selected_column].flag_4) +\
-                '\n   Set by User: ' + str(self.project_instance.graph.vertices[self.selected_column].set_by_user) +\
-                '\n   Is_edge_columns: ' + str(self.project_instance.graph.vertices[self.selected_column].is_edge_column) +\
-                '\n   Is Popular: ' + str(self.project_instance.graph.vertices[self.selected_column].is_popular) +\
-                '\n   Is unpopular: ' + str(self.project_instance.graph.vertices[self.selected_column].is_unpopular) +\
-                '\n   Is in precipitate: ' + str(self.project_instance.graph.vertices[self.selected_column].is_in_precipitate) +\
-                '\n   h_index: ' + str(self.project_instance.graph.vertices[self.selected_column].h_index) +\
-                '\n   species: ' + self.project_instance.graph.vertices[self.selected_column].atomic_species
-
-            print(string)
-            self.project_instance.graph.vertices[self.selected_column].print()
+            self.project_instance.vertex_report(self.selected_column)
 
     def invert_precipitate_columns_trigger(self):
 
