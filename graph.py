@@ -259,11 +259,6 @@ class Edge:
         edge_unit_vector = norm_factor * self.vector
         angle = utils.find_angle(horizontal_unit_vector[0], edge_unit_vector[0], horizontal_unit_vector[1],
                                  edge_unit_vector[1])
-        cross_product = utils.vector_cross_product_magnitude(horizontal_unit_vector[0], edge_unit_vector[0],
-                                                             horizontal_unit_vector[1], edge_unit_vector[1])
-        if cross_product < 0:
-            angle = 2 * np.pi - angle
-
         return angle
 
 
@@ -385,7 +380,10 @@ class AtomicGraph:
 
             for j in range(0, self.num_vertices):
 
-                all_distances.append(self.spatial_distance(i, j))
+                if i == j:
+                    all_distances.append(100)
+                else:
+                    all_distances.append(self.spatial_distance(i, j))
 
             all_indices = np.array(all_distances)
 

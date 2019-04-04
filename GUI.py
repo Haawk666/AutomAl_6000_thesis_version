@@ -170,6 +170,20 @@ class MainUI(QtWidgets.QMainWindow):
 
         self.addDockWidget(QtCore.Qt.LeftDockWidgetArea, self.info_display)
 
+        self.terminal_window = GUI_elements.Terminal()
+
+        self.terminal_display_area = QtWidgets.QScrollArea()
+        self.terminal_display_area.setWidget(self.terminal_window)
+        self.terminal_display_area.setWidgetResizable(True)
+        self.terminal_display_area.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+
+        self.terminal_display = QtWidgets.QDockWidget()
+        self.terminal_display.setWidget(self.terminal_display_area)
+        self.terminal_display.setWindowTitle('Terminal stream')
+        self.terminal_display.setMinimumWidth(300)
+
+        self.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.terminal_display)
+
         self.toggle_debug_mode_trigger(False)
         self.deselect_trigger()
 

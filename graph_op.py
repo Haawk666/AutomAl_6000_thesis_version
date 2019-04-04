@@ -29,17 +29,6 @@ def apply_angle_score(graph_obj, i, dist_3_std, dist_4_std, dist_5_std, num_sele
 
         alpha[x] = utils.find_angle(a[x], a[x_pluss], b[x], b[x_pluss])
 
-    # Deal with cases where the angle is over pi radians:
-    max_index = alpha.argmax()
-    angle_sum = 0.0
-    for x in range(0, n):
-        if x == max_index:
-            pass
-        else:
-            angle_sum = angle_sum + alpha[x]
-    if alpha.max() == angle_sum:
-        alpha[max_index] = 2 * np.pi - alpha.max()
-
     symmetry_3 = 2 * np.pi / 3
     symmetry_4 = np.pi / 2
     symmetry_5 = 2 * np.pi / 5
@@ -58,6 +47,8 @@ def apply_angle_score(graph_obj, i, dist_3_std, dist_4_std, dist_5_std, num_sele
             graph_obj.vertices[i].prob_vector[k] *= correction_factor_4
         elif k == 5:
             graph_obj.vertices[i].prob_vector[k] *= correction_factor_5
+        elif k == 6:
+            graph_obj.vertices[i].prob_vector[k] *= 0
 
     graph_obj.vertices[i].renorm_prob_vector()
 
@@ -71,6 +62,8 @@ def apply_angle_score(graph_obj, i, dist_3_std, dist_4_std, dist_5_std, num_sele
             graph_obj.vertices[i].prob_vector[k] *= correction_factor_4
         elif k == 5:
             graph_obj.vertices[i].prob_vector[k] *= correction_factor_5
+        elif k == 6:
+            graph_obj.vertices[i].prob_vector[k] *= 0
 
     graph_obj.vertices[i].renorm_prob_vector()
     graph_obj.vertices[i].define_species()

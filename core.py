@@ -188,7 +188,10 @@ class SuchSoftware:
             return obj
 
     def column_detection(self, search_type='s'):
-
+        if self.num_columns == 0:
+            print('Starting column detection. Search mode is {}'.format(search_type))
+        else:
+            print('Continuing column detection. Search mode is {}'.format(search_type))
         cont = True
         counter = self.num_columns
         self.set_alloy_mat(self.alloy)
@@ -245,6 +248,7 @@ class SuchSoftware:
         self.im_mat = mat_op.gen_de_framed_mat(self.im_mat, self.r + self.overhead)
         self.calc_avg_gamma()
         self.summarize_stats()
+        print('Column detection complete! Found {} columns'.format(self.num_columns))
 
     def column_characterization(self, starting_index, search_type=0):
 
@@ -255,8 +259,9 @@ class SuchSoftware:
             print('    Spatial mapping compleete')
             print('    Analysing angles')
             for i in range(0, self.num_columns):
-                graph_op.apply_angle_score(self.graph, i, self.dist_3_std, self.dist_4_std, self.dist_5_std,
-                                           self.num_selections)
+                if not self.graph.vertices[i].set_by_user:
+                    graph_op.apply_angle_score(self.graph, i, self.dist_3_std, self.dist_4_std, self.dist_5_std,
+                                               self.num_selections)
             print('    Angle analysis complete')
             print('    adding edges to graph')
             self.graph.redraw_edges()
