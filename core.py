@@ -39,7 +39,7 @@ class SuchSoftware:
     species_strings = ['Si', 'Cu', 'Zn', 'Al', 'Ag', 'Mg', 'Un']
 
     # Constructor
-    def __init__(self, filename_full):
+    def __init__(self, filename_full, debug_obj=None):
 
         self.filename_full = filename_full
         self.im_mat = None
@@ -55,6 +55,10 @@ class SuchSoftware:
             self.im_mat = mat_op.normalize_static(self.im_mat)
             (self.im_height, self.im_width) = self.im_mat.shape
             self.fft_im_mat = mat_op.gen_fft(self.im_mat)
+
+        # For communicating with the interface, if any:
+        self.debug_obj = debug_obj
+        self.debug_mode = False
 
         # Data matrices: These hold much of the information gathered by the different algorithms
         self.search_mat = self.im_mat
@@ -153,6 +157,13 @@ class SuchSoftware:
         # Initialize an empty graph
         self.graph = graph.AtomicGraph()
 
+    def report(self, string, force=False):
+        if self.debug_mode or force:
+            if self.debug_obj is not None:
+                self.debug_obj.appendPlainText(string)
+            else:
+                print(string)
+
     def set_alloy_mat(self, alloy=0):
 
         self.alloy = alloy
@@ -189,9 +200,9 @@ class SuchSoftware:
 
     def column_detection(self, search_type='s'):
         if self.num_columns == 0:
-            print('Starting column detection. Search mode is {}'.format(search_type))
+            self.report('Starting column detection. Search mode is {}'.format(search_type))
         else:
-            print('Continuing column detection. Search mode is {}'.format(search_type))
+            self.report('Continuing column detection. Search mode is {}'.format(search_type))
         cont = True
         counter = self.num_columns
         self.set_alloy_mat(self.alloy)
@@ -241,31 +252,31 @@ class SuchSoftware:
                 if np.max(self.search_mat) < self.threshold:
                     cont = False
             else:
-                print('Invalid search type sent to SuchSoftware.column_detection')
+                self.report('Invalid search type sent to SuchSoftware.column_detection', force=True)
 
         self.column_circumference_mat = mat_op.gen_de_framed_mat(self.column_circumference_mat, self.r + self.overhead)
         self.search_mat = mat_op.gen_de_framed_mat(self.search_mat, self.r + self.overhead)
         self.im_mat = mat_op.gen_de_framed_mat(self.im_mat, self.r + self.overhead)
         self.calc_avg_gamma()
         self.summarize_stats()
-        print('Column detection complete! Found {} columns'.format(self.num_columns))
+        self.report('Column detection complete! Found {} columns'.format(self.num_columns))
 
     def column_characterization(self, starting_index, search_type=0):
 
         if search_type == 0:
-            print('Starting column characterization')
-            print('    Mapping spatial locality')
+            self.report('Starting column characterization')
+            self.report('    Mapping spatial locality')
             self.graph.map_spatial_neighbours()
-            print('    Spatial mapping compleete')
-            print('    Analysing angles')
+            self.report('    Spatial mapping complete')
+            self.report('    Analysing angles')
             for i in range(0, self.num_columns):
                 if not self.graph.vertices[i].set_by_user:
                     graph_op.apply_angle_score(self.graph, i, self.dist_3_std, self.dist_4_std, self.dist_5_std,
                                                self.num_selections)
-            print('    Angle analysis complete')
-            print('    adding edges to graph')
+                    self.report('    Angle analysis complete')
+                    self.report('    adding edges to graph')
             self.graph.redraw_edges()
-            print('    Edges added')
+            self.report('    Edges added')
 
     def calc_avg_gamma(self):
         if self.num_columns > 0:

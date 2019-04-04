@@ -9,7 +9,6 @@ class Terminal(QtWidgets.QPlainTextEdit):
         super().__init__(*args)
 
         self.setReadOnly(True)
-        self.autoFillBackground()
 
 
 class InteractivePosColumn(QtWidgets.QGraphicsEllipseItem):

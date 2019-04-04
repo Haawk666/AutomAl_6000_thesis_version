@@ -196,7 +196,7 @@ class MainUI(QtWidgets.QMainWindow):
         filename = QtWidgets.QFileDialog.getOpenFileName(self, 'Select dm3', '')
         if filename[0]:
             self.statusBar().showMessage('Working...')
-            self.project_instance = core.SuchSoftware(filename[0])
+            self.project_instance = core.SuchSoftware(filename[0], self.terminal_window)
             self.control_instance = None
             self.project_loaded = True
             self.update_display()
@@ -544,7 +544,6 @@ class MainUI(QtWidgets.QMainWindow):
                 self.project_instance.column_characterization(self.selected_column)
                 self.update_central_widget()
 
-
     def restart_analysis_trigger(self):
 
         self.project_instance.reset_vertex_properties()
@@ -666,12 +665,14 @@ class MainUI(QtWidgets.QMainWindow):
         if state:
             self.control_window.debug_box.show()
             self.draw_connections(self.selected_column)
+            self.project_instance.debug_mode = True
         else:
             self.control_window.debug_box.hide()
             temp = self.selected_column
             self.selected_column = -1
             self.draw_connections(0)
             self.selected_column = temp
+            self.project_instance.debug_mode = False
 
     def add_mark_trigger(self):
 
@@ -1077,7 +1078,7 @@ class MainUI(QtWidgets.QMainWindow):
             self.control_window.btn_set_move.setDisabled(True)
             self.control_window.btn_cancel_move.setDisabled(True)
 
-            if not self.selected_column == -1 and self.control_window.debug_box.isVisible():
+            if not self.selected_column == -1 and self.control_window.debug_box.isVisible() and not self.project_instance.graph.vertices[self.selected_column] == []:
 
                 for x in range(0, self.project_instance.graph.vertices[self.selected_column].n()):
 
@@ -1406,7 +1407,7 @@ class MainUI(QtWidgets.QMainWindow):
 
                 for x in range(0, self.project_instance.num_columns):
 
-                    if not self.project_instance.graph.vertices[x].h_index == 6 and self.project_instance.graph.vertices[x].show_in_overlay and self.project_instance.columns[x].neighbour_indices is not None:
+                    if not self.project_instance.graph.vertices[x].h_index == 6 and self.project_instance.graph.vertices[x].show_in_overlay and not self.project_instance.graph.vertices[x].neighbour_indices == []:
 
                         n = 3
 
@@ -1431,7 +1432,7 @@ class MainUI(QtWidgets.QMainWindow):
 
         else:
 
-            if self.project_loaded and self.project_instance.num_columns > 0 and self.project_instance.graph.vertices[index].neighbour_indices is not None:
+            if self.project_loaded and self.project_instance.num_columns > 0 and not self.project_instance.graph.vertices[index].neighbour_indices == []:
 
                 for j in range(0, self.neighbour_line_objects.shape[0]):
                     self.neighbour_line_objects[j].hide()
