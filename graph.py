@@ -84,6 +84,9 @@ class Vertex:
         else:
             self.collapsed_prob_vector[self.num_selections - 1] = 1
 
+        for k in range(0, self.num_selections):
+            self.prob_vector[k] *= self.alloy_mat[k]
+
         self.renorm_prob_vector()
         self.define_species()
 
@@ -301,6 +304,15 @@ class AtomicGraph:
         if vertex.is_unpopular:
             self.num_unpopular += 1
 
+    def reset_vertex(self, i):
+        self.vertices[i].level = 0
+        self.vertices[i].reset_prob_vector(bias=self.vertices[i].num_selections - 1)
+        self.vertices[i].is_in_precipitate = False
+        self.vertices[i].is_unpopular = False
+        self.vertices[i].is_popular = False
+        self.vertices[i].is_edge_column = False
+        self.vertices[i].show_in_overlay = True
+
     def remove_vertex(self, vertex_index):
         raise NotImplemented
 
@@ -381,7 +393,7 @@ class AtomicGraph:
             for j in range(0, self.num_vertices):
 
                 if i == j:
-                    all_distances.append(100)
+                    all_distances.append(100000)
                 else:
                     all_distances.append(self.spatial_distance(i, j))
 

@@ -222,9 +222,9 @@ class SuchSoftware:
 
     def column_detection(self, search_type='s'):
         if self.num_columns == 0:
-            self.report('Starting column detection. Search mode is {}'.format(search_type), force=True)
+            self.report('Starting column detection. Search mode is \'{}\''.format(search_type), force=True)
         else:
-            self.report('Continuing column detection. Search mode is {}'.format(search_type), force=True)
+            self.report('Continuing column detection. Search mode is \'{}\''.format(search_type), force=True)
         cont = True
         counter = self.num_columns
         self.set_alloy_mat(self.alloy)
@@ -253,6 +253,7 @@ class SuchSoftware:
                                   num_selections=SuchSoftware.num_selections,
                                   species_strings=SuchSoftware.species_strings,
                                   certainty_threshold=self.certainty_threshold)
+            vertex.reset_prob_vector(bias=6)
             self.graph.add_vertex(vertex)
 
             self.column_centre_mat[y_fit_real_coor_pix, x_fit_real_coor_pix, 0] = 1
@@ -286,19 +287,27 @@ class SuchSoftware:
     def column_characterization(self, starting_index, search_type=0):
 
         if search_type == 0:
-            self.report('Starting column characterization', force=True)
-            self.report('    Mapping spatial locality', force=True)
+            self.report('Starting column characterization...', force=True)
+            self.report('    Mapping spatial locality...', force=True)
             self.graph.map_spatial_neighbours()
-            self.report('    Spatial mapping complete', force=True)
-            self.report('    Analysing angles', force=True)
+            self.report('    Spatial mapping complete.', force=True)
+            self.report('    Analysing angles...', force=True)
             for i in range(0, self.num_columns):
                 if not self.graph.vertices[i].set_by_user:
+                    self.graph.vertices[i].reset_prob_vector()
                     graph_op.apply_angle_score(self.graph, i, self.dist_3_std, self.dist_4_std, self.dist_5_std,
                                                self.num_selections)
-            self.report('    Angle analysis complete', force=True)
-            self.report('    adding edges to graph', force=True)
+            self.report('    Angle analysis complete.', force=True)
+            self.report('    Analyzing intensities...', force=True)
+            for i in range(0, self.num_columns):
+                if not self.graph.vertices[i].set_by_user:
+                    graph_op.apply_intensity_score(self.graph, i, self.num_selections, self.intensities[self.alloy],
+                                                   self.dist_8_std)
+            self.report('    Intensity analysis complete.', force=True)
+            self.report('    adding edges to graph...', force=True)
             self.graph.redraw_edges()
-            self.report('    Edges added', force=True)
+            self.report('    Edges added.', force=True)
+            self.report('Column characterization complete.', force=True)
 
     def calc_avg_gamma(self):
         if self.num_columns > 0:

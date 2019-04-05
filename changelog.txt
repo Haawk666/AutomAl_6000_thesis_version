@@ -1,4 +1,4 @@
-AACC 0.0.0.0
+AACC 0.0.0
 From specialization project version to first restructured version 0.0.0
 
 
@@ -13,7 +13,8 @@ New features in 0.0.0:
   different environment than the GUI, it will instead report progress with the print() call.
   Added a lot of reporting all around the software. When 'advanced debug' is selected, this reporting
   is more plentiful and detailed, but might be messy and superflous for standard use. The console feed
-  will be saved to a log file that can be shared.
+  can be saved to a log file with the new 'save log' button. Thsi file can then be easily shared when
+  discussing replication of bugs, hopefully aiding in the bux-fix process in the future.
 
 - Marginally improved column detection: Vertex positions are now calculated as float values rather
   than pixel indecies. This allows columns to have more fine-tuned positions and evades pixel
@@ -78,6 +79,10 @@ other:
 -----------------
 - Slightly started the daunting task of properly commenting and formatting docstrings. The first priority
   is the graph.py file.
+
+- Made a validation set of images that the algorithm can be compared with through a script. This will
+  enable quick statistics of the effectiveness of any new change made to the algorithm. This will hopefully
+  streamline the future effort a bit.
 
 
 

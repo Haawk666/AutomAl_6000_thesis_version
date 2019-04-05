@@ -39,12 +39,10 @@ def normal_dist(x, mean, std):
 
 
 def find_angle(a_1, a_2, b_1, b_2):
+    # Returns the smallest angle between two vectors (a_1, b_1) and (a_2, b_2)
     alpha = a_1 * a_2 + b_1 * b_2
     alpha = alpha / np.sqrt((a_1**2 + b_1**2) * (a_2**2 + b_2**2))
     alpha = np.arccos(alpha)
-
-    if vector_cross_product_magnitude(a_1, a_2, b_1, b_2) < 0:
-        alpha = 2 * np.pi - alpha
 
     return alpha
 
