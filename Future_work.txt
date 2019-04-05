@@ -1,0 +1,43 @@
+Planned tasks for the AACC software
+
+
+Planned features (Loosley ordered by priority):
+-----------------
+- Improving and adding methods to the column characterization algorithm.
+
+- Improving the column detection algorithm to be more self-sufficient and require
+  less user input.
+  
+- Add phase library and add phase information to the data structure.
+
+- Add support for importing images in the TIF format.
+
+- Add support for exporting data-files with a data-format wizard.
+
+- Integrate lambs. -> Crystal relaxation model (Possible major change to the data-structure)
+
+- Continued effort to improve and clean the code
+
+- Implement and test any suggestions Calin has.
+
+- Implement more graph analysis algorithms on several graph properties
+
+- Make an installshield wizard to enable proper program installation. This will vastly
+  decrease the boot-time of the executable.
+
+- Implement auto-updating????
+
+- Make overlay graphical elements customizable through a wizard.
+
+- Write tooltips for the GUI
+
+
+Bugfixes (Updated continually):
+-----------------
+
+
+Other:
+-----------------
+- Write technical documentation and user guides
+
+- Properly comment code and write docstrings

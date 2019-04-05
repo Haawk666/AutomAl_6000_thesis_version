@@ -1,6 +1,6 @@
 cd aacc
 
-pyi-makespec aacc.py
+pyi-makespec --onefile aacc.py
 
 edit aacc.spec with:
 
@@ -12,4 +12,6 @@ sys.setrecursionlimit(5000)
 
 '
 
-pyinstaller aacc.spec
+before the blockchiper line
+
+pyinstaller --onefile aacc.spec

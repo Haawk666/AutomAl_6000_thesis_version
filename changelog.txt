@@ -1,0 +1,85 @@
+AACC 0.0.0.0
+From specialization project version to first restructured version 0.0.0
+
+
+New features in 0.0.0:
+-----------------
+- Fully restructured the core program from scrathch and retouched the GUI to reflect the changes.
+  This will hopefully make the program structure more sensible and thus make life easier in the future.
+  
+- Added terminal output as a new widget, allowing the core to report on its progress and other program
+  info to be displayed. SuchSoftware is now instantiated with a reference to a function in MainUI to
+  enable progress reporting to the GUI. The core is however still modular, if it is called from a
+  different environment than the GUI, it will instead report progress with the print() call.
+  Added a lot of reporting all around the software. When 'advanced debug' is selected, this reporting
+  is more plentiful and detailed, but might be messy and superflous for standard use. The console feed
+  will be saved to a log file that can be shared.
+
+- Marginally improved column detection: Vertex positions are now calculated as float values rather
+  than pixel indecies. This allows columns to have more fine-tuned positions and evades pixel
+  snapping as it used to. It has escpecially improved the accuracy of column positions in realtively
+  low resolution images (Such as large particles).
+  
+- The re-implementation of the column characterization algorithm in the new structure is sligthly
+  different, and this seems to have been a slight improvement. No other changes have been made to the
+  algorithms though, as the focus of this update has been to prepare the software for future work.
+  
+- Implemented better version handling. If the core fails to instantiate from a save-file, it will
+  run a script that loads the instance in a compatible version and transforms the data to the current
+  version. Hopefully this will ensure backwards compability with save-states through all versions!
+  (Adding a new attribute to the SuchSoftware, AtomicGraph, Egde or Vertex classes breaks save-file
+  compability, which is a hassle...)
+  
+- Added some keyboard shortcuts: When you have a column selected, press 1 to instantly change its
+  species to Aluminium, 2 for Magnesium, 3 for Silicon and 4 for Copper. Use the '+' key to easily
+  toggle the column height between 0, 1 and 2. (0 corresponds to the 0-plane, 1 corresponds to the
+  1/2-plane and 2 is a special height that is intended for special cases, such as beta prime corners).
+  If you have 'enable move' enabled, you can use the arrow-keys to move the selected column at pixel
+  increments.
+  
+- Improved the visual cue in overlay and graph-views of the currently selected column.
+  
+- It is now possible to add and delete induvidual columns manually. Note that this should be done
+  before the column charaterization is run, as this will break the underlying data-structure of the
+  graph. (Might add more support for post-characterization data manipulation later, if needed...)
+  
+- Enableded zooming of the tab-views with 'shift+mousescrollwheel'. (This was not as trivial a task
+  as it might sound, gah!)
+  
+- The tab-views are now linked, meaning that if you zoom in and translate your view to a specific area
+  in the graph-tab, when you switch to for instance the overlay-tab, it will be zoomed in and translated
+  to the same area. This allows you to swiftly switch between views of the same image feature.
+  
+- Added a vertex report button that will print a report of vertex/column properties to the right-side
+  window. Also added a button 'print index', which will print the index of the column to the console,
+  in case you need to remember it for later. (No more writing down full pages of vertex indices by hand).
+  Pressing the 'stats' button in the image controls group will now also report image and particle stats
+  to the console window, instead of showing it in a pop-up-box. This is convenient in many ways.
+  
+- When manually setting the species of a column, this is now respected by the algorithm and no changes
+  will be made to that column unless you reset it with the new 'reset column' button.
+  
+- Added an option in the overlay filters to toggle show/hide columns that have been set by the user.
+  
+
+Bugfixes:
+-----------------
+- Fixed some of the buggines in the overlay filters, but works still remains on this.
+
+- A lot of code has been changed in this update, and not much time for testing, so many new bugs have
+  probarbly been introduced, Yehaaw!
+
+- Fixed the crashing when closing and loading projects bug. (I think...)
+
+- Tried to clean the code as much as time allowed (Still a lot of cleaning to be done!)
+
+
+other:
+-----------------
+- Slightly started the daunting task of properly commenting and formatting docstrings. The first priority
+  is the graph.py file.
+
+
+
+
+
