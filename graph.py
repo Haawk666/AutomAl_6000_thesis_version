@@ -281,6 +281,7 @@ class AtomicGraph:
         self.vertices = []
         self.vertex_indices = []
         self.edges = []
+        self.particle_boarder = []
 
         self.map_size = map_size
 
@@ -416,9 +417,49 @@ class AtomicGraph:
 
             self.vertices[i].neighbour_indices = sorted_indices
 
+    def find_nearest(self, i, n):
+
+        all_distances = []
+        sorted_indices = []
+        sorted_distances = []
+
+        for j in range(0, self.num_vertices):
+
+            if i == j:
+                all_distances.append(100000)
+            else:
+                all_distances.append(self.spatial_distance(i, j))
+
+        all_indices = np.array(all_distances)
+
+        for k in range(0, n):
+            index_of_min = all_indices.argmin()
+            value_of_min = all_indices.min()
+            sorted_indices.append(index_of_min)
+            sorted_distances.append(value_of_min)
+            all_indices[index_of_min] = all_indices.max() + 1
+
+        return sorted_indices, sorted_distances, n
+
     def spatial_distance(self, i, j):
         delta_x = self.vertices[j].real_coor_x - self.vertices[i].real_coor_x
         delta_y = self.vertices[j].real_coor_y - self.vertices[i].real_coor_y
         arg = delta_x ** 2 + delta_y ** 2
         return np.sqrt(arg)
+
+    def test_reciprocality(self, i, j):
+
+        found = False
+
+        for x in range(0, self.vertices[j].n()):
+
+            if self.vertices[j].neighbour_indices[x] == i:
+
+                found = True
+
+        return found
+
+    def set_level(self, i, level):
+        self.vertices[i].level = level
+
 

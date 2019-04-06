@@ -306,17 +306,23 @@ class SuchSoftware:
                                                    self.dist_8_std)
             self.report('    Intensity analysis complete.', force=True)
             self.report('    Running basic level definition...', force=True)
-            self.graph.reset_all_flags()
-            self.graph.vertices[starting_index].flag_1 = True
-            sys.setrecursionlimit(5000000)
-            if not self.graph.vertices[starting_index].level == 2:
-                graph_op.set_levels_basic(self.graph, self.graph.vertices[starting_index].neighbour_indices[0], 1, self.report)
-            else:
-                self.report('        Could not set basic levels because starting column has unclear level!', force=True)
+            self.report('        Could not set basic levels because it is not implemented', force=True)
+            self.report('    Levels set.', force=True)
+            self.report('    Finding particle....', force=True)
+            graph_op.precipitate_controller(self.graph, i)
+            self.report('    Found particle.', force=True)
+            self.report('    Running advanced level definition algorithm....', force=True)
+            graph_op.set_levels(self.graph, i, self.report, self.num_selections)
             self.report('    Levels set.', force=True)
             self.report('    adding edges to graph...', force=True)
             self.graph.redraw_edges()
             self.report('    Edges added.', force=True)
+            self.report('    Summarizing stats', force=True)
+            self.summarize_stats()
+            self.report('    Starting weak untangling...', force=True)
+            self.report('        Could not start weak untangling because it is not implemented yet!', force=True)
+            self.report('    Starting strong untangling...', force=True)
+            self.report('        Could not start strong untangling because it is not implemented yet!', force=True)
             self.report('Column characterization complete.', force=True)
 
     def calc_avg_gamma(self):
