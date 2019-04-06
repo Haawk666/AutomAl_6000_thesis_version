@@ -89,3 +89,67 @@ def apply_intensity_score(graph_obj, i, num_selections, intensities, dist_8_std)
     graph_obj.vertices[i].renorm_prob_vector()
     graph_obj.vertices[i].define_species()
 
+
+def apply_dist_score(graph_obj, i, other_radii, num_selections, radii, dist_1_std, dist_2_std):
+
+    for y in range(0, num_selections):
+
+        if radii[y] <= other_radii:
+            graph_obj.vertices[i].prob_vector[y] *= utils.normal_dist(
+                radii[y], other_radii, dist_1_std)
+        else:
+            graph_obj.vertices[i].prob_vector[y] *= utils.normal_dist(
+                radii[y], other_radii, dist_2_std)
+
+    graph_obj.vertices[i].renorm_prob_vector()
+    graph_obj.vertices[i].define_species()
+
+
+def set_levels_basic(graph_obj, i, level, report, indent_string='        '):
+
+    if level is not None:
+
+        if not graph_obj.vertices[i].flag_1:
+            graph_obj.vertices[i].level = level
+            graph_obj.vertices[i].flag_1 = True
+            report('{}Set vertex {} to level {}'.format(indent_string, i, level), force=False)
+        else:
+            report('{}Vertex {} already set to level {}'.format(indent_string, i, level), force=False)
+
+        anti_level = graph_obj.vertices[i].anti_level()
+
+        j = graph_obj.vertices[i].neighbour_indices[0]
+        k = graph_obj.vertices[i].neighbour_indices[1]
+        l = graph_obj.vertices[i].neighbour_indices[2]
+
+        if anti_level is not None:
+            if not graph_obj.vertices[j].flag_1:
+                report('{}    Neighbour 1 was not set. Sending {}'.format(indent_string, j), force=False)
+                set_levels_basic(graph_obj, j, anti_level, report, indent_string=indent_string + '        ')
+                if not graph_obj.vertices[k].flag_1:
+                    report('{}    Neighbour 2 was not set. Sending {}'.format(indent_string, k), force=False)
+                    set_levels_basic(graph_obj, k, anti_level, report, indent_string=indent_string + '        ')
+                    if not graph_obj.vertices[l].flag_1:
+                        report('{}    Neighbour 3 was not set. Sending {}'.format(indent_string, l), force=False)
+                        set_levels_basic(graph_obj, l, anti_level, report, indent_string=indent_string + '        ')
+
+
+def set_levels(graph_obj, i, report):
+
+    report('        Setting levels of matrix columns...', force=True)
+    set_matrix_levels(graph_obj, i)
+    report('        Matrix levels set.', force=True)
+    report('        Setting levels of particle columns...', force=True)
+    set_particle_levels(graph_obj)
+    report('        Particle levels set.', force=True)
+
+
+def set_matrix_levels(graph_obj, i):
+
+    pass
+
+
+def set_particle_levels(graph_obj):
+
+    pass
+

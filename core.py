@@ -6,6 +6,7 @@ import graph
 import pickle
 import utils
 import graph_op
+import sys
 
 
 class SuchSoftware:
@@ -287,7 +288,7 @@ class SuchSoftware:
     def column_characterization(self, starting_index, search_type=0):
 
         if search_type == 0:
-            self.report('Starting column characterization...', force=True)
+            self.report('Starting column characterization from vertex {}...'.format(starting_index), force=True)
             self.report('    Mapping spatial locality...', force=True)
             self.graph.map_spatial_neighbours()
             self.report('    Spatial mapping complete.', force=True)
@@ -304,6 +305,15 @@ class SuchSoftware:
                     graph_op.apply_intensity_score(self.graph, i, self.num_selections, self.intensities[self.alloy],
                                                    self.dist_8_std)
             self.report('    Intensity analysis complete.', force=True)
+            self.report('    Running basic level definition...', force=True)
+            self.graph.reset_all_flags()
+            self.graph.vertices[starting_index].flag_1 = True
+            sys.setrecursionlimit(5000000)
+            if not self.graph.vertices[starting_index].level == 2:
+                graph_op.set_levels_basic(self.graph, self.graph.vertices[starting_index].neighbour_indices[0], 1, self.report)
+            else:
+                self.report('        Could not set basic levels because starting column has unclear level!', force=True)
+            self.report('    Levels set.', force=True)
             self.report('    adding edges to graph...', force=True)
             self.graph.redraw_edges()
             self.report('    Edges added.', force=True)

@@ -164,6 +164,15 @@ class Vertex:
         self.reset_prob_vector(bias=h_index)
         self.collapse_prob_vector()
 
+    def anti_level(self):
+        if self.level == 0:
+            anti_level = 1
+        elif self.level == 1:
+            anti_level = 0
+        elif self.level == 2:
+            anti_level = None
+        return anti_level
+
     def partners(self):
         if not len(self.neighbour_indices) == 0:
             self.partner_indices = []

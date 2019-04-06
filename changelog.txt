@@ -14,7 +14,7 @@ New features in 0.0.0:
   Added a lot of reporting all around the software. When 'advanced debug' is selected, this reporting
   is more plentiful and detailed, but might be messy and superflous for standard use. The console feed
   can be saved to a log file with the new 'save log' button. Thsi file can then be easily shared when
-  discussing replication of bugs, hopefully aiding in the bux-fix process in the future.
+  discussing replication of bugs, hopefully aiding in the bux-fixing process in the future.
 
 - Marginally improved column detection: Vertex positions are now calculated as float values rather
   than pixel indecies. This allows columns to have more fine-tuned positions and evades pixel
@@ -83,6 +83,8 @@ other:
 - Made a validation set of images that the algorithm can be compared with through a script. This will
   enable quick statistics of the effectiveness of any new change made to the algorithm. This will hopefully
   streamline the future effort a bit.
+ 
+- set up a repo at gitHUB and is now actively using version control.
 
 
 
