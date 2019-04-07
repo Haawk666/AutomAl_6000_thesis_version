@@ -36,7 +36,7 @@ New features in 0.0.0:
   toggle the column height between 0, 1 and 2. (0 corresponds to the 0-plane, 1 corresponds to the
   1/2-plane and 2 is a special height that is intended for special cases, such as beta prime corners).
   If you have 'enable move' enabled, you can use the arrow-keys to move the selected column at pixel
-  increments.
+  increments. You can now also cycle through the tabs of the central widget with the space-key.
   
 - Improved the visual cue in overlay and graph-views of the currently selected column.
   
@@ -44,8 +44,9 @@ New features in 0.0.0:
   before the column charaterization is run, as this will break the underlying data-structure of the
   graph. (Might add more support for post-characterization data manipulation later, if needed...)
   
-- Enableded zooming of the tab-views with 'shift+mousescrollwheel'. (This was not as trivial a task
-  as it might sound, gah!)
+- Enableded zooming of the tab-views with 'shift+mousescrollwheel'. 'control+mouswheel' will scroll the 
+  view horizontally' and simply scrolling will scroll the view vertically. This made a huge difference
+  in how the GUI 'feels' in my opinion.
   
 - The tab-views are now linked, meaning that if you zoom in and translate your view to a specific area
   in the graph-tab, when you switch to for instance the overlay-tab, it will be zoomed in and translated

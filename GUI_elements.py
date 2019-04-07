@@ -11,30 +11,43 @@ class ZGraphicsView(QtWidgets.QGraphicsView):
         self.key_press_handler = key_press_handler
 
     def wheelEvent(self, event):
-        # Zoom Factor
-        zoom_in_factor = 1.25
-        zoom_out_factor = 1 / zoom_in_factor
 
-        # Set Anchors
-        self.setTransformationAnchor(QtWidgets.QGraphicsView.NoAnchor)
-        self.setResizeAnchor(QtWidgets.QGraphicsView.NoAnchor)
+        modifier = QtWidgets.QApplication.keyboardModifiers()
+        if modifier == QtCore.Qt.ShiftModifier:
 
-        # Save the scene pos
-        oldPos = self.mapToScene(event.pos())
+            # Zoom Factor
+            zoom_in_factor = 1.25
+            zoom_out_factor = 1 / zoom_in_factor
 
-        # Zoom
-        if event.angleDelta().y() > 0:
-            zoomFactor = zoom_in_factor
+            # Set Anchors
+            self.setTransformationAnchor(QtWidgets.QGraphicsView.NoAnchor)
+            self.setResizeAnchor(QtWidgets.QGraphicsView.NoAnchor)
+
+            # Save the scene pos
+            oldPos = self.mapToScene(event.pos())
+
+            # Zoom
+            if event.angleDelta().y() > 0:
+                zoomFactor = zoom_in_factor
+            else:
+                zoomFactor = zoom_out_factor
+            self.scale(zoomFactor, zoomFactor)
+
+            # Get the new position
+            newPos = self.mapToScene(event.pos())
+
+            # Move scene to old position
+            delta = newPos - oldPos
+            self.translate(delta.x(), delta.y())
+
+        elif modifier == QtCore.Qt.ControlModifier:
+
+            center = self.mapToScene(event.pos())
+            self.centerOn(center.x() - event.angleDelta().y(), center.y())
+
         else:
-            zoomFactor = zoom_out_factor
-        self.scale(zoomFactor, zoomFactor)
 
-        # Get the new position
-        newPos = self.mapToScene(event.pos())
-
-        # Move scene to old position
-        delta = newPos - oldPos
-        self.translate(delta.x(), delta.y())
+            super(ZGraphicsView, self).wheelEvent(event)
 
     def keyPressEvent(self, event):
         if self.key_press_handler is not None:

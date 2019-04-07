@@ -12,6 +12,7 @@ import numpy.core._dtype_ctypes  # This is needed because of a bug in pyinstalle
 import mat_op
 import core
 import GUI_elements
+import compatibility
 
 
 class MainUI(QtWidgets.QMainWindow):
@@ -200,6 +201,14 @@ class MainUI(QtWidgets.QMainWindow):
                                                         core.SuchSoftware.version[1],
                                                         core.SuchSoftware.version[2]), force=True)
 
+    def keyPressEvent(self, event):
+
+        if event.key() == QtCore.Qt.Key_Space:
+            if self.tabs.currentIndex() == 6:
+                self.tabs.setCurrentIndex(0)
+            else:
+                self.tabs.setCurrentIndex(self.tabs.currentIndex() + 1)
+
     def key_press(self, key):
         if self.project_loaded and not self.selected_column == -1:
             if self.tabs.currentIndex() == 0:
@@ -256,7 +265,13 @@ class MainUI(QtWidgets.QMainWindow):
         filename = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', '')
         if filename[0]:
             self.statusBar().showMessage('Working...')
-            self.project_instance = core.SuchSoftware.load(filename[0])
+            try:
+                self.project_instance = core.SuchSoftware.load(filename[0])
+            except ModuleNotFoundError:
+                self.report('    Outdated save-file detected. Running compatibility script', force=True)
+                upgrade_obj = compatibility.Upgrade(filename[0], self.version, core.SuchSoftware.version, self.report)
+                self.project_instance = upgrade_obj.load()
+
             self.project_instance.debug_obj = self.receive_console_output
             if self.control_window.debug_box.isVisible():
                 self.project_instance.debug_mode = True

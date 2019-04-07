@@ -3,10 +3,10 @@ import numpy as np
 import dm3_lib as dm3
 import mat_op
 import graph
-import pickle
 import utils
 import graph_op
 import sys
+import pickle
 
 
 class SuchSoftware:
