@@ -161,10 +161,13 @@ class SuchSoftware:
         # Initialize an empty graph
         self.graph = graph.AtomicGraph()
 
-    def report(self, string, force=False):
+    def report(self, string, force=False, update=False):
         if self.debug_mode or force:
             if self.debug_obj is not None:
-                self.debug_obj('core: ' + string)
+                if not string == '':
+                    self.debug_obj('core: ' + string, update)
+                else:
+                    self.debug_obj(string, update)
             else:
                 print(string)
 
@@ -176,7 +179,7 @@ class SuchSoftware:
         self.report('    Real pos: ({}, {})'.format(self.graph.vertices[i].real_coor_x,
                                                     self.graph.vertices[i].real_coor_y), force=True)
         self.report('    Atomic Species: {}'.format(self.graph.vertices[i].atomic_species), force=True)
-        self.report('    Probability vector: {}'.format(self.graph.vertices[i].prob_vector), force=True)
+        self.report(('    Probability vector: {}'.format(self.graph.vertices[i].prob_vector).replace('\n', '')), force=True)
 
     def image_report(self):
         self.summarize_stats()
@@ -298,25 +301,25 @@ class SuchSoftware:
                     self.graph.vertices[i].reset_prob_vector()
                     graph_op.apply_angle_score(self.graph, i, self.dist_3_std, self.dist_4_std, self.dist_5_std,
                                                self.num_selections)
-            self.report('    Angle analysis complete.', force=True)
+            self.report('    Angle analysis complete.', force=True, update=True)
             self.report('    Analyzing intensities...', force=True)
             for i in range(0, self.num_columns):
                 if not self.graph.vertices[i].set_by_user:
                     graph_op.apply_intensity_score(self.graph, i, self.num_selections, self.intensities[self.alloy],
                                                    self.dist_8_std)
-            self.report('    Intensity analysis complete.', force=True)
+            self.report('    Intensity analysis complete.', force=True, update=True)
             self.report('    Running basic level definition...', force=True)
             self.report('        Could not set basic levels because it is not implemented', force=True)
             self.report('    Levels set.', force=True)
             self.report('    Finding particle....', force=True)
-            graph_op.precipitate_controller(self.graph, i)
+            graph_op.precipitate_controller(self.graph, starting_index)
             self.report('    Found particle.', force=True)
             self.report('    Running advanced level definition algorithm....', force=True)
-            graph_op.set_levels(self.graph, i, self.report, self.num_selections)
-            self.report('    Levels set.', force=True)
+            graph_op.set_levels(self.graph, starting_index, self.report, self.graph.vertices[starting_index].level, self.num_selections)
+            self.report('    Levels set.', force=True, update=True)
             self.report('    adding edges to graph...', force=True)
             self.graph.redraw_edges()
-            self.report('    Edges added.', force=True)
+            self.report('    Edges added.', force=True, update=True)
             self.report('    Summarizing stats', force=True)
             self.summarize_stats()
             self.report('    Starting weak untangling...', force=True)

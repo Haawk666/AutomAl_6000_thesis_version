@@ -139,7 +139,7 @@ def set_levels(graph_obj, i, report, level, num_selections):
 
     report('        Setting levels of matrix columns...', force=True)
     graph_obj.reset_all_flags()
-    set_matrix_levels(i, level, num_selections, report)
+    set_matrix_levels(graph_obj, i, level, report)
     report('        Matrix levels set.', force=True)
     report('        Setting levels of particle columns...', force=True)
     complete = False
@@ -225,7 +225,7 @@ def set_matrix_levels(graph_obj, i, level, report):
             reciprocal = graph_obj.test_reciprocality(i, indices[x])
 
             if not graph_obj.vertices[indices[x]].flag_1 and not graph_obj.vertices[i].is_edge_column and reciprocal:
-                graph_obj.mesh_levels(indices[x], next_level)
+                set_matrix_levels(graph_obj, indices[x], next_level, report)
 
 
 def set_particle_levels(graph_obj, i, level, report):

@@ -136,13 +136,13 @@ class MainUI(QtWidgets.QMainWindow):
         self.graphicScene_6.addPixmap(self.graphic)
         self.graphicScene_7 = QtWidgets.QGraphicsScene()
         self.graphicScene_7.addPixmap(self.graphic)
-        self.graphicsView_1 = QtWidgets.QGraphicsView(self.graphicScene_1)
-        self.graphicsView_2 = QtWidgets.QGraphicsView(self.graphicScene_2)
-        self.graphicsView_3 = QtWidgets.QGraphicsView(self.graphicScene_3)
-        self.graphicsView_4 = QtWidgets.QGraphicsView(self.graphicScene_4)
-        self.graphicsView_5 = QtWidgets.QGraphicsView(self.graphicScene_5)
-        self.graphicsView_6 = QtWidgets.QGraphicsView(self.graphicScene_6)
-        self.graphicsView_7 = QtWidgets.QGraphicsView(self.graphicScene_7)
+        self.graphicsView_1 = GUI_elements.ZGraphicsView(self.graphicScene_1, self.key_press)
+        self.graphicsView_2 = GUI_elements.ZGraphicsView(self.graphicScene_2, self.key_press)
+        self.graphicsView_3 = GUI_elements.ZGraphicsView(self.graphicScene_3, self.key_press)
+        self.graphicsView_4 = GUI_elements.ZGraphicsView(self.graphicScene_4, self.key_press)
+        self.graphicsView_5 = GUI_elements.ZGraphicsView(self.graphicScene_5, self.key_press)
+        self.graphicsView_6 = GUI_elements.ZGraphicsView(self.graphicScene_6, self.key_press)
+        self.graphicsView_7 = GUI_elements.ZGraphicsView(self.graphicScene_7, self.key_press)
 
         self.tabs = QtWidgets.QTabWidget()
 
@@ -200,9 +200,38 @@ class MainUI(QtWidgets.QMainWindow):
                                                         core.SuchSoftware.version[1],
                                                         core.SuchSoftware.version[2]), force=True)
 
-    def receive_console_output(self, string):
-        self.terminal_window.appendPlainText(string)
-        self.terminal_window.repaint()
+    def key_press(self, key):
+        if self.project_loaded and not self.selected_column == -1:
+            if self.tabs.currentIndex() == 0:
+                pass
+            if self.tabs.currentIndex() == 1:
+                pass
+            if self.tabs.currentIndex() == 2:
+                if key == QtCore.Qt.Key_1:
+                    self.set_species(3)
+                elif key == QtCore.Qt.Key_2:
+                    self.set_species(5)
+                elif key == QtCore.Qt.Key_3:
+                    self.set_species(0)
+                elif key == QtCore.Qt.Key_4:
+                    self.set_species(1)
+            if self.tabs.currentIndex() == 3:
+                pass
+            if self.tabs.currentIndex() == 4:
+                pass
+            if self.tabs.currentIndex() == 5:
+                pass
+            if self.tabs.currentIndex() == 6:
+                pass
+
+    def receive_console_output(self, string, update):
+        if not string == '':
+            self.terminal_window.appendPlainText(string)
+            self.terminal_window.repaint()
+        else:
+            self.terminal_window.repaint()
+        if update:
+            self.update_display()
 
     def report(self, string, force=False):
         if self.debug_mode or force:
@@ -499,20 +528,26 @@ class MainUI(QtWidgets.QMainWindow):
                 else:
                     h = 6
 
-                self.project_instance.graph.vertices[self.selected_column].force_species(h)
+                self.set_species(h)
 
-                self.control_window.lbl_column_species.setText(
-                    'Atomic species: ' + self.project_instance.graph.vertices[self.selected_column].atomic_species)
-                self.control_window.lbl_confidence.setText(
-                    'Confidence: ' + str(self.project_instance.graph.vertices[self.selected_column].confidence))
-                self.project_instance.graph.vertices[self.selected_column].flag_1 = False
-                self.overlay_objects[self.selected_column] =\
-                    self.set_species_colors(self.overlay_objects[self.selected_column], self.selected_column)
+    def set_species(self, h):
 
-                self.control_window.draw_histogram()
+        if self.project_loaded and not self.selected_column == -1:
 
-                self.overlay_objects[self.selected_column] = self.set_species_colors(
-                    self.overlay_objects[self.selected_column], self.selected_column)
+            self.project_instance.graph.vertices[self.selected_column].force_species(h)
+
+            self.control_window.lbl_column_species.setText(
+                'Atomic species: ' + self.project_instance.graph.vertices[self.selected_column].atomic_species)
+            self.control_window.lbl_confidence.setText(
+                'Confidence: ' + str(self.project_instance.graph.vertices[self.selected_column].confidence))
+            self.project_instance.graph.vertices[self.selected_column].flag_1 = False
+            self.overlay_objects[self.selected_column] = \
+                self.set_species_colors(self.overlay_objects[self.selected_column], self.selected_column)
+
+            self.control_window.draw_histogram()
+
+            self.overlay_objects[self.selected_column] = self.set_species_colors(
+                self.overlay_objects[self.selected_column], self.selected_column)
 
     def set_level_trigger(self):
 

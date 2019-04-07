@@ -3,6 +3,44 @@ import numpy as np
 import core
 
 
+class ZGraphicsView(QtWidgets.QGraphicsView):
+
+    def __init__(self, parent=None, key_press_handler=None):
+        super(ZGraphicsView, self).__init__(parent)
+
+        self.key_press_handler = key_press_handler
+
+    def wheelEvent(self, event):
+        # Zoom Factor
+        zoom_in_factor = 1.25
+        zoom_out_factor = 1 / zoom_in_factor
+
+        # Set Anchors
+        self.setTransformationAnchor(QtWidgets.QGraphicsView.NoAnchor)
+        self.setResizeAnchor(QtWidgets.QGraphicsView.NoAnchor)
+
+        # Save the scene pos
+        oldPos = self.mapToScene(event.pos())
+
+        # Zoom
+        if event.angleDelta().y() > 0:
+            zoomFactor = zoom_in_factor
+        else:
+            zoomFactor = zoom_out_factor
+        self.scale(zoomFactor, zoomFactor)
+
+        # Get the new position
+        newPos = self.mapToScene(event.pos())
+
+        # Move scene to old position
+        delta = newPos - oldPos
+        self.translate(delta.x(), delta.y())
+
+    def keyPressEvent(self, event):
+        if self.key_press_handler is not None:
+            self.key_press_handler(event.key())
+
+
 class EmittingStream(QtCore.QObject):
 
     textWritten = QtCore.pyqtSignal(str)
@@ -18,6 +56,7 @@ class Terminal(QtWidgets.QPlainTextEdit):
 
         self.setReadOnly(True)
         self.setWordWrapMode(QtGui.QTextOption.NoWrap)
+        self.setLineWrapMode(QtWidgets.QPlainTextEdit.NoWrap)
 
 
 class InteractivePosColumn(QtWidgets.QGraphicsEllipseItem):
