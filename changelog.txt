@@ -39,8 +39,9 @@ New features in 0.0.0:
   species to Aluminium, 2 for Magnesium, 3 for Silicon and 4 for Copper. Use the '+' key to easily
   toggle the column height between 0, 1 and 2. (0 corresponds to the 0-plane, 1 corresponds to the
   1/2-plane and 2 is a special height that is intended for special cases, such as beta prime corners).
-  If you have 'enable move' enabled, you can use the arrow-keys to move the selected column at pixel
-  increments. You can now also cycle through the tabs of the central widget with the space-key.
+  If you have 'enable move' enabled, you can use the wasd-keys to move the selected column at pixel
+  increments. You can now also cycle through the tabs of the central widget with the 'x' and 'z'-key.
+  (x takes you to the right, z to the left)
   
 - Improved the visual cue in overlay and graph-views of the currently selected column.
   

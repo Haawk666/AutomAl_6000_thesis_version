@@ -78,8 +78,6 @@ class InteractivePosColumn(QtWidgets.QGraphicsEllipseItem):
         super().__init__(*args)
 
         self.obj = None
-        self.x_0 = 0
-        self.y_0 = 0
         self.i = 0
 
     def reference_object(self, obj, i):
@@ -88,9 +86,6 @@ class InteractivePosColumn(QtWidgets.QGraphicsEllipseItem):
         self.i = i
 
     def mouseReleaseEvent(self, event: 'QtWidgets.QGraphicsEllipseItem.mouseReleaseEvent'):
-
-        self.x_0 = np.floor(self.x() + self.obj.project_instance.r)
-        self.y_0 = np.floor(self.y() + self.obj.project_instance.r)
 
         if not self.obj.control_window.chb_move.isChecked():
 
@@ -115,8 +110,8 @@ class InteractivePosColumn(QtWidgets.QGraphicsEllipseItem):
         else:
 
             self.obj.control_window.lbl_column_index.setText('Column index: ' + str(self.i))
-            self.obj.control_window.lbl_column_x_pos.setText('x: ' + str(self.x_0))
-            self.obj.control_window.lbl_column_y_pos.setText('y: ' + str(self.y_0))
+            self.obj.control_window.lbl_column_x_pos.setText('x: ' + str(self.x()))
+            self.obj.control_window.lbl_column_y_pos.setText('y: ' + str(self.y()))
             self.obj.control_window.lbl_column_peak_gamma.setText(
                 'Peak gamma: ' + str(self.obj.project_instance.graph.vertices[self.i].peak_gamma))
             self.obj.control_window.lbl_column_species.setText(
@@ -147,8 +142,6 @@ class InteractiveOverlayColumn(QtWidgets.QGraphicsEllipseItem):
         super().__init__(*args)
 
         self.obj = None
-        self.x_0 = 0
-        self.y_0 = 0
         self.i = 0
 
     def reference_object(self, obj, i):
@@ -157,9 +150,6 @@ class InteractiveOverlayColumn(QtWidgets.QGraphicsEllipseItem):
         self.i = i
 
     def mouseReleaseEvent(self, event: 'QtWidgets.QGraphicsEllipseItem.mouseReleaseEvent'):
-
-        self.x_0 = int(np.floor(self.x() + np.round(self.obj.project_instance.r / 2)))
-        self.y_0 = int(np.floor(self.y() + np.round(self.obj.project_instance.r / 2)))
 
         if not self.obj.control_window.chb_move.isChecked():
 
@@ -184,8 +174,8 @@ class InteractiveOverlayColumn(QtWidgets.QGraphicsEllipseItem):
         else:
 
             self.obj.control_window.lbl_column_index.setText('Column index: ' + str(self.i))
-            self.obj.control_window.lbl_column_x_pos.setText('x: ' + str(self.x_0))
-            self.obj.control_window.lbl_column_y_pos.setText('y: ' + str(self.y_0))
+            self.obj.control_window.lbl_column_x_pos.setText('x: ' + str(self.x()))
+            self.obj.control_window.lbl_column_y_pos.setText('y: ' + str(self.y()))
             self.obj.control_window.lbl_column_peak_gamma.setText(
                 'Peak gamma: ' + str(self.obj.project_instance.graph.vertices[self.i].peak_gamma))
             self.obj.control_window.lbl_column_species.setText(
@@ -208,8 +198,6 @@ class InteractiveGraphVertex(QtWidgets.QGraphicsEllipseItem):
         super().__init__(*args)
 
         self.obj = None
-        self.x_0 = 0
-        self.y_0 = 0
         self.i = 0
 
     def reference_object(self, obj, i):
@@ -219,8 +207,6 @@ class InteractiveGraphVertex(QtWidgets.QGraphicsEllipseItem):
 
     def mouseReleaseEvent(self, event: 'QtWidgets.QGraphicsEllipseItem.mouseReleaseEvent'):
 
-        self.x_0 = int(np.floor(self.x() + np.round(self.obj.project_instance.r / 2)))
-        self.y_0 = int(np.floor(self.y() + np.round(self.obj.project_instance.r / 2)))
         self.obj.selected_column = self.i
 
         if not self.obj.control_window.chb_move.isChecked():
@@ -246,8 +232,8 @@ class InteractiveGraphVertex(QtWidgets.QGraphicsEllipseItem):
         else:
 
             self.obj.control_window.lbl_column_index.setText('Column index: ' + str(self.i))
-            self.obj.control_window.lbl_column_x_pos.setText('x: ' + str(self.x_0))
-            self.obj.control_window.lbl_column_y_pos.setText('y: ' + str(self.y_0))
+            self.obj.control_window.lbl_column_x_pos.setText('x: ' + str(self.x()))
+            self.obj.control_window.lbl_column_y_pos.setText('y: ' + str(self.y()))
             self.obj.control_window.lbl_column_peak_gamma.setText(
                 'Peak gamma: ' + str(self.obj.project_instance.graph.vertices[self.i].peak_gamma))
             self.obj.control_window.lbl_column_species.setText(

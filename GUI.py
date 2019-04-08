@@ -36,6 +36,8 @@ class MainUI(QtWidgets.QMainWindow):
         self.pos_objects = np.ndarray([1], dtype=type(dummy_instance))
         dummy_instance = GUI_elements.InteractiveOverlayColumn(0, 0, 0, 0)
         self.overlay_objects = np.ndarray([1], dtype=type(dummy_instance))
+        dummy_instance = GUI_elements.InteractiveGraphVertex(0, 0, 0, 0)
+        self.vertex_objects = np.ndarray([1], dtype=type(dummy_instance))
 
         self.boarder_line_objects = np.ndarray([1], dtype=type(QtWidgets.QGraphicsLineItem()))
         self.boarder_line_objects[0] = QtWidgets.QGraphicsLineItem(1.0, 2.0, 3.0, 4.0)
@@ -202,19 +204,22 @@ class MainUI(QtWidgets.QMainWindow):
 
     def keyPressEvent(self, event):
 
-        if event.key() == QtCore.Qt.Key_Space:
+        if event.key() == QtCore.Qt.Key_X:
             if self.tabs.currentIndex() == 6:
                 self.tabs.setCurrentIndex(0)
             else:
                 self.tabs.setCurrentIndex(self.tabs.currentIndex() + 1)
+        if event.key() == QtCore.Qt.Key_Z:
+            if self.tabs.currentIndex() == 0:
+                self.tabs.setCurrentIndex(6)
+            else:
+                self.tabs.setCurrentIndex(self.tabs.currentIndex() - 1)
 
     def key_press(self, key):
         if self.project_loaded and not self.selected_column == -1:
             if self.tabs.currentIndex() == 0:
                 pass
-            if self.tabs.currentIndex() == 1:
-                pass
-            if self.tabs.currentIndex() == 2:
+            if self.tabs.currentIndex() == 1 or self.tabs.currentIndex() == 2 or self.tabs.currentIndex() == 3:
                 if key == QtCore.Qt.Key_1:
                     self.set_species(3)
                 elif key == QtCore.Qt.Key_2:
@@ -223,8 +228,27 @@ class MainUI(QtWidgets.QMainWindow):
                     self.set_species(0)
                 elif key == QtCore.Qt.Key_4:
                     self.set_species(1)
-            if self.tabs.currentIndex() == 3:
-                pass
+                elif key == QtCore.Qt.Key_Plus:
+                    if self.project_instance.graph.vertices[self.selected_column].level == 0:
+                        self.set_level(1)
+                    elif self.project_instance.graph.vertices[self.selected_column].level == 1:
+                        self.set_level(2)
+                    elif self.project_instance.graph.vertices[self.selected_column].level == 2:
+                        self.set_level(0)
+                    else:
+                        self.report('Something is wrong! Could not set column level...', force=True)
+                elif key == QtCore.Qt.Key_W and self.control_window.chb_move.isChecked():
+                    self.pos_objects[self.selected_column].moveBy(0.0, -1.0)
+                    self.overlay_objects[self.selected_column].moveBy(0.0, -1.0)
+                elif key == QtCore.Qt.Key_S and self.control_window.chb_move.isChecked():
+                    self.pos_objects[self.selected_column].moveBy(0.0, 1.0)
+                    self.overlay_objects[self.selected_column].moveBy(0.0, 1.0)
+                elif key == QtCore.Qt.Key_A and self.control_window.chb_move.isChecked():
+                    self.pos_objects[self.selected_column].moveBy(-1.0, 0.0)
+                    self.overlay_objects[self.selected_column].moveBy(-1.0, 0.0)
+                elif key == QtCore.Qt.Key_D and self.control_window.chb_move.isChecked():
+                    self.pos_objects[self.selected_column].moveBy(1.0, 0.0)
+                    self.overlay_objects[self.selected_column].moveBy(1.0, 0.0)
             if self.tabs.currentIndex() == 4:
                 pass
             if self.tabs.currentIndex() == 5:
@@ -566,15 +590,18 @@ class MainUI(QtWidgets.QMainWindow):
             item, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Level", items, 0, False)
             if ok_pressed and item:
                 if item == 'down':
-                    self.project_instance.graph.vertices[self.selected_column].level = 0
+                    self.set_level(0)
                 elif item == 'up':
-                    self.project_instance.graph.vertices[self.selected_column].level = 1
+                    self.set_level(0)
                 elif item == 'other':
-                    self.project_instance.graph.vertices[self.selected_column].level = 2
-                self.control_window.lbl_column_level.setText(
-                    'Level: ' + str(self.project_instance.graph.vertices[self.selected_column].level))
-                self.overlay_objects[self.selected_column] = self.set_species_colors(
-                    self.overlay_objects[self.selected_column], self.selected_column)
+                    self.set_level(0)
+
+    def set_level(self, level):
+        self.project_instance.graph.vertices[self.selected_column].level = level
+        self.control_window.lbl_column_level.setText(
+            'Level: ' + str(self.project_instance.graph.vertices[self.selected_column].level))
+        self.overlay_objects[self.selected_column] = self.set_species_colors(
+            self.overlay_objects[self.selected_column], self.selected_column)
 
     def continue_detection_trigger(self):
 
@@ -866,17 +893,21 @@ class MainUI(QtWidgets.QMainWindow):
         self.statusBar().showMessage('Working...')
         self.pos_objects[self.selected_column].setFlag(QtWidgets.QGraphicsItem.ItemIsPanel)
 
-        x_coor = self.pos_objects[self.selected_column].x_0
-        y_coor = self.pos_objects[self.selected_column].y_0
+        x_coor = self.pos_objects[self.selected_column].x() + self.project_instance.r
+        y_coor = self.pos_objects[self.selected_column].y() + self.project_instance.r
+        self.pos_objects[self.selected_column].x_0 = np.floor(self.pos_objects[self.selected_column].x() + self.project_instance.r)
+        self.pos_objects[self.selected_column].y_0 = np.floor(self.pos_objects[self.selected_column].y() + self.project_instance.r)
         r = self.project_instance.r
 
-        self.project_instance.graph.vertices[self.selected_column].im_coor_x = x_coor
-        self.project_instance.graph.vertices[self.selected_column].im_coor_y = y_coor
+        self.project_instance.graph.vertices[self.selected_column].real_coor_x = x_coor
+        self.project_instance.graph.vertices[self.selected_column].real_coor_y = y_coor
+        self.project_instance.graph.vertices[self.selected_column].im_coor_x = int(np.floor(x_coor))
+        self.project_instance.graph.vertices[self.selected_column].im_coor_y = int(np.floor(y_coor))
 
         if self.project_instance.im_width - r > x_coor > r and self.project_instance.im_height - r > y_coor > r:
 
             self.project_instance.graph.vertices[self.selected_column].avg_gamma, self.project_instance.graph.vertices[
-                self.selected_column].peak_gamma = mat_op.average(self.project_instance.im_mat, x_coor, y_coor, r)
+                self.selected_column].peak_gamma = mat_op.average(self.project_instance.im_mat, int(x_coor), int(y_coor), r)
 
         else:
 
@@ -1240,8 +1271,8 @@ class MainUI(QtWidgets.QMainWindow):
             for i in range(0, self.project_instance.num_columns):
 
                 custom_ellipse_pos = GUI_elements.InteractivePosColumn(0, 0, 2 * r, 2 * r)
-                custom_ellipse_pos.moveBy(self.project_instance.graph.vertices[i].im_coor_x - r,
-                                          self.project_instance.graph.vertices[i].im_coor_y - r)
+                custom_ellipse_pos.moveBy(self.project_instance.graph.vertices[i].real_coor_x - r,
+                                          self.project_instance.graph.vertices[i].real_coor_y - r)
                 custom_ellipse_pos.reference_object(self, i)
 
                 if self.project_instance.graph.vertices[i].show_in_overlay:
@@ -1416,6 +1447,9 @@ class MainUI(QtWidgets.QMainWindow):
 
             # Draw vertices
 
+            dummy_instance = GUI_elements.InteractiveGraphVertex(0, 0, 0, 0)
+            self.vertex_objects = np.ndarray([1], dtype=type(dummy_instance))
+
             for i in range(0, self.project_instance.num_columns):
 
                 custom_ellipse_overlay = GUI_elements.InteractiveGraphVertex(0, 0, r, r)
@@ -1431,6 +1465,11 @@ class MainUI(QtWidgets.QMainWindow):
                 custom_ellipse_overlay.setPen(self.black_pen)
 
                 custom_ellipse_overlay.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable)
+
+                if self.vertex_objects.shape[0] == 1:
+                    self.vertex_objects[0] = custom_ellipse_overlay
+                else:
+                    self.vertex_objects = np.append(self.vertex_objects, custom_ellipse_overlay)
 
                 self.graphicScene_6.addItem(custom_ellipse_overlay)
 
