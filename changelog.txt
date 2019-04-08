@@ -29,7 +29,11 @@ New features in 0.0.0:
   run a script that loads the instance in a compatible version and transforms the data to the current
   version. Hopefully this will ensure backwards compability with save-states through all versions!
   (Adding a new attribute to the SuchSoftware, AtomicGraph, Egde or Vertex classes breaks save-file
-  compability, which is a hassle...)
+  compability, which is a hassle...) Note: Version compatibility will only be preserved starting from
+  this version (0.0.0). Due to how pickle works, it was not possible to write a dynamic script to
+  handle version conversion from the previous version. I had to make this conversion by writing two
+  different scripts that must be run excplicitly. If file convertion from the previous version to
+  version 0.0.0 is needed, send me the files and I can convert them and return them manually!
   
 - Added some keyboard shortcuts: When you have a column selected, press 1 to instantly change its
   species to Aluminium, 2 for Magnesium, 3 for Silicon and 4 for Copper. Use the '+' key to easily
@@ -66,14 +70,14 @@ New features in 0.0.0:
 
 Bugfixes:
 -----------------
-- Fixed some of the buggines in the overlay filters, but works still remains on this.
+- Fixed some of the buggines in the overlay filters, but work still remains on this.
 
 - A lot of code has been changed in this update, and not much time for testing, so many new bugs have
   probarbly been introduced, Yehaaw!
 
 - Fixed the crashing when closing and loading projects bug. (I think...)
 
-- Tried to clean the code as much as time allowed (Still a lot of cleaning to be done!)
+- Tried to clean the code as much as time allowed (Still a lot of cleaning and optimizationto be done!)
 
 
 other:

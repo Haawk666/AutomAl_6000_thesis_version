@@ -7,7 +7,6 @@ import utils
 import graph_op
 import sys
 import pickle
-import compatibility
 
 
 class SuchSoftware:
@@ -51,7 +50,6 @@ class SuchSoftware:
         self.scale = 1
         self.im_height = 0
         self.im_width = 0
-        self.version_saved = None
 
         if not (filename_full == 'Empty' or filename_full == 'empty'):
             dm3f = dm3.DM3(self.filename_full)
@@ -217,32 +215,13 @@ class SuchSoftware:
         with open(filename_full, 'wb') as f:
             _ = self.debug_obj
             self.debug_obj = None
-            self.version_saved = self.version
             pickle.dump(self, f, pickle.HIGHEST_PROTOCOL)
             self.debug_obj = _
 
     @staticmethod
-    def load(filename_full, report=None):
+    def load(filename_full):
         with open(filename_full, 'rb') as f:
-            try:
-                obj = pickle.load(f)
-            except:
-                obj = None
-                if report is not None:
-                    report('core: Failed to load save-file!', update=True)
-                else:
-                    print('core: Failed to load save-file!')
-            else:
-                if not obj.version_saved == SuchSoftware.version:
-                    if report is not None:
-                        report('core: Attempted to load uncompatible save-file. Running conversion script...', update=False)
-                    else:
-                        print('core: Attempted to load uncompatible save-file. Running conversion script...')
-                    obj = compatibility.convert(obj, obj.version, SuchSoftware.version)
-                    if obj is None:
-                        report('core: Failed to convert save-file!', update=True)
-                    else:
-                        print('core: Failed to convert save-file!')
+            obj = pickle.load(f)
             return obj
 
     def column_detection(self, search_type='s'):

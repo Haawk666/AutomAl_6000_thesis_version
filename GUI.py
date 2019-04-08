@@ -12,7 +12,6 @@ import numpy.core._dtype_ctypes  # This is needed because of a bug in pyinstalle
 import mat_op
 import core
 import GUI_elements
-import compatibility
 
 
 class MainUI(QtWidgets.QMainWindow):
@@ -265,23 +264,20 @@ class MainUI(QtWidgets.QMainWindow):
         filename = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', '')
         if filename[0]:
             self.statusBar().showMessage('Working...')
-            try:
-                self.project_instance = core.SuchSoftware.load(filename[0])
-            except ModuleNotFoundError:
-                self.report('    Outdated save-file detected. Running compatibility script', force=True)
-                upgrade_obj = compatibility.Upgrade(filename[0], self.version, core.SuchSoftware.version, self.report)
-                self.project_instance = upgrade_obj.load()
-
-            self.project_instance.debug_obj = self.receive_console_output
-            if self.control_window.debug_box.isVisible():
-                self.project_instance.debug_mode = True
+            self.project_instance = core.SuchSoftware.load(filename[0])
+            if self.project_instance is not None:
+                self.project_instance.debug_obj = self.receive_console_output
+                if self.control_window.debug_box.isVisible():
+                    self.project_instance.debug_mode = True
+                else:
+                    self.project_instance.debug_mode = False
+                self.control_instance = None
+                self.project_loaded = True
+                self.savefile = filename[0]
+                self.update_display()
+                self.report('Loaded {}'.format(filename[0]), force=True)
             else:
-                self.project_instance.debug_mode = False
-            self.control_instance = None
-            self.project_loaded = True
-            self.savefile = filename[0]
-            self.update_display()
-            self.report('Loaded {}'.format(filename[0]), force=True)
+                self.report('File was not loaded. Something must have gone wrong!', force=True)
         else:
             self.statusBar().showMessage('Ready')
 
@@ -308,9 +304,8 @@ class MainUI(QtWidgets.QMainWindow):
         self.control_window.empty_display()
         self.report('Closed project', force=True)
 
-    @staticmethod
-    def exit_trigger():
-        QtWidgets.qApp.quit()
+    def exit_trigger(self):
+        self.close()
 
     def set_threshold_trigger(self):
 
