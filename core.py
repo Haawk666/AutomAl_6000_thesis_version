@@ -174,6 +174,7 @@ class SuchSoftware:
                 print(string)
 
     def vertex_report(self, i):
+        self.report(' ', force=True)
         self.report('Vertex properties: ------------', force=True)
         self.report('    Index: {}'.format(self.graph.vertices[i].i), force=True)
         self.report('    Image pos: ({}, {})'.format(self.graph.vertices[i].im_coor_x,
@@ -182,12 +183,15 @@ class SuchSoftware:
                                                     self.graph.vertices[i].real_coor_y), force=True)
         self.report('    Atomic Species: {}'.format(self.graph.vertices[i].atomic_species), force=True)
         self.report(('    Probability vector: {}'.format(self.graph.vertices[i].prob_vector).replace('\n', '')), force=True)
+        self.report(' ', force=True)
 
     def image_report(self):
         self.summarize_stats()
+        self.report(' ', force=True)
         self.report('Project properties: ---------', force=True)
         for line in iter(self.display_stats_string.splitlines()):
             self.report('    {}'.format(line), force=True)
+        self.report(' ', force=True)
 
     def set_alloy_mat(self, alloy=0):
 
@@ -246,6 +250,7 @@ class SuchSoftware:
             return obj
 
     def column_detection(self, search_type='s'):
+        self.report(' ', force=True)
         if self.num_columns == 0:
             self.report('Starting column detection. Search mode is \'{}\''.format(search_type), force=True)
         else:
@@ -308,10 +313,12 @@ class SuchSoftware:
         self.calc_avg_gamma()
         self.summarize_stats()
         self.report('Column detection complete! Found {} columns'.format(self.num_columns), force=True)
+        self.report(' ', force=True)
 
     def column_characterization(self, starting_index, search_type=0):
 
         if search_type == 0:
+            self.report(' ', force=True)
             self.report('Starting column characterization from vertex {}...'.format(starting_index), force=True)
             self.report('    Mapping spatial locality...', force=True)
             self.graph.map_spatial_neighbours()
@@ -348,6 +355,7 @@ class SuchSoftware:
             self.report('    Starting strong untangling...', force=True)
             self.report('        Could not start strong untangling because it is not implemented yet!', force=True)
             self.report('Column characterization complete.', force=True)
+            self.report(' ', force=True)
 
     def calc_avg_gamma(self):
         if self.num_columns > 0:
@@ -563,8 +571,7 @@ class SuchSoftware:
 
     def build_stat_string(self):
 
-        self.display_stats_string = ('Statistics:\n\n'
-            'Number of detected columns: ' + str(self.num_columns) + '\n'
+        self.display_stats_string = ('Number of detected columns: ' + str(self.num_columns) + '\n'
             'Number of detected precipitate columns: ' + str(self.num_precipitate_columns) + '\n\n'
             'Number of inconsistencies: ' + str(self.num_inconsistencies) + '\n'
             'Number of popular: ' + str(self.num_popular) + '\n'
@@ -613,7 +620,7 @@ class SuchSoftware:
             'Number procentage of precipitate Al: ' + str(self.precipitate_number_percentage_al) + '\n'
             'Number procentage of precipitate Ag: ' + str(self.precipitate_number_percentage_ag) + '\n'
             'Number procentage of precipitate Mg: ' + str(self.precipitate_number_percentage_mg) + '\n'
-            'Number procentage of precipitate Un: ' + str(self.precipitate_number_percentage_un) + '\n\n')
+            'Number procentage of precipitate Un: ' + str(self.precipitate_number_percentage_un))
 
     def redraw_search_mat(self):
 

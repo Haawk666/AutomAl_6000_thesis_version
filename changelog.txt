@@ -25,7 +25,7 @@ New features in 0.0.0:
   different, and this seems to have been a slight improvement. No other changes have been made to the
   algorithms though, as the focus of this update has been to prepare the software for future work.
   
-- Implemented better version handling. If the core fails to instantiate from a save-file, it will
+- Implemented better version handling. If the core detects a save-file from a previous version, it will
   run a script that loads the instance in a compatible version and transforms the data to the current
   version. Hopefully this will ensure backwards compability with save-states through all versions!
   (Adding a new attribute to the SuchSoftware, AtomicGraph, Egde or Vertex classes breaks save-file
@@ -40,8 +40,8 @@ New features in 0.0.0:
   toggle the column height between 0, 1 and 2. (0 corresponds to the 0-plane, 1 corresponds to the
   1/2-plane and 2 is a special height that is intended for special cases, such as beta prime corners).
   If you have 'enable move' enabled, you can use the wasd-keys to move the selected column at pixel
-  increments. You can now also cycle through the tabs of the central widget with the 'x' and 'z'-key.
-  (x takes you to the right, z to the left)
+  increments (Make sure the central widget has focus). You can now also cycle through the tabs of the
+  central widget with the 'x' and 'z'-key. (x takes you to the right, z to the left)
   
 - Improved the visual cue in overlay and graph-views of the currently selected column.
   
@@ -55,10 +55,11 @@ New features in 0.0.0:
   
 - The tab-views are now linked, meaning that if you zoom in and translate your view to a specific area
   in the graph-tab, when you switch to for instance the overlay-tab, it will be zoomed in and translated
-  to the same area. This allows you to swiftly switch between views of the same image feature.
+  to the same area. This allows you to swiftly switch between views of the same image feature. In the 
+  future I plan to have a checkbox that toggles this feature.
   
 - Added a vertex report button that will print a report of vertex/column properties to the right-side
-  window. Also added a button 'print index', which will print the index of the column to the console,
+  window. Also added a button 'print index', which will print only the index of the column to the console,
   in case you need to remember it for later. (No more writing down full pages of vertex indices by hand).
   Pressing the 'stats' button in the image controls group will now also report image and particle stats
   to the console window, instead of showing it in a pop-up-box. This is convenient in many ways.
@@ -78,7 +79,7 @@ Bugfixes:
 
 - Fixed the crashing when closing and loading projects bug. (I think...)
 
-- Tried to clean the code as much as time allowed (Still a lot of cleaning and optimizationto be done!)
+- Tried to clean the code as much as time allowed (Still a lot of cleaning and optimization to be done!)
 
 
 other:

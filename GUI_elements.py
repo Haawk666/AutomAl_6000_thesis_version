@@ -89,23 +89,24 @@ class InteractivePosColumn(QtWidgets.QGraphicsEllipseItem):
 
         if not self.obj.control_window.chb_move.isChecked():
 
-            self.obj.column_selected(self.i)
-
-            if self.obj.previous_pos_obj is None:
-                pass
-            else:
+            if self.obj.previous_pos_obj is not None:
                 self.obj.pos_objects[self.obj.previous_pos_obj.i].unselect()
 
-            if self.obj.previous_overlay_obj is None:
-                pass
-            else:
+            if self.obj.previous_overlay_obj is not None:
                 self.obj.overlay_objects[self.obj.previous_overlay_obj.i].unselect()
+
+            if self.obj.previous_vertex_obj is not None:
+                self.obj.vertex_objects[self.obj.previous_vertex_obj.i].unselect()
+
+            self.obj.column_selected(self.i)
 
             self.select()
             self.obj.overlay_objects[self.i].select()
+            self.obj.vertex_objects[self.i].select()
 
-            self.obj.previous_pos_obj = self
             self.obj.previous_overlay_obj = self.obj.overlay_objects[self.i]
+            self.obj.previous_pos_obj = self
+            self.obj.previous_vertex_obj = self.obj.vertex_objects[self.i]
 
         else:
 
@@ -153,23 +154,24 @@ class InteractiveOverlayColumn(QtWidgets.QGraphicsEllipseItem):
 
         if not self.obj.control_window.chb_move.isChecked():
 
-            if self.obj.previous_pos_obj is None:
-                pass
-            else:
+            if self.obj.previous_pos_obj is not None:
                 self.obj.pos_objects[self.obj.previous_pos_obj.i].unselect()
 
-            if self.obj.previous_overlay_obj is None:
-                pass
-            else:
+            if self.obj.previous_overlay_obj is not None:
                 self.obj.overlay_objects[self.obj.previous_overlay_obj.i].unselect()
+
+            if self.obj.previous_vertex_obj is not None:
+                self.obj.vertex_objects[self.obj.previous_vertex_obj.i].unselect()
 
             self.obj.column_selected(self.i)
 
             self.select()
             self.obj.pos_objects[self.i].select()
+            self.obj.vertex_objects[self.i].select()
 
             self.obj.previous_overlay_obj = self
             self.obj.previous_pos_obj = self.obj.pos_objects[self.i]
+            self.obj.previous_vertex_obj = self.obj.vertex_objects[self.i]
 
         else:
 
@@ -186,10 +188,10 @@ class InteractiveOverlayColumn(QtWidgets.QGraphicsEllipseItem):
         self.obj.selected_column = self.i
 
     def select(self):
-        pass
+        self.setPen(self.obj.yellow_pen)
 
     def unselect(self):
-        pass
+        self.obj.set_species_colors(self, self.i)
 
 
 class InteractiveGraphVertex(QtWidgets.QGraphicsEllipseItem):
@@ -211,23 +213,24 @@ class InteractiveGraphVertex(QtWidgets.QGraphicsEllipseItem):
 
         if not self.obj.control_window.chb_move.isChecked():
 
-            if self.obj.previous_pos_obj is None:
-                pass
-            else:
+            if self.obj.previous_pos_obj is not None:
                 self.obj.pos_objects[self.obj.previous_pos_obj.i].unselect()
 
-            if self.obj.previous_overlay_obj is None:
-                pass
-            else:
+            if self.obj.previous_overlay_obj is not None:
                 self.obj.overlay_objects[self.obj.previous_overlay_obj.i].unselect()
+
+            if self.obj.previous_vertex_obj is not None:
+                self.obj.vertex_objects[self.obj.previous_vertex_obj.i].unselect()
 
             self.obj.column_selected(self.i)
 
             self.select()
             self.obj.pos_objects[self.i].select()
+            self.obj.overlay_objects[self.i].select()
 
-            self.obj.previous_overlay_obj = self
+            self.obj.previous_overlay_obj = self.obj.overlay_objects[self.i]
             self.obj.previous_pos_obj = self.obj.pos_objects[self.i]
+            self.obj.previous_vertex_obj = self
 
         else:
 
@@ -242,10 +245,10 @@ class InteractiveGraphVertex(QtWidgets.QGraphicsEllipseItem):
             self.obj.control_window.lbl_confidence.setText('Confidence: ' + str(self.obj.project_instance.graph.vertices[self.i].confidence))
 
     def select(self):
-        pass
+        self.setPen(self.obj.blue_pen)
 
     def unselect(self):
-        pass
+        self.setPen(self.obj.black_pen)
 
 
 class SetIndicesDialog(QtWidgets.QDialog):

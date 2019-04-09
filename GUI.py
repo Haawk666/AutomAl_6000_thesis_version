@@ -30,6 +30,7 @@ class MainUI(QtWidgets.QMainWindow):
 
         self.previous_pos_obj = None
         self.previous_overlay_obj = None
+        self.previous_vertex_obj = None
 
         # Lists of graphical objects
         dummy_instance = GUI_elements.InteractivePosColumn(0, 0, 0, 0)
@@ -176,8 +177,29 @@ class MainUI(QtWidgets.QMainWindow):
 
         self.terminal_window = GUI_elements.Terminal()
 
+        self.btn_save_log = QtWidgets.QPushButton('Save log', self)
+        self.btn_save_log.clicked.connect(self.save_log_trigger)
+        self.btn_save_log.setMaximumHeight(15)
+        self.btn_save_log.setMaximumWidth(50)
+        self.btn_save_log.setFont(self.font_tiny)
+
+        self.btn_clear_log = QtWidgets.QPushButton('Clear log', self)
+        self.btn_clear_log.clicked.connect(self.clear_log_trigger)
+        self.btn_clear_log.setMaximumHeight(15)
+        self.btn_clear_log.setMaximumWidth(50)
+        self.btn_clear_log.setFont(self.font_tiny)
+
+        self.terminal_btns_layout = QtWidgets.QHBoxLayout()
+        self.terminal_btns_layout.addWidget(self.btn_save_log)
+        self.terminal_btns_layout.addWidget(self.btn_clear_log)
+        self.terminal_btns_layout.addStretch()
+
+        self.terminal_display_layout = QtWidgets.QVBoxLayout()
+        self.terminal_display_layout.addLayout(self.terminal_btns_layout)
+        self.terminal_display_layout.addWidget(self.terminal_window)
+
         self.terminal_display_area = QtWidgets.QScrollArea()
-        self.terminal_display_area.setWidget(self.terminal_window)
+        self.terminal_display_area.setLayout(self.terminal_display_layout)
         self.terminal_display_area.setWidgetResizable(True)
         self.terminal_display_area.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
 
@@ -240,15 +262,19 @@ class MainUI(QtWidgets.QMainWindow):
                 elif key == QtCore.Qt.Key_W and self.control_window.chb_move.isChecked():
                     self.pos_objects[self.selected_column].moveBy(0.0, -1.0)
                     self.overlay_objects[self.selected_column].moveBy(0.0, -1.0)
+                    self.vertex_objects[self.selected_column].moveBy(0.0, -1.0)
                 elif key == QtCore.Qt.Key_S and self.control_window.chb_move.isChecked():
                     self.pos_objects[self.selected_column].moveBy(0.0, 1.0)
                     self.overlay_objects[self.selected_column].moveBy(0.0, 1.0)
+                    self.vertex_objects[self.selected_column].moveBy(0.0, 1.0)
                 elif key == QtCore.Qt.Key_A and self.control_window.chb_move.isChecked():
                     self.pos_objects[self.selected_column].moveBy(-1.0, 0.0)
                     self.overlay_objects[self.selected_column].moveBy(-1.0, 0.0)
+                    self.vertex_objects[self.selected_column].moveBy(-1.0, 0.0)
                 elif key == QtCore.Qt.Key_D and self.control_window.chb_move.isChecked():
                     self.pos_objects[self.selected_column].moveBy(1.0, 0.0)
                     self.overlay_objects[self.selected_column].moveBy(1.0, 0.0)
+                    self.vertex_objects[self.selected_column].moveBy(1.0, 0.0)
             if self.tabs.currentIndex() == 4:
                 pass
             if self.tabs.currentIndex() == 5:
@@ -314,11 +340,27 @@ class MainUI(QtWidgets.QMainWindow):
 
         if filename[0]:
             self.statusBar().showMessage('Working...')
+            self.report('Saving project', force=True)
             self.project_instance.save(filename[0])
             self.update_display()
             self.report('Saved project to {}'.format(filename[0]), force=True)
         else:
             self.statusBar().showMessage('Ready')
+
+    def save_log_trigger(self):
+        filename = QtWidgets.QFileDialog.getSaveFileName(self, 'Save file', '')
+        if filename[0]:
+            self.statusBar().showMessage('Working...')
+            self.report('Saving log file...', force=True)
+            string = self.terminal_window.toPlainText()
+            with open(filename[0], 'w') as f:
+                for line in iter(string.splitlines()):
+                    f.write(line)
+            f.close()
+            self.report('Saved log to {}'.format(filename[0]), force=True)
+
+    def clear_log_trigger(self):
+        self.terminal_window.clear()
 
     def close_trigger(self):
 
@@ -602,6 +644,10 @@ class MainUI(QtWidgets.QMainWindow):
             'Level: ' + str(self.project_instance.graph.vertices[self.selected_column].level))
         self.overlay_objects[self.selected_column] = self.set_species_colors(
             self.overlay_objects[self.selected_column], self.selected_column)
+        if level == 0:
+            self.vertex_objects[self.selected_column].setBrush(self.brush_level_0)
+        else:
+            self.vertex_objects[self.selected_column].setBrush(self.brush_level_1)
 
     def continue_detection_trigger(self):
 
@@ -1289,9 +1335,7 @@ class MainUI(QtWidgets.QMainWindow):
 
                 self.graphicScene_2.addItem(custom_ellipse_pos)
 
-            if self.selected_column == -1:
-                pass
-            else:
+            if not self.selected_column == -1:
                 self.pos_objects[self.selected_column].select()
 
     def draw_overlay(self):
@@ -1328,6 +1372,9 @@ class MainUI(QtWidgets.QMainWindow):
                         self.overlay_objects = np.append(self.overlay_objects, custom_ellipse_overlay)
 
                     self.graphicScene_3.addItem(custom_ellipse_overlay)
+
+                if not self.selected_column == -1:
+                    self.overlay_objects[self.selected_column].select()
 
     def set_species_colors(self, column_object, i):
 
@@ -1381,6 +1428,8 @@ class MainUI(QtWidgets.QMainWindow):
     def draw_atomic_graph(self, scale_factor):
 
         if self.project_loaded and self.project_instance.num_columns > 0:
+
+            self.project_instance.graph.redraw_edges()
 
             r = self.project_instance.r * scale_factor
 
@@ -1466,13 +1515,15 @@ class MainUI(QtWidgets.QMainWindow):
 
                 custom_ellipse_overlay.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable)
 
-                if self.vertex_objects.shape[0] == 1:
+                if i == 0:
                     self.vertex_objects[0] = custom_ellipse_overlay
                 else:
                     self.vertex_objects = np.append(self.vertex_objects, custom_ellipse_overlay)
 
                 self.graphicScene_6.addItem(custom_ellipse_overlay)
 
+            if not self.selected_column == -1:
+                self.vertex_objects[self.selected_column].select()
             self.red_pen.setWidth(1)
 
     def draw_atomic_sub_graph(self, scale_factor):
