@@ -18,6 +18,9 @@ class SuchSoftware:
     # Number of elements in the probability vectors
     num_selections = 7
 
+    # Number of closest neighbour that are included in local search-spaces
+    map_size = 8
+
     # Al lattice constant in picometers
     al_lattice_const = 404.95
 
@@ -161,7 +164,7 @@ class SuchSoftware:
         self.dist_8_std = 1.2
 
         # Initialize an empty graph
-        self.graph = graph.AtomicGraph()
+        self.graph = graph.AtomicGraph(map_size=self.map_size)
 
     def report(self, string, force=False, update=False):
         if self.debug_mode or force:
@@ -315,13 +318,70 @@ class SuchSoftware:
         self.report('Column detection complete! Found {} columns'.format(self.num_columns), force=True)
         self.report(' ', force=True)
 
+    def find_nearest(self, i, n, weight=6):
+
+        x_0 = self.graph.vertices[i].im_coor_x
+        y_0 = self.graph.vertices[i].im_coor_y
+
+        indices = np.ndarray([n], dtype=np.int)
+        distances = np.ndarray([n], dtype=np.float64)
+        num_found = 0
+        total_num = 0
+
+        for x in range(x_0 - weight * self.r, x_0 + weight * self.r):
+            for y in range(y_0 - weight * self.r, y_0 + weight * self.r):
+
+                if 0 <= x < self.im_width and 0 <= y < self.im_height and not (x == x_0 and y == y_0):
+
+                    if self.column_centre_mat[y, x, 0] == 1:
+                        j = self.column_centre_mat[y, x, 1]
+                        dist = self.graph.spatial_distance(i, j)
+                        if num_found == n:
+                            if dist < distances.max():
+                                ind = distances.argmax()
+                                indices[ind] = j
+                                distances[ind] = dist
+                        else:
+                            indices[num_found] = j
+                            distances[num_found] = dist
+                            num_found += 1
+                        total_num += 1
+
+        if num_found < n:
+
+            indices, distances = self.find_nearest(i, n, weight=2 * weight)
+            self.report('        Did not find enough neighbours for vertex {}. increasing search area.'.format(i), force=False)
+
+        else:
+
+            self.report('        Found {} total neighbours for vertex {}'.format(total_num, i), force=False)
+
+            # Use built-in sort instead of this home-made shit:
+            temp_indices = np.ndarray([n], dtype=np.int)
+            temp_distances = np.ndarray([n], dtype=np.float64)
+
+            for k in range(0, n):
+
+                ind = distances.argmin()
+                temp_indices[k] = indices[ind]
+                temp_distances = distances[ind]
+                distances[ind] = distances.max() + k
+
+            indices = temp_indices
+            distances = temp_distances
+
+        return list(indices), list(distances)
+
     def column_characterization(self, starting_index, search_type=0):
 
         if search_type == 0:
             self.report(' ', force=True)
             self.report('Starting column characterization from vertex {}...'.format(starting_index), force=True)
             self.report('    Mapping spatial locality...', force=True)
-            self.graph.map_spatial_neighbours()
+            self.redraw_centre_mat()
+            self.redraw_circumference_mat()
+            for i in range(0, self.num_columns):
+                self.graph.vertices[i].neighbour_indices, _ = self.find_nearest(i, self.map_size)
             self.report('    Spatial mapping complete.', force=True)
             self.report('    Analysing angles...', force=True)
             for i in range(0, self.num_columns):

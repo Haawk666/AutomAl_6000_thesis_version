@@ -71,6 +71,44 @@ class Vertex:
 
         return n
 
+    def increase_h_value(self):
+
+        changed = False
+        h = self.h_index
+
+        if h == 0 or h == 1:
+
+            self.reset_prob_vector(bias=3)
+            changed = True
+
+        elif h == 3:
+
+            self.reset_prob_vector(bias=5)
+            changed = True
+
+        return changed
+
+    def decrease_h_value(self):
+
+        changed = False
+        h = self.h_index
+
+        if h == 5:
+
+            self.reset_prob_vector(bias=3)
+            changed = True
+
+        elif h == 3:
+
+            self.reset_prob_vector()
+            self.prob_vector[0] += 0.1
+            self.prob_vector[1] += 0.1
+            self.renorm_prob_vector()
+            self.define_species()
+            changed = True
+
+        return changed
+
     def reset_prob_vector(self, bias=-1):
         self.prob_vector = np.ones([self.num_selections], dtype=np.float64)
 
@@ -170,6 +208,8 @@ class Vertex:
         elif self.level == 1:
             anti_level = 0
         elif self.level == 2:
+            anti_level = None
+        else:
             anti_level = None
         return anti_level
 
@@ -326,6 +366,14 @@ class AtomicGraph:
     def remove_vertex(self, vertex_index):
         raise NotImplemented
 
+    def increase_h(self, i):
+        changed = self.vertices[i].increase_h_value()
+        return changed
+
+    def decrease_h(self, i):
+        changed = self.vertices[i].decrease_h_value()
+        return changed
+
     def add_edge(self, vertex_a, vertex_b, index):
         self.edges.append(Edge(vertex_a, vertex_b, index))
         self.num_edges += 1
@@ -396,6 +444,9 @@ class AtomicGraph:
 
     def map_spatial_neighbours(self):
 
+        # This function is unefficient and stupid. Use column_centre_mat of the core module for this task. This function
+        # is only a back-up
+
         for i in range(0, self.num_vertices):
 
             all_distances = []
@@ -419,6 +470,9 @@ class AtomicGraph:
             self.vertices[i].neighbour_indices = sorted_indices
 
     def find_nearest(self, i, n):
+
+        # This function is unefficient and stupid. Use column_centre_mat of the core module for this task. This function
+        # is only a back-up
 
         all_distances = []
         sorted_indices = []

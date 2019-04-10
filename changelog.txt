@@ -6,6 +6,7 @@ New features in 0.0.0:
 -----------------
 - Fully restructured the core program from scrathch and retouched the GUI to reflect the changes.
   This will hopefully make the program structure more sensible and thus make life easier in the future.
+  Tried to lay good structural fundations for future features
   
 - Added terminal output as a new widget, allowing the core to report on its progress and other program
   info to be displayed. SuchSoftware is now instantiated with a reference to a function in MainUI to
