@@ -56,23 +56,9 @@ class SuchSoftware:
         self.im_width = 0
         self.version_saved = None
 
-        if not (filename_full == 'Empty' or filename_full == 'empty'):
-            dm3f = dm3.DM3(self.filename_full)
-            self.im_mat = dm3f.imagedata
-            (self.scale, junk) = dm3f.pxsize
-            self.scale = 1000 * self.scale
-            self.im_mat = mat_op.normalize_static(self.im_mat)
-            (self.im_height, self.im_width) = self.im_mat.shape
-            self.fft_im_mat = mat_op.gen_fft(self.im_mat)
-
         # For communicating with the interface, if any:
         self.debug_obj = debug_obj
         self.debug_mode = False
-
-        # Data matrices: These hold much of the information gathered by the different algorithms
-        self.search_mat = self.im_mat
-        self.column_centre_mat = np.zeros((self.im_height, self.im_width, 2), dtype=type(self.im_mat))
-        self.column_circumference_mat = np.zeros((self.im_height, self.im_width), dtype=type(self.im_mat))
 
         # Alloy info: This vector is used to multiply away elements in the AtomicColumn.prob_vector that are not in
         # the alloy being studied. Currently supported alloys are:
@@ -82,6 +68,20 @@ class SuchSoftware:
         self.alloy = 0
         self.alloy_mat = np.ndarray([SuchSoftware.num_selections], dtype=int)
         self.set_alloy_mat()
+
+        if not (filename_full == 'Empty' or filename_full == 'empty'):
+            dm3f = dm3.DM3(self.filename_full)
+            self.im_mat = dm3f.imagedata
+            (self.scale, junk) = dm3f.pxsize
+            self.scale = 1000 * self.scale
+            self.im_mat = mat_op.normalize_static(self.im_mat)
+            (self.im_height, self.im_width) = self.im_mat.shape
+            self.fft_im_mat = mat_op.gen_fft(self.im_mat)
+
+        # Data matrices: These hold much of the information gathered by the different algorithms
+        self.search_mat = self.im_mat
+        self.column_centre_mat = np.zeros((self.im_height, self.im_width, 2), dtype=type(self.im_mat))
+        self.column_circumference_mat = np.zeros((self.im_height, self.im_width), dtype=type(self.im_mat))
 
         # Counting and statistical variables
         self.num_columns = 0
@@ -196,11 +196,9 @@ class SuchSoftware:
             self.report('    {}'.format(line), force=True)
         self.report(' ', force=True)
 
-    def set_alloy_mat(self, alloy=0):
+    def set_alloy_mat(self):
 
-        self.alloy = alloy
-
-        if alloy == 0:
+        if self.alloy == 0:
 
             for x in range(0, SuchSoftware.num_selections):
                 if x == 2 or x == 4:
@@ -208,7 +206,9 @@ class SuchSoftware:
                 else:
                     self.alloy_mat[x] = 1
 
-        elif alloy == 1:
+            string = 'Alloy set to \'Al-Mg-Si-(Cu)\'.'
+
+        elif self.alloy == 1:
 
             for x in range(0, SuchSoftware.num_selections):
                 if x == 2 or x == 4 or x == 1:
@@ -216,9 +216,14 @@ class SuchSoftware:
                 else:
                     self.alloy_mat[x] = 1
 
+            string = 'Alloy set to \'Al-Mg-Si\'.'
+
         else:
 
-            print('Not a supported alloy number!')
+            string = 'Failed to set alloy. Unknown alloy number'
+
+        if not (self.filename_full == 'empty' or self.filename_full == 'Empty'):
+            self.report(string, force=True)
 
     def save(self, filename_full):
         with open(filename_full, 'wb') as f:
@@ -318,7 +323,7 @@ class SuchSoftware:
         self.report('Column detection complete! Found {} columns'.format(self.num_columns), force=True)
         self.report(' ', force=True)
 
-    def find_nearest(self, i, n, weight=6):
+    def find_nearest(self, i, n, weight=4):
 
         x_0 = self.graph.vertices[i].im_coor_x
         y_0 = self.graph.vertices[i].im_coor_y
@@ -364,7 +369,7 @@ class SuchSoftware:
 
                 ind = distances.argmin()
                 temp_indices[k] = indices[ind]
-                temp_distances = distances[ind]
+                temp_distances[k] = distances[ind]
                 distances[ind] = distances.max() + k
 
             indices = temp_indices
