@@ -8,6 +8,9 @@ import graph_op
 import sys
 import pickle
 import compatibility
+import legacy_items
+import weak_untangling
+import strong_untangling
 
 
 class SuchSoftware:
@@ -265,7 +268,6 @@ class SuchSoftware:
             self.report('Continuing column detection. Search mode is \'{}\''.format(search_type), force=True)
         cont = True
         counter = self.num_columns
-        self.set_alloy_mat()
         self.column_circumference_mat = mat_op.gen_framed_mat(self.column_circumference_mat, self.r + self.overhead)
         self.search_mat = mat_op.gen_framed_mat(self.search_mat, self.r + self.overhead)
         self.im_mat = mat_op.gen_framed_mat(self.im_mat, self.r + self.overhead)
@@ -380,47 +382,155 @@ class SuchSoftware:
     def column_characterization(self, starting_index, search_type=0):
 
         if search_type == 0:
-            self.report(' ', force=True)
+
             self.report('Starting column characterization from vertex {}...'.format(starting_index), force=True)
+            self.report('    Setting alloy', force=True)
+            self.set_alloy_mat()
+            self.report('    Alloy set.', force=True)
+
+            self.column_characterization(starting_index, search_type=2)
+
+            self.column_characterization(starting_index, search_type=3)
+
+            self.column_characterization(starting_index, search_type=4)
+
+            self.column_characterization(starting_index, search_type=5)
+
+            self.column_characterization(starting_index, search_type=6)
+
+            self.column_characterization(starting_index, search_type=7)
+
+            self.report('    Summarizing stats.', force=True)
+            self.summarize_stats()
+
+            self.column_characterization(starting_index, search_type=8)
+
+            self.column_characterization(starting_index, search_type=9)
+
+            self.report('    Summarizing stats.', force=True)
+            self.summarize_stats()
+
+            self.report('Column characterization complete.', force=True)
+            self.report(' ', force=True)
+
+        elif search_type == 1:
+
+            self.report('Starting column characterization from vertex {}...'.format(starting_index), force=True)
+            self.report('    Setting alloy', force=True)
+            self.set_alloy_mat()
+            self.report('    Alloy set.', force=True)
+
+            self.column_characterization(starting_index, search_type=2)
+
+            self.column_characterization(starting_index, search_type=3)
+
+            self.column_characterization(starting_index, search_type=4)
+
+            self.column_characterization(starting_index, search_type=5)
+
+            self.column_characterization(starting_index, search_type=6)
+
+            self.column_characterization(starting_index, search_type=7)
+
+            self.report('    Summarizing stats.', force=True)
+            self.summarize_stats()
+
+            self.column_characterization(starting_index, search_type=10)
+
+            self.column_characterization(starting_index, search_type=11)
+
+            self.report('    Summarizing stats.', force=True)
+            self.summarize_stats()
+
+            self.report('Column characterization complete.', force=True)
+            self.report(' ', force=True)
+
+        elif search_type == 2:
+
             self.report('    Mapping spatial locality...', force=True)
             self.redraw_centre_mat()
             self.redraw_circumference_mat()
             for i in range(0, self.num_columns):
                 self.graph.vertices[i].neighbour_indices, _ = self.find_nearest(i, self.map_size)
             self.report('    Spatial mapping complete.', force=True)
+
+        elif search_type == 3:
+
             self.report('    Analysing angles...', force=True)
             for i in range(0, self.num_columns):
                 if not self.graph.vertices[i].set_by_user:
-                    self.graph.vertices[i].reset_prob_vector()
                     graph_op.apply_angle_score(self.graph, i, self.dist_3_std, self.dist_4_std, self.dist_5_std,
                                                self.num_selections)
             self.report('    Angle analysis complete.', force=True, update=True)
+
+        elif search_type == 4:
+
             self.report('    Analyzing intensities...', force=True)
             for i in range(0, self.num_columns):
                 if not self.graph.vertices[i].set_by_user:
                     graph_op.apply_intensity_score(self.graph, i, self.num_selections, self.intensities[self.alloy],
                                                    self.dist_8_std)
             self.report('    Intensity analysis complete.', force=True, update=True)
-            self.report('    Running basic level definition...', force=True)
-            self.report('        Could not set basic levels because it is not implemented', force=True)
-            self.report('    Levels set.', force=True)
-            self.report('    Finding particle....', force=True)
-            graph_op.precipitate_controller(self.graph, starting_index)
+
+        elif search_type == 5:
+
+            self.report('    Finding particle with legacy method....', force=True)
+            legacy_items.precipitate_controller(self.graph, starting_index)
+            # graph_op.precipitate_controller(self.graph, starting_index)
             self.report('    Found particle.', force=True)
-            self.report('    Running advanced level definition algorithm....', force=True)
-            graph_op.set_levels(self.graph, starting_index, self.report, self.graph.vertices[starting_index].level, self.num_selections)
+
+        elif search_type == 6:
+
+            self.report('    Running legacy level definition algorithm....', force=True)
+            graph_op.set_levels(self.graph, starting_index, self.report, self.graph.vertices[starting_index].level,
+                                self.num_selections)
             self.report('    Levels set.', force=True, update=True)
+
+        elif search_type == 7:
+
             self.report('    adding edges to graph...', force=True)
             self.graph.redraw_edges()
             self.report('    Edges added.', force=True, update=True)
-            self.report('    Summarizing stats', force=True)
-            self.summarize_stats()
-            self.report('    Starting weak untangling...', force=True)
+
+        elif search_type == 8:
+
+            self.report('    Starting legacy weak untangling...', force=True)
             self.report('        Could not start weak untangling because it is not implemented yet!', force=True)
+
+        elif search_type == 9:
+
             self.report('    Starting strong untangling...', force=True)
             self.report('        Could not start strong untangling because it is not implemented yet!', force=True)
-            self.report('Column characterization complete.', force=True)
-            self.report(' ', force=True)
+
+        elif search_type == 10:
+
+            self.report('    Starting experimental weak untangling...', force=True)
+            self.report('        Could not start weak untangling because it is not implemented yet!', force=True)
+
+        elif search_type == 11:
+
+            self.report('    Starting strong untangling...', force=True)
+            self.report('        Could not start strong untangling because it is not implemented yet!', force=True)
+
+        elif search_type == 12:
+
+            self.report('    Resetting probability vectors with zero bias...', force=True)
+            for i in range(0, self.num_columns):
+                if not self.graph.vertices[i].set_by_user:
+                    self.graph.vertices[i].reset_prob_vector()
+            self.report('    Probability vectors reset.', force=True)
+
+        elif search_type == 13:
+
+            self.report('    Resetting user-set columns...', force=True)
+            for i in range(0, self.num_columns):
+                if self.graph.vertices[i].set_by_user:
+                    self.graph.vertices[i].reset_prob_vector()
+            self.report('    User-set columns was re-set.', force=True)
+
+        else:
+
+            self.report('Error: No such search type!', force=True)
 
     def calc_avg_gamma(self):
         if self.num_columns > 0:

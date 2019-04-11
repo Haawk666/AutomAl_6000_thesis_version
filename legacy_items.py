@@ -1,44 +1,42 @@
 from copy import deepcopy
 import numpy as np
 
-'''
 
-def precipitate_controller(self, i):
+def precipitate_controller(graph, i):
 
-    self.boarder_size = 0
-    self.precipitate_boarder = np.ndarray([1], dtype=int)
+    graph.particle_boarder = np.ndarray([1], dtype=int)
 
-    self.reset_all_flags()
+    graph.reset_all_flags()
 
-    self.precipitate_finder(i)
+    precipitate_finder(graph, i)
 
     counter = 0
 
-    for x in range(0, self.num_columns):
+    for x in range(0, graph.num_vertices):
 
-        if self.columns[x].flag_1 or self.columns[x].h_index == 6:
-            self.columns[x].is_in_precipitate = False
+        if graph.vertices[x].flag_1 or graph.vertices[x].h_index == 6:
+            graph.vertices[x].is_in_precipitate = False
         else:
-            self.columns[x].is_in_precipitate = True
+            graph.vertices[x].is_in_precipitate = True
 
-        if self.columns[x].flag_2:
+        if graph.vertices[x].flag_2:
 
             if counter == 0:
-                self.precipitate_boarder[0] = x
+                graph.particle_boarder[0] = x
             else:
-                self.precipitate_boarder = np.append(self.precipitate_boarder, x)
+                graph.particle_boarder = np.append(graph.particle_boarder, x)
 
             counter = counter + 1
 
-    self.boarder_size = counter
-    self.reset_all_flags()
-    self.sort_boarder()
+    graph.reset_all_flags()
+    sort_boarder(graph)
 
-def sort_boarder(self):
 
-    temp_boarder = deepcopy(self.precipitate_boarder)
-    selected = np.ndarray([self.boarder_size], dtype=bool)
-    for y in range(0, self.boarder_size):
+def sort_boarder(graph):
+
+    temp_boarder = deepcopy(graph.particle_boarder)
+    selected = np.ndarray([graph.particle_boarder.shape[0]], dtype=bool)
+    for y in range(0, graph.particle_boarder.shape[0]):
         selected[y] = False
     next_index = 0
     index = 0
@@ -47,47 +45,46 @@ def sort_boarder(self):
 
     while cont_var:
 
-        distance = self.N * self.M
+        distance = 1000000
 
-        for x in range(0, self.boarder_size):
+        for x in range(0, graph.particle_boarder.shape[0]):
 
-            current_distance = np.sqrt((self.columns[self.precipitate_boarder[x]].x -
-                                        self.columns[temp_boarder[index]].x )* *2 +
-                                       (self.columns[self.precipitate_boarder[x]].y -
-                                        self.columns[temp_boarder[index]].y )* *2)
+            current_distance = graph.spatial_distance(graph.particle_boarder[x], temp_boarder[index])
 
-            if current_distance < distance and not temp_boarder[index] == self.precipitate_boarder[x] and not selected
-                [x]:
+            if current_distance < distance and not temp_boarder[index] == graph.particle_boarder[x] and not selected[x]:
                 distance = current_distance
                 next_index = x
 
         selected[next_index] = True
         index = index + 1
 
-        temp_boarder[index] = self.precipitate_boarder[next_index]
+        temp_boarder[index] = graph.particle_boarder[next_index]
 
-        if index == self.boarder_size - 1:
+        if index == graph.particle_boarder.shape[0] - 1:
             cont_var = False
 
-    self.precipitate_boarder = deepcopy(temp_boarder)
+        graph.particle_boarder = deepcopy(temp_boarder)
 
-def precipitate_finder(self, i):
 
-    indices, distances, n = self.find_nearest(i, True)
+def precipitate_finder(graph, i):
 
-    self.columns[i].flag_1 = True
+    indices, distances, n = graph.find_nearest(i, graph.vertices[i].n())
+
+    graph.vertices[i].flag_1 = True
 
     for x in range(0, n):
 
-        if not self.columns[indices[x]].h_index == 3:
+        if not graph.vertices[indices[x]].h_index == 3:
 
-            if not self.columns[indices[x]].h_index == 6:
-                self.columns[i].flag_2 = True
+            if not graph.vertices[indices[x]].h_index == 6:
+                graph.vertices[i].flag_2 = True
 
         else:
 
-            if not self.columns[indices[x]].flag_1:
-                self.precipitate_finder(indices[x])
+            if not graph.vertices[indices[x]].flag_1:
+                precipitate_finder(indices[x])
+
+'''
                 
 def define_levels(self, i, level=0):
 

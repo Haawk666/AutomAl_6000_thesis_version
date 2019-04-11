@@ -674,13 +674,34 @@ class MainUI(QtWidgets.QMainWindow):
 
         if self.project_loaded and not self.selected_column == -1:
 
-            items = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '21', '22', '23', 'other')
-            item, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Search step", items, 0, False)
-            if ok_pressed and item:
+            strings = ['0 - Full column characerization algorithm with legacy untangling',
+                       '1 - Full column charaterization algorithm with experimental untangling',
+                       '2 - Run spatial mapping',
+                       '3 - Apply angle statistics',
+                       '4 - Apply intensity statistics',
+                       '5 - Run particle detection',
+                       '6 - Set levels',
+                       '7 - Redraw edges',
+                       '8 - Run legacy weak untangling',
+                       '9 - Run legacy strong untangling',
+                       '10 - Run Experimental weak untangling',
+                       '11 - Run experimental strong untangling',
+                       '12 - Reset probability vectors',
+                       '13 - Reset user-set columns']
+
+            string, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Search step", strings, 0, False)
+            if ok_pressed and strings:
                 self.statusBar().showMessage('Analyzing... This may take a long time...')
                 sys.setrecursionlimit(10000)
-                self.project_instance.column_characterization(self.selected_column)
-                self.update_central_widget()
+                choice = -1
+                for k in range(0, len(strings)):
+                    if string == strings[k]:
+                        choice = k
+                if not choice == -1:
+                    self.project_instance.column_characterization(self.selected_column, choice)
+                    self.update_central_widget()
+                else:
+                    self.report('Invalid selection. Was not able to start column detection.', force=True)
 
     def restart_analysis_trigger(self):
 
