@@ -265,7 +265,7 @@ class SuchSoftware:
             self.report('Continuing column detection. Search mode is \'{}\''.format(search_type), force=True)
         cont = True
         counter = self.num_columns
-        self.set_alloy_mat(self.alloy)
+        self.set_alloy_mat()
         self.column_circumference_mat = mat_op.gen_framed_mat(self.column_circumference_mat, self.r + self.overhead)
         self.search_mat = mat_op.gen_framed_mat(self.search_mat, self.r + self.overhead)
         self.im_mat = mat_op.gen_framed_mat(self.im_mat, self.r + self.overhead)
