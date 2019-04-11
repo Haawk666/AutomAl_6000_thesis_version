@@ -32,15 +32,11 @@ def normalize_static(mat):
 
 
 def gen_framed_mat(mat, r):
-    # Generates a new matrix containing the input matrix, but framed with a frame of width r, with elements set to 0
-    # in the frame. Used in functions where this is simpler than to consider boarder inputs
-    (n, m) = mat.shape
-    temp_mat = np.zeros((int(n + 2 * r), int(m + 2 * r)), dtype=mat.dtype)
-    for i in range(0, n - 1 + (2 * r)):
-        for j in range(0, m + (2 * r) - 1):
-            if i in range(r, n + r - 1) and j in range(r, m + r - 1):
-                temp_mat[i, j] = mat[i - r, j - r]
-    return temp_mat
+    hor_frame = np.zeros((r, mat.shape[1]), dtype=type(mat))
+    ver_frame = np.zeros((mat.shape[0] + 2 * r, r), dtype=type(mat))
+    mat = np.concatenate((hor_frame, mat, hor_frame), axis=0)
+    mat = np.concatenate((ver_frame, mat, ver_frame), axis=0)
+    return mat
 
 
 def gen_de_framed_mat(temp_mat, r):

@@ -40,11 +40,6 @@ class ZGraphicsView(QtWidgets.QGraphicsView):
             delta = newPos - oldPos
             self.translate(delta.x(), delta.y())
 
-        elif modifier == QtCore.Qt.ControlModifier:
-
-            center = self.mapToScene(event.pos())
-            self.centerOn(center.x() - event.angleDelta().y(), center.y())
-
         else:
 
             super(ZGraphicsView, self).wheelEvent(event)
