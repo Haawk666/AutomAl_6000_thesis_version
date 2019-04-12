@@ -35,7 +35,7 @@ def gen_framed_mat(mat, r):
     hor_frame = np.zeros((r, mat.shape[1]), dtype=type(mat))
     ver_frame = np.zeros((mat.shape[0] + 2 * r, r), dtype=type(mat))
     mat = np.concatenate((hor_frame, mat, hor_frame), axis=0)
-    mat = np.concatenate((ver_frame, mat, ver_frame), axis=0)
+    mat = np.concatenate((ver_frame, mat, ver_frame), axis=1)
     return mat
 
 

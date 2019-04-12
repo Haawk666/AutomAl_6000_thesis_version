@@ -355,3 +355,7 @@ def precipitate_finder(graph_obj, i):
             if not graph_obj.vertices[indices[x]].flag_1:
                 precipitate_finder(graph_obj, indices[x])
 
+
+def detect_crossing_edges(graph):
+    pass
+

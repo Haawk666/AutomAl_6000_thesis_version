@@ -465,6 +465,7 @@ class SuchSoftware:
             self.column_analyser(i, search_type='4')
             self.column_analyser(i, search_type='4')
             self.column_analyser(i, search_type='5')
+
             self.column_analyser(i, search_type='7')
             self.column_analyser(i, search_type='5')
             self.column_analyser(i, search_type='5')

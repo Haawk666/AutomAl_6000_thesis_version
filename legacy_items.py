@@ -1,5 +1,6 @@
 from copy import deepcopy
 import numpy as np
+import utils
 
 
 def precipitate_controller(graph, i):
@@ -82,15 +83,13 @@ def precipitate_finder(graph, i):
         else:
 
             if not graph.vertices[indices[x]].flag_1:
-                precipitate_finder(indices[x])
+                precipitate_finder(graph, indices[x])
 
-'''
-                
-def define_levels(self, i, level=0):
 
-    self.reset_all_flags()
+def define_levels(graph, i, level=0):
+    graph.reset_all_flags()
 
-    self.mesh_levels(i, level)
+    mesh_levels(graph, i, level)
 
     complete = False
     emer_abort = False
@@ -102,23 +101,23 @@ def define_levels(self, i, level=0):
         found = False
         counter = 0
 
-        while counter < self.num_columns:
+        while counter < graph.num_vertices:
 
-            if self.columns[counter].is_in_precipitate and not self.columns[counter].flag_1:
+            if graph.vertices[counter].is_in_precipitate and not graph.vertices[counter].flag_1:
 
                 x = 0
 
                 while x <= neighbour_level:
 
-                    if self.columns[self.columns[counter].neighbour_indices[x]].is_in_precipitate and\
-                                    self.columns[self.columns[counter].neighbour_indices[x]].flag_1:
+                    if graph.vertices[graph.vertices[counter].neighbour_indices[x]].is_in_precipitate and \
+                            graph.vertices[graph.vertices[counter].neighbour_indices[x]].flag_1:
 
-                        neighbour = self.columns[counter].neighbour_indices[x]
-                        if self.columns[neighbour].level == 0:
-                            self.columns[counter].level = 1
+                        neighbour = graph.vertices[counter].neighbour_indices[x]
+                        if graph.vertices[neighbour].level == 0:
+                            graph.vertices[counter].level = 1
                         else:
-                            self.columns[counter].level = 0
-                        self.columns[counter].flag_1 = True
+                            graph.vertices[counter].level = 0
+                        graph.vertices[counter].flag_1 = True
                         found = True
 
                     x = x + 1
@@ -127,9 +126,9 @@ def define_levels(self, i, level=0):
 
         complete = True
 
-        for y in range(0, self.num_columns):
+        for y in range(0, graph.num_vertices):
 
-            if self.columns[y].is_in_precipitate and not self.columns[y].flag_1:
+            if graph.vertices[y].is_in_precipitate and not graph.vertices[y].flag_1:
 
                 complete = False
 
@@ -149,18 +148,19 @@ def define_levels(self, i, level=0):
 
         print(neighbour_level)
 
-    self.reset_all_flags()
+    graph.reset_all_flags()
 
-def mesh_levels(self, i, level):
 
-    if self.columns[i].is_in_precipitate:
+def mesh_levels(graph, i, level):
 
-        self.columns[i].flag_1 = True
-        self.set_level(i, level)
+    if graph.vertices[i].is_in_precipitate:
+
+        graph.vertices[i].flag_1 = True
+        set_level(graph, i, level)
 
     else:
 
-        self.columns[i].flag_1 = True
+        graph.vertices[i].flag_1 = True
 
         next_level = 0
         if level == 0:
@@ -170,27 +170,28 @@ def mesh_levels(self, i, level):
         else:
             print('Disaster!')
 
-        self.set_level(i, level)
+        set_level(graph, i, level)
 
-        indices = self.columns[i].neighbour_indices
+        indices = graph.vertices[i].neighbour_indices
 
-        for x in range(0, self.columns[i].n()):
+        for x in range(0, graph.vertices[i].n()):
 
-            reciprocal = self.test_reciprocality(i, indices[x])
+            reciprocal = graph.test_reciprocality(i, indices[x])
 
-            if not self.columns[indices[x]].flag_1 and not self.columns[i].is_edge_column and reciprocal:
+            if not graph.vertices[indices[x]].flag_1 and not graph.vertices[i].is_edge_column and reciprocal:
 
-                self.mesh_levels(indices[x], next_level)
+                mesh_levels(graph, indices[x], next_level)
 
-def precipitate_levels(self, i, level):
 
-    if not self.columns[i].is_in_precipitate:
+def precipitate_levels(graph, i, level):
 
-        self.columns[i].flag_1 = True
+    if not graph.vertices[i].is_in_precipitate:
+
+        graph.vertices[i].flag_1 = True
 
     else:
 
-        self.columns[i].flag_1 = True
+        graph.vertices[i].flag_1 = True
 
         next_level = 0
         if level == 0:
@@ -200,9 +201,9 @@ def precipitate_levels(self, i, level):
         else:
             print('Disaster!')
 
-        self.set_level(i, level)
+        set_level(graph, i, level)
 
-        indices = self.columns[i].neighbour_indices
+        indices = graph.vertices[i].neighbour_indices
 
         complete = False
         counter_1 = 0
@@ -210,11 +211,11 @@ def precipitate_levels(self, i, level):
 
         while not complete:
 
-            if not self.columns[indices[counter_1]].flag_1:
+            if not graph.vertices[indices[counter_1]].flag_1:
 
-                if self.test_reciprocality(i, indices[counter_1]):
+                if graph.test_reciprocality(i, indices[counter_1]):
 
-                    self.precipitate_levels(indices[counter_1], next_level)
+                    precipitate_levels(indices[counter_1], next_level)
                     counter_1 = counter_1 + 1
                     counter_2 = counter_2 + 1
 
@@ -226,21 +227,23 @@ def precipitate_levels(self, i, level):
 
                 counter_1 = counter_1 + 1
 
-            if counter_2 == self.columns[i].n() - 2 or counter_1 == self.columns[i].n() - 2:
+            if counter_2 == graph.vertices[i].n() - 2 or counter_1 == graph.vertices[i].n() - 2:
 
                 complete = True
 
-def set_level(self, i, level):
 
-    previous_level = self.columns[i].level
-    self.columns[i].level = level
+def set_level(graph, i, level):
+
+    previous_level = graph.vertices[i].level
+    graph.vertices[i].level = level
 
     if level == previous_level:
         return False
     else:
         return True
 
-def classify_pair(self, i, j):
+
+def classify_pair(graph, i, j):
 
     neighbour_type = 0
     partner_type = 0
@@ -253,14 +256,14 @@ def classify_pair(self, i, j):
 
     for x in range(0, 8):
 
-        if self.columns[i].neighbour_indices[x] == j:
+        if graph.vertices[i].neighbour_indices[x] == j:
             j_neighbour_to_i = True
-            if x < self.columns[i].n():
+            if x < graph.vertices[i].n():
                 j_partner_to_i = True
 
-        if self.columns[j].neighbour_indices[x] == i:
+        if graph.vertices[j].neighbour_indices[x] == i:
             i_neighbour_to_j = True
-            if x < self.columns[j].n():
+            if x < graph.vertices[j].n():
                 i_partner_to_j = True
 
     if not i_neighbour_to_j and not j_neighbour_to_i:
@@ -281,7 +284,7 @@ def classify_pair(self, i, j):
     elif i_partner_to_j and j_partner_to_i:
         partner_type = 3
 
-    if self.columns[i].level == self.columns[j].level:
+    if graph.vertices[i].level == graph.vertices[j].level:
         level_type = 0
     else:
         level_type = 1
@@ -294,10 +297,10 @@ def classify_pair(self, i, j):
 
     else:
 
-        indices, num_edges_clockwise_right = self.find_shape(i, j, clockwise=True)
-        indices, num_edges_clockwise_left = self.find_shape(j, i, clockwise=True)
-        indices, num_edges_anticlockwise_right = self.find_shape(j, i, clockwise=False)
-        indices, num_edges_anticlockwise_left = self.find_shape(i, j, clockwise=False)
+        indices, num_edges_clockwise_right = find_shape(graph, i, j, clockwise=True)
+        indices, num_edges_clockwise_left = find_shape(graph, j, i, clockwise=True)
+        indices, num_edges_anticlockwise_right = find_shape(graph, j, i, clockwise=False)
+        indices, num_edges_anticlockwise_left = find_shape(graph, i, j, clockwise=False)
 
         if num_edges_clockwise_right == 3 and num_edges_clockwise_left == 3:
             geometry_type_clockwise = 1
@@ -343,10 +346,11 @@ def classify_pair(self, i, j):
     return neighbour_type, partner_type, level_type, geometry_type_clockwise, geometry_type_anticlockwise,\
         geo_type_symmetry, intersects
 
-def resolve_edge_inconsistency(self, i, j, clockwise=True):
+
+def resolve_edge_inconsistency(graph, i, j, clockwise=True):
 
     neighbour_type, partner_type, level_type, geometry_type_clockwise, geometry_type_anticlockwise, \
-        geo_type_symmetry, intersects = self.classify_pair(i, j)
+        geo_type_symmetry, intersects = classify_pair(graph, i, j)
 
     if geo_type_symmetry == 0:
         geometry_type = geometry_type_clockwise
@@ -389,44 +393,44 @@ def resolve_edge_inconsistency(self, i, j, clockwise=True):
     j_index_in_i = -1
 
     for x in range(0, 8):
-        if self.columns[i].neighbour_indices[x] == j:
+        if graph.vertices[i].neighbour_indices[x] == j:
             j_index_in_i = x
 
     if j_index_in_i == -1:
-        self.columns[i].neighbour_indices[7] = j
+        graph.vertices[i].neighbour_indices[7] = j
         j_index_in_i = 7
 
     for x in range(0, 8):
-        if self.columns[j].neighbour_indices[x] == i:
+        if graph.vertices[j].neighbour_indices[x] == i:
             i_index_in_j = x
 
     if i_index_in_j == -1:
-        self.columns[j].neighbour_indices[7] = i
+        graph.vertices[j].neighbour_indices[7] = i
         i_index_in_j = 7
 
     if i_partner_to_j:
         # Perturb neighbours of j such that i is last element in k^j
-        self.perturbator(j, i_index_in_j, self.columns[j].n() - 1)
+        perturbator(graph, j, i_index_in_j, graph.vertices[j].n() - 1)
     else:
         # Perturb neighbours of j such that i is last element in k^j
-        self.perturbator(j, i_index_in_j, self.columns[j].n())
+        perturbator(graph, j, i_index_in_j, graph.vertices[j].n())
 
     if j_partner_to_i:
         # Perturb neighbours of i such that j is last k
-        self.perturbator(i, j_index_in_i, self.columns[i].n() - 1)
+        perturbator(graph, i, j_index_in_i, graph.vertices[i].n() - 1)
     else:
         # Perturb neighbours of i such that j is last k
-        self.perturbator(i, j_index_in_i, self.columns[i].n())
+        perturbator(graph, i, j_index_in_i, graph.vertices[i].n())
 
     if clockwise:
 
-        shape_1_indices, num_edge_1 = self.find_shape(i, j, clockwise=clockwise)
-        shape_2_indices, num_edge_2 = self.find_shape(j, i, clockwise=clockwise)
+        shape_1_indices, num_edge_1 = find_shape(graph, i, j, clockwise=clockwise)
+        shape_2_indices, num_edge_2 = find_shape(graph, j, i, clockwise=clockwise)
 
     else:
 
-        shape_1_indices, num_edge_1 = self.find_shape(j, i, clockwise=clockwise)
-        shape_2_indices, num_edge_2 = self.find_shape(i, j, clockwise=clockwise)
+        shape_1_indices, num_edge_1 = find_shape(graph, j, i, clockwise=clockwise)
+        shape_2_indices, num_edge_2 = find_shape(graph, i, j, clockwise=clockwise)
 
     print(str(i) + ', ' + str(j) + ': ')
 
@@ -434,21 +438,21 @@ def resolve_edge_inconsistency(self, i, j, clockwise=True):
         # This means we want to break the connection!
 
         if partner_type == 1:
-            if not self.try_connect(i, j_index_in_i):
-                if not self.decrease_h_value(i):
+            if not try_connect(graph, i, j_index_in_i):
+                if not graph.decrease_h_value(i):
                     print('Could not reconnect!')
 
         elif partner_type == 2:
-            if not self.try_connect(j, i_index_in_j):
-                if not self.decrease_h_value(j):
+            if not try_connect(graph, j, i_index_in_j):
+                if not graph.decrease_h_value(j):
                     print('Could not reconnect!')
 
         elif partner_type == 3:
-            if not self.try_connect(j, i_index_in_j):
-                if not self.decrease_h_value(j):
+            if not try_connect(graph, j, i_index_in_j):
+                if not graph.decrease_h_value(j):
                     print('Could not reconnect!')
-            if not self.try_connect(i, j_index_in_i):
-                if not self.decrease_h_value(i):
+            if not try_connect(graph, i, j_index_in_i):
+                if not graph.decrease_h_value(i):
                     print('Could not reconnect!')
 
     if geometry_type == 2 or geometry_type == 3:
@@ -469,10 +473,10 @@ def resolve_edge_inconsistency(self, i, j, clockwise=True):
             ind_1 = shape_2_indices[4]
             ind_2 = shape_2_indices[2]
 
-        distance_1 = np.sqrt((self.columns[ind_1].x - self.columns[i].x) ** 2 + (
-                self.columns[ind_1].y - self.columns[i].y) ** 2)
-        distance_2 = np.sqrt((self.columns[j].x - self.columns[ind_2].x) ** 2 + (
-                self.columns[j].y - self.columns[ind_2].y) ** 2)
+        distance_1 = np.sqrt((graph.vertices[ind_1].x - graph.vertices[i].x) ** 2 + (
+                graph.vertices[ind_1].y - graph.vertices[i].y) ** 2)
+        distance_2 = np.sqrt((graph.vertices[j].x - graph.vertices[ind_2].x) ** 2 + (
+                graph.vertices[j].y - graph.vertices[ind_2].y) ** 2)
 
         if distance_1 < distance_2:
             index_stayer = i
@@ -493,25 +497,25 @@ def resolve_edge_inconsistency(self, i, j, clockwise=True):
             if i_partner_to_j:
                 stayer_connected_to_loser = True
 
-        for x in range(self.columns[index_stayer].n(), 8):
-            if self.columns[index_stayer].neighbour_indices[x] == index_new:
+        for x in range(graph.vertices[index_stayer].n(), 8):
+            if graph.vertices[index_stayer].neighbour_indices[x] == index_new:
                 new_index_in_stayer = x
 
         if new_index_in_stayer == -1:
-            self.columns[index_stayer].neighbour_indices[7] = index_new
+            graph.vertices[index_stayer].neighbour_indices[7] = index_new
             new_index_in_stayer = 7
 
-        self.perturbator(index_stayer, self.columns[index_stayer].n(), new_index_in_stayer)
+        perturbator(graph, index_stayer, graph.vertices[index_stayer].n(), new_index_in_stayer)
 
         if loser_connected_to_stayer:
-            if not self.try_connect(index_loser, stayer_index_in_loser):
-                if not self.decrease_h_value(index_loser):
+            if not try_connect(graph, index_loser, stayer_index_in_loser):
+                if not graph.decrease_h_value(index_loser):
                     print('Could not reconnect!')
 
         if stayer_connected_to_loser:
-            self.perturbator(index_stayer, loser_index_in_stayer, new_index_in_stayer)
+            perturbator(graph, index_stayer, loser_index_in_stayer, new_index_in_stayer)
         else:
-            if not self.increase_h_value(index_stayer):
+            if not graph.increase_h_value(index_stayer):
                 print('Could not reconnect!')
 
     if geometry_type == 4 or geometry_type == 5:
@@ -522,11 +526,11 @@ def resolve_edge_inconsistency(self, i, j, clockwise=True):
         # This means we want to keep the connection
 
         if partner_type == 1:
-            if not self.increase_h_value(j):
+            if not graph.increase_h_value(j):
                 print('Could not reconnect!')
 
         elif partner_type == 2:
-            if not self.increase_h_value(i):
+            if not graph.increase_h_value(i):
                 print('Could not reconnect!')
 
     if geometry_type == 0:
@@ -535,17 +539,18 @@ def resolve_edge_inconsistency(self, i, j, clockwise=True):
         print(shape_1_indices)
         print(shape_2_indices)
 
-def try_connect(self, i, j_index_in_i):
+
+def try_connect(graph, i, j_index_in_i):
 
     changed = False
     better_friend = False
     friend_index_in_i = -1
 
-    for x in range(self.columns[i].n(), 8):
+    for x in range(graph.vertices[i].n(), 8):
 
-        if self.test_reciprocality(i, self.columns[i].neighbour_indices[x]):
+        if graph.test_reciprocality(i, graph.vertices[i].neighbour_indices[x]):
 
-            if not self.columns[i].level == self.columns[self.columns[i].neighbour_indices[x]].level:
+            if not graph.vertices[i].level == graph.vertices[graph.vertices[i].neighbour_indices[x]].level:
 
                 better_friend = True
                 friend_index_in_i = x
@@ -556,64 +561,49 @@ def try_connect(self, i, j_index_in_i):
 
     if better_friend:
 
-        self.perturbator(i, j_index_in_i, friend_index_in_i)
+        perturbator(graph, i, j_index_in_i, friend_index_in_i)
         changed = True
 
     return changed
 
-def perturbator(self, i, a, b):
 
-    val_a = self.columns[i].neighbour_indices[a]
-    val_b = self.columns[i].neighbour_indices[b]
+def perturbator(graph, i, a, b):
 
-    self.columns[i].neighbour_indices[a] = val_b
-    self.columns[i].neighbour_indices[b] = val_a
+    val_a = graph.vertices[i].neighbour_indices[a]
+    val_b = graph.vertices[i].neighbour_indices[b]
 
-def find_edge_columns(self):
+    graph.vertices[i].neighbour_indices[a] = val_b
+    graph.vertices[i].neighbour_indices[b] = val_a
 
-    for y in range(0, self.num_columns):
 
-        x_coor = self.columns[y].x
-        y_coor = self.columns[y].y
-        margin = 6 * self.r
+def find_consistent_perturbations_simple(graph, y, sub=False):
 
-        if x_coor < margin or x_coor > self.M - margin - 1 or y_coor < margin or y_coor > self.N - margin - 1:
+    if not graph.vertices[y].is_edge_column:
 
-            self.columns[y].is_edge_column = True
-            self.reset_prop_vector(y, bias=3)
-
-        else:
-
-            self.columns[y].is_edge_column = False
-
-def find_consistent_perturbations_simple(self, y, sub=False):
-
-    if not self.columns[y].is_edge_column:
-
-        n = self.columns[y].n()
+        n = graph.vertices[y].n()
 
         if sub:
 
             n = 3
 
-        indices = self.columns[y].neighbour_indices
-        new_indices = np.zeros([indices.shape[0]], dtype=int)
+        indices = graph.vertices[y].neighbour_indices
+        new_indices = np.zeros([len(indices)], dtype=int)
         found = 0
 
-        for x in range(0, indices.shape[0]):
+        for x in range(0, len(indices)):
 
             n2 = 3
 
-            if self.columns[indices[x]].h_index == 0 or self.columns[indices[x]].h_index == 1:
+            if graph.vertices[indices[x]].h_index == 0 or graph.vertices[indices[x]].h_index == 1:
                 n2 = 3
-            elif self.columns[indices[x]].h_index == 3:
+            elif graph.vertices[indices[x]].h_index == 3:
                 n2 = 4
-            elif self.columns[indices[x]].h_index == 5:
+            elif graph.vertices[indices[x]].h_index == 5:
                 n2 = 5
             else:
                 print('Problem in find_consistent_perturbations_simple!')
 
-            neighbour_indices = self.columns[indices[x]].neighbour_indices
+            neighbour_indices = graph.vertices[indices[x]].neighbour_indices
 
             for z in range(0, n2):
 
@@ -627,14 +617,14 @@ def find_consistent_perturbations_simple(self, y, sub=False):
 
             for k in range(0, found):
 
-                for z in range(0, indices.shape[0]):
+                for z in range(0, len(indices)):
 
                     if indices[z] == new_indices[k]:
                         index_positions[k] = z
 
             counter = found - 1
 
-            for i in range(0, indices.shape[0]):
+            for i in range(0, len(indices)):
 
                 are_used = False
 
@@ -649,9 +639,9 @@ def find_consistent_perturbations_simple(self, y, sub=False):
                     counter = counter + 1
                     new_indices[counter] = indices[i]
 
-            self.columns[y].neighbour_indices = new_indices
-            self.columns[y].is_popular = False
-            self.columns[y].is_unpopular = False
+            graph.vertices[y].neighbour_indices = new_indices
+            graph.vertices[y].is_popular = False
+            graph.vertices[y].is_unpopular = False
 
         elif found > n:
 
@@ -659,14 +649,14 @@ def find_consistent_perturbations_simple(self, y, sub=False):
 
             for k in range(0, found):
 
-                for z in range(0, indices.shape[0]):
+                for z in range(0, len(indices)):
 
                     if indices[z] == new_indices[k]:
                         index_positions[k] = z
 
             counter = found - 1
 
-            for i in range(0, indices.shape[0]):
+            for i in range(0, len(indices)):
 
                 are_used = False
 
@@ -679,9 +669,9 @@ def find_consistent_perturbations_simple(self, y, sub=False):
                     counter = counter + 1
                     new_indices[counter] = indices[i]
 
-            self.columns[y].neighbour_indices = new_indices
-            self.columns[y].is_unpopular = False
-            self.columns[y].is_popular = True
+            graph.vertices[y].neighbour_indices = new_indices
+            graph.vertices[y].is_unpopular = False
+            graph.vertices[y].is_popular = True
 
         else:
 
@@ -689,14 +679,14 @@ def find_consistent_perturbations_simple(self, y, sub=False):
 
             for k in range(0, found):
 
-                for z in range(0, indices.shape[0]):
+                for z in range(0, len(indices)):
 
                     if indices[z] == new_indices[k]:
                         index_positions[k] = z
 
             counter = found - 1
 
-            for i in range(0, indices.shape[0]):
+            for i in range(0, len(indices)):
 
                 are_used = False
 
@@ -709,33 +699,34 @@ def find_consistent_perturbations_simple(self, y, sub=False):
                     counter = counter + 1
                     new_indices[counter] = indices[i]
 
-            self.columns[y].neighbour_indices = new_indices
-            self.columns[y].is_unpopular = True
-            self.columns[y].is_popular = False
+            graph.vertices[y].neighbour_indices = new_indices
+            graph.vertices[y].is_unpopular = True
+            graph.vertices[y].is_popular = False
 
-def sort_neighbours_by_level(self, y):
 
-    n = self.columns[y].n()
+def sort_neighbours_by_level(graph, y):
+
+    n = graph.vertices[y].n()
 
     num_wrong_flags = 0
 
     for x in range(0, n):
 
-        if self.columns[self.columns[y].neighbour_indices[x]].level == self.columns[y].level:
+        if graph.vertices[graph.vertices[y].neighbour_indices[x]].level == graph.vertices[y].level:
             num_wrong_flags = num_wrong_flags + 1
 
     if num_wrong_flags >= n - 1:
 
-        if self.columns[y].level == 0:
-            self.columns[y].level = 1
+        if graph.vertices[y].level == 0:
+            graph.vertices[y].level = 1
         else:
-            self.columns[y].level = 0
+            graph.vertices[y].level = 0
 
         num_wrong_flags = 0
 
         for x in range(0, n):
 
-            if self.columns[self.columns[y].neighbour_indices[x]].level == self.columns[y].level:
+            if graph.vertices[graph.vertices[y].neighbour_indices[x]].level == graph.vertices[y].level:
                 num_wrong_flags = num_wrong_flags + 1
 
     finished = False
@@ -749,10 +740,10 @@ def sort_neighbours_by_level(self, y):
 
         for x in range(0, n - 1):
 
-            if not self.columns[self.columns[y].neighbour_indices[x]].level == self.columns[y].level:
+            if not graph.vertices[graph.vertices[y].neighbour_indices[x]].level == graph.vertices[y].level:
                 pass
             else:
-                self.perturbator(y, x, x + 1)
+                perturbator(graph, y, x, x + 1)
                 num_perturbations = num_perturbations + 1
 
             if x == n - num_wrong_flags - 2 and num_perturbations == 0:
@@ -761,36 +752,37 @@ def sort_neighbours_by_level(self, y):
 
         debug_counter = debug_counter + 1
 
-def find_consistent_perturbations_advanced(self, y, experimental=False):
 
-    if not self.columns[y].is_edge_column:
+def find_consistent_perturbations_advanced(graph, y, experimental=False):
 
-        n = self.columns[y].n()
+    if not graph.vertices[y].is_edge_column:
 
-        indices = deepcopy(self.columns[y].neighbour_indices)
+        n = graph.vertices[y].n()
+
+        indices = deepcopy(graph.vertices[y].neighbour_indices)
         new_indices = np.zeros([indices.shape[0]], dtype=int)
         index_of_unpopular_neighbours = np.zeros([indices.shape[0]], dtype=int)
         found = 0
 
-        for x in range(0, indices.shape[0]):
+        for x in range(0, len(indices)):
 
-            if self.columns[indices[x]].is_unpopular:
+            if graph.vertices[indices[x]].is_unpopular:
                 index_of_unpopular_neighbours[x] = indices[x]
             else:
                 index_of_unpopular_neighbours[x] = -1
 
             n2 = 3
 
-            if self.columns[indices[x]].h_index == 0 or self.columns[indices[x]].h_index == 1:
+            if graph.vertices[indices[x]].h_index == 0 or graph.vertices[indices[x]].h_index == 1:
                 n2 = 3
-            elif self.columns[indices[x]].h_index == 3:
+            elif graph.vertices[indices[x]].h_index == 3:
                 n2 = 4
-            elif self.columns[indices[x]].h_index == 5:
+            elif graph.vertices[indices[x]].h_index == 5:
                 n2 = 5
             else:
                 print('Problem in find_consistent_perturbations_simple!')
 
-            neighbour_indices = self.columns[indices[x]].neighbour_indices
+            neighbour_indices = graph.vertices[indices[x]].neighbour_indices
 
             for z in range(0, n2):
 
@@ -805,14 +797,14 @@ def find_consistent_perturbations_advanced(self, y, experimental=False):
 
             for k in range(0, found):
 
-                for z in range(0, indices.shape[0]):
+                for z in range(0, len(indices)):
 
                     if indices[z] == new_indices[k]:
                         index_positions[k] = z
 
             counter = found - 1
 
-            for i in range(0, indices.shape[0]):
+            for i in range(0, len(indices)):
 
                 are_used = False
 
@@ -827,12 +819,12 @@ def find_consistent_perturbations_advanced(self, y, experimental=False):
                     counter = counter + 1
                     new_indices[counter] = indices[i]
 
-            self.columns[y].neighbour_indices = new_indices
-            self.columns[y].is_unpopular = False
-            self.columns[y].is_popular = False
+            graph.vertices[y].neighbour_indices = new_indices
+            graph.vertices[y].is_unpopular = False
+            graph.vertices[y].is_popular = False
 
             if experimental:
-                self.sort_neighbours_by_level(y)
+                sort_neighbours_by_level(graph, y)
 
         elif found > n:
 
@@ -840,14 +832,14 @@ def find_consistent_perturbations_advanced(self, y, experimental=False):
 
             for k in range(0, found):
 
-                for z in range(0, indices.shape[0]):
+                for z in range(0, len(indices)):
 
                     if indices[z] == new_indices[k]:
                         index_positions[k] = z
 
             counter = found - 1
 
-            for i in range(0, indices.shape[0]):
+            for i in range(0, len(indices)):
 
                 are_used = False
 
@@ -860,12 +852,12 @@ def find_consistent_perturbations_advanced(self, y, experimental=False):
                     counter = counter + 1
                     new_indices[counter] = indices[i]
 
-            self.columns[y].neighbour_indices = new_indices
-            self.columns[y].is_popular = True
-            self.columns[y].is_unpopular = False
+            graph.vertices[y].neighbour_indices = new_indices
+            graph.vertices[y].is_popular = True
+            graph.vertices[y].is_unpopular = False
 
             if experimental:
-                self.sort_neighbours_by_level(y)
+                sort_neighbours_by_level(graph, y)
 
         else:
 
@@ -875,14 +867,14 @@ def find_consistent_perturbations_advanced(self, y, experimental=False):
 
             for k in range(0, found):
 
-                for z in range(0, indices.shape[0]):
+                for z in range(0, len(indices)):
 
                     if indices[z] == new_indices[k]:
                         index_positions[k] = z
 
             counter = found - 1
 
-            for i in range(0, indices.shape[0]):
+            for i in range(0, len(indices)):
 
                 are_used = False
 
@@ -895,21 +887,21 @@ def find_consistent_perturbations_advanced(self, y, experimental=False):
                     counter = counter + 1
                     new_indices[counter] = indices[i]
 
-            self.columns[y].neighbour_indices = new_indices
-            self.columns[y].is_unpopular = True
-            self.columns[y].is_popular = False
+            graph.vertices[y].neighbour_indices = new_indices
+            graph.vertices[y].is_unpopular = True
+            graph.vertices[y].is_popular = False
 
             friend_index = -1
-            distance = self.N
+            distance = 100000
 
-            for x in range(0, indices.shape[0]):
+            for x in range(0, len(indices)):
 
                 if not index_of_unpopular_neighbours[x] == -1:
 
-                    temp_distance = np.sqrt((self.columns[y].x -
-                                             self.columns[index_of_unpopular_neighbours[x]].x)**2 +
-                                            (self.columns[y].y -
-                                             self.columns[index_of_unpopular_neighbours[x]].y)**2)
+                    temp_distance = np.sqrt((graph.vertices[y].real_coor_x -
+                                             graph.vertices[index_of_unpopular_neighbours[x]].real_coor_x)**2 +
+                                            (graph.vertices[y].real_coor_y -
+                                             graph.vertices[index_of_unpopular_neighbours[x]].real_coor_y)**2)
 
                     if temp_distance < distance:
                         distance = temp_distance
@@ -919,59 +911,60 @@ def find_consistent_perturbations_advanced(self, y, experimental=False):
 
                 i_1 = -1
 
-                for j in range(0, indices.shape[0]):
+                for j in range(0, len(indices)):
 
                     if new_indices[j] == friend_index:
                         i_1 = j
 
                 print('y: ' + str(y) + ', found: ' + str(found) + ', i_1: ' + str(i_1) + ', friend_index: ' + str(friend_index))
 
-                self.columns[y].neighbour_indices[i_1] = self.columns[y].neighbour_indices[found]
-                self.columns[y].neighbour_indices[found] = friend_index
+                graph.vertices[y].neighbour_indices[i_1] = graph.vertices[y].neighbour_indices[found]
+                graph.vertices[y].neighbour_indices[found] = friend_index
 
-                self.find_consistent_perturbations_simple(friend_index)
-                self.find_consistent_perturbations_simple(y)
+                find_consistent_perturbations_simple(graph, friend_index)
+                find_consistent_perturbations_simple(graph, y)
 
             else:
 
-                distance = self.N
+                distance = 10000
                 friend_index = -1
 
-                for x in range(found, indices.shape[0]):
+                for x in range(found, len(indices)):
 
-                    if not self.columns[self.columns[y].neighbour_indices[x]].level == self.columns[y].level:
+                    if not graph.vertices[graph.vertices[y].neighbour_indices[x]].level == graph.vertices[y].level:
 
-                        temp_distance = np.sqrt((self.columns[y].x -
-                                                 self.columns[self.columns[y].neighbour_indices[x]].x) ** 2 +
-                                                (self.columns[y].y -
-                                                 self.columns[self.columns[y].neighbour_indices[x]].y) ** 2)
+                        temp_distance = np.sqrt((graph.vertices[y].real_coor_x -
+                                                 graph.vertices[graph.vertices[y].neighbour_indices[x]].real_coor_x) ** 2 +
+                                                (graph.vertices[y].real_coor_y -
+                                                 graph.vertices[graph.vertices[y].neighbour_indices[x]].real_coor_y) ** 2)
 
                         if temp_distance < distance:
                             distance = temp_distance
-                            friend_index = self.columns[y].neighbour_indices[x]
+                            friend_index = graph.vertices[y].neighbour_indices[x]
 
                 if not friend_index == -1:
 
                     i_1 = -1
 
-                    for j in range(0, indices.shape[0]):
+                    for j in range(0, len(indices)):
 
                         if new_indices[j] == friend_index:
                             i_1 = j
 
-                    self.columns[y].neighbour_indices[i_1] = self.columns[y].neighbour_indices[found]
-                    self.columns[y].neighbour_indices[found] = friend_index
+                    graph.vertices[y].neighbour_indices[i_1] = graph.vertices[y].neighbour_indices[found]
+                    graph.vertices[y].neighbour_indices[found] = friend_index
 
-                    self.find_consistent_perturbations_simple(friend_index)
-                    self.find_consistent_perturbations_simple(y)
+                    find_consistent_perturbations_simple(graph, friend_index)
+                    find_consistent_perturbations_simple(graph, y)
 
             if experimental:
-                self.sort_neighbours_by_level(y)
+                sort_neighbours_by_level(graph, y)
 
-def connection_shift_on_level(self, i, experimental=False):
 
-    n = self.columns[i].n()
-    indices = self.columns[i].neighbour_indices
+def connection_shift_on_level(graph, i, experimental=False):
+
+    n = graph.vertices[i].n()
+    indices = graph.vertices[i].neighbour_indices
 
     bad_index = -1
     good_index = -1
@@ -982,7 +975,7 @@ def connection_shift_on_level(self, i, experimental=False):
 
         print('k: ' + str(x))
 
-        if self.columns[indices[x]].level == self.columns[i].level:
+        if graph.vertices[indices[x]].level == graph.vertices[i].level:
 
             bad_index = x
 
@@ -998,7 +991,7 @@ def connection_shift_on_level(self, i, experimental=False):
 
         print('j: ' + str(n + high - 1 - x))
 
-        if not self.columns[indices[n + high - 1 - x]].level == self.columns[i].level:
+        if not graph.vertices[indices[n + high - 1 - x]].level == graph.vertices[i].level:
 
             good_index = n + high - 1 - x
 
@@ -1006,19 +999,21 @@ def connection_shift_on_level(self, i, experimental=False):
         print(
             str(i) + ' | ' + str(bad_index) + ': ' + str(indices[bad_index]) + ' | ' + str(good_index) + ': ' + str(
                 indices[good_index]))
-        self.perturbator(i, bad_index, good_index)
+        perturbator(graph, i, bad_index, good_index)
 
-def reset_popularity_flags(self):
 
-    for x in range(0, self.num_columns):
-        self.columns[x].is_popular = False
-        self.columns[x].is_unpopular = False
+def reset_popularity_flags(graph):
 
-    self.num_unpopular = 0
-    self.num_popular = 0
-    self.num_inconsistencies = 0
+    for x in range(0, graph.num_vertices):
+        graph.vertices[x].is_popular = False
+        graph.vertices[x].is_unpopular = False
 
-def find_shape(self, i, j, clockwise=True):
+    graph.num_unpopular = 0
+    graph.num_popular = 0
+    graph.num_inconsistencies = 0
+
+
+def find_shape(graph, i, j, clockwise=True):
 
     closed = False
     start_index = i
@@ -1039,28 +1034,28 @@ def find_shape(self, i, j, clockwise=True):
 
             next_index = -1
 
-            if not self.test_reciprocality(i, j):
+            if not graph.test_reciprocality(i, j):
 
                 if clockwise:
-                    sorted_indices, alpha = self.clockwise_neighbour_sort(j, j=i)
+                    sorted_indices, alpha = clockwise_neighbour_sort(graph, j, j=i)
                 else:
-                    sorted_indices, alpha = self.anticlockwise_neighbour_sort(j, j=i)
+                    sorted_indices, alpha = anticlockwise_neighbour_sort(graph, j, j=i)
 
-                next_index = self.columns[j].n()
+                next_index = graph.vertices[j].n()
 
             else:
 
                 if clockwise:
-                    sorted_indices, alpha = self.clockwise_neighbour_sort(j)
+                    sorted_indices, alpha = clockwise_neighbour_sort(graph, j)
                 else:
-                    sorted_indices, alpha = self.anticlockwise_neighbour_sort(j)
+                    sorted_indices, alpha = anticlockwise_neighbour_sort(graph, j)
 
-                for x in range(0, self.columns[j].n()):
+                for x in range(0, graph.vertices[j].n()):
 
                     if sorted_indices[x] == i:
 
                         if x == 0:
-                            next_index = self.columns[j].n() - 1
+                            next_index = graph.vertices[j].n() - 1
                         else:
                             next_index = x - 1
 
@@ -1070,13 +1065,14 @@ def find_shape(self, i, j, clockwise=True):
 
     return shape_indices, shape_indices.shape[0] - 1
 
-def clockwise_neighbour_sort(self, i, j=-1):
 
-    n = self.columns[i].n()
+def clockwise_neighbour_sort(graph, i, j=-1):
+
+    n = graph.vertices[i].n()
     print('n: ' + str(n))
 
     if not j == -1:
-        n = self.columns[i].n() + 1
+        n = graph.vertices[i].n() + 1
         print('changed n: ' + str(n))
 
     a = np.ndarray([n], dtype=np.int)
@@ -1089,15 +1085,15 @@ def clockwise_neighbour_sort(self, i, j=-1):
 
         sorted_indices[0] = j
 
-        a[0] = self.columns[j].x - self.columns[i].x
-        b[0] = self.columns[j].y - self.columns[i].y
+        a[0] = graph.vertices[j].real_coor_x - graph.vertices[i].real_coor_x
+        b[0] = graph.vertices[j].real_coor_y - graph.vertices[i].real_coor_y
 
         for x in range(1, n):
-            a[x] = self.columns[self.columns[i].neighbour_indices[x - 1]].x - self.columns[i].x
-            b[x] = self.columns[self.columns[i].neighbour_indices[x - 1]].y - self.columns[i].y
+            a[x] = graph.vertices[graph.vertices[i].neighbour_indices[x - 1]].real_coor_x - graph.vertices[i].real_coor_x
+            b[x] = graph.vertices[graph.vertices[i].neighbour_indices[x - 1]].real_coor_y - graph.vertices[i].real_coor_y
 
         for x in range(0, n - 1):
-            indices[x] = self.columns[i].neighbour_indices[x]
+            indices[x] = graph.vertices[i].neighbour_indices[x]
 
         for x in range(1, n):
 
@@ -1115,18 +1111,18 @@ def clockwise_neighbour_sort(self, i, j=-1):
 
     else:
 
-        sorted_indices[0] = self.columns[i].neighbour_indices[0]
+        sorted_indices[0] = graph.vertices[i].neighbour_indices[0]
 
         for x in range(1, n):
-            indices[x - 1] = self.columns[i].neighbour_indices[x]
+            indices[x - 1] = graph.vertices[i].neighbour_indices[x]
 
         for x in range(0, n):
-            a[x] = self.columns[self.columns[i].neighbour_indices[x]].x - self.columns[i].x
-            b[x] = self.columns[self.columns[i].neighbour_indices[x]].y - self.columns[i].y
+            a[x] = graph.vertices[graph.vertices[i].neighbour_indices[x]].real_coor_x - graph.vertices[i].real_coor_x
+            b[x] = graph.vertices[graph.vertices[i].neighbour_indices[x]].real_coor_y - graph.vertices[i].real_coor_y
 
         for x in range(1, n):
 
-            indices[x - 1] = self.columns[i].neighbour_indices[x]
+            indices[x - 1] = graph.vertices[i].neighbour_indices[x]
 
             alpha[x - 1] = utils.find_angle(a[0], a[x], b[0], b[x])
 
@@ -1144,13 +1140,14 @@ def clockwise_neighbour_sort(self, i, j=-1):
 
     return sorted_indices, alpha
 
-def anticlockwise_neighbour_sort(self, i, j=-1):
 
-    n = self.columns[i].n()
+def anticlockwise_neighbour_sort(graph, i, j=-1):
+
+    n = graph.vertices[i].n()
     print('n: ' + str(n))
 
     if not j == -1:
-        n = self.columns[i].n() + 1
+        n = graph.vertices[i].n() + 1
         print('changed n: ' + str(n))
 
     a = np.ndarray([n], dtype=np.int)
@@ -1163,15 +1160,15 @@ def anticlockwise_neighbour_sort(self, i, j=-1):
 
         sorted_indices[0] = j
 
-        a[0] = self.columns[j].x - self.columns[i].x
-        b[0] = self.columns[j].y - self.columns[i].y
+        a[0] = graph.vertices[j].real_coor_x - graph.vertices[i].real_coor_x
+        b[0] = graph.vertices[j].real_coor_y - graph.vertices[i].real_coor_y
 
         for x in range(1, n):
-            a[x] = self.columns[self.columns[i].neighbour_indices[x - 1]].x - self.columns[i].x
-            b[x] = self.columns[self.columns[i].neighbour_indices[x - 1]].y - self.columns[i].y
+            a[x] = graph.vertices[graph.vertices[i].neighbour_indices[x - 1]].real_coor_x - graph.vertices[i].real_coor_x
+            b[x] = graph.vertices[graph.vertices[i].neighbour_indices[x - 1]].real_coor_y - graph.vertices[i].real_coor_y
 
         for x in range(0, n - 1):
-            indices[x] = self.columns[i].neighbour_indices[x]
+            indices[x] = graph.vertices[i].neighbour_indices[x]
 
         for x in range(1, n):
 
@@ -1189,18 +1186,18 @@ def anticlockwise_neighbour_sort(self, i, j=-1):
 
     else:
 
-        sorted_indices[0] = self.columns[i].neighbour_indices[0]
+        sorted_indices[0] = graph.vertices[i].neighbour_indices[0]
 
         for x in range(1, n):
-            indices[x - 1] = self.columns[i].neighbour_indices[x]
+            indices[x - 1] = graph.vertices[i].neighbour_indices[x]
 
         for x in range(0, n):
-            a[x] = self.columns[self.columns[i].neighbour_indices[x]].x - self.columns[i].x
-            b[x] = self.columns[self.columns[i].neighbour_indices[x]].y - self.columns[i].y
+            a[x] = graph.vertices[graph.vertices[i].neighbour_indices[x]].real_coor_x - graph.vertices[i].real_coor_x
+            b[x] = graph.vertices[graph.vertices[i].neighbour_indices[x]].real_coor_y - graph.vertices[i].real_coor_y
 
         for x in range(1, n):
 
-            indices[x - 1] = self.columns[i].neighbour_indices[x]
+            indices[x - 1] = graph.vertices[i].neighbour_indices[x]
 
             alpha[x - 1] = utils.find_angle(a[0], a[x], b[0], b[x])
 
@@ -1218,5 +1215,4 @@ def anticlockwise_neighbour_sort(self, i, j=-1):
 
     return sorted_indices, alpha
 
-'''
 

@@ -379,37 +379,62 @@ class SuchSoftware:
 
         return list(indices), list(distances)
 
+    def find_edge_columns(self):
+
+        for y in range(0, self.num_columns):
+
+            x_coor = self.graph.vertices[y].real_coor_x
+            y_coor = self.graph.vertices[y].real_coor_y
+            margin = 6 * self.r
+
+            if x_coor < margin or x_coor > self.im_width - margin - 1 or y_coor < margin or y_coor > self.im_height - margin - 1:
+
+                self.graph.vertices[y].is_edge_column = True
+                self.graph.vertices[y].reset_prob_vector(bias=3)
+
+            else:
+
+                self.graph.vertices[y].is_edge_column = False
+
     def column_characterization(self, starting_index, search_type=0):
 
         if search_type == 0:
 
             self.report('Starting column characterization from vertex {}...'.format(starting_index), force=True)
-            self.report('    Setting alloy', force=True)
+            self.report('    Setting alloy...', force=True)
             self.set_alloy_mat()
             self.report('    Alloy set.', force=True)
-
+            self.report('    Finding edge columns....', force=True)
+            self.find_edge_columns()
+            for i in range(0, self.num_columns):
+                if self.graph.vertices[i].is_edge_column and not self.graph.vertices[i].set_by_user:
+                    self.graph.vertices[i].reset_prob_vector(bias=3)
+            self.report('    Found edge columns.', force=True)
+            # Reset prob vectors:
+            self.column_characterization(starting_index, search_type=12)
+            # Spatial mapping:
             self.column_characterization(starting_index, search_type=2)
-
+            # Angle analysis:
             self.column_characterization(starting_index, search_type=3)
-
+            # Intensity analysis
             self.column_characterization(starting_index, search_type=4)
-
+            # Find particle:
             self.column_characterization(starting_index, search_type=5)
-
+            # Set levels:
             self.column_characterization(starting_index, search_type=6)
-
+            # Add edges:
             self.column_characterization(starting_index, search_type=7)
-
+            # Summarize:
             self.report('    Summarizing stats.', force=True)
             self.summarize_stats()
-
+            # Legacy weak untanglng
             self.column_characterization(starting_index, search_type=8)
-
+            # Legacy strong untangling
             self.column_characterization(starting_index, search_type=9)
-
+            # Summarize:
             self.report('    Summarizing stats.', force=True)
             self.summarize_stats()
-
+            # Complete:
             self.report('Column characterization complete.', force=True)
             self.report(' ', force=True)
 
@@ -458,7 +483,7 @@ class SuchSoftware:
 
             self.report('    Analysing angles...', force=True)
             for i in range(0, self.num_columns):
-                if not self.graph.vertices[i].set_by_user:
+                if not self.graph.vertices[i].set_by_user and not self.graph.vertices[i].is_edge_column:
                     graph_op.apply_angle_score(self.graph, i, self.dist_3_std, self.dist_4_std, self.dist_5_std,
                                                self.num_selections)
             self.report('    Angle analysis complete.', force=True, update=True)
@@ -467,7 +492,7 @@ class SuchSoftware:
 
             self.report('    Analyzing intensities...', force=True)
             for i in range(0, self.num_columns):
-                if not self.graph.vertices[i].set_by_user:
+                if not self.graph.vertices[i].set_by_user and not self.graph.vertices[i].is_edge_column:
                     graph_op.apply_intensity_score(self.graph, i, self.num_selections, self.intensities[self.alloy],
                                                    self.dist_8_std)
             self.report('    Intensity analysis complete.', force=True, update=True)
@@ -482,8 +507,9 @@ class SuchSoftware:
         elif search_type == 6:
 
             self.report('    Running legacy level definition algorithm....', force=True)
-            graph_op.set_levels(self.graph, starting_index, self.report, self.graph.vertices[starting_index].level,
-                                self.num_selections)
+            legacy_items.define_levels(self.graph, starting_index, self.graph.vertices[starting_index].level)
+            # graph_op.set_levels(self.graph, starting_index, self.report, self.graph.vertices[starting_index].level,
+                               # self.num_selections)
             self.report('    Levels set.', force=True, update=True)
 
         elif search_type == 7:
@@ -495,7 +521,82 @@ class SuchSoftware:
         elif search_type == 8:
 
             self.report('    Starting legacy weak untangling...', force=True)
-            self.report('        Could not start weak untangling because it is not implemented yet!', force=True)
+            for i in range(0, self.num_columns):
+                legacy_items.find_consistent_perturbations_simple(self.graph, i, sub=True)
+            self.column_characterization(starting_index, search_type=12)
+            self.column_characterization(starting_index, search_type=4)
+            self.column_characterization(starting_index, search_type=3)
+            self.column_characterization(starting_index, search_type=5)
+            self.column_characterization(starting_index, search_type=6)
+            self.summarize_stats()
+            for i in range(0, self.num_columns):
+                legacy_items.find_consistent_perturbations_simple(self.graph, i)
+            self.column_characterization(starting_index, search_type=12)
+            self.column_characterization(starting_index, search_type=4)
+            self.column_characterization(starting_index, search_type=3)
+            self.column_characterization(starting_index, search_type=5)
+            self.column_characterization(starting_index, search_type=6)
+            self.summarize_stats()
+            for i in range(0, self.num_columns):
+                legacy_items.find_consistent_perturbations_advanced(self.graph)
+            for i in range(0, self.num_columns):
+                legacy_items.find_consistent_perturbations_advanced(self.graph)
+            self.column_characterization(starting_index, search_type=12)
+            self.column_characterization(starting_index, search_type=4)
+            self.column_characterization(starting_index, search_type=3)
+            self.column_characterization(starting_index, search_type=5)
+            self.column_characterization(starting_index, search_type=6)
+            self.summarize_stats()
+            for i in range(0, self.num_columns):
+                legacy_items.find_consistent_perturbations_advanced(self.graph)
+            for i in range(0, self.num_columns):
+                legacy_items.find_consistent_perturbations_advanced(self.graph)
+            self.column_characterization(starting_index, search_type=12)
+            self.column_characterization(starting_index, search_type=4)
+            self.column_characterization(starting_index, search_type=3)
+            self.column_characterization(starting_index, search_type=5)
+            self.column_characterization(starting_index, search_type=6)
+            self.summarize_stats()
+            for i in range(0, self.num_columns):
+                legacy_items.find_consistent_perturbations_advanced(self.graph, experimental=True)
+            self.column_characterization(starting_index, search_type=12)
+            self.column_characterization(starting_index, search_type=4)
+            self.column_characterization(starting_index, search_type=3)
+            self.column_characterization(starting_index, search_type=5)
+            self.column_characterization(starting_index, search_type=6)
+            self.summarize_stats()
+            for i in range(0, self.num_columns):
+                legacy_items.find_consistent_perturbations_advanced(self.graph)
+            for i in range(0, self.num_columns):
+                legacy_items.find_consistent_perturbations_advanced(self.graph)
+            self.column_characterization(starting_index, search_type=12)
+            self.column_characterization(starting_index, search_type=4)
+            self.column_characterization(starting_index, search_type=3)
+            self.column_characterization(starting_index, search_type=5)
+            self.column_characterization(starting_index, search_type=6)
+            self.summarize_stats()
+            for i in range(0, self.num_columns):
+                legacy_items.find_consistent_perturbations_advanced(self.graph)
+            for i in range(0, self.num_columns):
+                if self.graph.vertices[i].is_popular and not self.graph.vertices[i].set_by_user and not self.graph.vertices[i].is_edge_column:
+                    legacy_items.connection_shift_on_level(self.graph, i)
+            for i in range(0, self.num_columns):
+                legacy_items.find_consistent_perturbations_advanced(self.graph)
+            for i in range(0, self.num_columns):
+                legacy_items.find_consistent_perturbations_advanced(self.graph, experimental=True)
+            self.column_characterization(starting_index, search_type=12)
+            self.column_characterization(starting_index, search_type=4)
+            self.column_characterization(starting_index, search_type=3)
+            self.column_characterization(starting_index, search_type=5)
+            self.column_characterization(starting_index, search_type=6)
+            self.summarize_stats()
+            for i in range(0, self.num_columns):
+                legacy_items.find_consistent_perturbations_advanced(self.graph)
+            for i in range(0, self.num_columns):
+                legacy_items.find_consistent_perturbations_advanced(self.graph)
+            for i in range(0, self.num_columns):
+                legacy_items.find_consistent_perturbations_advanced(self.graph, experimental=True)
+            self.report('    Legacy weak untangling complete!', force=True)
 
         elif search_type == 9:
 
@@ -516,7 +617,7 @@ class SuchSoftware:
 
             self.report('    Resetting probability vectors with zero bias...', force=True)
             for i in range(0, self.num_columns):
-                if not self.graph.vertices[i].set_by_user:
+                if not self.graph.vertices[i].set_by_user and not self.graph.vertices[i].is_edge_column:
                     self.graph.vertices[i].reset_prob_vector()
             self.report('    Probability vectors reset.', force=True)
 
