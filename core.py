@@ -343,7 +343,7 @@ class SuchSoftware:
                     if self.column_centre_mat[y, x, 0] == 1:
                         j = self.column_centre_mat[y, x, 1]
                         dist = self.graph.spatial_distance(i, j)
-                        if num_found == n:
+                        if num_found >= n:
                             if dist < distances.max():
                                 ind = distances.argmax()
                                 indices[ind] = j
@@ -372,7 +372,7 @@ class SuchSoftware:
                 ind = distances.argmin()
                 temp_indices[k] = indices[ind]
                 temp_distances[k] = distances[ind]
-                distances[ind] = distances.max() + k
+                distances[ind] = distances.max() + k + 1
 
             indices = temp_indices
             distances = temp_distances
@@ -538,9 +538,9 @@ class SuchSoftware:
             self.column_characterization(starting_index, search_type=6)
             self.summarize_stats()
             for i in range(0, self.num_columns):
-                legacy_items.find_consistent_perturbations_advanced(self.graph)
+                legacy_items.find_consistent_perturbations_advanced(self.graph, i)
             for i in range(0, self.num_columns):
-                legacy_items.find_consistent_perturbations_advanced(self.graph)
+                legacy_items.find_consistent_perturbations_advanced(self.graph, i)
             self.column_characterization(starting_index, search_type=12)
             self.column_characterization(starting_index, search_type=4)
             self.column_characterization(starting_index, search_type=3)
@@ -548,9 +548,9 @@ class SuchSoftware:
             self.column_characterization(starting_index, search_type=6)
             self.summarize_stats()
             for i in range(0, self.num_columns):
-                legacy_items.find_consistent_perturbations_advanced(self.graph)
+                legacy_items.find_consistent_perturbations_advanced(self.graph, i)
             for i in range(0, self.num_columns):
-                legacy_items.find_consistent_perturbations_advanced(self.graph)
+                legacy_items.find_consistent_perturbations_advanced(self.graph, i)
             self.column_characterization(starting_index, search_type=12)
             self.column_characterization(starting_index, search_type=4)
             self.column_characterization(starting_index, search_type=3)
@@ -558,7 +558,7 @@ class SuchSoftware:
             self.column_characterization(starting_index, search_type=6)
             self.summarize_stats()
             for i in range(0, self.num_columns):
-                legacy_items.find_consistent_perturbations_advanced(self.graph, experimental=True)
+                legacy_items.find_consistent_perturbations_advanced(self.graph, i, experimental=True)
             self.column_characterization(starting_index, search_type=12)
             self.column_characterization(starting_index, search_type=4)
             self.column_characterization(starting_index, search_type=3)
@@ -566,9 +566,9 @@ class SuchSoftware:
             self.column_characterization(starting_index, search_type=6)
             self.summarize_stats()
             for i in range(0, self.num_columns):
-                legacy_items.find_consistent_perturbations_advanced(self.graph)
+                legacy_items.find_consistent_perturbations_advanced(self.graph, i)
             for i in range(0, self.num_columns):
-                legacy_items.find_consistent_perturbations_advanced(self.graph)
+                legacy_items.find_consistent_perturbations_advanced(self.graph, i)
             self.column_characterization(starting_index, search_type=12)
             self.column_characterization(starting_index, search_type=4)
             self.column_characterization(starting_index, search_type=3)
@@ -576,14 +576,14 @@ class SuchSoftware:
             self.column_characterization(starting_index, search_type=6)
             self.summarize_stats()
             for i in range(0, self.num_columns):
-                legacy_items.find_consistent_perturbations_advanced(self.graph)
+                legacy_items.find_consistent_perturbations_advanced(self.graph, i)
             for i in range(0, self.num_columns):
                 if self.graph.vertices[i].is_popular and not self.graph.vertices[i].set_by_user and not self.graph.vertices[i].is_edge_column:
                     legacy_items.connection_shift_on_level(self.graph, i)
             for i in range(0, self.num_columns):
-                legacy_items.find_consistent_perturbations_advanced(self.graph)
+                legacy_items.find_consistent_perturbations_advanced(self.graph, i)
             for i in range(0, self.num_columns):
-                legacy_items.find_consistent_perturbations_advanced(self.graph, experimental=True)
+                legacy_items.find_consistent_perturbations_advanced(self.graph, i, experimental=True)
             self.column_characterization(starting_index, search_type=12)
             self.column_characterization(starting_index, search_type=4)
             self.column_characterization(starting_index, search_type=3)
@@ -591,11 +591,11 @@ class SuchSoftware:
             self.column_characterization(starting_index, search_type=6)
             self.summarize_stats()
             for i in range(0, self.num_columns):
-                legacy_items.find_consistent_perturbations_advanced(self.graph)
+                legacy_items.find_consistent_perturbations_advanced(self.graph, i)
             for i in range(0, self.num_columns):
-                legacy_items.find_consistent_perturbations_advanced(self.graph)
+                legacy_items.find_consistent_perturbations_advanced(self.graph, i)
             for i in range(0, self.num_columns):
-                legacy_items.find_consistent_perturbations_advanced(self.graph, experimental=True)
+                legacy_items.find_consistent_perturbations_advanced(self.graph, i, experimental=True)
             self.report('    Legacy weak untangling complete!', force=True)
 
         elif search_type == 9:

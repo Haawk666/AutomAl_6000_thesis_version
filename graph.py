@@ -393,13 +393,14 @@ class AtomicGraph:
 
     def calc_chi(self):
         self.chi = 0
-        for i in range(0, self.num_edges):
-            if self.edges[i].is_consistent():
-                self.chi += 1
-        if self.num_edges == 0:
-            self.chi = 0
-        else:
-            self.chi = self.chi / self.num_edges
+        if not len(self.edges) <= 0 and self.edges is not None:
+            for i in range(0, self.num_edges):
+                if self.edges[i].is_consistent():
+                    self.chi += 1
+            if self.num_edges == 0:
+                self.chi = 0
+            else:
+                self.chi = self.chi / self.num_edges
         return self.chi
 
     def reset_vertex_properties(self):

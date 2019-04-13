@@ -645,16 +645,22 @@ def find_consistent_perturbations_simple(graph, y, sub=False):
 
         elif found > n:
 
+            # Here
+
             index_positions = np.zeros([found], dtype=int)
 
             for k in range(0, found):
 
                 for z in range(0, len(indices)):
 
-                    if indices[z] == new_indices[k]:
+                    if int(indices[z]) == int(new_indices[k]):
                         index_positions[k] = z
 
             counter = found - 1
+
+            print(index_positions)
+            print(indices)
+            print(new_indices)
 
             for i in range(0, len(indices)):
 
