@@ -50,6 +50,7 @@ class Vertex:
         # Ag
         # Mg
         # Un
+
         self.species_strings = None
         if species_strings is None:
             self.species_strings = ['Si', 'Cu', 'Zn', 'Al', 'Ag', 'Mg', 'Un']
@@ -215,10 +216,15 @@ class Vertex:
 
     def partners(self):
         if not len(self.neighbour_indices) == 0:
-            self.partner_indices = []
-            for i in range(0, self.n()):
-                self.partner_indices.append(self.neighbour_indices[i])
+            self.partner_indices = self.neighbour_indices[0:self.n() - 1]
             return self.partner_indices
+
+    def partner_query(self, j):
+        found = False
+        for i in self.partners():
+            if i == j:
+                found = True
+        return found
 
     def print(self):
         print('\nVertex properties:\n----------')
@@ -439,9 +445,54 @@ class AtomicGraph:
             elif self.vertices[x].level == 1:
                 self.vertices[x].level = 0
 
-    def find_mesh(self, i, j):
-        # return list of indices of shape and number of edges
-        return 5, 6
+    def angle_sort(self, i, j):
+
+        partners = self.vertices[j].partners()
+        angles = []
+        p1 = (self.vertices[i].real_coor_x, self.vertices[i].real_coor_y)
+        pivot = (self.vertices[j].real_coor_x, self.vertices[j].real_coor_y)
+
+        for k in partners:
+            p2 = (self.vertices[k].real_coor_x, self.vertices[k].real_coor_y)
+            alpha = utils.find_angle_from_points(p1, p2, pivot)
+            angles.append(alpha)
+
+        return angles
+
+    def find_mesh(self, i, j, clockwise=True):
+
+        if not clockwise:
+            i, j = j, i
+
+        # Check that j is partner to i
+        if not self.vertices[i].partner_query(j):
+            raise NotImplementedError
+
+        corners = [i, j]
+        angles = [0]
+
+        counter = 0
+        stop = False
+
+        while not stop:
+
+            v_angles = np.array(self.angle_sort(i, j))
+            v_angles[v_angles.argmin()] = v_angles.max() + 1
+            next_index = self.vertices[j].partner_indices[v_angles.argmin()]
+            angles.append(v_angles.min())
+
+            if next_index == corners[0] or counter > 6:
+                stop = True
+                p1 = (self.vertices[j].real_coor_x, self.vertices[j].real_coor_y)
+                pivot = (self.vertices[corners[0]].real_coor_x, self.vertices[corners[0]].real_coor_y)
+                p2 = (self.vertices[corners[1]].real_coor_x, self.vertices[corners[1]].real_coor_y)
+                angles[0] = utils.find_angle_from_points(p1, p2, pivot)
+            else:
+                corners.append(next_index)
+                counter += 1
+                i, j = j, next_index
+
+        return corners, angles
 
     def map_spatial_neighbours(self):
 
@@ -517,5 +568,4 @@ class AtomicGraph:
 
     def set_level(self, i, level):
         self.vertices[i].level = level
-
 

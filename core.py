@@ -21,7 +21,7 @@ class SuchSoftware:
     # Number of elements in the probability vectors
     num_selections = 7
 
-    # Number of closest neighbour that are included in local search-spaces
+    # Number of closest neighbours that are included in local search-spaces
     map_size = 8
 
     # Al lattice constant in picometers
@@ -36,7 +36,7 @@ class SuchSoftware:
     mg_radii = 160
     un_radii = 200
 
-    # Indexable list
+    # Indexable list of atomic radii
     atomic_radii = (si_radii, cu_radii, zn_radii, al_radii, ag_radii, mg_radii, un_radii)
 
     # Relative mean peak intensities for the different implemented alloys:
@@ -152,7 +152,7 @@ class SuchSoftware:
         self.display_stats_string = 'Empty'
         self.export_data_string = ' '
 
-        # Parameter variables. these are parameters of the algorithms. See the documentation.
+        # These are hyper-parameters of the algorithms. See the documentation.
         self.threshold = 0.2586
         self.search_size = 1
         self.r = int(100 / self.scale)
