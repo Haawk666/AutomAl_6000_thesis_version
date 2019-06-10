@@ -189,6 +189,7 @@ class SuchSoftware:
                                                     self.graph.vertices[i].real_coor_y), force=True)
         self.report('    Atomic Species: {}'.format(self.graph.vertices[i].atomic_species), force=True)
         self.report(('    Probability vector: {}'.format(self.graph.vertices[i].prob_vector).replace('\n', '')), force=True)
+        self.report('    Partner vector: {}'.format(self.graph.vertices[i].partners()), force=True)
         self.report(' ', force=True)
 
     def image_report(self):
@@ -523,6 +524,7 @@ class SuchSoftware:
             self.report('    Starting legacy weak untangling...', force=True)
             for i in range(0, self.num_columns):
                 legacy_items.find_consistent_perturbations_simple(self.graph, i, sub=True)
+            self.graph.redraw_edges()
             self.column_characterization(starting_index, search_type=12)
             self.column_characterization(starting_index, search_type=4)
             self.column_characterization(starting_index, search_type=3)
@@ -531,6 +533,7 @@ class SuchSoftware:
             self.summarize_stats()
             for i in range(0, self.num_columns):
                 legacy_items.find_consistent_perturbations_simple(self.graph, i)
+            self.graph.redraw_edges()
             self.column_characterization(starting_index, search_type=12)
             self.column_characterization(starting_index, search_type=4)
             self.column_characterization(starting_index, search_type=3)
@@ -541,6 +544,7 @@ class SuchSoftware:
                 legacy_items.find_consistent_perturbations_advanced(self.graph, i)
             for i in range(0, self.num_columns):
                 legacy_items.find_consistent_perturbations_advanced(self.graph, i)
+            self.graph.redraw_edges()
             self.column_characterization(starting_index, search_type=12)
             self.column_characterization(starting_index, search_type=4)
             self.column_characterization(starting_index, search_type=3)
@@ -551,6 +555,7 @@ class SuchSoftware:
                 legacy_items.find_consistent_perturbations_advanced(self.graph, i)
             for i in range(0, self.num_columns):
                 legacy_items.find_consistent_perturbations_advanced(self.graph, i)
+            self.graph.redraw_edges()
             self.column_characterization(starting_index, search_type=12)
             self.column_characterization(starting_index, search_type=4)
             self.column_characterization(starting_index, search_type=3)
@@ -559,6 +564,7 @@ class SuchSoftware:
             self.summarize_stats()
             for i in range(0, self.num_columns):
                 legacy_items.find_consistent_perturbations_advanced(self.graph, i, experimental=True)
+            self.graph.redraw_edges()
             self.column_characterization(starting_index, search_type=12)
             self.column_characterization(starting_index, search_type=4)
             self.column_characterization(starting_index, search_type=3)
@@ -569,6 +575,7 @@ class SuchSoftware:
                 legacy_items.find_consistent_perturbations_advanced(self.graph, i)
             for i in range(0, self.num_columns):
                 legacy_items.find_consistent_perturbations_advanced(self.graph, i)
+            self.graph.redraw_edges()
             self.column_characterization(starting_index, search_type=12)
             self.column_characterization(starting_index, search_type=4)
             self.column_characterization(starting_index, search_type=3)
@@ -584,11 +591,13 @@ class SuchSoftware:
                 legacy_items.find_consistent_perturbations_advanced(self.graph, i)
             for i in range(0, self.num_columns):
                 legacy_items.find_consistent_perturbations_advanced(self.graph, i, experimental=True)
+            self.graph.redraw_edges()
             self.column_characterization(starting_index, search_type=12)
             self.column_characterization(starting_index, search_type=4)
             self.column_characterization(starting_index, search_type=3)
             self.column_characterization(starting_index, search_type=5)
             self.column_characterization(starting_index, search_type=6)
+            self.graph.redraw_edges()
             self.summarize_stats()
             for i in range(0, self.num_columns):
                 legacy_items.find_consistent_perturbations_advanced(self.graph, i)
@@ -596,6 +605,8 @@ class SuchSoftware:
                 legacy_items.find_consistent_perturbations_advanced(self.graph, i)
             for i in range(0, self.num_columns):
                 legacy_items.find_consistent_perturbations_advanced(self.graph, i, experimental=True)
+            self.graph.redraw_edges()
+            self.summarize_stats()
             self.report('    Legacy weak untangling complete!', force=True)
 
         elif search_type == 9:

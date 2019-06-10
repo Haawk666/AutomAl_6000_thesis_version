@@ -216,7 +216,7 @@ class Vertex:
 
     def partners(self):
         if not len(self.neighbour_indices) == 0:
-            self.partner_indices = self.neighbour_indices[0:self.n() - 1]
+            self.partner_indices = self.neighbour_indices[0:self.n()]
             return self.partner_indices
 
     def partner_query(self, j):
@@ -238,7 +238,7 @@ class Edge:
 
     def __init__(self, vertex_a, vertex_b, index):
 
-        # Initialize and edge with direction from vertex a -> vertex b.
+        # Initialize an edge with direction from vertex a -> vertex b.
 
         self.vertex_a = vertex_a
         self.vertex_b = vertex_b
@@ -278,22 +278,22 @@ class Edge:
 
         found_a = False
 
-        for ind in self.vertex_a.partners():
-            if ind == index_j:
+        for ind in self.vertex_b.partners():
+            if ind == index_i:
                 found_a = True
 
         if not found_a:
-            print('Unexpected error in graph.Edge.is_consistent()')
             is_consistent = False
             is_reciprocated = False
 
         found_b = False
 
-        for ind in self.vertex_b.partners():
-            if ind == index_i:
+        for ind in self.vertex_a.partners():
+            if ind == index_j:
                 found_b = True
 
         if not found_b:
+            print('Unexpected error in graph.Edge.is_consistent()')
             is_consistent = False
             is_reciprocated = False
 
@@ -343,6 +343,8 @@ class AtomicGraph:
     def summarize_stats(self):
 
         self.num_vertices = len(self.vertices)
+        self.num_popular = 0
+        self.num_unpopular = 0
         for x in range(0, self.num_vertices):
             if self.vertices[x].is_popular:
                 self.num_popular += 1
@@ -390,11 +392,9 @@ class AtomicGraph:
     def redraw_edges(self):
         self.edges = []
         self.num_edges = 0
-        for i in range(0, self.num_vertices):
-            self.vertices[i].partners()
-            if not self.vertices[i].neighbour_indices == []:
-                for j in range(0, self.vertices[i].n()):
-                    self.add_edge(self.vertices[i], self.vertices[self.vertices[i].neighbour_indices[j]], self.num_edges)
+        for vertex in self.vertices:
+            for partner in vertex.partners():
+                self.add_edge(vertex, self.vertices[partner], self.num_edges)
         self.calc_chi()
 
     def calc_chi(self):
@@ -494,6 +494,27 @@ class AtomicGraph:
 
         return corners, angles
 
+    def get_atomic_configuration(self, i):
+
+        sub_graph = SubGraph(self.map_size)
+        sub_graph.add_vertex(self.vertices[i])
+
+        for partner in self.vertices[i].partners():
+
+            sub_graph.add_vertex(self.vertices[partner])
+            corners, _ = self.find_mesh(i, partner)
+
+            for j in corners:
+
+                if j not in sub_graph.vertex_indices:
+
+                    sub_graph.add_vertex(self.vertices[j])
+
+        sub_graph.redraw_edges()
+        sub_graph.summarize_stats()
+
+        return sub_graph
+
     def map_spatial_neighbours(self):
 
         # This function is unefficient and stupid. Use column_centre_mat of the core module for this task. This function
@@ -568,4 +589,101 @@ class AtomicGraph:
 
     def set_level(self, i, level):
         self.vertices[i].level = level
+
+
+class SubGraph:
+
+    def __init__(self, map_size=8):
+
+        self.vertices = []
+        self.vertex_indices = []
+        self.edges = []
+
+        self.map_size = map_size
+
+        self.chi = 0
+        self.num_vertices = len(self.vertices)
+        self.num_edges = 0
+        self.num_inconsistencies = 0
+        self.num_popular = 0
+        self.num_unpopular = 0
+
+    def summarize_stats(self):
+
+        self.num_vertices = len(self.vertices)
+        self.num_popular = 0
+        self.num_unpopular = 0
+        for vertex in self.vertices:
+            if vertex.is_popular:
+                self.num_popular += 1
+            if vertex.is_unpopular:
+                self.num_unpopular += 1
+
+    def add_vertex(self, vertex):
+
+        self.vertices.append(vertex)
+        self.vertex_indices.append(vertex.i)
+        self.num_vertices += 1
+        if vertex.is_popular:
+            self.num_popular += 1
+        if vertex.is_unpopular:
+            self.num_unpopular += 1
+
+    def get_ind_from_mother(self, i):
+
+        for index, mother_index in enumerate(self.vertex_indices):
+            if mother_index == i:
+                sub_index = index
+                break
+        else:
+            sub_index = -1
+        return sub_index
+
+    def reset_vertex(self, i):
+        i = self.get_ind_from_mother(i)
+        if not i == -1:
+            self.vertices[i].level = 0
+            self.vertices[i].reset_prob_vector(bias=self.vertices[i].num_selections - 1)
+            self.vertices[i].is_in_precipitate = False
+            self.vertices[i].is_unpopular = False
+            self.vertices[i].is_popular = False
+            self.vertices[i].is_edge_column = False
+            self.vertices[i].show_in_overlay = True
+
+    def remove_vertex(self, vertex_index):
+        raise NotImplemented
+
+    def increase_h(self, i):
+        i = self.get_ind_from_mother(i)
+        if not i == -1:
+            changed = self.vertices[i].increase_h_value()
+        else:
+            changed = False
+        return changed
+
+    def decrease_h(self, i):
+        i = self.get_ind_from_mother(i)
+        if not i == -1:
+            changed = self.vertices[i].decrease_h_value()
+        else:
+            changed = False
+        return changed
+
+    def add_edge(self, vertex_a, vertex_b, index):
+        self.edges.append(Edge(vertex_a, vertex_b, index))
+        self.num_edges += 1
+
+    def remove_edge(self, edge_index):
+        raise NotImplemented
+
+    def redraw_edges(self):
+        self.edges = []
+        self.num_edges = 0
+        for vertex in self.vertices:
+            for partner in vertex.partners():
+                if partner in self.vertex_indices:
+                    self.add_edge(vertex, self.vertices[self.get_ind_from_mother(partner)], self.num_edges)
+
+
+
 

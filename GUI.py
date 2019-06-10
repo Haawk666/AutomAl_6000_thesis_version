@@ -39,6 +39,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.overlay_objects = np.ndarray([1], dtype=type(dummy_instance))
         dummy_instance = GUI_elements.InteractiveGraphVertex(0, 0, 0, 0)
         self.vertex_objects = np.ndarray([1], dtype=type(dummy_instance))
+        self.sub_vertex_objects = np.ndarray([1], dtype=type(dummy_instance))
 
         self.boarder_line_objects = np.ndarray([1], dtype=type(QtWidgets.QGraphicsLineItem()))
         self.boarder_line_objects[0] = QtWidgets.QGraphicsLineItem(1.0, 2.0, 3.0, 4.0)
@@ -1446,70 +1447,84 @@ class MainUI(QtWidgets.QMainWindow):
 
         return column_object
 
+    def make_arrow_obj(self, p1, p2, r, scale_factor, consistent):
+
+        r_2 = QtCore.QPointF(2 * scale_factor * p2[0], 2 * scale_factor * p2[1])
+        r_1 = QtCore.QPointF(2 * scale_factor * p1[0], 2 * scale_factor * p1[1])
+
+        r_vec = r_2 - r_1
+        r_mag = np.sqrt((r_2.x() - r_1.x()) ** 2 + (r_2.y() - r_1.y()) ** 2)
+        factor = r / (r_mag * 2)
+
+        k_1 = r_1 + factor * r_vec
+        k_2 = r_1 + (1 - factor) * r_vec
+
+        theta = np.pi / 4
+        self.red_pen.setWidth(3)
+
+        l_1 = factor * QtCore.QPointF(r_vec.x() * np.cos(theta) + r_vec.y() * np.sin(theta),
+                                      - r_vec.x() * np.sin(theta) + r_vec.y() * np.cos(theta))
+        l_1 = k_1 + l_1
+
+        l_2 = factor * QtCore.QPointF(r_vec.x() * np.cos(-theta) + r_vec.y() * np.sin(-theta),
+                                      - r_vec.x() * np.sin(-theta) + r_vec.y() * np.cos(-theta))
+        l_2 = k_1 + l_2
+
+        l_3 = - factor * QtCore.QPointF(r_vec.x() * np.cos(theta) + r_vec.y() * np.sin(theta),
+                                        - r_vec.x() * np.sin(theta) + r_vec.y() * np.cos(theta))
+        l_3 = k_2 + l_3
+
+        l_4 = - factor * QtCore.QPointF(r_vec.x() * np.cos(-theta) + r_vec.y() * np.sin(-theta),
+                                        - r_vec.x() * np.sin(-theta) + r_vec.y() * np.cos(-theta))
+        l_4 = k_2 + l_4
+
+        tri_1 = (k_1, l_1, l_2)
+        tri_2 = (k_2, l_3, l_4)
+
+        poly_1 = QtGui.QPolygonF(tri_1)
+        # poly_2 = QtGui.QPolygonF(tri_2)
+
+        line = QtWidgets.QGraphicsLineItem(2 * scale_factor * p1[0],
+                                           2 * scale_factor * p1[1],
+                                           2 * scale_factor * p2[0],
+                                           2 * scale_factor * p2[1])
+        head_1 = QtWidgets.QGraphicsPolygonItem(poly_1)
+        # head_2 = QtWidgets.QGraphicsPolygonItem(poly_2)
+
+        if consistent:
+            pen = self.pen_connection
+            brush = self.brush_connection
+        else:
+            pen = self.red_pen
+            brush = self.red_brush
+
+        line.setPen(pen)
+        head_1.setPen(pen)
+        # head_2.setBrush(brush)
+
+        return line, head_1
+
     def draw_atomic_graph(self, scale_factor):
 
         if self.project_loaded and self.project_instance.num_columns > 0:
 
-            self.project_instance.graph.redraw_edges()
-
             r = self.project_instance.r * scale_factor
 
             # Draw edges
-            theta = np.pi / 4
             self.red_pen.setWidth(3)
 
             for i in range(0, self.project_instance.graph.num_edges):
 
                 if not self.project_instance.graph.edges[i].vertex_a.neighbour_indices == []:
 
-                    r_2 = QtCore.QPointF(2 * scale_factor * self.project_instance.graph.edges[i].vertex_a.real_coor_x, 2 * scale_factor * self.project_instance.graph.edges[i].vertex_a.real_coor_y)
-                    r_1 = QtCore.QPointF(2 * scale_factor * self.project_instance.graph.edges[i].vertex_b.real_coor_x, 2 * scale_factor * self.project_instance.graph.edges[i].vertex_b.real_coor_y)
+                    p1 = (self.project_instance.graph.edges[i].vertex_a.real_coor_x,
+                          self.project_instance.graph.edges[i].vertex_a.real_coor_y)
+                    p2 = (self.project_instance.graph.edges[i].vertex_b.real_coor_x,
+                          self.project_instance.graph.edges[i].vertex_b.real_coor_y)
 
-                    r_vec = r_2 - r_1
-                    r_mag = np.sqrt((r_2.x() - r_1.x())**2 + (r_2.y() - r_1.y())**2)
-                    factor = r / (r_mag * 2)
+                    consistent = self.project_instance.graph.edges[i].is_consistent_edge
 
-                    k_1 = r_1 + factor * r_vec
-                    k_2 = r_1 + (1 - factor) * r_vec
-
-                    l_1 = factor * QtCore.QPointF(r_vec.x() * np.cos(theta) + r_vec.y() * np.sin(theta),
-                                                  - r_vec.x() * np.sin(theta) + r_vec.y() * np.cos(theta))
-                    l_1 = k_1 + l_1
-
-                    l_2 = factor * QtCore.QPointF(r_vec.x() * np.cos(-theta) + r_vec.y() * np.sin(-theta),
-                                                  - r_vec.x() * np.sin(-theta) + r_vec.y() * np.cos(-theta))
-                    l_2 = k_1 + l_2
-
-                    l_3 = - factor * QtCore.QPointF(r_vec.x() * np.cos(theta) + r_vec.y() * np.sin(theta),
-                                                    - r_vec.x() * np.sin(theta) + r_vec.y() * np.cos(theta))
-                    l_3 = k_2 + l_3
-
-                    l_4 = - factor * QtCore.QPointF(r_vec.x() * np.cos(-theta) + r_vec.y() * np.sin(-theta),
-                                                    - r_vec.x() * np.sin(-theta) + r_vec.y() * np.cos(-theta))
-                    l_4 = k_2 + l_4
-
-                    tri_1 = (k_1, l_1, l_2)
-                    tri_2 = (k_2, l_3, l_4)
-                    poly_1 = QtGui.QPolygonF(tri_1)
-                    # poly_2 = QtGui.QPolygonF(tri_2)
-
-                    line = QtWidgets.QGraphicsLineItem(2 * scale_factor * self.project_instance.graph.edges[i].vertex_a.im_coor_x,
-                                                       2 * scale_factor * self.project_instance.graph.edges[i].vertex_a.im_coor_y,
-                                                       2 * scale_factor * self.project_instance.graph.edges[i].vertex_b.im_coor_x,
-                                                       2 * scale_factor * self.project_instance.graph.edges[i].vertex_b.im_coor_y)
-                    head_1 = QtWidgets.QGraphicsPolygonItem(poly_1)
-                    # head_2 = QtWidgets.QGraphicsPolygonItem(poly_2)
-
-                    if self.project_instance.graph.edges[i].is_consistent_edge:
-                        pen = self.pen_connection
-                        brush = self.brush_connection
-                    else:
-                        pen = self.red_pen
-                        brush = self.red_brush
-
-                    line.setPen(pen)
-                    head_1.setPen(pen)
-                    # head_2.setBrush(brush)
+                    line, head_1 = self.make_arrow_obj(p1, p2, r, scale_factor, consistent)
 
                     self.graphicScene_6.addItem(line)
                     if not self.project_instance.graph.edges[i].is_consistent_edge:
@@ -1547,13 +1562,52 @@ class MainUI(QtWidgets.QMainWindow):
                 self.vertex_objects[self.selected_column].select()
             self.red_pen.setWidth(1)
 
+    def draw_vertex(self, r, scale_factor, i):
+
+        custom_ellipse_overlay = GUI_elements.InteractiveGraphVertex(0, 0, r, r)
+        custom_ellipse_overlay.moveBy(
+            2 * scale_factor * self.project_instance.graph.vertices[i].im_coor_x - np.round(r / 2),
+            2 * scale_factor * self.project_instance.graph.vertices[i].im_coor_y - np.round(r / 2))
+        custom_ellipse_overlay.reference_object(self, i)
+
+        if self.project_instance.graph.vertices[i].level == 0:
+            custom_ellipse_overlay.setBrush(self.brush_level_0)
+        else:
+            custom_ellipse_overlay.setBrush(self.brush_level_1)
+
+        custom_ellipse_overlay.setPen(self.black_pen)
+
+        custom_ellipse_overlay.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable)
+
+        return custom_ellipse_overlay
+
     def draw_atomic_sub_graph(self, scale_factor):
 
-        if self.project_loaded and self.project_instance.num_columns > 0:
+        if self.project_loaded and self.project_instance.num_columns > 0 and not self.selected_column == -1:
 
-            r = self.project_instance.r * scale_factor
+            if not self.project_instance.graph.vertices[self.selected_column].neighbour_indices == []:
 
-            self.graphicScene_7.setBackgroundBrush(self.brush_background_grey)
+                sub_graph = self.project_instance.graph.get_atomic_configuration(self.selected_column)
+                r = self.project_instance.r * scale_factor
+
+                for num, vertex in enumerate(sub_graph.vertices):
+
+                    custom_ellipse = self.draw_vertex(r, scale_factor, vertex.i)
+                    custom_ellipse.setFlag(QtWidgets.QGraphicsItem.ItemIsPanel)
+
+                    self.graphicScene_7.addItem(custom_ellipse)
+
+                self.red_pen.setWidth(1)
+
+                for num, edge in enumerate(sub_graph.edges):
+
+                    p1 = (edge.vertex_a.real_coor_x, edge.vertex_a.real_coor_y)
+                    p2 = (edge.vertex_b.real_coor_x, edge.vertex_b.real_coor_y)
+
+                    line, head = self.make_arrow_obj(p1, p2, r, scale_factor, True)
+
+                    self.graphicScene_7.addItem(line)
+                    self.graphicScene_7.addItem(head)
 
     def draw_boarder(self):
 
