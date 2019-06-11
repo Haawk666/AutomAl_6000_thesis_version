@@ -3,6 +3,14 @@ import numpy as np
 import core
 
 
+class GraphInfoView(QtWidgets.QWidget):
+
+    def __init__(self, *args, obj=None):
+        super().__init__(*args)
+
+        self.ui_obj = obj
+
+
 class ZGraphicsView(QtWidgets.QGraphicsView):
 
     def __init__(self, parent=None, key_press_handler=None):
@@ -946,6 +954,12 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_delete.setMaximumWidth(50)
         self.btn_delete.setFont(self.font_tiny)
 
+        self.btn_sub = QtWidgets.QPushButton('Sub-graph', self)
+        self.btn_sub.clicked.connect(self.ui_obj.gen_sub_graph)
+        self.btn_sub.setMaximumHeight(15)
+        self.btn_sub.setMaximumWidth(50)
+        self.btn_sub.setFont(self.font_tiny)
+
         self.btn_deselect = QtWidgets.QPushButton('Deselect', self)
         self.btn_deselect.clicked.connect(self.ui_obj.deselect_trigger)
         self.btn_deselect.setMaximumHeight(15)
@@ -1002,6 +1016,7 @@ class ControlWindow(QtWidgets.QWidget):
         btn_column_btns_layout.addWidget(self.btn_new)
         btn_column_btns_layout.addWidget(self.btn_deselect)
         btn_column_btns_layout.addWidget(self.btn_delete)
+        btn_column_btns_layout.addWidget(self.btn_sub)
         btn_column_btns_layout.addStretch()
 
         btn_overlay_btns_layout = QtWidgets.QHBoxLayout()

@@ -47,6 +47,29 @@ def find_angle(a_1, a_2, b_1, b_2):
     return alpha
 
 
+def mean_val(data):
+
+    return sum(data) / len(data)
+
+
+def variance(data):
+
+    mean = mean_val(data)
+
+    sum = 0
+    for item in data:
+        sum += (item - mean)**2
+
+    sum = sum / (len(data) - 1)
+
+    return sum
+
+
+def deviation(data):
+
+    return np.sqrt(variance(data))
+
+
 def find_angle_from_points(p1, p2, pivot):
 
     vec_1 = (p1[0] - pivot[0], p1[1] - pivot[1])

@@ -364,6 +364,11 @@ class MainUI(QtWidgets.QMainWindow):
     def clear_log_trigger(self):
         self.terminal_window.clear()
 
+    def gen_sub_graph(self):
+        self.graphicScene_7 = QtWidgets.QGraphicsScene()
+        self.draw_atomic_sub_graph(2)
+        self.graphicsView_7.setScene(self.graphicScene_7)
+
     def close_trigger(self):
 
         self.statusBar().showMessage('Working...')
@@ -1277,9 +1282,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.graphicsView_6.setScene(self.graphicScene_6)
 
         # Draw atomic sub-graph
-        self.graphicScene_7 = QtWidgets.QGraphicsScene()
-        self.draw_atomic_sub_graph(1)
-        self.graphicsView_7.setScene(self.graphicScene_7)
+
 
         # Draw search matrix tab
         self.graphic = QtGui.QPixmap('Images\\Outputs\\Buffers\\search_image.png')
@@ -1606,16 +1609,28 @@ class MainUI(QtWidgets.QMainWindow):
 
                 # Draw angles
 
+                self.report('Sub-graph centered on vertex {}; Numerical summary:------------'.format(self.selected_column), force=True)
+                central_angles = []
+                m_max = 0
+
                 for m, mesh in enumerate(meshes):
 
-                    print(str(mesh.vertex_indices))
-                    print(str(mesh.angles))
-                    print(str(mesh.angle_vectors))
+                    m_max = m
+
+                    central_angles.append(57.2957795 * mesh.angles[0])
+
+                    self.report('Mesh {}:'.format(m), force=True)
+                    self.report('    Is consistent: {}'.format(str(mesh.test_consistency())), force=True)
+                    self.report('    Sum of angles: {}'.format(str(57.2957795 * sum(mesh.angles))), force=True)
+                    self.report('    Variance of angles: {}'.format(utils.variance([57.2957795 * x for x in mesh.angles])), force=True)
+                    self.report('    Symmetry prob vector from central angle: {}'.format(str([0, 0, 0])), force=True)
+
+                    self.report('    Angles:', force=True)
 
                     for i, corner in enumerate(mesh.vertices):
 
                         p1 = (corner.real_coor_x, corner.real_coor_y)
-                        p2 = (p1[0] + 0.9 * r * mesh.angle_vectors[i][0], p1[1] + 0.9 * r * mesh.angle_vectors[i][1])
+                        p2 = (p1[0] + 0.3 * r * mesh.angle_vectors[i][0], p1[1] + 0.3 * r * mesh.angle_vectors[i][1])
 
                         arrow, head = self.make_arrow_obj(p1, p2, r, scale_factor, False)
 
@@ -1629,6 +1644,11 @@ class MainUI(QtWidgets.QMainWindow):
                         angle_text.setY(2 * scale_factor * p2[1] - 0.5 * rect.height())
 
                         self.graphicScene_7.addItem(angle_text)
+                        self.report('        a{}{} = {}'.format(m, i, 57.2957795 * angle), force=True)
+
+                self.report('Mean central angle: {}'.format(str(sum(central_angles) / (m_max + 1))), force=True)
+                self.report('Central angle variance: {}'.format(utils.variance(central_angles)), force=True)
+                self.report('Symmetry prob vector from mean central angle: {}'.format(str([0, 0, 0])), force=True)
 
     def draw_boarder(self):
 

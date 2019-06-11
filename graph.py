@@ -726,8 +726,19 @@ class Mesh:
         self.angle_vectors = []
 
         self.is_enclosed = True
+        self.is_consistent = True
         self.num_corners = 0
         self.num_edges = 0
+
+    def test_consistency(self):
+
+        self.is_consistent = True
+        for edge in self.edges:
+            if not edge.is_consistent():
+                self.is_consistent = False
+        if not self.num_corners == 4:
+            self.is_consistent = False
+        return self.is_consistent
 
     def add_vertex(self, vertex):
 

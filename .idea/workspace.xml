@@ -4,6 +4,10 @@
     <list default="true" id="30e19c21-651c-42d8-9913-28ec51a34a6a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/GUI.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GUI_elements.py" beforeDir="false" afterPath="$PROJECT_DIR$/GUI_elements.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Images/Outputs/Buffers/FFT.png" beforeDir="false" afterPath="$PROJECT_DIR$/Images/Outputs/Buffers/FFT.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Images/Outputs/Buffers/raw_image.png" beforeDir="false" afterPath="$PROJECT_DIR$/Images/Outputs/Buffers/raw_image.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Images/Outputs/Buffers/search_image.png" beforeDir="false" afterPath="$PROJECT_DIR$/Images/Outputs/Buffers/search_image.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/graph.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils.py" afterDir="false" />
     </list>
@@ -60,14 +64,14 @@
     <session id="-67957513">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="12" />
+          <entry key="project.closed" value="15" />
           <entry key="project.open.time.1" value="1" />
           <entry key="project.open.time.10" value="1" />
           <entry key="project.open.time.2" value="1" />
-          <entry key="project.open.time.7" value="6" />
+          <entry key="project.open.time.7" value="9" />
           <entry key="project.open.time.8" value="4" />
           <entry key="project.open.time.9" value="1" />
-          <entry key="project.opened" value="14" />
+          <entry key="project.opened" value="17" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
@@ -79,8 +83,8 @@
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="835" />
-          <entry key="Python" value="12189" />
+          <entry key="PLAIN_TEXT" value="871" />
+          <entry key="Python" value="13937" />
         </counts>
       </usages-collector>
     </session>
@@ -92,8 +96,8 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/GUI.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="440">
-                  <caret line="1628" column="86" selection-start-line="1628" selection-start-column="86" selection-end-line="1628" selection-end-column="86" />
+                <state relative-caret-position="474">
+                  <caret line="1649" column="108" selection-start-line="1649" selection-start-column="108" selection-end-line="1649" selection-end-column="108" />
                   <folding>
                     <element signature="e#424#466#0" expanded="true" />
                   </folding>
@@ -104,8 +108,8 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/GUI_elements.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="22474">
-                  <caret line="1324" column="45" selection-start-line="1324" selection-start-column="45" selection-end-line="1324" selection-end-column="45" />
+                <state relative-caret-position="253">
+                  <caret line="957" column="62" selection-start-line="957" selection-start-column="49" selection-end-line="957" selection-end-column="62" />
                   <folding>
                     <element signature="e#0#42#0" expanded="true" />
                   </folding>
@@ -140,8 +144,8 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/graph.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="435">
-                  <caret line="507" column="65" selection-start-line="507" selection-start-column="65" selection-end-line="507" selection-end-column="65" />
+                <state relative-caret-position="363">
+                  <caret line="740" column="33" selection-start-line="740" selection-start-column="33" selection-end-line="740" selection-end-column="33" />
                   <folding>
                     <element signature="e#51#69#0" expanded="true" />
                   </folding>
@@ -161,8 +165,8 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/utils.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="486">
-                  <caret line="66" column="17" selection-start-line="66" selection-start-column="17" selection-end-line="66" selection-end-column="17" />
+                <state relative-caret-position="306">
+                  <caret line="59" column="21" selection-start-line="59" selection-start-column="21" selection-end-line="59" selection-end-column="21" />
                 </state>
               </provider>
             </entry>
@@ -240,10 +244,10 @@
         <option value="$PROJECT_DIR$/graph_op.py" />
         <option value="$PROJECT_DIR$/old_core_reference.py" />
         <option value="$PROJECT_DIR$/legacy_items.py" />
-        <option value="$PROJECT_DIR$/GUI_elements.py" />
         <option value="$PROJECT_DIR$/core.py" />
-        <option value="$PROJECT_DIR$/utils.py" />
+        <option value="$PROJECT_DIR$/GUI_elements.py" />
         <option value="$PROJECT_DIR$/graph.py" />
+        <option value="$PROJECT_DIR$/utils.py" />
         <option value="$PROJECT_DIR$/GUI.py" />
       </list>
     </option>
@@ -259,7 +263,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -276,6 +279,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -589,7 +593,14 @@
       <option name="project" value="LOCAL" />
       <updated>1560148475937</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="Added angle indication to sub-graphs">
+      <created>1560212602391</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1560212602392</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -601,7 +612,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3283859" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.31298557" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.17092119" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.27192008" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -641,7 +652,8 @@
     <MESSAGE value="Legacy weak untangling now works" />
     <MESSAGE value="Improved mesh logic" />
     <MESSAGE value="Added sub-graph prototype" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added sub-graph prototype" />
+    <MESSAGE value="Added angle indication to sub-graphs" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added angle indication to sub-graphs" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://C:/anaconda3/Lib/site-packages/numpy/core/fromnumeric.py">
@@ -714,16 +726,6 @@
     <entry file="file://$PROJECT_DIR$/core.pyi">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/GUI_elements.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="22474">
-          <caret line="1324" column="45" selection-start-line="1324" selection-start-column="45" selection-end-line="1324" selection-end-column="45" />
-          <folding>
-            <element signature="e#0#42#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/legacy_items.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="11441">
@@ -775,27 +777,37 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/utils.py">
+    <entry file="file://$PROJECT_DIR$/GUI_elements.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="486">
-          <caret line="66" column="17" selection-start-line="66" selection-start-column="17" selection-end-line="66" selection-end-column="17" />
+        <state relative-caret-position="253">
+          <caret line="957" column="62" selection-start-line="957" selection-start-column="49" selection-end-line="957" selection-end-column="62" />
+          <folding>
+            <element signature="e#0#42#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/graph.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="507" column="65" selection-start-line="507" selection-start-column="65" selection-end-line="507" selection-end-column="65" />
+        <state relative-caret-position="363">
+          <caret line="740" column="33" selection-start-line="740" selection-start-column="33" selection-end-line="740" selection-end-column="33" />
           <folding>
             <element signature="e#51#69#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="59" column="21" selection-start-line="59" selection-start-column="21" selection-end-line="59" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/GUI.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="440">
-          <caret line="1628" column="86" selection-start-line="1628" selection-start-column="86" selection-end-line="1628" selection-end-column="86" />
+        <state relative-caret-position="474">
+          <caret line="1649" column="108" selection-start-line="1649" selection-start-column="108" selection-end-line="1649" selection-end-column="108" />
           <folding>
             <element signature="e#424#466#0" expanded="true" />
           </folding>
