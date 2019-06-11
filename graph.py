@@ -448,16 +448,20 @@ class AtomicGraph:
     def angle_sort(self, i, j):
 
         partners = self.vertices[j].partners()
-        angles = []
+        min_angle = 100
+        next_index = -1
         p1 = (self.vertices[i].real_coor_x, self.vertices[i].real_coor_y)
         pivot = (self.vertices[j].real_coor_x, self.vertices[j].real_coor_y)
 
         for k in partners:
-            p2 = (self.vertices[k].real_coor_x, self.vertices[k].real_coor_y)
-            alpha = utils.find_angle_from_points(p1, p2, pivot)
-            angles.append(alpha)
+            if not k == i:
+                p2 = (self.vertices[k].real_coor_x, self.vertices[k].real_coor_y)
+                alpha = utils.find_angle_from_points(p1, p2, pivot)
+                if alpha < min_angle:
+                    min_angle = alpha
+                    next_index = k
 
-        return angles
+        return min_angle, next_index
 
     def find_mesh(self, i, j, clockwise=True):
 
@@ -470,16 +474,26 @@ class AtomicGraph:
 
         corners = [i, j]
         angles = [0]
+        vectors = [0]
 
         counter = 0
         stop = False
 
         while not stop:
 
-            v_angles = np.array(self.angle_sort(i, j))
-            v_angles[v_angles.argmin()] = v_angles.max() + 1
-            next_index = self.vertices[j].partner_indices[v_angles.argmin()]
-            angles.append(v_angles.min())
+            angle, next_index = self.angle_sort(i, j)
+            angles.append(angle)
+
+            p1 = (self.vertices[i].real_coor_x, self.vertices[i].real_coor_y)
+            pivot = (self.vertices[j].real_coor_x, self.vertices[j].real_coor_y)
+
+            theta = 0.5 * angle
+            vector = (p1[0] - pivot[0], p1[1] - pivot[1])
+            length = utils.vector_magnitude(vector)
+            vector = (vector[0] / length, vector[1] / length)
+            vector = (vector[0] * np.cos(theta) - vector[1] * np.sin(theta),
+                      vector[0] * np.sin(theta) + vector[1] * np.cos(theta))
+            vectors.append(vector)
 
             if next_index == corners[0] or counter > 6:
                 stop = True
@@ -487,22 +501,38 @@ class AtomicGraph:
                 pivot = (self.vertices[corners[0]].real_coor_x, self.vertices[corners[0]].real_coor_y)
                 p2 = (self.vertices[corners[1]].real_coor_x, self.vertices[corners[1]].real_coor_y)
                 angles[0] = utils.find_angle_from_points(p1, p2, pivot)
+
+                theta = 0.5 * angles[0]
+                vector = (p1[0] - pivot[0], p1[1] - pivot[1])
+                length = utils.vector_magnitude(vector)
+                vector = (vector[0] / length, vector[1] / length)
+                vector = (vector[0] * np.cos(theta) - vector[1] * np.sin(theta),
+                          vector[0] * np.sin(theta) + vector[1] * np.cos(theta))
+                vectors[0] = vector
             else:
                 corners.append(next_index)
                 counter += 1
                 i, j = j, next_index
 
-        return corners, angles
+        return corners, angles, vectors
 
     def get_atomic_configuration(self, i):
 
         sub_graph = SubGraph(self.map_size)
         sub_graph.add_vertex(self.vertices[i])
+        meshes = []
 
         for partner in self.vertices[i].partners():
 
             sub_graph.add_vertex(self.vertices[partner])
-            corners, _ = self.find_mesh(i, partner)
+            corners, ang, vec = self.find_mesh(i, partner)
+            mesh = Mesh()
+            for k, corner in enumerate(corners):
+                mesh.add_vertex(self.vertices[corner])
+                mesh.angles.append(ang[k])
+                mesh.angle_vectors.append(vec[k])
+            mesh.redraw_edges()
+            meshes.append(mesh)
 
             for j in corners:
 
@@ -513,7 +543,7 @@ class AtomicGraph:
         sub_graph.redraw_edges()
         sub_graph.summarize_stats()
 
-        return sub_graph
+        return sub_graph, meshes
 
     def map_spatial_neighbours(self):
 
@@ -683,6 +713,52 @@ class SubGraph:
             for partner in vertex.partners():
                 if partner in self.vertex_indices:
                     self.add_edge(vertex, self.vertices[self.get_ind_from_mother(partner)], self.num_edges)
+
+
+class Mesh:
+
+    def __init__(self):
+
+        self.vertices = []
+        self.vertex_indices = []
+        self.edges = []
+        self.angles = []
+        self.angle_vectors = []
+
+        self.is_enclosed = True
+        self.num_corners = 0
+        self.num_edges = 0
+
+    def add_vertex(self, vertex):
+
+        self.vertices.append(vertex)
+        self.vertex_indices.append(vertex.i)
+        self.num_corners += 1
+
+    def redraw_edges(self):
+
+        self.edges = []
+        self.num_edges = 0
+        for vertex in self.vertices:
+            for partner in vertex.partners():
+                if partner in self.vertex_indices:
+                    self.add_edge(vertex, self.vertices[self.get_ind_from_mother(partner)], self.num_edges)
+
+    def add_edge(self, vertex_a, vertex_b, index):
+        self.edges.append(Edge(vertex_a, vertex_b, index))
+        self.num_edges += 1
+
+    def get_ind_from_mother(self, i):
+
+        for index, mother_index in enumerate(self.vertex_indices):
+            if mother_index == i:
+                sub_index = index
+                break
+        else:
+            sub_index = -1
+        return sub_index
+
+
 
 
 

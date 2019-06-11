@@ -12,6 +12,7 @@ import numpy.core._dtype_ctypes  # This is needed because of a bug in pyinstalle
 import mat_op
 import core
 import GUI_elements
+import utils
 
 
 class MainUI(QtWidgets.QMainWindow):
@@ -1537,19 +1538,7 @@ class MainUI(QtWidgets.QMainWindow):
 
             for i in range(0, self.project_instance.num_columns):
 
-                custom_ellipse_overlay = GUI_elements.InteractiveGraphVertex(0, 0, r, r)
-                custom_ellipse_overlay.moveBy(2 * scale_factor * self.project_instance.graph.vertices[i].im_coor_x - np.round(r / 2),
-                                              2 * scale_factor * self.project_instance.graph.vertices[i].im_coor_y - np.round(r / 2))
-                custom_ellipse_overlay.reference_object(self, i)
-
-                if self.project_instance.graph.vertices[i].level == 0:
-                    custom_ellipse_overlay.setBrush(self.brush_level_0)
-                else:
-                    custom_ellipse_overlay.setBrush(self.brush_level_1)
-
-                custom_ellipse_overlay.setPen(self.black_pen)
-
-                custom_ellipse_overlay.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable)
+                custom_ellipse_overlay = self.draw_vertex(r, scale_factor, i)
 
                 if i == 0:
                     self.vertex_objects[0] = custom_ellipse_overlay
@@ -1566,8 +1555,8 @@ class MainUI(QtWidgets.QMainWindow):
 
         custom_ellipse_overlay = GUI_elements.InteractiveGraphVertex(0, 0, r, r)
         custom_ellipse_overlay.moveBy(
-            2 * scale_factor * self.project_instance.graph.vertices[i].im_coor_x - np.round(r / 2),
-            2 * scale_factor * self.project_instance.graph.vertices[i].im_coor_y - np.round(r / 2))
+            2 * scale_factor * self.project_instance.graph.vertices[i].real_coor_x - r / 2,
+            2 * scale_factor * self.project_instance.graph.vertices[i].real_coor_y - r / 2)
         custom_ellipse_overlay.reference_object(self, i)
 
         if self.project_instance.graph.vertices[i].level == 0:
@@ -1576,7 +1565,6 @@ class MainUI(QtWidgets.QMainWindow):
             custom_ellipse_overlay.setBrush(self.brush_level_1)
 
         custom_ellipse_overlay.setPen(self.black_pen)
-
         custom_ellipse_overlay.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable)
 
         return custom_ellipse_overlay
@@ -1587,17 +1575,10 @@ class MainUI(QtWidgets.QMainWindow):
 
             if not self.project_instance.graph.vertices[self.selected_column].neighbour_indices == []:
 
-                sub_graph = self.project_instance.graph.get_atomic_configuration(self.selected_column)
+                sub_graph, meshes = self.project_instance.graph.get_atomic_configuration(self.selected_column)
                 r = self.project_instance.r * scale_factor
 
-                for num, vertex in enumerate(sub_graph.vertices):
-
-                    custom_ellipse = self.draw_vertex(r, scale_factor, vertex.i)
-                    custom_ellipse.setFlag(QtWidgets.QGraphicsItem.ItemIsPanel)
-
-                    self.graphicScene_7.addItem(custom_ellipse)
-
-                self.red_pen.setWidth(1)
+                # Draw edges
 
                 for num, edge in enumerate(sub_graph.edges):
 
@@ -1608,6 +1589,46 @@ class MainUI(QtWidgets.QMainWindow):
 
                     self.graphicScene_7.addItem(line)
                     self.graphicScene_7.addItem(head)
+
+                self.red_pen.setWidth(1)
+
+                # Draw vertices
+
+                for num, vertex in enumerate(sub_graph.vertices):
+
+                    custom_ellipse = self.draw_vertex(r, scale_factor, vertex.i)
+                    custom_ellipse.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable, False)
+                    custom_ellipse.setFlag(QtWidgets.QGraphicsItem.ItemIsPanel, True)
+
+                    self.graphicScene_7.addItem(custom_ellipse)
+
+                self.red_pen.setWidth(1)
+
+                # Draw angles
+
+                for m, mesh in enumerate(meshes):
+
+                    print(str(mesh.vertex_indices))
+                    print(str(mesh.angles))
+                    print(str(mesh.angle_vectors))
+
+                    for i, corner in enumerate(mesh.vertices):
+
+                        p1 = (corner.real_coor_x, corner.real_coor_y)
+                        p2 = (p1[0] + 0.9 * r * mesh.angle_vectors[i][0], p1[1] + 0.9 * r * mesh.angle_vectors[i][1])
+
+                        arrow, head = self.make_arrow_obj(p1, p2, r, scale_factor, False)
+
+                        angle = mesh.angles[i]
+
+                        angle_text = QtWidgets.QGraphicsSimpleTextItem()
+                        angle_text.setText('a{}{}'.format(m, i))
+                        angle_text.setFont(self.font_tiny)
+                        rect = angle_text.boundingRect()
+                        angle_text.setX(2 * scale_factor * p2[0] - 0.5 * rect.width())
+                        angle_text.setY(2 * scale_factor * p2[1] - 0.5 * rect.height())
+
+                        self.graphicScene_7.addItem(angle_text)
 
     def draw_boarder(self):
 

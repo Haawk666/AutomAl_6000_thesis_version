@@ -59,6 +59,14 @@ def find_angle_from_points(p1, p2, pivot):
     return alpha
 
 
+def vector_magnitude(vec):
+
+    length = vec[0] ** 2 + vec[1] ** 2
+    length = np.sqrt(length)
+
+    return length
+
+
 def vector_cross_product_magnitude(a_1, a_2, b_1, b_2):
 
     return a_1 * b_2 - b_1 * a_2
