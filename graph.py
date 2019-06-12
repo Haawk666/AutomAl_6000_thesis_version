@@ -345,10 +345,10 @@ class AtomicGraph:
         self.num_vertices = len(self.vertices)
         self.num_popular = 0
         self.num_unpopular = 0
-        for x in range(0, self.num_vertices):
-            if self.vertices[x].is_popular:
+        for vertex in self.vertices:
+            if vertex.is_popular:
                 self.num_popular += 1
-            if self.vertices[x].is_unpopular:
+            if vertex.is_unpopular:
                 self.num_unpopular += 1
         self.calc_chi()
 
@@ -400,8 +400,8 @@ class AtomicGraph:
     def calc_chi(self):
         self.chi = 0
         if not len(self.edges) <= 0 and self.edges is not None:
-            for i in range(0, self.num_edges):
-                if self.edges[i].is_consistent():
+            for edge in self.edges:
+                if edge.is_consistent():
                     self.chi += 1
             if self.num_edges == 0:
                 self.chi = 0
@@ -432,28 +432,24 @@ class AtomicGraph:
         self.summarize_stats()
 
     def reset_all_flags(self):
-        for x in range(0, self.num_vertices):
-            self.vertices[x].flag_1 = False
-            self.vertices[x].flag_2 = False
-            self.vertices[x].flag_3 = False
-            self.vertices[x].flag_4 = False
+        for vertex in self.vertices:
+            vertex.flag_1 = False
+            vertex.flag_2 = False
+            vertex.flag_3 = False
+            vertex.flag_4 = False
 
     def invert_levels(self):
-        for x in range(0, self.num_vertices):
-            if self.vertices[x].level == 0:
-                self.vertices[x].level = 1
-            elif self.vertices[x].level == 1:
-                self.vertices[x].level = 0
+        for vertex in self.vertices:
+            vertex.level = vertex.anti_level()
 
     def angle_sort(self, i, j):
 
-        partners = self.vertices[j].partners()
         min_angle = 100
         next_index = -1
         p1 = (self.vertices[i].real_coor_x, self.vertices[i].real_coor_y)
         pivot = (self.vertices[j].real_coor_x, self.vertices[j].real_coor_y)
 
-        for k in partners:
+        for k in self.vertices[j].partners():
             if not k == i:
                 p2 = (self.vertices[k].real_coor_x, self.vertices[k].real_coor_y)
                 alpha = utils.find_angle_from_points(p1, p2, pivot)
@@ -544,6 +540,14 @@ class AtomicGraph:
         sub_graph.summarize_stats()
 
         return sub_graph, meshes
+
+    def find_intersects(self):
+
+        intersects = []
+
+        for a in self.vertices:
+            for b in [self.vertices[index] for index in a.partners()]:
+                pass
 
     def map_spatial_neighbours(self):
 
