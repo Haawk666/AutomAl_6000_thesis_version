@@ -2,19 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="30e19c21-651c-42d8-9913-28ec51a34a6a" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Saves/debug_test_result" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Saves/validation_set/Benchmark log.xlsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Saves/validation_set/filenames.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Saves/validation_set/log.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/GUI.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GUI_elements.py" beforeDir="false" afterPath="$PROJECT_DIR$/GUI_elements.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Images/Outputs/Buffers/FFT.png" beforeDir="false" afterPath="$PROJECT_DIR$/Images/Outputs/Buffers/FFT.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Images/Outputs/Buffers/raw_image.png" beforeDir="false" afterPath="$PROJECT_DIR$/Images/Outputs/Buffers/raw_image.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Images/Outputs/Buffers/search_image.png" beforeDir="false" afterPath="$PROJECT_DIR$/Images/Outputs/Buffers/search_image.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Saves/debug_test" beforeDir="false" afterPath="$PROJECT_DIR$/Saves/debug_test" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/compatibility.py" beforeDir="false" afterPath="$PROJECT_DIR$/compatibility.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Saves/validation_set/filenames.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Saves/validation_set/filenames.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core.py" beforeDir="false" afterPath="$PROJECT_DIR$/core.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/legacy_items.py" beforeDir="false" afterPath="$PROJECT_DIR$/legacy_items.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -102,25 +93,25 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="7459" />
-          <entry key="txt" value="168" />
+          <entry key="py" value="7489" />
+          <entry key="txt" value="225" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="168" />
-          <entry key="Python" value="7459" />
+          <entry key="PLAIN_TEXT" value="225" />
+          <entry key="Python" value="7489" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="py" value="18" />
-          <entry key="txt" value="2" />
+          <entry key="txt" value="4" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="PLAIN_TEXT" value="2" />
+          <entry key="PLAIN_TEXT" value="4" />
           <entry key="Python" value="18" />
         </counts>
       </usages-collector>
@@ -147,14 +138,23 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/core.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="426">
-              <caret line="222" column="68" selection-start-line="222" selection-start-column="68" selection-end-line="222" selection-end-column="68" />
+            <state relative-caret-position="596">
+              <caret line="223" column="18" selection-start-line="223" selection-start-column="18" selection-end-line="223" selection-end-column="18" />
               <folding>
                 <element signature="e#68#86#0" expanded="true" />
-                <marker date="1560443495050" expanded="true" signature="5814:7266" ph="..." />
-                <marker date="1560443495050" expanded="true" signature="7322:8203" ph="..." />
-                <marker date="1560443495050" expanded="true" signature="7807:8203" ph="..." />
+                <marker date="1560445274187" expanded="true" signature="5814:7312" ph="..." />
+                <marker date="1560445274187" expanded="true" signature="7368:8223" ph="..." />
+                <marker date="1560445274187" expanded="true" signature="7827:8223" ph="..." />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Saves/validation_set/filenames.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="17">
+              <caret line="1" column="26" selection-start-line="1" selection-start-column="26" selection-end-line="1" selection-end-column="26" />
             </state>
           </provider>
         </entry>
@@ -198,10 +198,10 @@
         <option value="$PROJECT_DIR$/graph.py" />
         <option value="$PROJECT_DIR$/changelog.txt" />
         <option value="$PROJECT_DIR$/compatibility.py" />
-        <option value="$PROJECT_DIR$/Saves/validation_set/filenames.txt" />
         <option value="$PROJECT_DIR$/GUI_elements.py" />
         <option value="$PROJECT_DIR$/GUI.py" />
         <option value="$PROJECT_DIR$/legacy_items.py" />
+        <option value="$PROJECT_DIR$/Saves/validation_set/filenames.txt" />
         <option value="$PROJECT_DIR$/core.py" />
       </list>
     </option>
@@ -608,7 +608,14 @@
       <option name="project" value="LOCAL" />
       <updated>1560435375070</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="Added benchmark infrastructure">
+      <created>1560443916545</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1560443916545</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -637,7 +644,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Successfully added terminal stream terminal feed" />
     <MESSAGE value="Added some text-files" />
     <MESSAGE value="Made the statistical methods functional" />
     <MESSAGE value="Tinkered with level definition algorithms" />
@@ -662,7 +668,8 @@
     <MESSAGE value="Bug-fixes" />
     <MESSAGE value="Updated changelog" />
     <MESSAGE value="Added pipfile configs" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added pipfile configs" />
+    <MESSAGE value="Added benchmark infrastructure" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added benchmark infrastructure" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://C:/anaconda3/Lib/site-packages/numpy/core/fromnumeric.py" />
@@ -760,13 +767,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/changelog.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="578">
-          <caret line="73" column="49" selection-start-line="73" selection-start-column="49" selection-end-line="73" selection-end-column="49" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/compatibility.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="187">
@@ -823,22 +823,29 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/changelog.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="731">
+          <caret line="73" column="49" selection-start-line="73" selection-start-column="49" selection-end-line="73" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Saves/validation_set/filenames.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="7" selection-start-column="7" selection-end-column="7" />
+        <state relative-caret-position="17">
+          <caret line="1" column="26" selection-start-line="1" selection-start-column="26" selection-end-line="1" selection-end-column="26" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="426">
-          <caret line="222" column="68" selection-start-line="222" selection-start-column="68" selection-end-line="222" selection-end-column="68" />
+        <state relative-caret-position="596">
+          <caret line="223" column="18" selection-start-line="223" selection-start-column="18" selection-end-line="223" selection-end-column="18" />
           <folding>
             <element signature="e#68#86#0" expanded="true" />
-            <marker date="1560443495050" expanded="true" signature="5814:7266" ph="..." />
-            <marker date="1560443495050" expanded="true" signature="7322:8203" ph="..." />
-            <marker date="1560443495050" expanded="true" signature="7807:8203" ph="..." />
+            <marker date="1560445274187" expanded="true" signature="5814:7312" ph="..." />
+            <marker date="1560445274187" expanded="true" signature="7368:8223" ph="..." />
+            <marker date="1560445274187" expanded="true" signature="7827:8223" ph="..." />
           </folding>
         </state>
       </provider>

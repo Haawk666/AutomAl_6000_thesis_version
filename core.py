@@ -190,6 +190,7 @@ class SuchSoftware:
 
         with open('Saves/validation_set/filenames.txt', mode='r') as f:
             for line in f:
+                line = line.replace('\n', '')
                 filename, control = line.split(',')
                 filenames.append(filename)
                 filename = 'Saves/validation_set/' + filename
@@ -220,7 +221,7 @@ class SuchSoftware:
 
         deviations, avg = SuchSoftware.measure_deviance(file, control)
 
-        file.save('Saves/validation_set/' + filename + '_test_result')
+        file.save(filename + '_test_result')
 
         return deviations, avg
 
