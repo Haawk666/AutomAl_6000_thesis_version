@@ -642,13 +642,18 @@ class SuchSoftware:
 
         elif search_type == 14:
             self.report('    Looking for intersections', force=True)
-            num_intersections = len(self.graph.find_intersects())
-            not_removed, strong_intersections = graph_op.remove_intersections(self.graph)
+            intersections = self.graph.find_intersects()
+            num_intersections = len(intersections)
+            self.report('        Found:', force=True)
+            for intersection in intersections:
+                self.report('            {}'.format(str(intersection)), force=True)
+            not_removed, strong_intersections, ww, ss = graph_op.remove_intersections(self.graph)
             intersections = self.graph.find_intersects()
             self.report('        Found {} intersections'.format(num_intersections), force=True)
-            self.report('        Found {} strong intersections'.format(len(strong_intersections)), force=True)
+            self.report('        Found {} strong intersections'.format(ss), force=True)
+            self.report('        Found {} weak-weak intersections'.format(ww), force=True)
             self.report('        {} weak intersections were not removed'.format(not_removed), force=True)
-            self.report('        {} literal intersections still remain'.fomrat(len(intersections)), force=True)
+            self.report('        {} literal intersections still remain'.format(len(intersections)), force=True)
             self.report('        Intersections:', force=True)
             for intersection in intersections:
                 self.report('            {}'.format(str(intersection)), force=True)

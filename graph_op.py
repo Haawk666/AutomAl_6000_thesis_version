@@ -9,6 +9,8 @@ def remove_intersections(graph_obj):
     intersections = graph_obj.find_intersects()
     remove_edges = []
     strong_intersections = []
+    weak_weak_intersections = 0
+    strong_stong_intersections = 0
 
     # First identify inconsisten edges that cross consistent edges
 
@@ -17,12 +19,12 @@ def remove_intersections(graph_obj):
         edge_1 = (intersection[0], intersection[1])
         edge_2 = (intersection[2], intersection[3])
 
-        if graph_obj.vertices[edge_1[0]].partner_query(edge_1[1]):
+        if graph_obj.vertices[edge_1[1]].partner_query(edge_1[0]):
             edge_1_is_strong = True
         else:
             edge_1_is_strong = False
 
-        if graph_obj.vertices[edge_2[0]].partner_query(edge_2[1]):
+        if graph_obj.vertices[edge_2[1]].partner_query(edge_2[0]):
             edge_2_is_strong = True
         else:
             edge_2_is_strong = False
@@ -39,7 +41,7 @@ def remove_intersections(graph_obj):
 
         elif not edge_1_is_strong and not edge_2_is_strong:
             # Do some analysis
-            pass
+            weak_weak_intersections += 1
 
         else:
 
@@ -63,6 +65,7 @@ def remove_intersections(graph_obj):
 
             if add:
                 strong_intersections.append(permutations[0])
+                strong_stong_intersections += 1
 
     not_removed = 0
     for edge in remove_edges:
@@ -72,7 +75,7 @@ def remove_intersections(graph_obj):
     graph_obj.redraw_edges()
     graph_obj.summarize_stats()
 
-    return not_removed, strong_intersections
+    return not_removed, strong_intersections, weak_weak_intersections, strong_stong_intersections
 
 
 def apply_angle_score(graph_obj, i, dist_3_std, dist_4_std, dist_5_std, num_selections):

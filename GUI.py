@@ -1487,14 +1487,14 @@ class MainUI(QtWidgets.QMainWindow):
         tri_2 = (k_2, l_3, l_4)
 
         poly_1 = QtGui.QPolygonF(tri_1)
-        # poly_2 = QtGui.QPolygonF(tri_2)
+        poly_2 = QtGui.QPolygonF(tri_2)
 
         line = QtWidgets.QGraphicsLineItem(2 * scale_factor * p1[0],
                                            2 * scale_factor * p1[1],
                                            2 * scale_factor * p2[0],
                                            2 * scale_factor * p2[1])
         head_1 = QtWidgets.QGraphicsPolygonItem(poly_1)
-        # head_2 = QtWidgets.QGraphicsPolygonItem(poly_2)
+        head_2 = QtWidgets.QGraphicsPolygonItem(poly_2)
 
         if consistent:
             pen = self.pen_connection
@@ -1505,9 +1505,9 @@ class MainUI(QtWidgets.QMainWindow):
 
         line.setPen(pen)
         head_1.setPen(pen)
-        # head_2.setBrush(brush)
+        head_2.setBrush(brush)
 
-        return line, head_1
+        return line, head_2
 
     def draw_atomic_graph(self, scale_factor):
 
