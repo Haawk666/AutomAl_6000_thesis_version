@@ -16,7 +16,7 @@ import strong_untangling
 class SuchSoftware:
 
     # Version
-    version = [0, 0, 0]
+    version = [0, 0, 1]
 
     # Number of elements in the probability vectors
     num_selections = 7
@@ -58,6 +58,7 @@ class SuchSoftware:
         self.im_height = 0
         self.im_width = 0
         self.version_saved = None
+        self.starting_index = None
 
         # For communicating with the interface, if any:
         self.debug_obj = debug_obj
@@ -179,6 +180,62 @@ class SuchSoftware:
             else:
                 print(string)
 
+    def run_test(self):
+
+        deviations = []
+        averages = []
+        number_of_vertices = []
+        filenames = []
+        number_of_files = 0
+
+        with open('Saves/validation_set/filenames.txt', mode='r') as f:
+            for line in f:
+                filename, control = line.split(',')
+                filenames.append(filename)
+                filename = 'Saves/validation_set/' + filename
+                control = 'Saves/validation_set/' + control
+                deviation, avg = SuchSoftware.run_individual_test(filename, control)
+                deviations.append(deviation)
+                averages.append(avg)
+                number_of_vertices.append(int(deviation / avg))
+                number_of_files += 1
+
+        self.report('Algorithm test:-----', force=True)
+        self.report('Number of files tested: {}'.format(number_of_files), force=True)
+        self.report('Total deviations found: {}'.format(sum(deviations)), force=True)
+        self.report('Total vertices checked: {}'.format(sum(number_of_vertices)), force=True)
+        self.report('Average deviation: {}'.format(sum(deviations) / sum(number_of_vertices)), force=True)
+        self.report('Individual results: (filename, deviations, number of vertices, average)', force=True)
+        for i, item in enumerate(deviations):
+            self.report('    {}, {}, {}, {}'.format(filenames[i], deviations[i], number_of_vertices[i], averages[i]), force=True)
+
+    @staticmethod
+    def run_individual_test(filename, control_file, mode=0):
+
+        file = SuchSoftware.load(filename)
+        control = SuchSoftware.load(control_file)
+        i = file.starting_index
+
+        file.column_characterization(i, search_type=mode)
+
+        deviations, avg = SuchSoftware.measure_deviance(file, control)
+
+        file.save('Saves/validation_set/' + filename + '_test_result')
+
+        return deviations, avg
+
+    @staticmethod
+    def measure_deviance(obj, control):
+        if obj.graph.num_vertices == control.graph.num_vertices:
+            deviations = 0
+            for vertex, control_vertex in zip(obj.graph.vertices, control.graph.vertices):
+                if not vertex.is_edge_column:
+                    if not vertex.h_index == control_vertex.h_index:
+                        deviations = deviations + 1
+            return deviations, deviations / obj.graph.num_vertices
+        else:
+            return None
+
     def vertex_report(self, i):
         self.report(' ', force=True)
         self.report('Vertex properties: ------------', force=True)
@@ -254,11 +311,7 @@ class SuchSoftware:
                         report('core: Attempted to load uncompatible save-file. Running conversion script...', update=False)
                     else:
                         print('core: Attempted to load uncompatible save-file. Running conversion script...')
-                    obj = compatibility.convert(obj, obj.version, SuchSoftware.version)
-                    if obj is None:
-                        report('core: Failed to convert save-file!', update=True)
-                    else:
-                        print('core: Failed to convert save-file!')
+                    obj = compatibility.convert(obj, obj.version_saved, SuchSoftware.version)
             return obj
 
     def column_detection(self, search_type='s'):
@@ -398,6 +451,8 @@ class SuchSoftware:
                 self.graph.vertices[y].is_edge_column = False
 
     def column_characterization(self, starting_index, search_type=0):
+
+        sys.setrecursionlimit(10000)
 
         if search_type == 0:
 
@@ -660,7 +715,6 @@ class SuchSoftware:
             self.report('        Strong intersections:', force=True)
             for strong_intersection in strong_intersections:
                 self.report('            {}'.format(str(strong_intersection)), force=True)
-
 
         else:
 

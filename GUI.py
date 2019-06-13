@@ -460,6 +460,13 @@ class MainUI(QtWidgets.QMainWindow):
                 dialog.gen_layout()
                 dialog.exec_()
 
+    def set_start_trigger(self):
+        if self.project_instance is not None:
+            if not self.selected_column == -1:
+                self.project_instance.starting_index = self.selected_column
+                self.control_window.lbl_starting_index.setText('Default starting index: ' + str(self.selected_column))
+                self.report('Default starting index set to {}'.format(self.selected_column), force=True)
+
     def set_std_1_trigger(self):
 
         if self.project_loaded:
@@ -864,6 +871,11 @@ class MainUI(QtWidgets.QMainWindow):
             self.control_instance = None
             self.statusBar().showMessage('Ready')
 
+    def run_benchmark_trigger(self):
+
+        if self.project_instance is not None:
+            self.project_instance.run_test()
+
     def display_deviations_trigger(self):
 
         if self.project_loaded and self.project_instance.num_columns > 0 and self.control_instance is not None:
@@ -1239,8 +1251,8 @@ class MainUI(QtWidgets.QMainWindow):
 
                     if self.project_instance.graph.vertices[self.selected_column].neighbour_indices[x] == i:
 
-                        shape, n = self.project_instance.graph.find_mesh(self.selected_column, i)
-                        print(str(shape) + ': ' + str(i) + ' ' + str(self.selected_column))
+                        corners, angles, vectors = self.project_instance.graph.find_mesh(self.selected_column, i)
+                        print(str(len(corners)) + ': ' + str(i) + ' ' + str(self.selected_column))
 
             self.selected_column = i
 
@@ -1284,7 +1296,6 @@ class MainUI(QtWidgets.QMainWindow):
 
         # Draw atomic sub-graph
 
-
         # Draw search matrix tab
         self.graphic = QtGui.QPixmap('Images\\Outputs\\Buffers\\search_image.png')
         self.graphicScene_4 = QtWidgets.QGraphicsScene()
@@ -1322,6 +1333,8 @@ class MainUI(QtWidgets.QMainWindow):
             self.control_window.lbl_alloy.setText('Alloy: Al-Mg-Si')
         else:
             self.control_window.lbl_alloy.setText('Alloy: Unknown')
+        self.control_window.lbl_starting_index.setText(
+            'Default starting index: ' + str(self.project_instance.starting_index))
         self.control_window.lbl_std_1.setText('Standard deviation 1: ' + str(self.project_instance.dist_1_std))
         self.control_window.lbl_std_2.setText('Standard deviation 2: ' + str(self.project_instance.dist_2_std))
         self.control_window.lbl_std_3.setText('Standard deviation 3: ' + str(self.project_instance.dist_3_std))

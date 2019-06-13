@@ -8,7 +8,10 @@ def convert(obj, old_version, version):
 
     if old_version == [0, 0, 0]:
         # Set new attributes
+        print('Updating...')
+        obj.starting_index = None
         fresh_obj = obj
+        print('updated!')
     elif old_version == [0, 0, 1]:
         # Set new attributes
         fresh_obj = obj

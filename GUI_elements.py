@@ -651,6 +651,7 @@ class ControlWindow(QtWidgets.QWidget):
 
         self.lbl_alloy = QtWidgets.QLabel('Alloy: ')
 
+        self.lbl_starting_index = QtWidgets.QLabel('Default starting index: ')
         self.lbl_std_1 = QtWidgets.QLabel('Standard deviation 1: ')
         self.lbl_std_2 = QtWidgets.QLabel('Standard deviation 2: ')
         self.lbl_std_3 = QtWidgets.QLabel('Standard deviation 3: ')
@@ -805,6 +806,13 @@ class ControlWindow(QtWidgets.QWidget):
         btn_set_alloy_layout.addWidget(self.btn_set_alloy)
         btn_set_alloy_layout.addWidget(self.lbl_alloy)
         btn_set_alloy_layout.addStretch()
+
+        self.btn_set_start = SmallButton('Set', self)
+        self.btn_set_start.clicked.connect(self.ui_obj.set_start_trigger)
+        btn_set_start_layout = QtWidgets.QHBoxLayout()
+        btn_set_start_layout.addWidget(self.btn_set_start)
+        btn_set_start_layout.addWidget(self.lbl_starting_index)
+        btn_set_start_layout.addStretch()
 
         self.btn_set_std_1 = SmallButton('Set', self)
         self.btn_set_std_1.clicked.connect(self.ui_obj.set_std_1_trigger)
@@ -1111,6 +1119,7 @@ class ControlWindow(QtWidgets.QWidget):
 
         self.info_display_layout_6 = QtWidgets.QVBoxLayout()
         self.info_display_layout_6.addLayout(btn_debug_btns_layout)
+        self.info_display_layout_6.addLayout(btn_set_start_layout)
         self.info_display_layout_6.addLayout(btn_set_std_1_layout)
         self.info_display_layout_6.addLayout(btn_set_std_2_layout)
         self.info_display_layout_6.addLayout(btn_set_std_3_layout)
@@ -1517,6 +1526,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.lbl_search_size.setText('Search size: ')
         self.lbl_scale.setText('Scale (pm / pixel): ')
         self.lbl_alloy.setText('Alloy: ')
+        self.lbl_starting_index.setText('Default starting index: ')
         self.lbl_std_1.setText('Standard deviation 1: ')
         self.lbl_std_2.setText('Standard deviation 2: ')
         self.lbl_std_3.setText('Standard deviation 3: ')
@@ -1609,6 +1619,7 @@ class MenuBar:
         reset_flags_action = QtWidgets.QAction('Reset all flags', self.ui_obj)
         set_control_file_action = QtWidgets.QAction('Set control instance', self.ui_obj)
         display_deviations_action = QtWidgets.QAction('Display deviation stats', self.ui_obj)
+        run_validation_test_action = QtWidgets.QAction('Run algorithm benchmark', self.ui_obj)
         test_consistency_action = QtWidgets.QAction('Reset levels', self.ui_obj)
         invert_precipitate_levels_action = QtWidgets.QAction('Invert precipitate levels', self.ui_obj)
         # - help
@@ -1651,6 +1662,7 @@ class MenuBar:
         debug.addAction(add_mark_action)
         debug.addAction(reset_flags_action)
         debug.addAction(set_control_file_action)
+        debug.addAction(run_validation_test_action)
         debug.addAction(display_deviations_action)
         debug.addAction(test_consistency_action)
         debug.addAction(invert_precipitate_levels_action)
@@ -1693,6 +1705,7 @@ class MenuBar:
         add_mark_action.triggered.connect(self.ui_obj.add_mark_trigger)
         reset_flags_action.triggered.connect(self.ui_obj.clear_flags_trigger)
         set_control_file_action.triggered.connect(self.ui_obj.set_control_file_trigger)
+        run_validation_test_action.triggered.connect(self.ui_obj.run_benchmark_trigger)
         display_deviations_action.triggered.connect(self.ui_obj.display_deviations_trigger)
         test_consistency_action.triggered.connect(self.ui_obj.test_consistency_trigger)
         invert_precipitate_levels_action.triggered.connect(self.ui_obj.invert_precipitate_columns_trigger)
