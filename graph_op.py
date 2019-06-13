@@ -4,6 +4,77 @@ import utils
 from copy import deepcopy
 
 
+def remove_intersections(graph_obj):
+
+    intersections = graph_obj.find_intersects()
+    remove_edges = []
+    strong_intersections = []
+
+    # First identify inconsisten edges that cross consistent edges
+
+    for intersection in intersections:
+
+        edge_1 = (intersection[0], intersection[1])
+        edge_2 = (intersection[2], intersection[3])
+
+        if graph_obj.vertices[edge_1[0]].partner_query(edge_1[1]):
+            edge_1_is_strong = True
+        else:
+            edge_1_is_strong = False
+
+        if graph_obj.vertices[edge_2[0]].partner_query(edge_2[1]):
+            edge_2_is_strong = True
+        else:
+            edge_2_is_strong = False
+
+        if edge_1_is_strong and not edge_2_is_strong:
+
+            if edge_2 not in remove_edges:
+                remove_edges.append(edge_2)
+
+        elif not edge_1_is_strong and edge_2_is_strong:
+
+            if edge_1 not in remove_edges:
+                remove_edges.append(edge_1)
+
+        elif not edge_1_is_strong and not edge_2_is_strong:
+            # Do some analysis
+            pass
+
+        else:
+
+            permutations = []
+            permutations.append((edge_1[0], edge_1[1], edge_2[0], edge_2[1]))
+            permutations.append((edge_1[0], edge_1[1], edge_2[1], edge_2[0]))
+            permutations.append((edge_1[0], edge_1[1], edge_2[0], edge_2[1]))
+            permutations.append((edge_1[0], edge_1[1], edge_2[1], edge_2[0]))
+            permutations.append((edge_2[0], edge_2[1], edge_1[0], edge_1[1]))
+            permutations.append((edge_2[0], edge_2[1], edge_1[1], edge_1[0]))
+            permutations.append((edge_2[0], edge_2[1], edge_1[0], edge_1[1]))
+            permutations.append((edge_2[0], edge_2[1], edge_1[1], edge_1[0]))
+
+            add = True
+
+            for permutation in permutations:
+
+                if permutation in strong_intersections:
+
+                    add = False
+
+            if add:
+                strong_intersections.append(permutations[0])
+
+    not_removed = 0
+    for edge in remove_edges:
+        if not graph_obj.strong_remove_edge(edge[0], edge[1]):
+            not_removed += 1
+
+    graph_obj.redraw_edges()
+    graph_obj.summarize_stats()
+
+    return not_removed, strong_intersections
+
+
 def apply_angle_score(graph_obj, i, dist_3_std, dist_4_std, dist_5_std, num_selections):
 
     n = 3

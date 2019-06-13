@@ -123,10 +123,8 @@ def is_point_in_closed_segment(a, b, c):
 def closed_segment_intersect(a, b, c, d):
     """ Verifies if closed segments a, b, c, d do intersect.
     """
-    if a == b:
-        return a == c or a == d
-    if c == d:
-        return c == a or c == b
+    if a == b or c == d or a == c or a == d or b == c or b == d:
+        return False
 
     s1 = side(a, b, c)
     s2 = side(a, b, d)

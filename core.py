@@ -640,6 +640,23 @@ class SuchSoftware:
                     self.graph.vertices[i].reset_prob_vector()
             self.report('    User-set columns was re-set.', force=True)
 
+        elif search_type == 14:
+            self.report('    Looking for intersections', force=True)
+            num_intersections = len(self.graph.find_intersects())
+            not_removed, strong_intersections = graph_op.remove_intersections(self.graph)
+            intersections = self.graph.find_intersects()
+            self.report('        Found {} intersections'.format(num_intersections), force=True)
+            self.report('        Found {} strong intersections'.format(len(strong_intersections)), force=True)
+            self.report('        {} weak intersections were not removed'.format(not_removed), force=True)
+            self.report('        {} literal intersections still remain'.fomrat(len(intersections)), force=True)
+            self.report('        Intersections:', force=True)
+            for intersection in intersections:
+                self.report('            {}'.format(str(intersection)), force=True)
+            self.report('        Strong intersections:', force=True)
+            for strong_intersection in strong_intersections:
+                self.report('            {}'.format(str(strong_intersection)), force=True)
+
+
         else:
 
             self.report('Error: No such search type!', force=True)

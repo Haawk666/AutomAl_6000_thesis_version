@@ -72,6 +72,18 @@ class Vertex:
 
         return n
 
+    def real_coor(self):
+
+        real_coor = (self.real_coor_x, self.real_coor_y)
+
+        return real_coor
+
+    def im_coor(self):
+
+        im_coor = (self.im_coor_x, self.im_coor_y)
+
+        return im_coor
+
     def increase_h_value(self):
 
         changed = False
@@ -389,6 +401,32 @@ class AtomicGraph:
     def remove_edge(self, edge_index):
         raise NotImplemented
 
+    def weak_remove_edge(self, i, j):
+        raise NotImplemented
+
+    def strong_remove_edge(self, i, j):
+
+        if self.perturb_j_to_last_partner(i, j):
+            if self.decrease_h(i):
+                return True
+            else:
+                return False
+        else:
+            return True
+
+    def perturb_j_to_last_partner(self, i, j):
+
+        for pos, k in enumerate(self.vertices[i].partners()):
+            if k == j:
+                pos_n = self.vertices[i].n() - 1
+                if not pos == pos_n:
+                    self.vertices[i].neighbour_indices[pos], self.vertices[i].neighbour_indices[pos_n] =\
+                        self.vertices[i].neighbour_indices[pos_n], self.vertices[i].neighbour_indices[pos]
+                break
+        else:
+            return False
+        return True
+
     def redraw_edges(self):
         self.edges = []
         self.num_edges = 0
@@ -543,11 +581,31 @@ class AtomicGraph:
 
     def find_intersects(self):
 
-        intersects = []
+        # Extend?
+
+        intersecting_segments = []
 
         for a in self.vertices:
             for b in [self.vertices[index] for index in a.partners()]:
-                pass
+                if not a.is_edge_column and not b.is_edge_column:
+                    for c in [self.vertices[index] for index in a.partners()]:
+                        if not c.i == b.i:
+                            for d in [self.vertices[index] for index in c.partners()]:
+                                intersects = utils.closed_segment_intersect(a.real_coor(), b.real_coor(),
+                                                                            c.real_coor(), d.real_coor())
+                                if intersects and (a.i, b.i, c.i, d.i) not in intersecting_segments and\
+                                        (c.i, d.i, a.i, b.i) not in intersecting_segments:
+                                    intersecting_segments.append((a.i, b.i, c.i, d.i))
+                    for c in [self.vertices[index] for index in a.partners()]:
+                        for d in [self.vertices[index] for index in c.partners()]:
+                            for e in [self.vertices[index] for index in d.partners()]:
+                                intersects = utils.closed_segment_intersect(a.real_coor(), b.real_coor(),
+                                                                            d.real_coor(), e.real_coor())
+                                if intersects and (a.i, b.i, d.i, e.i) not in intersecting_segments and\
+                                        (d.i, e.i, a.i, b.i) not in intersecting_segments:
+                                    intersecting_segments.append((a.i, b.i, d.i, e.i))
+
+        return intersecting_segments
 
     def map_spatial_neighbours(self):
 

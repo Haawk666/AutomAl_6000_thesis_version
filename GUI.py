@@ -694,7 +694,8 @@ class MainUI(QtWidgets.QMainWindow):
                        '10 - Run Experimental weak untangling',
                        '11 - Run experimental strong untangling',
                        '12 - Reset probability vectors',
-                       '13 - Reset user-set columns']
+                       '13 - Reset user-set columns',
+                       '14 - Search for intersections']
 
             string, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Search step", strings, 0, False)
             if ok_pressed and strings:
