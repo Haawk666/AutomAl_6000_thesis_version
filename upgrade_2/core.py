@@ -50,6 +50,7 @@ class SuchSoftware:
         self.scale = 1
         self.im_height = 0
         self.im_width = 0
+        self.version_saved = None
 
         if not (filename_full == 'Empty' or filename_full == 'empty'):
             dm3f = dm3.DM3(self.filename_full)

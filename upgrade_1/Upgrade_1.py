@@ -32,7 +32,7 @@ class Ui(QtWidgets.QMainWindow):
             self.new_obj = core_.SuchSoftware('empty')
             self.convert_to_0_0_0()
             self.new_obj.save(self.filename[0])
-            print('Converted file successfully!')
+            print('Converted file successfully! {}'.format(self.filename[0]))
         else:
             print('error')
 
@@ -63,7 +63,10 @@ class Ui(QtWidgets.QMainWindow):
                                   species_strings=self.new_obj.species_strings,
                                   certainty_threshold=self.new_obj.certainty_threshold)
             vertex.prob_vector = column.prob_vector
-            vertex.neighbour_indices = column.neighbour_indices
+            if column.neighbour_indices is None:
+                vertex.neighbour_indices = []
+            else:
+                vertex.neighbour_indices = column.neighbour_indices
             vertex.h_index = column.h_index
             vertex.level = column.level
             vertex.confidence = column.confidence

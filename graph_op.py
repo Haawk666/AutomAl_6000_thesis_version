@@ -12,7 +12,7 @@ def remove_intersections(graph_obj):
     weak_weak_intersections = 0
     strong_stong_intersections = 0
 
-    # First identify inconsisten edges that cross consistent edges
+    # First identify inconsistent edges that cross consistent edges
 
     for intersection in intersections:
 

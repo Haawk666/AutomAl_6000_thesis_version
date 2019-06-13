@@ -2,13 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="30e19c21-651c-42d8-9913-28ec51a34a6a" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/AACC.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AACC.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/GUI.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Images/Outputs/Buffers/FFT.png" beforeDir="false" afterPath="$PROJECT_DIR$/Images/Outputs/Buffers/FFT.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Images/Outputs/Buffers/raw_image.png" beforeDir="false" afterPath="$PROJECT_DIR$/Images/Outputs/Buffers/raw_image.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Images/Outputs/Buffers/search_image.png" beforeDir="false" afterPath="$PROJECT_DIR$/Images/Outputs/Buffers/search_image.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core.py" beforeDir="false" afterPath="$PROJECT_DIR$/core.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/graph.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/graph_op.py" beforeDir="false" afterPath="$PROJECT_DIR$/graph_op.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upgrade_1/Upgrade_1.py" beforeDir="false" afterPath="$PROJECT_DIR$/upgrade_1/Upgrade_1.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upgrade_1/graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/upgrade_1/graph.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upgrade_2/core.py" beforeDir="false" afterPath="$PROJECT_DIR$/upgrade_2/core.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upgrade_2/upgrade_2.py" beforeDir="false" afterPath="$PROJECT_DIR$/upgrade_2/upgrade_2.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -96,151 +101,47 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="4192" />
+          <entry key="py" value="4494" />
           <entry key="txt" value="30" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="PLAIN_TEXT" value="30" />
-          <entry key="Python" value="4192" />
+          <entry key="Python" value="4494" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="py" value="1" />
+          <entry key="py" value="11" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Python" value="1" />
+          <entry key="Python" value="11" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.15811966">
-      <split-first>
-        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/GUI.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="320">
-                  <caret line="1489" column="8" selection-start-line="1489" selection-start-column="8" selection-end-line="1489" selection-end-column="8" />
-                  <folding>
-                    <element signature="e#424#466#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/GUI_elements.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="16235">
-                  <caret line="957" column="62" selection-start-line="957" selection-start-column="49" selection-end-line="957" selection-end-column="62" />
-                  <folding>
-                    <element signature="e#0#42#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/legacy_items.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="11441">
-                  <caret line="675" selection-start-line="675" selection-end-line="675" />
-                  <folding>
-                    <element signature="e#0#25#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/core.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="650">
-                  <caret line="647" column="46" selection-start-line="647" selection-start-column="46" selection-end-line="647" selection-end-column="46" />
-                  <folding>
-                    <element signature="e#68#86#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/graph.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="517">
-                  <caret line="406" column="39" selection-start-line="406" selection-start-column="39" selection-end-line="406" selection-end-column="39" />
-                  <folding>
-                    <element signature="e#51#69#0" expanded="true" />
-                    <marker date="1560421269944" expanded="true" signature="2252:2334" ph="..." />
-                    <marker date="1560421269944" expanded="true" signature="11642:11846" ph="..." />
-                    <marker date="1560421269944" expanded="true" signature="11888:12360" ph="..." />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/mat_op.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="493">
-                  <caret line="31" selection-start-line="31" selection-end-line="31" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/compatibility.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="34">
-                  <caret line="2" selection-start-line="2" selection-end-line="2" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-first>
-      <split-second>
-        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/old_core_reference.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="24055">
-                  <caret line="1420" selection-start-line="1420" selection-end-line="1420" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/graph_op.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="336">
-                  <caret line="26" column="63" selection-start-line="26" selection-start-column="63" selection-end-line="26" selection-end-column="63" />
-                  <folding>
-                    <element signature="e#1#19#0" expanded="true" />
-                    <marker date="1560425166090" expanded="true" signature="97:2476" ph="..." />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/utils.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="360">
-                  <caret line="125" column="24" selection-start-line="125" selection-start-column="24" selection-end-line="125" selection-end-column="24" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-second>
-    </splitter>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/graph.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-1540">
+              <caret line="681" column="38" lean-forward="true" selection-start-line="681" selection-start-column="38" selection-end-line="681" selection-end-column="38" />
+              <folding>
+                <element signature="e#51#69#0" expanded="true" />
+                <marker date="1560435145034" expanded="true" signature="2252:2334" ph="..." />
+                <marker date="1560435145034" expanded="true" signature="11498:11711" ph="..." />
+                <marker date="1560435145034" expanded="true" signature="11814:12018" ph="..." />
+                <marker date="1560435145034" expanded="true" signature="12060:12532" ph="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -268,20 +169,21 @@
         <option value="$PROJECT_DIR$/upgrade_1/Core.py" />
         <option value="$PROJECT_DIR$/upgrade_1/Upgrade.py" />
         <option value="$PROJECT_DIR$/upgrade_2/upgrade.py" />
-        <option value="$PROJECT_DIR$/upgrade_1/graph.py" />
-        <option value="$PROJECT_DIR$/upgrade_1/Upgrade_1.py" />
         <option value="$PROJECT_DIR$/compatibility.py" />
-        <option value="$PROJECT_DIR$/upgrade_2/upgrade_2.py" />
         <option value="$PROJECT_DIR$/changelog.txt" />
         <option value="$PROJECT_DIR$/mat_op.py" />
         <option value="$PROJECT_DIR$/old_core_reference.py" />
         <option value="$PROJECT_DIR$/legacy_items.py" />
         <option value="$PROJECT_DIR$/GUI_elements.py" />
         <option value="$PROJECT_DIR$/utils.py" />
-        <option value="$PROJECT_DIR$/graph.py" />
         <option value="$PROJECT_DIR$/core.py" />
         <option value="$PROJECT_DIR$/GUI.py" />
         <option value="$PROJECT_DIR$/graph_op.py" />
+        <option value="$PROJECT_DIR$/upgrade_1/graph.py" />
+        <option value="$PROJECT_DIR$/upgrade_2/core.py" />
+        <option value="$PROJECT_DIR$/upgrade_1/Upgrade_1.py" />
+        <option value="$PROJECT_DIR$/upgrade_2/upgrade_2.py" />
+        <option value="$PROJECT_DIR$/graph.py" />
       </list>
     </option>
   </component>
@@ -352,27 +254,6 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Upgrade (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="AACC" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/upgrade_1" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/upgrade_1/Upgrade.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration name="Upgrade_1" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="AACC" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -386,6 +267,27 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/upgrade_1/Upgrade_1.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="graph" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="AACC" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/upgrade_1" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/upgrade_1/graph.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -437,19 +339,19 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.Upgrade (1)" />
       <item itemvalue="Python.upgrade" />
       <item itemvalue="Python.Upgrade_1" />
       <item itemvalue="Python.upgrade_2" />
       <item itemvalue="Python.AACC" />
+      <item itemvalue="Python.graph" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.AACC" />
         <item itemvalue="Python.upgrade_2" />
         <item itemvalue="Python.Upgrade_1" />
+        <item itemvalue="Python.graph" />
         <item itemvalue="Python.upgrade" />
-        <item itemvalue="Python.Upgrade (1)" />
       </list>
     </recent_temporary>
   </component>
@@ -653,19 +555,26 @@
       <option name="project" value="LOCAL" />
       <updated>1560424195999</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="Intersection removal">
+      <created>1560427867112</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1560427867112</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1176" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" weight="0.21474358" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.21443625" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3283859" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.17092119" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.35700575" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.27192008" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -683,7 +592,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Implemented more functions" />
     <MESSAGE value="Added some starting features to the column detection." />
     <MESSAGE value="Added terminal window concept" />
     <MESSAGE value="Tried and failed at adding terminal feed" />
@@ -708,7 +616,8 @@
     <MESSAGE value="Added numerical summary to sub-graphs" />
     <MESSAGE value="Added segment intersection equations" />
     <MESSAGE value="Intersection removal prototype" />
-    <option name="LAST_COMMIT_MESSAGE" value="Intersection removal prototype" />
+    <MESSAGE value="Intersection removal" />
+    <option name="LAST_COMMIT_MESSAGE" value="Intersection removal" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://C:/anaconda3/Lib/site-packages/numpy/core/fromnumeric.py" />
@@ -724,31 +633,10 @@
     <entry file="file://C:/anaconda3/Lib/tokenize.py" />
     <entry file="file://$PROJECT_DIR$/upgrade_2/upgrade.py" />
     <entry file="file://$PROJECT_DIR$/upgrade_1/Upgrade.py" />
-    <entry file="file://$PROJECT_DIR$/upgrade_1/graph.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="213">
-          <caret line="343" column="23" selection-start-line="343" selection-start-column="23" selection-end-line="343" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/upgrade_1/Upgrade_1.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="72" selection-start-line="72" selection-end-line="72" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/upgrade_1/Core.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-697">
           <caret line="34" column="31" selection-start-line="34" selection-start-column="31" selection-end-line="34" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/upgrade_2/upgrade_2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="275">
-          <caret line="62" selection-start-line="62" selection-end-line="62" />
         </state>
       </provider>
     </entry>
@@ -769,44 +657,21 @@
     <entry file="file://$PROJECT_DIR$/core.pyi">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/GUI_elements.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="16235">
-          <caret line="957" column="62" selection-start-line="957" selection-start-column="49" selection-end-line="957" selection-end-column="62" />
-          <folding>
-            <element signature="e#0#42#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/legacy_items.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="11441">
-          <caret line="675" selection-start-line="675" selection-end-line="675" />
-          <folding>
-            <element signature="e#0#25#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/mat_op.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="493">
-          <caret line="31" selection-start-line="31" selection-end-line="31" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/compatibility.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" selection-start-line="2" selection-end-line="2" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/old_core_reference.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="24055">
+        <state relative-caret-position="782">
           <caret line="1420" selection-start-line="1420" selection-end-line="1420" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graph_op.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="132">
+          <caret line="14" column="33" selection-start-line="14" selection-start-column="33" selection-end-line="14" selection-end-column="33" />
+          <folding>
+            <element signature="e#1#19#0" expanded="true" />
+            <marker date="1560429171967" expanded="true" signature="97:2477" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -817,46 +682,106 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/graph.py">
+    <entry file="file://$PROJECT_DIR$/compatibility.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="517">
-          <caret line="406" column="39" selection-start-line="406" selection-start-column="39" selection-end-line="406" selection-end-column="39" />
+        <state relative-caret-position="34">
+          <caret line="2" selection-start-line="2" selection-end-line="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mat_op.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="493">
+          <caret line="31" selection-start-line="31" selection-end-line="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/legacy_items.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="782">
+          <caret line="675" selection-start-line="675" selection-end-line="675" />
           <folding>
-            <element signature="e#51#69#0" expanded="true" />
-            <marker date="1560421269944" expanded="true" signature="2252:2334" ph="..." />
-            <marker date="1560421269944" expanded="true" signature="11642:11846" ph="..." />
-            <marker date="1560421269944" expanded="true" signature="11888:12360" ph="..." />
+            <element signature="e#0#25#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core.py">
+    <entry file="file://$PROJECT_DIR$/upgrade_1/core_.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="650">
-          <caret line="647" column="46" selection-start-line="647" selection-start-column="46" selection-end-line="647" selection-end-column="46" />
+        <state relative-caret-position="-357" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/upgrade_2/core_.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/upgrade_2/core.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="52" column="33" selection-start-line="52" selection-start-column="33" selection-end-line="52" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/upgrade_1/graph.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="314">
+          <caret line="343" column="23" selection-start-line="343" selection-start-column="23" selection-end-line="343" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/GUI_elements.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="782">
+          <caret line="957" column="62" selection-start-line="957" selection-start-column="49" selection-end-line="957" selection-end-column="62" />
           <folding>
-            <element signature="e#68#86#0" expanded="true" />
+            <element signature="e#0#42#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/GUI.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="320">
-          <caret line="1489" column="8" selection-start-line="1489" selection-start-column="8" selection-end-line="1489" selection-end-column="8" />
+        <state relative-caret-position="374">
+          <caret line="22" column="32" selection-start-line="22" selection-start-column="32" selection-end-line="22" selection-end-column="32" />
           <folding>
             <element signature="e#424#466#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/graph_op.py">
+    <entry file="file://$PROJECT_DIR$/upgrade_2/upgrade_2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="336">
-          <caret line="26" column="63" selection-start-line="26" selection-start-column="63" selection-end-line="26" selection-end-column="63" />
+        <state relative-caret-position="663">
+          <caret line="43" lean-forward="true" selection-start-line="43" selection-end-line="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/upgrade_1/Upgrade_1.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-102">
+          <caret line="34" column="12" lean-forward="true" selection-start-line="34" selection-start-column="12" selection-end-line="34" selection-end-column="77" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3009">
+          <caret line="60" selection-start-line="60" selection-end-line="60" />
           <folding>
-            <element signature="e#1#19#0" expanded="true" />
-            <marker date="1560425166090" expanded="true" signature="97:2476" ph="..." />
+            <element signature="e#68#86#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graph.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1540">
+          <caret line="681" column="38" lean-forward="true" selection-start-line="681" selection-start-column="38" selection-end-line="681" selection-end-column="38" />
+          <folding>
+            <element signature="e#51#69#0" expanded="true" />
+            <marker date="1560435145034" expanded="true" signature="2252:2334" ph="..." />
+            <marker date="1560435145034" expanded="true" signature="11498:11711" ph="..." />
+            <marker date="1560435145034" expanded="true" signature="11814:12018" ph="..." />
+            <marker date="1560435145034" expanded="true" signature="12060:12532" ph="..." />
           </folding>
         </state>
       </provider>

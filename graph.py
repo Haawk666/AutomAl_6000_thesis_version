@@ -398,8 +398,14 @@ class AtomicGraph:
         self.edges.append(Edge(vertex_a, vertex_b, index))
         self.num_edges += 1
 
-    def remove_edge(self, edge_index):
-        raise NotImplemented
+    def remove_edge(self, i, j):
+        if not self.weak_remove_edge(i, j):
+            if not self.strong_remove_edge(i, j):
+                return False
+            else:
+                return True
+        else:
+            return True
 
     def weak_remove_edge(self, i, j):
         raise NotImplemented
@@ -668,15 +674,8 @@ class AtomicGraph:
         return np.sqrt(arg)
 
     def test_reciprocality(self, i, j):
-
-        found = False
-
-        for x in range(0, self.vertices[j].n()):
-
-            if self.vertices[j].neighbour_indices[x] == i:
-
-                found = True
-
+        # Is i in j.partners?
+        found = self.vertices[j].partner_query(i)
         return found
 
     def set_level(self, i, level):

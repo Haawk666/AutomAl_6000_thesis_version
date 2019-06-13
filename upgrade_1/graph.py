@@ -338,7 +338,7 @@ class AtomicGraph:
         self.num_edges = 0
         for i in range(0, self.num_vertices):
             self.vertices[i].partners()
-            if self.vertices[i].neighbour_indices is not None:
+            if not len(self.vertices[i].neighbour_indices) == 0:
                 for j in range(0, self.vertices[i].n()):
                     self.add_edge(self.vertices[i], self.vertices[self.vertices[i].neighbour_indices[j]], self.num_edges)
         self.calc_chi()

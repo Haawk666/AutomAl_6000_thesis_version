@@ -32,7 +32,7 @@ class Ui(QtWidgets.QMainWindow):
         self.filename = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', '')
         if self.filename[0]:
             self.load()
-            print('Converted file successfully!')
+            print('Converted file successfully! {}'.format(self.filename[0]))
         else:
             print('error')
 
