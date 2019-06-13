@@ -2,18 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="30e19c21-651c-42d8-9913-28ec51a34a6a" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/AACC.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AACC.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Images/Outputs/Buffers/FFT.png" beforeDir="false" afterPath="$PROJECT_DIR$/Images/Outputs/Buffers/FFT.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Images/Outputs/Buffers/raw_image.png" beforeDir="false" afterPath="$PROJECT_DIR$/Images/Outputs/Buffers/raw_image.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Images/Outputs/Buffers/search_image.png" beforeDir="false" afterPath="$PROJECT_DIR$/Images/Outputs/Buffers/search_image.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/graph.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/graph_op.py" beforeDir="false" afterPath="$PROJECT_DIR$/graph_op.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/upgrade_1/Upgrade_1.py" beforeDir="false" afterPath="$PROJECT_DIR$/upgrade_1/Upgrade_1.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/upgrade_1/graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/upgrade_1/graph.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/upgrade_2/core.py" beforeDir="false" afterPath="$PROJECT_DIR$/upgrade_2/core.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/upgrade_2/upgrade_2.py" beforeDir="false" afterPath="$PROJECT_DIR$/upgrade_2/upgrade_2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/changelog.txt" beforeDir="false" afterPath="$PROJECT_DIR$/changelog.txt" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -102,22 +91,24 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="py" value="4494" />
-          <entry key="txt" value="30" />
+          <entry key="txt" value="91" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="30" />
+          <entry key="PLAIN_TEXT" value="91" />
           <entry key="Python" value="4494" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="py" value="11" />
+          <entry key="txt" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
+          <entry key="PLAIN_TEXT" value="1" />
           <entry key="Python" value="11" />
         </counts>
       </usages-collector>
@@ -125,11 +116,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/graph.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1540">
-              <caret line="681" column="38" lean-forward="true" selection-start-line="681" selection-start-column="38" selection-end-line="681" selection-end-column="38" />
+            <state relative-caret-position="262">
+              <caret line="787" lean-forward="true" selection-start-line="787" selection-end-line="787" />
               <folding>
                 <element signature="e#51#69#0" expanded="true" />
                 <marker date="1560435145034" expanded="true" signature="2252:2334" ph="..." />
@@ -137,6 +128,15 @@
                 <marker date="1560435145034" expanded="true" signature="11814:12018" ph="..." />
                 <marker date="1560435145034" expanded="true" signature="12060:12532" ph="..." />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/changelog.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="578">
+              <caret line="73" column="49" selection-start-line="73" selection-start-column="49" selection-end-line="73" selection-end-column="49" />
             </state>
           </provider>
         </entry>
@@ -170,7 +170,6 @@
         <option value="$PROJECT_DIR$/upgrade_1/Upgrade.py" />
         <option value="$PROJECT_DIR$/upgrade_2/upgrade.py" />
         <option value="$PROJECT_DIR$/compatibility.py" />
-        <option value="$PROJECT_DIR$/changelog.txt" />
         <option value="$PROJECT_DIR$/mat_op.py" />
         <option value="$PROJECT_DIR$/old_core_reference.py" />
         <option value="$PROJECT_DIR$/legacy_items.py" />
@@ -184,6 +183,7 @@
         <option value="$PROJECT_DIR$/upgrade_1/Upgrade_1.py" />
         <option value="$PROJECT_DIR$/upgrade_2/upgrade_2.py" />
         <option value="$PROJECT_DIR$/graph.py" />
+        <option value="$PROJECT_DIR$/changelog.txt" />
       </list>
     </option>
   </component>
@@ -562,7 +562,14 @@
       <option name="project" value="LOCAL" />
       <updated>1560427867112</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="Bug-fixes">
+      <created>1560435173205</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1560435173205</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -592,7 +599,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added some starting features to the column detection." />
     <MESSAGE value="Added terminal window concept" />
     <MESSAGE value="Tried and failed at adding terminal feed" />
     <MESSAGE value="Successfully added terminal stream terminal feed" />
@@ -617,7 +623,8 @@
     <MESSAGE value="Added segment intersection equations" />
     <MESSAGE value="Intersection removal prototype" />
     <MESSAGE value="Intersection removal" />
-    <option name="LAST_COMMIT_MESSAGE" value="Intersection removal" />
+    <MESSAGE value="Bug-fixes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Bug-fixes" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://C:/anaconda3/Lib/site-packages/numpy/core/fromnumeric.py" />
@@ -644,13 +651,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="340">
           <caret line="20" selection-start-line="20" selection-end-line="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/changelog.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="544">
-          <caret line="71" column="98" selection-start-line="71" selection-start-column="98" selection-end-line="71" selection-end-column="98" />
         </state>
       </provider>
     </entry>
@@ -774,8 +774,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/graph.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1540">
-          <caret line="681" column="38" lean-forward="true" selection-start-line="681" selection-start-column="38" selection-end-line="681" selection-end-column="38" />
+        <state relative-caret-position="262">
+          <caret line="787" lean-forward="true" selection-start-line="787" selection-end-line="787" />
           <folding>
             <element signature="e#51#69#0" expanded="true" />
             <marker date="1560435145034" expanded="true" signature="2252:2334" ph="..." />
@@ -783,6 +783,13 @@
             <marker date="1560435145034" expanded="true" signature="11814:12018" ph="..." />
             <marker date="1560435145034" expanded="true" signature="12060:12532" ph="..." />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/changelog.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="578">
+          <caret line="73" column="49" selection-start-line="73" selection-start-column="49" selection-end-line="73" selection-end-column="49" />
         </state>
       </provider>
     </entry>
