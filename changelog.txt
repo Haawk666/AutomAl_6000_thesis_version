@@ -70,6 +70,8 @@ New features in 0.0.0:
   time-consumers of the column characterization algorithm now seem to be the mapping of locality
   (fining the 8 nearest vertices to every vertex). Finding a better way to achieve this than what is
   implemented now, will make a big difference in the computational effort of the characterization.
+
+- Introduced a edge intersection detection method
   
 
 Bugfixes:
