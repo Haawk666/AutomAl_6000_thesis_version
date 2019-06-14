@@ -642,15 +642,16 @@ class MainUI(QtWidgets.QMainWindow):
     def set_level_trigger(self):
 
         if self.project_loaded and not (self.selected_column == -1):
-            items = ('down', 'up', 'other')
+            items = ('0', '1', 'other')
             item, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Level", items, 0, False)
             if ok_pressed and item:
-                if item == 'down':
+                if item == '0':
                     self.set_level(0)
-                elif item == 'up':
-                    self.set_level(0)
+                elif item == '1':
+                    self.set_level(1)
                 elif item == 'other':
-                    self.set_level(0)
+                    level = self.project_instance.graph.vertices[self.selected_column].anti_level()
+                    self.set_level(level)
 
     def set_level(self, level):
         self.project_instance.graph.vertices[self.selected_column].level = level
