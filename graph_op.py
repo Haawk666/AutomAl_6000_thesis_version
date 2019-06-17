@@ -11,6 +11,7 @@ def remove_intersections(graph_obj):
     strong_intersections = []
     weak_weak_intersections = 0
     strong_stong_intersections = 0
+    not_removed = 0
 
     # First identify inconsistent edges that cross consistent edges
 
@@ -40,8 +41,18 @@ def remove_intersections(graph_obj):
                 remove_edges.append(edge_1)
 
         elif not edge_1_is_strong and not edge_2_is_strong:
-            # Do some analysis
-            weak_weak_intersections += 1
+
+            if edge_1[0] not in graph_obj.vertices[edge_2[0]].partners():
+                graph_obj.perturb(edge_2[0], edge_2[1], edge_1[0])
+            else:
+                if edge_2 not in remove_edges:
+                    remove_edges.append(edge_2)
+
+            if edge_2[0] not in graph_obj.vertices[edge_1[0]].partners():
+                graph_obj.perturb(edge_1[0], edge_2[0], edge_1[1])
+            else:
+                if edge_1 not in remove_edges:
+                    remove_edges.append(edge_1)
 
         else:
 
@@ -67,7 +78,7 @@ def remove_intersections(graph_obj):
                 strong_intersections.append(permutations[0])
                 strong_stong_intersections += 1
 
-    not_removed = 0
+
     for edge in remove_edges:
         if not graph_obj.strong_remove_edge(edge[0], edge[1]):
             not_removed += 1
@@ -76,6 +87,61 @@ def remove_intersections(graph_obj):
     graph_obj.summarize_stats()
 
     return not_removed, strong_intersections, weak_weak_intersections, strong_stong_intersections
+
+
+def base_angle_score(graph_obj, i, dist_3_std, dist_4_std, dist_5_std):
+
+    pivot = graph_obj.vertices[i].real_coor()
+    neighbours = graph_obj.vertices[i].neighbour_indices
+    j_1 = graph_obj.vertices[neighbours[0]].real_coor()
+    j_2 = graph_obj.vertices[neighbours[1]].real_coor()
+    j_3 = graph_obj.vertices[neighbours[2]].real_coor()
+    j = [j_1, j_2, j_3, j_1]
+
+    alpha = []
+    for i in range(0, 3):
+        alpha.append(utils.find_angle_from_points(j[i], j[i + 1], pivot))
+
+    if sum(alpha) > 6.5:
+        for i in range(0, 3):
+            alpha[i] = 2 * np.pi - alpha[i]
+
+    mu_max_3 = 2 * np.pi / 3
+    mu_max_4 = np.pi
+    mu_max_5 = None
+    mu_min_3 = 2 * np.pi / 3
+    mu_min_4 = np.pi / 2
+    mu_min_5 = 2 * np.pi / 5
+
+    cf_max_3 = utils.normal_dist(max(alpha), mu_max_3, dist_3_std)
+    cf_max_4 = utils.normal_dist(max(alpha), mu_max_4, dist_4_std)
+    cf_max_5 = None
+    cf_min_3 = utils.normal_dist(min(alpha), mu_min_3, dist_3_std)
+    cf_min_4 = utils.normal_dist(min(alpha), mu_min_4, dist_4_std)
+    cf_min_5 = utils.normal_dist(min(alpha), mu_min_5, dist_5_std)
+    cf_max = [cf_max_3, cf_max_4, cf_min_5]
+    cf_min = [cf_min_3, cf_min_4, cf_min_5]
+
+    graph_obj.vertices[i].symmetry_vector = [a * b for a, b in zip(cf_max, graph_obj.vertices[i].symmetry_vector)]
+    graph_obj.vertices[i].symmetry_vector = utils.normalize_list(graph_obj.vertices[i].symmetry_vector)
+    graph_obj.vertices[i].symmetry_vector = [a * b for a, b in zip(cf_min, graph_obj.vertices[i].symmetry_vector)]
+    graph_obj.vertices[i].symmetry_vector = utils.normalize_list(graph_obj.vertices[i].symmetry_vector)
+
+
+def mesh_angle_score(graph_obj, i, dist_3_std, dist_4_std, dist_5_std):
+
+    _, meshes = graph_obj.get_atomic_configuration(i)
+
+    mu_3 = 2 * np.pi / 3
+    mu_4 = np.pi / 2
+    mu_5 = 2 * np.pi / 5
+
+    for mesh in meshes:
+        if mesh.test_consistency():
+            graph_obj.vertices[i].symmetry_vector[0] = utils.normal_dist(mesh.angles[0], mu_3, dist_3_std)
+            graph_obj.vertices[i].symmetry_vector[1] = utils.normal_dist(mesh.angles[0], mu_4, dist_4_std)
+            graph_obj.vertices[i].symmetry_vector[2] = utils.normal_dist(mesh.angles[0], mu_5, dist_5_std)
+            graph_obj.vertices[i].symmetry_vector = utils.normalize_list(graph_obj.vertices[i].symmetry_vector)
 
 
 def apply_angle_score(graph_obj, i, dist_3_std, dist_4_std, dist_5_std, num_selections):

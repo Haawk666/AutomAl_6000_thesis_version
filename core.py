@@ -16,7 +16,7 @@ import strong_untangling
 class SuchSoftware:
 
     # Version
-    version = [0, 0, 1]
+    version = [0, 0, 2]
 
     # Number of elements in the probability vectors
     num_selections = 7
@@ -332,7 +332,8 @@ class SuchSoftware:
             pos = np.unravel_index(self.search_mat.argmax(),
                                    (self.im_height + 2 * (self.r + self.overhead),
                                     self.im_width + 2 * (self.r + self.overhead)))
-            column_portrait, x_fit, y_fit = utils.cm_fit(self.im_mat, pos[1], pos[0], self.r)
+            max_val = self.search_mat.max()
+            x_fit, y_fit = utils.cm_fit(self.im_mat, pos[1], pos[0], self.r)
 
             x_fit_real_coor = x_fit - self.r - self.overhead
             y_fit_real_coor = y_fit - self.r - self.overhead
@@ -343,7 +344,7 @@ class SuchSoftware:
 
             self.search_mat = mat_op.delete_pixels(self.search_mat, x_fit_pix, y_fit_pix, self.r + self.overhead)
 
-            vertex = graph.Vertex(counter, x_fit_real_coor, y_fit_real_coor, self.r, np.max(column_portrait), 0,
+            vertex = graph.Vertex(counter, x_fit_real_coor, y_fit_real_coor, self.r, max_val, 0,
                                   self.alloy_mat,
                                   num_selections=SuchSoftware.num_selections,
                                   species_strings=SuchSoftware.species_strings,
@@ -716,6 +717,83 @@ class SuchSoftware:
             self.report('        Strong intersections:', force=True)
             for strong_intersection in strong_intersections:
                 self.report('            {}'.format(str(strong_intersection)), force=True)
+
+        if search_type == 15:
+
+            self.report('Starting column characterization from vertex {}...'.format(starting_index), force=True)
+            self.report('    Setting alloy...', force=True)
+            self.set_alloy_mat()
+            self.report('    Alloy set.', force=True)
+            self.report('    Finding edge columns....', force=True)
+            self.find_edge_columns()
+            for vertex in self.graph.vertices:
+                if vertex.is_edge_column and not vertex.set_by_user:
+                    vertex.reset_prob_vector(bias=3)
+                    vertex.reset_symmetry_vector(bias=-1)
+            self.report('    Found edge columns.', force=True)
+            # Reset prob vectors:
+            self.column_characterization(starting_index, search_type=12)
+            # Spatial mapping:
+            self.column_characterization(starting_index, search_type=2)
+            # Angle analysis:
+            self.column_characterization(starting_index, search_type=3)
+            # Intensity analysis
+            self.column_characterization(starting_index, search_type=4)
+            # Find particle:
+            self.column_characterization(starting_index, search_type=5)
+            # Set levels:
+            self.column_characterization(starting_index, search_type=6)
+            # Add edges:
+            self.column_characterization(starting_index, search_type=7)
+            # Remove crossing edges
+            self.column_characterization(starting_index, search_type=14)
+            # Weak
+            self.report('    Starting experimental weak untangling...', force=True)
+            for i in range(0, self.num_columns):
+                legacy_items.find_consistent_perturbations_simple(self.graph, i, sub=True)
+            self.graph.redraw_edges()
+            self.column_characterization(starting_index, search_type=12)
+            self.column_characterization(starting_index, search_type=4)
+            self.column_characterization(starting_index, search_type=16)
+            self.column_characterization(starting_index, search_type=5)
+            self.column_characterization(starting_index, search_type=6)
+            self.summarize_stats()
+            for i in range(0, self.num_columns):
+                legacy_items.find_consistent_perturbations_simple(self.graph, i)
+            self.graph.redraw_edges()
+            self.column_characterization(starting_index, search_type=12)
+            self.column_characterization(starting_index, search_type=4)
+            self.column_characterization(starting_index, search_type=16)
+            self.column_characterization(starting_index, search_type=5)
+            self.column_characterization(starting_index, search_type=6)
+            for i in range(0, self.num_columns):
+                legacy_items.find_consistent_perturbations_advanced(self.graph, i)
+            for i in range(0, self.num_columns):
+                legacy_items.find_consistent_perturbations_advanced(self.graph, i)
+            self.graph.redraw_edges()
+            self.column_characterization(starting_index, search_type=12)
+            self.column_characterization(starting_index, search_type=4)
+            self.column_characterization(starting_index, search_type=16)
+            self.column_characterization(starting_index, search_type=5)
+            self.column_characterization(starting_index, search_type=6)
+            # Summarize:
+            self.report('    Summarizing stats.', force=True)
+            self.summarize_stats()
+            # Summarize:
+            self.report('    Summarizing stats.', force=True)
+            self.summarize_stats()
+            # Complete:
+            self.report('Column characterization complete.', force=True)
+            self.report(' ', force=True)
+
+        elif search_type == 16:
+
+            for vertex in self.graph.vertices:
+                if not vertex.set_by_user:
+                    graph_op.base_angle_score(self.graph, vertex.i, self.dist_3_std, self.dist_4_std, self.dist_5_std)
+                    graph_op.mesh_angle_score(self.graph, vertex.i, self.dist_3_std, self.dist_4_std, self.dist_5_std)
+                    vertex.reset_prob_vector()
+                    vertex.multiply_symmetry()
 
         else:
 

@@ -640,7 +640,6 @@ class MainUI(QtWidgets.QMainWindow):
                 self.overlay_objects[self.selected_column], self.selected_column)
 
     def set_level_trigger(self):
-
         if self.project_loaded and not (self.selected_column == -1):
             items = ('0', '1', 'other')
             item, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Level", items, 0, False)
@@ -665,7 +664,6 @@ class MainUI(QtWidgets.QMainWindow):
             self.vertex_objects[self.selected_column].setBrush(self.brush_level_1)
 
     def continue_detection_trigger(self):
-
         if self.project_loaded:
             items = ('s', 't', 'other')
             item, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Search type", items, 0, False)
@@ -703,7 +701,8 @@ class MainUI(QtWidgets.QMainWindow):
                        '11 - Run experimental strong untangling',
                        '12 - Reset probability vectors',
                        '13 - Reset user-set columns',
-                       '14 - Search for intersections']
+                       '14 - Search for intersections',
+                       '15 - Experimental']
 
             string, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Search step", strings, 0, False)
             if ok_pressed and strings:

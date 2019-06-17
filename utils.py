@@ -38,6 +38,20 @@ def normal_dist(x, mean, std):
     return dist
 
 
+def normalize_list(in_list, norm_sum=1):
+
+    factor = sum(in_list) / norm_sum
+    norm_list = [a / factor for a in in_list]
+    return norm_list
+
+
+def normalize_array(in_array, norm_sum=1):
+
+    factor = in_array.sum() / norm_sum
+    norm_array = in_array / factor
+    return norm_array
+
+
 def find_angle(a_1, a_2, b_1, b_2):
     # Returns the smallest angle between two vectors (a_1, b_1) and (a_2, b_2)
     alpha = a_1 * a_2 + b_1 * b_2
@@ -71,6 +85,8 @@ def deviation(data):
 
 
 def find_angle_from_points(p1, p2, pivot):
+
+    # Always returns the anti-clockwise angle from p1 to p2 around the pivot (radians)
 
     vec_1 = (p1[0] - pivot[0], p1[1] - pivot[1])
     vec_2 = (p2[0] - pivot[0], p2[1] - pivot[1])
@@ -212,7 +228,6 @@ def gaussian_fit(mat, x_0, y_0, r):
 def cm_fit(mat, x_0, y_0, r):
     # "Centre of mass" fit. Calculates the centre of mass of the pixels in the circle centred at (x_0, y_0) with radius
     # r.
-    portrait_mat = mat[x_0 - r:x_0 + r, y_0 - r:y_0 + r]
     counter = 0
     total_mass = 0
     weighted_x_sum = 0
@@ -227,7 +242,7 @@ def cm_fit(mat, x_0, y_0, r):
                 counter = counter + 1
     x_fit = weighted_x_sum / total_mass
     y_fit = weighted_y_sum / total_mass
-    return portrait_mat, x_fit, y_fit
+    return x_fit, y_fit
 
 
 

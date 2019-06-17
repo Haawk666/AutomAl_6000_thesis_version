@@ -31,15 +31,26 @@ class Vertex:
         self.flag_2 = False
         self.flag_3 = False
         self.flag_4 = False
+        self.flag_5 = False
+        self.flag_6 = False
+        self.flag_7 = False
+        self.flag_8 = False
         self.is_unpopular = False
         self.is_popular = False
         self.is_edge_column = False
         self.show_in_overlay = True
+        self.symmetry_vector = [1/3, 1/3, 1/3]
         self.prob_vector = np.ndarray([self.num_selections], dtype=np.float64)
         self.collapsed_prob_vector = np.zeros([self.num_selections], dtype=int)
         self.collapsed_prob_vector[self.num_selections - 1] = 1
         self.neighbour_indices = []
         self.partner_indices = []
+
+        # The following params are reserved for future use, whilst still maintaining backwards compatibility:
+        self.ad_hoc_list_1 = []
+        self.ad_hoc_list_1 = []
+        self.ad_hoc_value_1 = 0
+        self.ad_hoc_value_2 = 0
 
         # The prob_vector is ordered to represent the elements in order of their radius:
 
@@ -122,6 +133,14 @@ class Vertex:
 
         return changed
 
+    def reset_symmetry_vector(self, bias=-1):
+        self.symmetry_vector = [1.0, 1.0, 1.0]
+
+        if not bias == -1:
+            self.symmetry_vector[bias - 3] = 1.1
+
+        self.renorm_symmetry_vector()
+
     def reset_prob_vector(self, bias=-1):
         self.prob_vector = np.ones([self.num_selections], dtype=np.float64)
 
@@ -144,6 +163,17 @@ class Vertex:
     def collapse_prob_vector(self):
         self.define_species()
         self.prob_vector = self.collapsed_prob_vector
+
+    def multiply_symmetry(self):
+        self.prob_vector[0] *= self.symmetry_vector[0]
+        self.prob_vector[1] *= self.symmetry_vector[0]
+        self.prob_vector[3] *= self.symmetry_vector[1]
+        self.prob_vector[5] *= self.symmetry_vector[2]
+        self.renorm_prob_vector()
+        self.define_species()
+
+    def renorm_symmetry_vector(self):
+        self.symmetry_vector = utils.normalize_list(self.symmetry_vector)
 
     def renorm_prob_vector(self):
         for k in range(0, self.num_selections):
@@ -206,6 +236,21 @@ class Vertex:
             is_certain = True
 
         return h_index, is_certain
+
+    def analyse_symmetry_vector_confidence(self):
+
+        h_value = max(self.symmetry_vector)
+        nh_value = 0
+        for symmetry in self.symmetry_vector:
+            if h_value > symmetry >= nh_value:
+                nh_value = symmetry
+
+        confidence = 1 - nh_value / h_value
+        is_certain = False
+        if confidence >= self.certainty_threshold:
+            is_certain = True
+
+        return h_value, is_certain
 
     def force_species(self, h_index):
         self.h_index = h_index
@@ -420,6 +465,40 @@ class AtomicGraph:
         else:
             return True
 
+    def perturb_j_k(self, i, j, k):
+
+        pos_j = -1
+        pos_k = -1
+
+        for m, neighbour in enumerate(self.vertices[i].neighbour_indices):
+            if neighbour == j:
+                pos_j = m
+            if neighbour == k:
+                pos_k = m
+
+        if pos_k == -1:
+            last_index = self.vertices[i].neighbour_indices[self.map_size - 1]
+            self.substitute_neighbour(i, last_index, k)
+            pos_k = self.map_size - 1
+
+        self.perturb_pos_j_pos_k(i, pos_j, pos_k)
+
+    def perturb_pos_j_pos_k(self, i, pos_j, pos_k):
+
+        self.vertices[i].neighbour_indices[pos_j], self.vertices[i].neighbour_indices[pos_k] =\
+            self.vertices[i].neighbour_indices[pos_k], self.vertices[i].neighbour_indices[pos_j]
+
+    def substitute_neighbour(self, i, j, k):
+
+        for pos, neighbour in enumerate(self.vertices[i].neighbour_indices):
+            if neighbour == j:
+                self.vertices[i].neighbour_indices[pos] = k
+                self.vertices[i].partners()
+                break
+        else:
+            return False
+        return True
+
     def perturb_j_to_last_partner(self, i, j):
 
         for pos, k in enumerate(self.vertices[i].partners()):
@@ -481,6 +560,10 @@ class AtomicGraph:
             vertex.flag_2 = False
             vertex.flag_3 = False
             vertex.flag_4 = False
+            vertex.flag_5 = False
+            vertex.flag_6 = False
+            vertex.flag_7 = False
+            vertex.flag_8 = False
 
     def invert_levels(self):
         for vertex in self.vertices:
