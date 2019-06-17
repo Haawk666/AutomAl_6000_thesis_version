@@ -4,6 +4,28 @@ import utils
 from copy import deepcopy
 
 
+def statistical_level_bleed(graph_obj, starting_index, level):
+
+    graph_obj.reset_all_flags()
+
+    if level == 0:
+        graph_obj.vertices[starting_index].level_vector = [1.0, 0.0]
+    elif level == 1:
+        graph_obj.vertices[starting_index].level_vector = [0.0, 1.0]
+
+
+def level_tree_transverse(graph_obj, i):
+    conf = graph_obj.vertices[i].analyse_level_vector_confidence()
+    level = graph_obj.vertices[i].set_level_from_vector()
+    graph_obj.vertices[i].flag_1 = True
+
+    for partner in graph_obj.vertices[i].partners():
+        if not graph_obj.vertices[partner].flag_1:
+            if graph_obj.vertices[partner].partner_query(i):
+                if level == 0:
+                    graph_obj.vertices[partner].level_vector[0] = graph_obj.vertices[partner].level_vector[0]
+
+
 def remove_intersections(graph_obj):
 
     intersections = graph_obj.find_intersects()

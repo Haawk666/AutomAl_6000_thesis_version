@@ -262,6 +262,7 @@ class Vertex:
         return h_value, is_certain
 
     def analyse_level_vector_confidence(self):
+        self.renorm_level_vector()
         confidence = abs(self.level_vector[0] - self.level_vector[1])
         return confidence
 
@@ -273,6 +274,7 @@ class Vertex:
             self.level = 1
         else:
             self.level = 0
+        return self.level
 
     def force_species(self, h_index):
         self.h_index = h_index
