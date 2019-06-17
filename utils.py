@@ -40,8 +40,8 @@ def normal_dist(x, mean, std):
 
 def normalize_list(in_list, norm_sum=1):
 
-    factor = sum(in_list) / norm_sum
-    norm_list = [a / factor for a in in_list]
+    factor = norm_sum / sum(in_list)
+    norm_list = [a * factor for a in in_list]
     return norm_list
 
 

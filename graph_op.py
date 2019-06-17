@@ -9,21 +9,46 @@ def statistical_level_bleed(graph_obj, starting_index, level):
     graph_obj.reset_all_flags()
 
     if level == 0:
-        graph_obj.vertices[starting_index].level_vector = [1.0, 0.0]
+        graph_obj.vertices[starting_index].level_vector = [0.9, 0.1]
     elif level == 1:
-        graph_obj.vertices[starting_index].level_vector = [0.0, 1.0]
+        graph_obj.vertices[starting_index].level_vector = [0.1, 0.9]
+
+    runs = []
+    measures = []
+
+    for m in range(0, 20):
+        level_tree_traverse(graph_obj, starting_index)
+        runs.append(m)
+        measures.append(graph_obj.calc_avg_level_confidence())
+        graph_obj.reset_all_flags()
+
+    return runs, measures
 
 
-def level_tree_transverse(graph_obj, i):
+def level_tree_traverse(graph_obj, i):
     conf = graph_obj.vertices[i].analyse_level_vector_confidence()
     level = graph_obj.vertices[i].set_level_from_vector()
     graph_obj.vertices[i].flag_1 = True
 
     for partner in graph_obj.vertices[i].partners():
-        if not graph_obj.vertices[partner].flag_1:
             if graph_obj.vertices[partner].partner_query(i):
                 if level == 0:
-                    graph_obj.vertices[partner].level_vector[0] = graph_obj.vertices[partner].level_vector[0]
+                    graph_obj.vertices[partner].level_vector[0] = graph_obj.vertices[partner].level_vector[0] - conf
+                    graph_obj.vertices[partner].level_vector[1] = graph_obj.vertices[partner].level_vector[1] + conf
+                elif level == 1:
+                    graph_obj.vertices[partner].level_vector[1] = graph_obj.vertices[partner].level_vector[1] - conf
+                    graph_obj.vertices[partner].level_vector[0] = graph_obj.vertices[partner].level_vector[0] + conf
+                else:
+                    print('Error in graph_op.level_tree_traverse')
+                if graph_obj.vertices[partner].level_vector[0] < 0:
+                    graph_obj.vertices[partner].level_vector[0] = graph_obj.vertices[partner].level_vector[0] - graph_obj.vertices[partner].level_vector[0]
+                    graph_obj.vertices[partner].level_vector[1] = graph_obj.vertices[partner].level_vector[1] - graph_obj.vertices[partner].level_vector[0]
+                if graph_obj.vertices[partner].level_vector[1] < 0:
+                    graph_obj.vertices[partner].level_vector[0] = graph_obj.vertices[partner].level_vector[0] - graph_obj.vertices[partner].level_vector[1]
+                    graph_obj.vertices[partner].level_vector[1] = graph_obj.vertices[partner].level_vector[1] - graph_obj.vertices[partner].level_vector[1]
+                graph_obj.vertices[partner].renorm_level_vector()
+            if not graph_obj.vertices[partner].flag_1:
+                level_tree_traverse(graph_obj, partner)
 
 
 def remove_intersections(graph_obj):

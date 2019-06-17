@@ -122,6 +122,10 @@ class InteractivePosColumn(QtWidgets.QGraphicsEllipseItem):
                 'Atomic species: ' + self.obj.project_instance.graph.vertices[self.i].atomic_species)
             self.obj.control_window.lbl_column_level.setText('Level: ' + str(self.obj.project_instance.graph.vertices[self.i].level))
             self.obj.control_window.lbl_confidence.setText('Confidence: ' + str(self.obj.project_instance.graph.vertices[self.i].confidence))
+            self.obj.control_window.lbl_symmetry_confidence.setText(
+                'Symmetry confidence: ' + str(self.obj.project_instance.graph.vertices[self.i].symmetry_confidence))
+            self.obj.control_window.lbl_level_confidence.setText(
+                'Level confidence: ' + str(self.obj.project_instance.graph.vertices[self.i].level_confidence))
 
         self.obj.selected_column = self.i
 
@@ -187,6 +191,10 @@ class InteractiveOverlayColumn(QtWidgets.QGraphicsEllipseItem):
                 'Atomic species: ' + self.obj.project_instance.graph.vertices[self.i].atomic_species)
             self.obj.control_window.lbl_column_level.setText('Level: ' + str(self.obj.project_instance.graph.vertices[self.i].level))
             self.obj.control_window.lbl_confidence.setText('Confidence: ' + str(self.obj.project_instance.graph.vertices[self.i].confidence))
+            self.obj.control_window.lbl_symmetry_confidence.setText(
+                'Symmetry confidence: ' + str(self.obj.project_instance.graph.vertices[self.i].symmetry_confidence))
+            self.obj.control_window.lbl_level_confidence.setText(
+                'Level confidence: ' + str(self.obj.project_instance.graph.vertices[self.i].level_confidence))
 
         self.obj.selected_column = self.i
 
@@ -246,6 +254,9 @@ class InteractiveGraphVertex(QtWidgets.QGraphicsEllipseItem):
                 'Atomic species: ' + self.obj.project_instance.graph.vertices[self.i].atomic_species)
             self.obj.control_window.lbl_column_level.setText('Level: ' + str(self.obj.project_instance.graph.vertices[self.i].level))
             self.obj.control_window.lbl_confidence.setText('Confidence: ' + str(self.obj.project_instance.graph.vertices[self.i].confidence))
+            self.obj.control_window.lbl_symmetry_confidence.setText('Symmetry confidence: ' + str(self.obj.project_instance.graph.vertices[self.i].symmetry_confidence))
+            self.obj.control_window.lbl_level_confidence.setText(
+                'Level confidence: ' + str(self.obj.project_instance.graph.vertices[self.i].level_confidence))
 
     def select(self):
         self.setPen(self.obj.blue_pen)
@@ -668,6 +679,8 @@ class ControlWindow(QtWidgets.QWidget):
         self.lbl_column_species = QtWidgets.QLabel('Atomic species: ')
         self.lbl_column_level = QtWidgets.QLabel('Level: ')
         self.lbl_confidence = QtWidgets.QLabel('Confidence: ')
+        self.lbl_symmetry_confidence = QtWidgets.QLabel('Symmetry confidence: ')
+        self.lbl_level_confidence = QtWidgets.QLabel('Level confidence: ')
         self.lbl_prob_vector = QtWidgets.QLabel('Probability vector: ')
         self.lbl_neighbours = QtWidgets.QLabel('Nearest neighbours: ')
 
@@ -1114,6 +1127,8 @@ class ControlWindow(QtWidgets.QWidget):
         self.info_display_layout_4.addWidget(self.lbl_column_peak_gamma)
         self.info_display_layout_4.addWidget(self.lbl_column_avg_gamma)
         self.info_display_layout_4.addWidget(self.lbl_confidence)
+        self.info_display_layout_4.addWidget(self.lbl_symmetry_confidence)
+        self.info_display_layout_4.addWidget(self.lbl_level_confidence)
         self.info_display_layout_4.addWidget(self.lbl_prob_vector)
         self.info_display_layout_4.addLayout(self.probGraphicLayout)
         self.info_display_layout_4.addWidget(self.chb_precipitate_column)
@@ -1553,6 +1568,8 @@ class ControlWindow(QtWidgets.QWidget):
         self.lbl_std_5.setText('Standard deviation 5: ')
         self.lbl_std_8.setText('Standard deviation 8: ')
         self.lbl_cert_threshold.setText('Certainty threshold: ')
+        self.lbl_symmetry_confidence.setText('Symmetry confidence: ')
+        self.lbl_level_confidence.setText('Level confidence: ')
 
         self.ui_obj.deselect_trigger()
 

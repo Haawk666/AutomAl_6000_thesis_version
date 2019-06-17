@@ -262,8 +262,11 @@ class Vertex:
         return h_value, is_certain
 
     def analyse_level_vector_confidence(self):
+        print(self.level_vector)
         self.renorm_level_vector()
+        print(self.level_vector)
         confidence = abs(self.level_vector[0] - self.level_vector[1])
+        print(confidence)
         return confidence
 
     def set_level_from_vector(self):

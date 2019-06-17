@@ -9,6 +9,7 @@ verify_ssl = true
 pyqt5 = "*"
 pillow = "*"
 scipy = "*"
+matplotlib = "*"
 
 [requires]
 python_version = "3.7"

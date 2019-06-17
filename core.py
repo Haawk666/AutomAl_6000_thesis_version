@@ -9,8 +9,7 @@ import sys
 import pickle
 import compatibility
 import legacy_items
-import weak_untangling
-import strong_untangling
+from matplotlib import pyplot as plt
 
 
 class SuchSoftware:
@@ -794,6 +793,12 @@ class SuchSoftware:
                     graph_op.mesh_angle_score(self.graph, vertex.i, self.dist_3_std, self.dist_4_std, self.dist_5_std)
                     vertex.reset_prob_vector()
                     vertex.multiply_symmetry()
+
+        elif search_type == 17:
+
+            runs, measures = graph_op.statistical_level_bleed(self.graph, starting_index, self.graph.vertices[starting_index].level)
+            plt.plot(runs, measures)
+            plt.show()
 
         else:
 
