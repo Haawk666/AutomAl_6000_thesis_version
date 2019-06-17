@@ -9,7 +9,13 @@ def convert(obj, old_version, version):
     if old_version == [0, 0, 0]:
         # Set new attributes
         obj.starting_index = None
+        obj.graph.avg_species_confidence = 0.0
+        obj.graph.avg_symmetry_confidence = 0.0
+        obj.graph.avg_level_confidence = 0.0
         for vertex in obj.graph.vertices:
+            vertex.level_confidence = 0.0
+            vertex.symmetry_confidence = 0.0
+            vertex.level_vector = [1 / 2, 1 / 2]
             vertex.symmetry_vector = [1/3, 1/3, 1/3]
             vertex.flag_5 = False
             vertex.flag_6 = False
@@ -22,7 +28,13 @@ def convert(obj, old_version, version):
         fresh_obj = obj
     elif old_version == [0, 0, 1]:
         # Set new attributes
+        obj.graph.avg_species_confidence = 0.0
+        obj.graph.avg_symmetry_confidence = 0.0
+        obj.graph.avg_level_confidence = 0.0
         for vertex in obj.graph.vertices:
+            vertex.level_confidence = 0.0
+            vertex.symmetry_confidence = 0.0
+            vertex.level_vector = [1 / 2, 1 / 2]
             vertex.symmetry_vector = [1/3, 1/3, 1/3]
             vertex.flag_5 = False
             vertex.flag_6 = False
@@ -32,6 +44,15 @@ def convert(obj, old_version, version):
             vertex.ad_hoc_list_1 = []
             vertex.ad_hoc_value_1 = 0
             vertex.ad_hoc_value_2 = 0
+        fresh_obj = obj
+    elif old_version == [0, 0, 2]:
+        obj.graph.avg_species_confidence = 0.0
+        obj.graph.avg_symmetry_confidence = 0.0
+        obj.graph.avg_level_confidence = 0.0
+        for vertex in obj.graph.vertices:
+            vertex.level_confidence = 0.0
+            vertex.symmetry_confidence = 0.0
+            vertex.level_vector = [1 / 2, 1 / 2]
         fresh_obj = obj
     else:
         fresh_obj = None

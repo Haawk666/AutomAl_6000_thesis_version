@@ -16,7 +16,7 @@ import strong_untangling
 class SuchSoftware:
 
     # Version
-    version = [0, 0, 2]
+    version = [0, 0, 3]
 
     # Number of elements in the probability vectors
     num_selections = 7

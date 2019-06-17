@@ -1079,6 +1079,11 @@ class MainUI(QtWidgets.QMainWindow):
             message.setText('Not implemented yet')
             message.exec_()
 
+    def toggle_graph_detail_trigger(self):
+
+        self.draw_atomic_graph(1)
+        self.update_display()
+
     def set_style_trigger(self):
 
         if self.project_loaded:
@@ -1529,6 +1534,7 @@ class MainUI(QtWidgets.QMainWindow):
             r = self.project_instance.r * scale_factor
 
             # Draw edges
+            self.project_instance.graph.redraw_edges()
             self.red_pen.setWidth(3)
 
             for i in range(0, self.project_instance.graph.num_edges):
@@ -1544,9 +1550,13 @@ class MainUI(QtWidgets.QMainWindow):
 
                     line, head_1 = self.make_arrow_obj(p1, p2, r, scale_factor, consistent)
 
-                    self.graphicScene_6.addItem(line)
-                    if not self.project_instance.graph.edges[i].is_consistent_edge:
-                        self.graphicScene_6.addItem(head_1)
+                    if self.control_window.chb_graph.isChecked():
+                        self.graphicScene_6.addItem(line)
+                        if not self.project_instance.graph.edges[i].is_consistent_edge:
+                            self.graphicScene_6.addItem(head_1)
+                    else:
+                        if consistent:
+                            self.graphicScene_6.addItem(line)
 
             # Draw vertices
 

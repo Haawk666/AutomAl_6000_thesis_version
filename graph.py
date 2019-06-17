@@ -24,6 +24,8 @@ class Vertex:
         self.alloy_mat = alloy_mat
 
         self.confidence = 0.0
+        self.level_confidence = 0.0
+        self.symmetry_confidence = 0.0
         self.certainty_threshold = certainty_threshold
         self.is_in_precipitate = False
         self.set_by_user = False
@@ -40,6 +42,7 @@ class Vertex:
         self.is_edge_column = False
         self.show_in_overlay = True
         self.symmetry_vector = [1/3, 1/3, 1/3]
+        self.level_vector = [1/2, 1/2]
         self.prob_vector = np.ndarray([self.num_selections], dtype=np.float64)
         self.collapsed_prob_vector = np.zeros([self.num_selections], dtype=int)
         self.collapsed_prob_vector[self.num_selections - 1] = 1
@@ -133,6 +136,9 @@ class Vertex:
 
         return changed
 
+    def reset_level_vector(self):
+        self.level_vector = [1/2, 1/2]
+
     def reset_symmetry_vector(self, bias=-1):
         self.symmetry_vector = [1.0, 1.0, 1.0]
 
@@ -171,6 +177,9 @@ class Vertex:
         self.prob_vector[5] *= self.symmetry_vector[2]
         self.renorm_prob_vector()
         self.define_species()
+
+    def renorm_level_vector(self):
+        self.level_vector = utils.normalize_list(self.level_vector)
 
     def renorm_symmetry_vector(self):
         self.symmetry_vector = utils.normalize_list(self.symmetry_vector)
@@ -251,6 +260,19 @@ class Vertex:
             is_certain = True
 
         return h_value, is_certain
+
+    def analyse_level_vector_confidence(self):
+        confidence = abs(self.level_vector[0] - self.level_vector[1])
+        return confidence
+
+    def set_level_from_vector(self):
+        self.level_confidence = self.analyse_level_vector_confidence()
+        if self.level_vector[0] > self.level_vector[1]:
+            self.level = 0
+        elif self.level_vector[0] < self.level_vector[1]:
+            self.level = 1
+        else:
+            self.level = 0
 
     def force_species(self, h_index):
         self.h_index = h_index
@@ -396,6 +418,36 @@ class AtomicGraph:
         self.num_inconsistencies = 0
         self.num_popular = 0
         self.num_unpopular = 0
+        self.avg_species_confidence = 0.0
+        self.avg_symmetry_confidence = 0.0
+        self.avg_level_confidence = 0.0
+
+    def calc_avg_species_confidence(self):
+        sum_ = 0
+        for vertex in self.vertices:
+            vertex.analyse_prob_vector_confidence()
+            sum_ += vertex.confidence
+        result = sum_ / self.num_vertices
+        self.avg_species_confidence = result
+        return result
+
+    def calc_avg_symmetry_confidence(self):
+        sum_ = 0
+        for vertex in self.vertices:
+            vertex.analyse_symmetry_vector_confidence()
+            sum_ += vertex.symmetry_confidence
+        result = sum_ / self.num_vertices
+        self.avg_symmetry_confidence = result
+        return result
+
+    def calc_avg_level_confidence(self):
+        sum_ = 0
+        for vertex in self.vertices:
+            vertex.analyse_level_vector_confidence()
+            sum_ += vertex.level_confidence
+        result = sum_ / self.num_vertices
+        self.avg_level_confidence = result
+        return result
 
     def summarize_stats(self):
 
@@ -408,6 +460,9 @@ class AtomicGraph:
             if vertex.is_unpopular:
                 self.num_unpopular += 1
         self.calc_chi()
+        self.calc_avg_species_confidence()
+        self.calc_avg_symmetry_confidence()
+        self.calc_avg_level_confidence()
 
     def add_vertex(self, vertex):
 
@@ -516,8 +571,9 @@ class AtomicGraph:
         self.edges = []
         self.num_edges = 0
         for vertex in self.vertices:
-            for partner in vertex.partners():
-                self.add_edge(vertex, self.vertices[partner], self.num_edges)
+            if vertex.partners() is not None:
+                for partner in vertex.partner_indices:
+                    self.add_edge(vertex, self.vertices[partner], self.num_edges)
         self.calc_chi()
 
     def calc_chi(self):

@@ -78,7 +78,6 @@ def remove_intersections(graph_obj):
                 strong_intersections.append(permutations[0])
                 strong_stong_intersections += 1
 
-
     for edge in remove_edges:
         if not graph_obj.strong_remove_edge(edge[0], edge[1]):
             not_removed += 1
@@ -495,7 +494,4 @@ def precipitate_finder(graph_obj, i):
             if not graph_obj.vertices[indices[x]].flag_1:
                 precipitate_finder(graph_obj, indices[x])
 
-
-def detect_crossing_edges(graph):
-    pass
 

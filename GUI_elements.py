@@ -677,6 +677,8 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_show = QtWidgets.QCheckBox('Show in overlay')
         self.chb_move = QtWidgets.QCheckBox('Enable move')
 
+        self.chb_graph = QtWidgets.QCheckBox('Show inconsistent connections')
+
         self.chb_raw_image = QtWidgets.QCheckBox('Raw image')
         self.chb_black_background = QtWidgets.QCheckBox('Black background')
         self.chb_structures = QtWidgets.QCheckBox('Structures')
@@ -731,6 +733,8 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_show.setChecked(False)
         self.chb_move.setChecked(False)
 
+        self.chb_graph.setChecked(True)
+
         self.chb_raw_image.setChecked(True)
         self.chb_black_background.setChecked(False)
         self.chb_structures.setChecked(True)
@@ -755,6 +759,8 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_precipitate_column.toggled.connect(self.ui_obj.toggle_precipitate_trigger)
         self.chb_show.toggled.connect(self.ui_obj.toggle_show_trigger)
         self.chb_move.toggled.connect(self.ui_obj.move_trigger)
+
+        self.chb_graph.toggled.connect(self.ui_obj.toggle_graph_detail_trigger)
 
         self.chb_raw_image.toggled.connect(self.ui_obj.update_central_widget)
         self.chb_black_background.toggled.connect(self.ui_obj.update_central_widget)
@@ -1057,6 +1063,12 @@ class ControlWindow(QtWidgets.QWidget):
         self.column_box_empty.setStyleSheet('QGroupBox { font-weight: bold; } ')
         self.column_box_empty.hide()
 
+        self.graph_box = QtWidgets.QGroupBox('Atomic Graph')
+        self.graph_box.setStyleSheet('QGroupBox { font-weight: bold; } ')
+        self.graph_box_empty = QtWidgets.QGroupBox('Atomic Graph')
+        self.graph_box_empty.setStyleSheet('QGroupBox { font-weight: bold; } ')
+        self.graph_box_empty.hide()
+
         self.overlay_box = QtWidgets.QGroupBox('Overlay settings')
         self.overlay_box.setStyleSheet('QGroupBox { font-weight: bold; } ')
         self.overlay_box_empty = QtWidgets.QGroupBox('Overlay settings')
@@ -1130,6 +1142,11 @@ class ControlWindow(QtWidgets.QWidget):
 
         self.debug_box.setLayout(self.info_display_layout_6)
 
+        self.info_display_layout_7 = QtWidgets.QVBoxLayout()
+        self.info_display_layout_7.addWidget(self.chb_graph)
+
+        self.graph_box.setLayout(self.info_display_layout_7)
+
         self.info_display_layout = QtWidgets.QVBoxLayout()
         self.info_display_layout.addWidget(self.image_box)
         self.info_display_layout.addWidget(self.image_box_empty)
@@ -1140,6 +1157,8 @@ class ControlWindow(QtWidgets.QWidget):
         self.info_display_layout.addWidget(self.alg_2_box_empty)
         self.info_display_layout.addWidget(self.column_box)
         self.info_display_layout.addWidget(self.column_box_empty)
+        self.info_display_layout.addWidget(self.graph_box)
+        self.info_display_layout.addWidget(self.graph_box_empty)
         self.info_display_layout.addWidget(self.overlay_box)
         self.info_display_layout.addWidget(self.overlay_box_empty)
         self.info_display_layout.addStretch()
