@@ -4,6 +4,21 @@ import utils
 from copy import deepcopy
 
 
+def sort_neighbourhood(graph_obj):
+
+    for vertex in graph_obj.vertices:
+        i_level = vertex.level
+        tmp_1 = []
+        tmp_2 = []
+        for j, neighbour in enumerate(vertex.neighbour_indices):
+            j_level = graph_obj.vertices[neighbour].level
+            if i_level == j_level:
+                tmp_2.append(neighbour)
+            else:
+                tmp_1.append(neighbour)
+        vertex.neighbour_indices = tmp_1 + tmp_2
+
+
 def statistical_level_bleed(graph_obj, starting_index, level):
 
     graph_obj.reset_all_flags()
@@ -28,27 +43,22 @@ def statistical_level_bleed(graph_obj, starting_index, level):
 def level_tree_traverse(graph_obj, i):
     conf = graph_obj.vertices[i].analyse_level_vector_confidence()
     level = graph_obj.vertices[i].set_level_from_vector()
+    edgy = graph_obj.vertices[i].is_edge_column
     graph_obj.vertices[i].flag_1 = True
 
     for partner in graph_obj.vertices[i].partners():
-            if graph_obj.vertices[partner].partner_query(i):
-                if level == 0:
-                    graph_obj.vertices[partner].level_vector[0] = graph_obj.vertices[partner].level_vector[0] - conf
-                    graph_obj.vertices[partner].level_vector[1] = graph_obj.vertices[partner].level_vector[1] + conf
-                elif level == 1:
-                    graph_obj.vertices[partner].level_vector[1] = graph_obj.vertices[partner].level_vector[1] - conf
-                    graph_obj.vertices[partner].level_vector[0] = graph_obj.vertices[partner].level_vector[0] + conf
-                else:
-                    print('Error in graph_op.level_tree_traverse')
-                if graph_obj.vertices[partner].level_vector[0] < 0:
-                    graph_obj.vertices[partner].level_vector[0] = graph_obj.vertices[partner].level_vector[0] - graph_obj.vertices[partner].level_vector[0]
-                    graph_obj.vertices[partner].level_vector[1] = graph_obj.vertices[partner].level_vector[1] - graph_obj.vertices[partner].level_vector[0]
-                if graph_obj.vertices[partner].level_vector[1] < 0:
-                    graph_obj.vertices[partner].level_vector[0] = graph_obj.vertices[partner].level_vector[0] - graph_obj.vertices[partner].level_vector[1]
-                    graph_obj.vertices[partner].level_vector[1] = graph_obj.vertices[partner].level_vector[1] - graph_obj.vertices[partner].level_vector[1]
-                graph_obj.vertices[partner].renorm_level_vector()
-            if not graph_obj.vertices[partner].flag_1:
-                level_tree_traverse(graph_obj, partner)
+        if not edgy:
+            if level == 0:
+                graph_obj.vertices[partner].level_vector[0] = graph_obj.vertices[partner].level_vector[0]
+                graph_obj.vertices[partner].level_vector[1] = graph_obj.vertices[partner].level_vector[1] + conf
+            elif level == 1:
+                graph_obj.vertices[partner].level_vector[1] = graph_obj.vertices[partner].level_vector[1]
+                graph_obj.vertices[partner].level_vector[0] = graph_obj.vertices[partner].level_vector[0] + conf
+            else:
+                print('Error in graph_op.level_tree_traverse')
+            graph_obj.vertices[partner].renorm_level_vector()
+        if not graph_obj.vertices[partner].flag_1:
+            level_tree_traverse(graph_obj, partner)
 
 
 def remove_intersections(graph_obj):
@@ -90,13 +100,13 @@ def remove_intersections(graph_obj):
         elif not edge_1_is_strong and not edge_2_is_strong:
 
             if edge_1[0] not in graph_obj.vertices[edge_2[0]].partners():
-                graph_obj.perturb(edge_2[0], edge_2[1], edge_1[0])
+                graph_obj.perturb_j_k(edge_2[0], edge_2[1], edge_1[0])
             else:
                 if edge_2 not in remove_edges:
                     remove_edges.append(edge_2)
 
             if edge_2[0] not in graph_obj.vertices[edge_1[0]].partners():
-                graph_obj.perturb(edge_1[0], edge_2[0], edge_1[1])
+                graph_obj.perturb_j_k(edge_1[0], edge_2[0], edge_1[1])
             else:
                 if edge_1 not in remove_edges:
                     remove_edges.append(edge_1)
@@ -135,7 +145,7 @@ def remove_intersections(graph_obj):
     return not_removed, strong_intersections, weak_weak_intersections, strong_stong_intersections
 
 
-def base_angle_score(graph_obj, i, dist_3_std, dist_4_std, dist_5_std):
+def base_angle_score(graph_obj, i, dist_3_std, dist_4_std, dist_5_std, apply=True):
 
     pivot = graph_obj.vertices[i].real_coor()
     neighbours = graph_obj.vertices[i].neighbour_indices
@@ -168,26 +178,43 @@ def base_angle_score(graph_obj, i, dist_3_std, dist_4_std, dist_5_std):
     cf_max = [cf_max_3, cf_max_4, cf_min_5]
     cf_min = [cf_min_3, cf_min_4, cf_min_5]
 
-    graph_obj.vertices[i].symmetry_vector = [a * b for a, b in zip(cf_max, graph_obj.vertices[i].symmetry_vector)]
-    graph_obj.vertices[i].symmetry_vector = utils.normalize_list(graph_obj.vertices[i].symmetry_vector)
-    graph_obj.vertices[i].symmetry_vector = [a * b for a, b in zip(cf_min, graph_obj.vertices[i].symmetry_vector)]
-    graph_obj.vertices[i].symmetry_vector = utils.normalize_list(graph_obj.vertices[i].symmetry_vector)
+    if apply:
+
+        probs = [a * b for a, b in zip(cf_max, graph_obj.vertices[i].symmetry_vector)]
+        probs = utils.normalize_list(probs)
+        probs = [a * b for a, b in zip(cf_min, probs)]
+        probs = utils.normalize_list(probs)
+
+        return probs
+
+    else:
+
+        return max(alpha), min(alpha), cf_max_3, cf_max_4, cf_min_3, cf_min_4, cf_min_5
 
 
 def mesh_angle_score(graph_obj, i, dist_3_std, dist_4_std, dist_5_std):
 
-    _, meshes = graph_obj.get_atomic_configuration(i)
+    _, meshes = graph_obj.get_atomic_configuration(i, True)
 
     mu_3 = 2 * np.pi / 3
     mu_4 = np.pi / 2
     mu_5 = 2 * np.pi / 5
 
+    probs = [1/3, 1/3, 1/3]
+
     for mesh in meshes:
-        if mesh.test_consistency():
-            graph_obj.vertices[i].symmetry_vector[0] = utils.normal_dist(mesh.angles[0], mu_3, dist_3_std)
-            graph_obj.vertices[i].symmetry_vector[1] = utils.normal_dist(mesh.angles[0], mu_4, dist_4_std)
-            graph_obj.vertices[i].symmetry_vector[2] = utils.normal_dist(mesh.angles[0], mu_5, dist_5_std)
-            graph_obj.vertices[i].symmetry_vector = utils.normalize_list(graph_obj.vertices[i].symmetry_vector)
+        if mesh.test_sidedness():
+            cf_3 = utils.normal_dist(mesh.angles[0], mu_3, dist_3_std)
+            cf_4 = utils.normal_dist(mesh.angles[0], mu_4, dist_4_std)
+            cf_5 = utils.normal_dist(mesh.angles[0], mu_5, dist_5_std)
+            cf = [cf_3, cf_4, cf_5]
+            probs = [a * b for a, b in zip(cf, probs)]
+            probs = utils.normalize_list(probs)
+
+    probs = [a * b for a, b in zip(probs, graph_obj.vertices[i].symmetry_vector)]
+    probs = utils.normalize_list(probs)
+
+    return probs
 
 
 def apply_angle_score(graph_obj, i, dist_3_std, dist_4_std, dist_5_std, num_selections):

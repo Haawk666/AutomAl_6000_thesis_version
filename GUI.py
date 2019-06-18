@@ -703,7 +703,7 @@ class MainUI(QtWidgets.QMainWindow):
                        '13 - Reset user-set columns',
                        '14 - Search for intersections',
                        '15 - Experimental',
-                       '16 - ',
+                       '16 - Experimental angle score',
                        '17 - Experimental levels']
 
             string, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Search step", strings, 0, False)
@@ -1227,6 +1227,11 @@ class MainUI(QtWidgets.QMainWindow):
                 'Atomic species: ' + self.project_instance.graph.vertices[i].atomic_species)
             self.control_window.lbl_column_level.setText('Level: ' + str(self.project_instance.graph.vertices[i].level))
             self.control_window.lbl_confidence.setText('Confidence: ' + str(self.project_instance.graph.vertices[i].confidence))
+            self.control_window.lbl_symmetry_confidence.setText(
+                'Symmetry confidence: ' + str(
+                    self.project_instance.graph.vertices[self.selected_column].symmetry_confidence))
+            self.control_window.lbl_level_confidence.setText(
+                'Level confidence: ' + str(self.project_instance.graph.vertices[self.selected_column].level_confidence))
             self.control_window.lbl_neighbours.setText('Nearest neighbours: ' + str(self.project_instance.graph.vertices[i].neighbour_indices))
 
             self.control_window.btn_new.setDisabled(False)
@@ -1334,9 +1339,6 @@ class MainUI(QtWidgets.QMainWindow):
         self.control_window.lbl_search_size.setText('Search size: ' + str(self.project_instance.search_size))
         self.control_window.lbl_scale.setText('Scale (pm / pixel): ' + str(self.project_instance.scale))
         self.control_window.lbl_overhead_radii.setText('Overhead (pixels): ' + str(self.project_instance.overhead))
-        self.control_window.lbl_symmetry_confidence.setText(
-            'Symmetry confidence: ' + str(self.project_instance.graph.vertices[self.selected_column].symmetry_confidence))
-        self.control_window.lbl_level_confidence.setText('Level confidence: ' + str(self.project_instance.graph.vertices[self.selected_column].level_confidence))
         if self.project_instance.alloy == 0:
             self.control_window.lbl_alloy.setText('Alloy: Al-Mg-Si-(Cu)')
         elif self.project_instance.alloy == 1:

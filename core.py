@@ -247,6 +247,15 @@ class SuchSoftware:
         self.report('    Atomic Species: {}'.format(self.graph.vertices[i].atomic_species), force=True)
         self.report(('    Probability vector: {}'.format(self.graph.vertices[i].prob_vector).replace('\n', '')), force=True)
         self.report('    Partner vector: {}'.format(self.graph.vertices[i].partners()), force=True)
+        self.report('    Level confidence: {}'.format(self.graph.vertices[i].level_confidence), force=True)
+        alpha_max, alpha_min, cf_max_3, cf_max_4, cf_min_3, cf_min_4, cf_min_5 = graph_op.base_angle_score(self.graph, i, self.dist_3_std, self.dist_4_std, self.dist_5_std, False)
+        self.report('    Alpha max: {}'.format(alpha_max), force=True)
+        self.report('    Alpha min: {}'.format(alpha_min), force=True)
+        self.report('    cf_max_3: {}'.format(cf_max_3), force=True)
+        self.report('    cf_max_4: {}'.format(cf_max_4), force=True)
+        self.report('    cf_min_3: {}'.format(cf_min_3), force=True)
+        self.report('    cf_min_4: {}'.format(cf_min_4), force=True)
+        self.report('    cf_min_5: {}'.format(cf_min_5), force=True)
         self.report(' ', force=True)
 
     def image_report(self):
@@ -534,15 +543,18 @@ class SuchSoftware:
             self.redraw_circumference_mat()
             for i in range(0, self.num_columns):
                 self.graph.vertices[i].neighbour_indices, _ = self.find_nearest(i, self.map_size)
+            self.find_edge_columns()
             self.report('    Spatial mapping complete.', force=True)
 
         elif search_type == 3:
 
             self.report('    Analysing angles...', force=True)
-            for i in range(0, self.num_columns):
-                if not self.graph.vertices[i].set_by_user and not self.graph.vertices[i].is_edge_column:
+            for i, vertex in enumerate(self.graph.vertices):
+                if not vertex.set_by_user and not vertex.is_edge_column:
+                    vertex.reset_prob_vector(bias=vertex.h_index)
                     graph_op.apply_angle_score(self.graph, i, self.dist_3_std, self.dist_4_std, self.dist_5_std,
                                                self.num_selections)
+
             self.report('    Angle analysis complete.', force=True, update=True)
 
         elif search_type == 4:
@@ -717,7 +729,7 @@ class SuchSoftware:
             for strong_intersection in strong_intersections:
                 self.report('            {}'.format(str(strong_intersection)), force=True)
 
-        if search_type == 15:
+        elif search_type == 15:
 
             self.report('Starting column characterization from vertex {}...'.format(starting_index), force=True)
             self.report('    Setting alloy...', force=True)
@@ -787,18 +799,23 @@ class SuchSoftware:
 
         elif search_type == 16:
 
-            for vertex in self.graph.vertices:
-                if not vertex.set_by_user:
-                    graph_op.base_angle_score(self.graph, vertex.i, self.dist_3_std, self.dist_4_std, self.dist_5_std)
-                    graph_op.mesh_angle_score(self.graph, vertex.i, self.dist_3_std, self.dist_4_std, self.dist_5_std)
-                    vertex.reset_prob_vector()
-                    vertex.multiply_symmetry()
+            for i in range(0, self.num_columns):
+                if not self.graph.vertices[i].set_by_user:
+                    self.graph.vertices[i].reset_symmetry_vector()
+                    self.graph.vertices[i].symmetry_vector =\
+                        graph_op.base_angle_score(self.graph, i, self.dist_3_std, self.dist_4_std, self.dist_5_std)
+                    self.graph.vertices[i].symmetry_vector =\
+                        graph_op.mesh_angle_score(self.graph, i, self.dist_3_std, self.dist_4_std, self.dist_5_std)
+                    self.graph.vertices[i].multiply_symmetry()
 
         elif search_type == 17:
 
+            for vertex in self.graph.vertices:
+                vertex.reset_level_vector()
             runs, measures = graph_op.statistical_level_bleed(self.graph, starting_index, self.graph.vertices[starting_index].level)
             plt.plot(runs, measures)
             plt.show()
+            graph_op.sort_neighbourhood(self.graph)
 
         else:
 

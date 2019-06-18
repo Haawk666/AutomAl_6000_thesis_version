@@ -171,10 +171,14 @@ class Vertex:
         self.prob_vector = self.collapsed_prob_vector
 
     def multiply_symmetry(self):
+        self.reset_prob_vector()
         self.prob_vector[0] *= self.symmetry_vector[0]
         self.prob_vector[1] *= self.symmetry_vector[0]
+        self.prob_vector[2] = 0
         self.prob_vector[3] *= self.symmetry_vector[1]
+        self.prob_vector[4] = 0
         self.prob_vector[5] *= self.symmetry_vector[2]
+        self.prob_vector[6] = 0
         self.renorm_prob_vector()
         self.define_species()
 
@@ -262,11 +266,8 @@ class Vertex:
         return h_value, is_certain
 
     def analyse_level_vector_confidence(self):
-        print(self.level_vector)
         self.renorm_level_vector()
-        print(self.level_vector)
         confidence = abs(self.level_vector[0] - self.level_vector[1])
-        print(confidence)
         return confidence
 
     def set_level_from_vector(self):
@@ -630,7 +631,7 @@ class AtomicGraph:
         for vertex in self.vertices:
             vertex.level = vertex.anti_level()
 
-    def angle_sort(self, i, j):
+    def angle_sort(self, i, j, strict=False):
 
         min_angle = 100
         next_index = -1
@@ -642,12 +643,17 @@ class AtomicGraph:
                 p2 = (self.vertices[k].real_coor_x, self.vertices[k].real_coor_y)
                 alpha = utils.find_angle_from_points(p1, p2, pivot)
                 if alpha < min_angle:
-                    min_angle = alpha
-                    next_index = k
+                    if not strict:
+                        min_angle = alpha
+                        next_index = k
+                    else:
+                        if self.vertices[k].partner_query():
+                            min_angle = alpha
+                            next_index = k
 
         return min_angle, next_index
 
-    def find_mesh(self, i, j, clockwise=True):
+    def find_mesh(self, i, j, clockwise=True, strict=False):
 
         if not clockwise:
             i, j = j, i
@@ -665,7 +671,7 @@ class AtomicGraph:
 
         while not stop:
 
-            angle, next_index = self.angle_sort(i, j)
+            angle, next_index = self.angle_sort(i, j, strict)
             angles.append(angle)
 
             p1 = (self.vertices[i].real_coor_x, self.vertices[i].real_coor_y)
@@ -700,7 +706,7 @@ class AtomicGraph:
 
         return corners, angles, vectors
 
-    def get_atomic_configuration(self, i):
+    def get_atomic_configuration(self, i, strict=False):
 
         sub_graph = SubGraph(self.map_size)
         sub_graph.add_vertex(self.vertices[i])
@@ -709,7 +715,7 @@ class AtomicGraph:
         for partner in self.vertices[i].partners():
 
             sub_graph.add_vertex(self.vertices[partner])
-            corners, ang, vec = self.find_mesh(i, partner)
+            corners, ang, vec = self.find_mesh(i, partner, strict)
             mesh = Mesh()
             for k, corner in enumerate(corners):
                 mesh.add_vertex(self.vertices[corner])
@@ -944,6 +950,12 @@ class Mesh:
         if not self.num_corners == 4:
             self.is_consistent = False
         return self.is_consistent
+
+    def test_sidedness(self):
+        if not self.num_corners == 4:
+            return False
+        else:
+            return True
 
     def add_vertex(self, vertex):
 
