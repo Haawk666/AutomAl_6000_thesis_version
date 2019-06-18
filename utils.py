@@ -70,13 +70,13 @@ def variance(data):
 
     mean = mean_val(data)
 
-    sum = 0
+    sum_ = 0
     for item in data:
-        sum += (item - mean)**2
+        sum_ += (item - mean)**2
 
-    sum = sum / (len(data) - 1)
+    sum_ = sum_ / (len(data))
 
-    return sum
+    return sum_
 
 
 def deviation(data):

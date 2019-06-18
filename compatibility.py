@@ -25,6 +25,8 @@ def convert(obj, old_version, version):
             vertex.ad_hoc_list_1 = []
             vertex.ad_hoc_value_1 = 0
             vertex.ad_hoc_value_2 = 0
+            vertex.central_angle_variance = 0.0
+        obj.graph.avg_central_variance = 0.0
         fresh_obj = obj
     elif old_version == [0, 0, 1]:
         # Set new attributes
@@ -44,6 +46,8 @@ def convert(obj, old_version, version):
             vertex.ad_hoc_list_1 = []
             vertex.ad_hoc_value_1 = 0
             vertex.ad_hoc_value_2 = 0
+            vertex.central_angle_variance = 0.0
+        obj.graph.avg_central_variance = 0.0
         fresh_obj = obj
     elif old_version == [0, 0, 2]:
         obj.graph.avg_species_confidence = 0.0
@@ -53,6 +57,13 @@ def convert(obj, old_version, version):
             vertex.level_confidence = 0.0
             vertex.symmetry_confidence = 0.0
             vertex.level_vector = [1 / 2, 1 / 2]
+            vertex.central_angle_variance = 0.0
+        obj.graph.avg_central_variance = 0.0
+        fresh_obj = obj
+    elif old_version == [0, 0, 3]:
+        for vertex in obj.graph.vertices:
+            vertex.central_angle_variance = 0.0
+        obj.graph.avg_central_variance = 0.0
         fresh_obj = obj
     else:
         fresh_obj = None

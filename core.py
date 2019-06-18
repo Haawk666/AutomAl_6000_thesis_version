@@ -15,7 +15,7 @@ from matplotlib import pyplot as plt
 class SuchSoftware:
 
     # Version
-    version = [0, 0, 3]
+    version = [0, 0, 4]
 
     # Number of elements in the probability vectors
     num_selections = 7
@@ -256,6 +256,10 @@ class SuchSoftware:
         self.report('    cf_min_3: {}'.format(cf_min_3), force=True)
         self.report('    cf_min_4: {}'.format(cf_min_4), force=True)
         self.report('    cf_min_5: {}'.format(cf_min_5), force=True)
+        rotation_map, angles, variance = self.graph.calc_central_angle_variance(i)
+        self.report('    Central angle variance = {}'.format(variance), force=True)
+        self.report('    Rotation map: {}'.format(str(rotation_map)), force=True)
+        self.report('    Central angles: {}'.format(str(angles)), force=True)
         self.report(' ', force=True)
 
     def image_report(self):

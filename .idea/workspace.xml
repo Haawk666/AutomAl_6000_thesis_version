@@ -2,18 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="30e19c21-651c-42d8-9913-28ec51a34a6a" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/centre_al.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/centre_cu.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/centre_mg.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/corner_mg.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/corner_si.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/AACC.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AACC.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/GUI.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Images/Outputs/Buffers/FFT.png" beforeDir="false" afterPath="$PROJECT_DIR$/Images/Outputs/Buffers/FFT.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Images/Outputs/Buffers/raw_image.png" beforeDir="false" afterPath="$PROJECT_DIR$/Images/Outputs/Buffers/raw_image.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Images/Outputs/Buffers/search_image.png" beforeDir="false" afterPath="$PROJECT_DIR$/Images/Outputs/Buffers/search_image.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Saves/debug_test" beforeDir="false" afterPath="$PROJECT_DIR$/Saves/debug_test" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Saves/debug_test_result" beforeDir="false" afterPath="$PROJECT_DIR$/Saves/debug_test_result" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GUI_elements.py" beforeDir="false" afterPath="$PROJECT_DIR$/GUI_elements.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/compatibility.py" beforeDir="false" afterPath="$PROJECT_DIR$/compatibility.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core.py" beforeDir="false" afterPath="$PROJECT_DIR$/core.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/graph.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/graph_op.py" beforeDir="false" afterPath="$PROJECT_DIR$/graph_op.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -73,23 +74,23 @@
           <entry key="project.open.time.10" value="1" />
           <entry key="project.open.time.2" value="1" />
           <entry key="project.open.time.6" value="2" />
-          <entry key="project.open.time.7" value="11" />
+          <entry key="project.open.time.7" value="12" />
           <entry key="project.open.time.8" value="4" />
           <entry key="project.open.time.9" value="1" />
-          <entry key="project.opened" value="21" />
+          <entry key="project.opened" value="22" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="PLAIN_TEXT" value="1" />
+          <entry key="PLAIN_TEXT" value="7" />
           <entry key="Python" value="35" />
           <entry key="PythonStub" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="938" />
-          <entry key="Python" value="20105" />
+          <entry key="PLAIN_TEXT" value="1195" />
+          <entry key="Python" value="21253" />
         </counts>
       </usages-collector>
     </session>
@@ -130,90 +131,17 @@
     </session>
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.4162276">
-      <split-first>
-        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/compatibility.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="881">
-                  <caret line="61" selection-start-line="61" selection-end-line="61" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/GUI.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="402">
-                  <caret line="705" column="53" selection-start-line="705" selection-start-column="53" selection-end-line="705" selection-end-column="53" />
-                  <folding>
-                    <element signature="e#424#466#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/GUI_elements.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="425">
-                  <caret line="133" column="40" selection-start-line="133" selection-start-column="40" selection-end-line="133" selection-end-column="40" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/core.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="369">
-                  <caret line="807" column="62" selection-start-line="807" selection-start-column="62" selection-end-line="807" selection-end-column="62" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/graph.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="-12700">
-                  <caret line="182" column="29" selection-start-line="182" selection-start-column="29" selection-end-line="182" selection-end-column="29" />
-                  <folding>
-                    <element signature="e#51#69#0" expanded="true" />
-                    <marker date="1560856394713" expanded="true" signature="30263:30370" ph="..." />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-first>
-      <split-second>
-        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/graph_op.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="322">
-                  <caret line="177" column="34" selection-start-line="177" selection-start-column="34" selection-end-line="177" selection-end-column="34" />
-                  <folding>
-                    <element signature="e#1#19#0" expanded="true" />
-                    <marker date="1560868794345" expanded="true" signature="95:511" ph="..." />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/utils.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="424">
-                  <caret line="42" selection-start-line="42" selection-end-line="42" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-second>
-    </splitter>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/compatibility.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1105">
+              <caret line="65" column="44" selection-start-line="65" selection-start-column="44" selection-end-line="65" selection-end-column="44" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -250,22 +178,27 @@
         <option value="$PROJECT_DIR$/changelog.txt" />
         <option value="$PROJECT_DIR$/legacy_items.py" />
         <option value="$PROJECT_DIR$/Saves/validation_set/filenames.txt" />
-        <option value="$PROJECT_DIR$/compatibility.py" />
-        <option value="$PROJECT_DIR$/GUI_elements.py" />
-        <option value="$PROJECT_DIR$/utils.py" />
         <option value="$PROJECT_DIR$/GUI.py" />
-        <option value="$PROJECT_DIR$/graph.py" />
         <option value="$PROJECT_DIR$/concept_test_1.py" />
         <option value="$PROJECT_DIR$/concept_test_2.py" />
-        <option value="$PROJECT_DIR$/core.py" />
         <option value="$PROJECT_DIR$/graph_op.py" />
+        <option value="$PROJECT_DIR$/compatibility.py" />
+        <option value="$PROJECT_DIR$/graph.py" />
+        <option value="$PROJECT_DIR$/GUI_elements.py" />
+        <option value="$PROJECT_DIR$/utils.py" />
+        <option value="$PROJECT_DIR$/core.py" />
+        <option value="$PROJECT_DIR$/centre_cu.txt" />
+        <option value="$PROJECT_DIR$/corner_mg.txt" />
+        <option value="$PROJECT_DIR$/corner_si.txt" />
+        <option value="$PROJECT_DIR$/centre_mg.txt" />
+        <option value="$PROJECT_DIR$/centre_al.txt" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-7" />
+    <option name="x" value="953" />
     <option name="width" value="974" />
-    <option name="height" value="1167" />
+    <option name="height" value="1026" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -671,15 +604,16 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1176" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1035" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.12434141" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.12434141" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3283859" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.33877158" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.2706334" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.33851278" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.21309656" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -826,82 +760,98 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/compatibility.py">
+    <entry file="file://$PROJECT_DIR$/concept_test_2.py" />
+    <entry file="file://$PROJECT_DIR$/concept_test_1.py" />
+    <entry file="file://$PROJECT_DIR$/graph_op.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="881">
-          <caret line="61" selection-start-line="61" selection-end-line="61" />
+        <state relative-caret-position="985">
+          <caret line="195" selection-start-line="195" selection-end-line="195" />
+          <folding>
+            <element signature="e#1#19#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/corner_mg.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="20" column="4" selection-start-line="20" selection-start-column="4" selection-end-line="20" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/centre_cu.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="6" column="3" selection-start-line="6" selection-start-column="3" selection-end-line="6" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="148">
+          <caret line="76" column="28" selection-start-line="76" selection-start-column="28" selection-end-line="76" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graph.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="308">
+          <caret line="843" column="43" selection-start-line="843" selection-start-column="43" selection-end-line="843" selection-end-column="43" />
+          <folding>
+            <element signature="e#51#69#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="14" column="19" selection-start-line="14" selection-start-column="19" selection-end-line="14" selection-end-column="19" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/GUI_elements.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="133" column="40" selection-start-line="133" selection-start-column="40" selection-end-line="133" selection-end-column="40" />
+        <state relative-caret-position="-2975">
+          <caret line="390" selection-start-line="390" selection-end-line="390" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/GUI.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="402">
-          <caret line="705" column="53" selection-start-line="705" selection-start-column="53" selection-end-line="705" selection-end-column="53" />
+          <caret line="705" column="31" selection-start-line="705" selection-start-column="31" selection-end-line="705" selection-end-column="31" />
           <folding>
             <element signature="e#424#466#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/concept_test_2.py">
+    <entry file="file://$PROJECT_DIR$/corner_si.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" column="21" selection-start-line="9" selection-start-column="21" selection-end-line="9" selection-end-column="21" />
-          <folding>
-            <marker date="1560865856151" expanded="true" signature="54:55" ph="..." />
-            <marker date="1560865856151" expanded="true" signature="221:222" ph="..." />
-            <marker date="1560865856151" expanded="true" signature="221:227" ph="..." />
-          </folding>
+        <state relative-caret-position="340">
+          <caret line="20" column="3" selection-start-line="20" selection-start-column="3" selection-end-line="20" selection-end-column="3" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/concept_test_1.py">
+    <entry file="file://$PROJECT_DIR$/centre_mg.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" column="38" selection-start-line="4" selection-start-column="38" selection-end-line="4" selection-end-column="38" />
+        <state relative-caret-position="34">
+          <caret line="2" column="4" selection-start-line="2" selection-start-column="4" selection-end-line="2" selection-end-column="4" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/utils.py">
+    <entry file="file://$PROJECT_DIR$/centre_al.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="424">
-          <caret line="42" selection-start-line="42" selection-end-line="42" />
+        <state relative-caret-position="34">
+          <caret line="2" column="4" selection-start-line="2" selection-start-column="4" selection-end-line="2" selection-end-column="4" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core.py">
+    <entry file="file://$PROJECT_DIR$/compatibility.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="369">
-          <caret line="807" column="62" selection-start-line="807" selection-start-column="62" selection-end-line="807" selection-end-column="62" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/graph.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-12700">
-          <caret line="182" column="29" selection-start-line="182" selection-start-column="29" selection-end-line="182" selection-end-column="29" />
-          <folding>
-            <element signature="e#51#69#0" expanded="true" />
-            <marker date="1560856394713" expanded="true" signature="30263:30370" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/graph_op.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="322">
-          <caret line="177" column="34" selection-start-line="177" selection-start-column="34" selection-end-line="177" selection-end-column="34" />
-          <folding>
-            <element signature="e#1#19#0" expanded="true" />
-            <marker date="1560868794345" expanded="true" signature="95:511" ph="..." />
-          </folding>
+        <state relative-caret-position="1105">
+          <caret line="65" column="44" selection-start-line="65" selection-start-column="44" selection-end-line="65" selection-end-column="44" />
         </state>
       </provider>
     </entry>

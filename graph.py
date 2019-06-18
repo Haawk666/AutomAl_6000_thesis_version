@@ -27,6 +27,7 @@ class Vertex:
         self.level_confidence = 0.0
         self.symmetry_confidence = 0.0
         self.certainty_threshold = certainty_threshold
+        self.central_angle_variance = 0.0
         self.is_in_precipitate = False
         self.set_by_user = False
         self.flag_1 = False
@@ -427,6 +428,7 @@ class AtomicGraph:
         self.avg_species_confidence = 0.0
         self.avg_symmetry_confidence = 0.0
         self.avg_level_confidence = 0.0
+        self.avg_central_variance = 0.0
 
     def calc_avg_species_confidence(self):
         sum_ = 0
@@ -830,6 +832,36 @@ class AtomicGraph:
 
     def set_level(self, i, level):
         self.vertices[i].level = level
+
+    def calc_central_angle_variance(self, i):
+
+        # Generator?
+        partners = self.vertices[i].partners()
+        rotation_sorted_partners = []
+        rotation_sorted_partners.append(partners[0])
+        angles = []
+
+        for j in range(1, len(partners) + 1):
+            angle, partner = self.angle_sort(rotation_sorted_partners[j - 1], i, strict=False)
+            angles.append(angle)
+            rotation_sorted_partners.append(partner)
+
+        variance = utils.variance(angles)
+        self.vertices[i].central_angle_variance = variance
+
+        return rotation_sorted_partners, angles, variance
+
+    def calc_avg_central_angle_variance(self):
+
+        sum_ = 0
+
+        for vertex in self.vertices:
+            sum_ += self.calc_central_angle_variance(vertex.i)
+
+        variance = sum_ / self.num_vertices
+        self.avg_central_variance = variance
+
+        return variance
 
 
 class SubGraph:

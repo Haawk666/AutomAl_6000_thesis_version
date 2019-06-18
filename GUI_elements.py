@@ -378,16 +378,16 @@ class SetIndicesDialog(QtWidgets.QDialog):
         self.lbl_combo_7.setText(str(self.indices[6]))
         self.lbl_combo_8.setText(str(self.indices[7]))
 
-        for x in range(0, self.indices.shape[0]):
+        for index in self.indices:
 
-            self.Combo_1.addItem(str(self.indices[x]))
-            self.Combo_2.addItem(str(self.indices[x]))
-            self.Combo_3.addItem(str(self.indices[x]))
-            self.Combo_4.addItem(str(self.indices[x]))
-            self.Combo_5.addItem(str(self.indices[x]))
-            self.Combo_6.addItem(str(self.indices[x]))
-            self.Combo_7.addItem(str(self.indices[x]))
-            self.Combo_8.addItem(str(self.indices[x]))
+            self.Combo_1.addItem(str(index))
+            self.Combo_2.addItem(str(index))
+            self.Combo_3.addItem(str(index))
+            self.Combo_4.addItem(str(index))
+            self.Combo_5.addItem(str(index))
+            self.Combo_6.addItem(str(index))
+            self.Combo_7.addItem(str(index))
+            self.Combo_8.addItem(str(index))
 
         self.Combo_1.setCurrentIndex(0)
         self.Combo_2.setCurrentIndex(1)
