@@ -683,6 +683,13 @@ class ControlWindow(QtWidgets.QWidget):
         self.lbl_level_confidence = QtWidgets.QLabel('Level confidence: ')
         self.lbl_prob_vector = QtWidgets.QLabel('Probability vector: ')
         self.lbl_neighbours = QtWidgets.QLabel('Nearest neighbours: ')
+        self.lbl_central_variance = QtWidgets.QLabel('Central angle variance: ')
+
+        self.lbl_chi = QtWidgets.QLabel('Chi: ')
+        self.lbl_avg_variance = QtWidgets.QLabel('Average central variance: ')
+        self.lbl_avg_level_confidence = QtWidgets.QLabel('Average level confidence: ')
+        self.lbl_avg_symmetry_confidence = QtWidgets.QLabel('Average symmetry confidence: ')
+        self.lbl_avg_species_confidence = QtWidgets.QLabel('Average species confidence: ')
 
         # Checkboxes
 
@@ -1017,6 +1024,18 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_set_indices_2.setMaximumWidth(200)
         self.btn_set_indices_2.setFont(self.font_tiny)
 
+        self.btn_set_perturb_mode = QtWidgets.QPushButton('Perturb mode', self)
+        self.btn_set_perturb_mode.clicked.connect(self.ui_obj.set_perturb_mode_trigger)
+        self.btn_set_perturb_mode.setMaximumHeight(20)
+        self.btn_set_perturb_mode.setMaximumWidth(200)
+        self.btn_set_perturb_mode.setFont(self.font_tiny)
+
+        self.btn_plot_variance = QtWidgets.QPushButton('Plot variance', self)
+        self.btn_plot_variance.clicked.connect(self.ui_obj.plot_variance_trigger)
+        self.btn_plot_variance.setMaximumHeight(20)
+        self.btn_plot_variance.setMaximumWidth(200)
+        self.btn_plot_variance.setFont(self.font_tiny)
+
         btn_debug_btns_layout = QtWidgets.QHBoxLayout()
         btn_debug_btns_layout.addWidget(self.btn_set_indices)
         btn_debug_btns_layout.addWidget(self.btn_set_indices_2)
@@ -1049,6 +1068,11 @@ class ControlWindow(QtWidgets.QWidget):
         btn_overlay_btns_layout = QtWidgets.QHBoxLayout()
         btn_overlay_btns_layout.addWidget(self.btn_set_style)
         btn_overlay_btns_layout.addStretch()
+
+        btn_graph_btns_layout = QtWidgets.QHBoxLayout()
+        btn_graph_btns_layout.addWidget(self.btn_set_perturb_mode)
+        btn_graph_btns_layout.addWidget(self.btn_plot_variance)
+        btn_graph_btns_layout.addStretch()
 
         # Info layout
 
@@ -1135,6 +1159,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.info_display_layout_4.addWidget(self.chb_show)
         self.info_display_layout_4.addLayout(btn_move_control_layout)
         self.info_display_layout_4.addWidget(self.lbl_neighbours)
+        self.info_display_layout_4.addWidget(self.lbl_central_variance)
 
         self.column_box.setLayout(self.info_display_layout_4)
 
@@ -1158,7 +1183,13 @@ class ControlWindow(QtWidgets.QWidget):
         self.debug_box.setLayout(self.info_display_layout_6)
 
         self.info_display_layout_7 = QtWidgets.QVBoxLayout()
+        self.info_display_layout_7.addLayout(btn_graph_btns_layout)
         self.info_display_layout_7.addWidget(self.chb_graph)
+        self.info_display_layout_7.addWidget(self.lbl_chi)
+        self.info_display_layout_7.addWidget(self.lbl_avg_species_confidence)
+        self.info_display_layout_7.addWidget(self.lbl_avg_symmetry_confidence)
+        self.info_display_layout_7.addWidget(self.lbl_avg_level_confidence)
+        self.info_display_layout_7.addWidget(self.lbl_avg_variance)
 
         self.graph_box.setLayout(self.info_display_layout_7)
 
@@ -1570,6 +1601,11 @@ class ControlWindow(QtWidgets.QWidget):
         self.lbl_cert_threshold.setText('Certainty threshold: ')
         self.lbl_symmetry_confidence.setText('Symmetry confidence: ')
         self.lbl_level_confidence.setText('Level confidence: ')
+        self.lbl_chi.setText('Chi: ')
+        self.lbl_avg_species_confidence.setText('Average species confidence: ')
+        self.lbl_avg_symmetry_confidence.setText('Average symmetry confidence: ')
+        self.lbl_avg_level_confidence.setText('Average level confidence: ')
+        self.lbl_avg_variance.setText('Average angle variance: ')
 
         self.ui_obj.deselect_trigger()
 

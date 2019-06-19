@@ -315,6 +315,9 @@ class Vertex:
                 found = True
         return found
 
+    def species(self):
+        return self.species_strings[self.h_index]
+
     def print(self):
         print('\nVertex properties:\n----------')
         print('Index: {}\nImage pos: ({}, {})\nReal pos: ({}, {})'.format(self.i, self.im_coor_x, self.im_coor_y,
@@ -426,7 +429,10 @@ class AtomicGraph:
         for vertex in self.vertices:
             vertex.analyse_prob_vector_confidence()
             sum_ += vertex.confidence
-        result = sum_ / self.num_vertices
+        if self.num_vertices == 0:
+            result = 0
+        else:
+            result = sum_ / self.num_vertices
         self.avg_species_confidence = result
         return result
 
@@ -435,7 +441,10 @@ class AtomicGraph:
         for vertex in self.vertices:
             vertex.analyse_symmetry_vector_confidence()
             sum_ += vertex.symmetry_confidence
-        result = sum_ / self.num_vertices
+        if self.num_vertices == 0:
+            result = 0
+        else:
+            result = sum_ / self.num_vertices
         self.avg_symmetry_confidence = result
         return result
 
@@ -444,7 +453,10 @@ class AtomicGraph:
         for vertex in self.vertices:
             vertex.analyse_level_vector_confidence()
             sum_ += vertex.level_confidence
-        result = sum_ / self.num_vertices
+        if self.num_vertices == 0:
+            result = 0
+        else:
+            result = sum_ / self.num_vertices
         self.avg_level_confidence = result
         return result
 
@@ -462,6 +474,7 @@ class AtomicGraph:
         self.calc_avg_species_confidence()
         self.calc_avg_symmetry_confidence()
         self.calc_avg_level_confidence()
+        self.calc_avg_central_angle_variance()
 
     def add_vertex(self, vertex):
 
@@ -908,28 +921,36 @@ class AtomicGraph:
 
         # Generator?
         partners = self.vertices[i].partners()
-        rotation_sorted_partners = []
-        rotation_sorted_partners.append(partners[0])
-        angles = []
+        if partners is not None:
+            rotation_sorted_partners = []
+            rotation_sorted_partners.append(partners[0])
+            angles = []
 
-        for j in range(1, len(partners) + 1):
-            angle, partner = self.angle_sort(rotation_sorted_partners[j - 1], i, strict=False)
-            angles.append(angle)
-            rotation_sorted_partners.append(partner)
+            for j in range(1, len(partners) + 1):
+                angle, partner = self.angle_sort(rotation_sorted_partners[j - 1], i, strict=False)
+                angles.append(angle)
+                rotation_sorted_partners.append(partner)
 
-        variance = utils.variance(angles)
-        self.vertices[i].central_angle_variance = variance
+            variance = utils.variance(angles)
+            self.vertices[i].central_angle_variance = variance
 
-        return rotation_sorted_partners, angles, variance
+            return rotation_sorted_partners, angles, variance
+        else:
+            return None, None, None
 
     def calc_avg_central_angle_variance(self):
 
         sum_ = 0
 
         for vertex in self.vertices:
-            sum_ += self.calc_central_angle_variance(vertex.i)
+            *_, var = self.calc_central_angle_variance(vertex.i)
+            if var is not None:
+                sum_ += var
 
-        variance = sum_ / self.num_vertices
+        if self.num_vertices == 0:
+            variance = 0
+        else:
+            variance = sum_ / self.num_vertices
         self.avg_central_variance = variance
 
         return variance

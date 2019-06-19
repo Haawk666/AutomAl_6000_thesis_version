@@ -219,6 +219,22 @@ class SuchSoftware:
         plt.scatter(species, variance)
         plt.show()
 
+    def plot_variances(self):
+
+        if not self.graph.num_vertices == 0:
+
+            species = []
+            variance = []
+
+            for vertex in self.graph.vertices:
+                if not vertex.is_edge_column:
+                    species.append(vertex.species())
+                    *_, var = self.graph.calc_central_angle_variance(vertex.i)
+                    variance.append(var)
+
+            plt.scatter(species, variance)
+            plt.show()
+
     def report(self, string, force=False, update=False):
         if self.debug_mode or force:
             if self.debug_obj is not None:
@@ -394,7 +410,7 @@ class SuchSoftware:
             pos = np.unravel_index(self.search_mat.argmax(),
                                    (self.im_height + 2 * (self.r + self.overhead),
                                     self.im_width + 2 * (self.r + self.overhead)))
-            max_val = self.search_mat.max()
+            max_val = self.search_mat[pos]
             x_fit, y_fit = utils.cm_fit(self.im_mat, pos[1], pos[0], self.r)
 
             x_fit_real_coor = x_fit - self.r - self.overhead

@@ -472,6 +472,13 @@ class MainUI(QtWidgets.QMainWindow):
                 self.control_window.lbl_starting_index.setText('Default starting index: ' + str(self.selected_column))
                 self.report('Default starting index set to {}'.format(self.selected_column), force=True)
 
+    def set_perturb_mode_trigger(self):
+
+        if self.project_loaded:
+            message = QtWidgets.QMessageBox()
+            message.setText('Not implemented yet')
+            message.exec_()
+
     def set_std_1_trigger(self):
 
         if self.project_loaded:
@@ -1056,6 +1063,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.control_window.lbl_column_level.setText('Level: ')
         self.control_window.lbl_confidence.setText('Confidence: ')
         self.control_window.lbl_neighbours.setText('Nearest neighbours: ')
+        self.control_window.lbl_central_variance.setText('Central angle variance: ')
 
         self.control_window.btn_new.setDisabled(True)
         self.control_window.btn_deselect.setDisabled(True)
@@ -1238,6 +1246,8 @@ class MainUI(QtWidgets.QMainWindow):
             self.control_window.lbl_level_confidence.setText(
                 'Level confidence: ' + str(self.project_instance.graph.vertices[self.selected_column].level_confidence))
             self.control_window.lbl_neighbours.setText('Nearest neighbours: ' + str(self.project_instance.graph.vertices[i].neighbour_indices))
+            rotation_partners, angles, variance = self.project_instance.graph.calc_central_angle_variance(self.selected_column)
+            self.control_window.lbl_central_variance.setText('Central angle variance: ' + str(variance))
 
             self.control_window.btn_new.setDisabled(False)
             self.control_window.btn_deselect.setDisabled(False)
@@ -1344,6 +1354,16 @@ class MainUI(QtWidgets.QMainWindow):
         self.control_window.lbl_search_size.setText('Search size: ' + str(self.project_instance.search_size))
         self.control_window.lbl_scale.setText('Scale (pm / pixel): ' + str(self.project_instance.scale))
         self.control_window.lbl_overhead_radii.setText('Overhead (pixels): ' + str(self.project_instance.overhead))
+        chi = self.project_instance.graph.calc_chi()
+        avg_species_confidence = self.project_instance.graph.calc_avg_species_confidence()
+        avg_symmetry_confidence = self.project_instance.graph.calc_avg_symmetry_confidence()
+        avg_level_confidence = self.project_instance.graph.calc_avg_level_confidence()
+        avg_variance = self.project_instance.graph.calc_avg_central_angle_variance()
+        self.control_window.lbl_chi.setText('Chi: ' + str(chi))
+        self.control_window.lbl_avg_species_confidence.setText('Average species confidence: ' + str(avg_species_confidence))
+        self.control_window.lbl_avg_symmetry_confidence.setText('Average symmetry confidence: ' + str(avg_symmetry_confidence))
+        self.control_window.lbl_avg_level_confidence.setText('Average level confidence: ' + str(avg_level_confidence))
+        self.control_window.lbl_avg_variance.setText('Average angle variance: ' + str(avg_variance))
         if self.project_instance.alloy == 0:
             self.control_window.lbl_alloy.setText('Alloy: Al-Mg-Si-(Cu)')
         elif self.project_instance.alloy == 1:
@@ -1680,7 +1700,8 @@ class MainUI(QtWidgets.QMainWindow):
                         angle_text.setX(2 * scale_factor * p2[0] - 0.5 * rect.width())
                         angle_text.setY(2 * scale_factor * p2[1] - 0.5 * rect.height())
 
-                        self.graphicScene_7.addItem(angle_text)
+                        # self.graphicScene_7.addItem(angle_text)
+                        self.graphicScene_7.addItem(arrow)
                         self.report('        a{}{} = {}'.format(m, i, 57.2957795 * angle), force=True)
 
                 self.report('Mean central angle: {}'.format(str(sum(central_angles) / (m_max + 1))), force=True)
@@ -1690,6 +1711,12 @@ class MainUI(QtWidgets.QMainWindow):
     def draw_boarder(self):
 
         pass
+
+    def plot_variance_trigger(self):
+
+        if self.project_instance is not None:
+
+            self.project_instance.plot_variances()
 
     def draw_connections(self, index=-1):
 
