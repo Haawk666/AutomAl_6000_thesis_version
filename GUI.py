@@ -1660,6 +1660,7 @@ class MainUI(QtWidgets.QMainWindow):
                     self.report('    Sum of angles: {}'.format(str(57.2957795 * sum(mesh.angles))), force=True)
                     self.report('    Variance of angles: {}'.format(utils.variance([57.2957795 * x for x in mesh.angles])), force=True)
                     self.report('    Symmetry prob vector from central angle: {}'.format(str([0, 0, 0])), force=True)
+                    self.report('    corners: {}'.format(mesh.vertex_indices), force=True)
 
                     self.report('    Angles:', force=True)
 

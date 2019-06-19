@@ -305,6 +305,9 @@ class Vertex:
             self.partner_indices = self.neighbour_indices[0:self.n()]
             return self.partner_indices
 
+    def anti_partners(self):
+        return self.neighbour_indices[self.n():]
+
     def partner_query(self, j):
         found = False
         for i in self.partners():
@@ -362,23 +365,11 @@ class Edge:
             is_illegal_levels = True
             is_consistent = False
 
-        found_a = False
-
-        for ind in self.vertex_b.partners():
-            if ind == index_i:
-                found_a = True
-
-        if not found_a:
+        if not self.vertex_b.partner_query(index_i):
             is_consistent = False
             is_reciprocated = False
 
-        found_b = False
-
-        for ind in self.vertex_a.partners():
-            if ind == index_j:
-                found_b = True
-
-        if not found_b:
+        if not self.vertex_a.partner_query(index_j):
             print('Unexpected error in graph.Edge.is_consistent()')
             is_consistent = False
             is_reciprocated = False
@@ -516,7 +507,20 @@ class AtomicGraph:
             return True
 
     def weak_remove_edge(self, i, j):
-        raise NotImplemented
+
+        for anti_partner in self.vertices[i].anti_partners():
+
+            if self.vertices[anti_partner].partner_query(i):
+
+                print('{} {} {}'.format(i, j, anti_partner))
+
+                self.perturb_j_k(i, j, anti_partner)
+                break
+
+        else:
+            print('Could not weak remove ({}, {})'.format(i, j))
+            return False
+        return True
 
     def strong_remove_edge(self, i, j):
 
@@ -588,7 +592,7 @@ class AtomicGraph:
         self.chi = 0
         if not len(self.edges) <= 0 and self.edges is not None:
             for edge in self.edges:
-                if edge.is_consistent():
+                if not edge.is_consistent():
                     self.chi += 1
             if self.num_edges == 0:
                 self.chi = 0
@@ -661,8 +665,8 @@ class AtomicGraph:
             i, j = j, i
 
         # Check that j is partner to i
-        if not self.vertices[i].partner_query(j):
-            raise NotImplementedError
+        # if not self.vertices[i].partner_query(j):
+        #     raise NotImplementedError
 
         corners = [i, j]
         angles = [0]
@@ -679,7 +683,7 @@ class AtomicGraph:
             p1 = (self.vertices[i].real_coor_x, self.vertices[i].real_coor_y)
             pivot = (self.vertices[j].real_coor_x, self.vertices[j].real_coor_y)
 
-            theta = 0.5 * angle
+            theta = 0.5 * angle - np.pi / 2
             vector = (p1[0] - pivot[0], p1[1] - pivot[1])
             length = utils.vector_magnitude(vector)
             vector = (vector[0] / length, vector[1] / length)
@@ -687,26 +691,77 @@ class AtomicGraph:
                       vector[0] * np.sin(theta) + vector[1] * np.cos(theta))
             vectors.append(vector)
 
-            if next_index == corners[0] or counter > 6:
-                stop = True
-                p1 = (self.vertices[j].real_coor_x, self.vertices[j].real_coor_y)
-                pivot = (self.vertices[corners[0]].real_coor_x, self.vertices[corners[0]].real_coor_y)
-                p2 = (self.vertices[corners[1]].real_coor_x, self.vertices[corners[1]].real_coor_y)
-                angles[0] = utils.find_angle_from_points(p1, p2, pivot)
+            if next_index == corners[0] or counter > 8:
 
-                theta = 0.5 * angles[0]
+                _, nextnext = self.angle_sort(j, next_index, strict)
+
+                if not nextnext == corners[1]:
+
+                    corners, angles, vectors, i, j = self.rebase(corners, angles, vectors, nextnext, next_index, append=False)
+
+                    p1 = (self.vertices[nextnext].real_coor_x, self.vertices[nextnext].real_coor_y)
+                    pivot = (self.vertices[corners[0]].real_coor_x, self.vertices[corners[0]].real_coor_y)
+                    p2 = (self.vertices[corners[1]].real_coor_x, self.vertices[corners[1]].real_coor_y)
+                    angles[0] = utils.find_angle_from_points(p1, p2, pivot)
+
+                else:
+
+                    p1 = (self.vertices[j].real_coor_x, self.vertices[j].real_coor_y)
+                    pivot = (self.vertices[corners[0]].real_coor_x, self.vertices[corners[0]].real_coor_y)
+                    p2 = (self.vertices[corners[1]].real_coor_x, self.vertices[corners[1]].real_coor_y)
+                    angles[0] = utils.find_angle_from_points(p1, p2, pivot)
+
+                stop = True
+
+                theta = 0.5 * angles[0] - np.pi / 2
                 vector = (p1[0] - pivot[0], p1[1] - pivot[1])
                 length = utils.vector_magnitude(vector)
                 vector = (vector[0] / length, vector[1] / length)
                 vector = (vector[0] * np.cos(theta) - vector[1] * np.sin(theta),
                           vector[0] * np.sin(theta) + vector[1] * np.cos(theta))
                 vectors[0] = vector
+
+            elif next_index in corners:
+
+                corners, angles, vectors, i, j = self.rebase(corners, angles, vectors, next_index, j)
+                counter = len(corners) - 2
+
             else:
                 corners.append(next_index)
                 counter += 1
                 i, j = j, next_index
 
         return corners, angles, vectors
+
+    def rebase(self, corners, angles, vectors, next_, j, append=True):
+
+        for k, corner in enumerate(corners):
+
+            if corner == next_:
+
+                del corners[k + 1:]
+                del angles[k + 1:]
+                del vectors[k + 1:]
+
+                p1 = (self.vertices[corners[k - 1]].real_coor_x, self.vertices[corners[k - 1]].real_coor_y)
+                pivot = (self.vertices[corner].real_coor_x, self.vertices[corner].real_coor_y)
+                p2 = (self.vertices[j].real_coor_x, self.vertices[j].real_coor_y)
+                angles[k] = utils.find_angle_from_points(p1, p2, pivot)
+
+                theta = 0.5 * angles[k] - np.pi / 2
+                vector = (p1[0] - pivot[0], p1[1] - pivot[1])
+                length = utils.vector_magnitude(vector)
+                vector = (vector[0] / length, vector[1] / length)
+                vector = (vector[0] * np.cos(theta) - vector[1] * np.sin(theta),
+                          vector[0] * np.sin(theta) + vector[1] * np.cos(theta))
+                vectors[k] = vector
+
+                if append:
+                    corners.append(j)
+
+                break
+
+        return corners, angles, vectors, next_, j
 
     def get_atomic_configuration(self, i, strict=False):
 
@@ -717,7 +772,7 @@ class AtomicGraph:
         for partner in self.vertices[i].partners():
 
             sub_graph.add_vertex(self.vertices[partner])
-            corners, ang, vec = self.find_mesh(i, partner, strict)
+            corners, ang, vec = self.find_mesh(i, partner, strict=strict)
             mesh = Mesh()
             for k, corner in enumerate(corners):
                 mesh.add_vertex(self.vertices[corner])
@@ -731,6 +786,22 @@ class AtomicGraph:
                 if j not in sub_graph.vertex_indices:
 
                     sub_graph.add_vertex(self.vertices[j])
+
+            if corners[len(corners) - 1] not in self.vertices[i].partners():
+
+                corners, ang, vec = self.find_mesh(i, corners[len(corners) - 1], strict=strict)
+                mesh = Mesh()
+                for k, corner in enumerate(corners):
+                    mesh.add_vertex(self.vertices[corner])
+                    mesh.angles.append(ang[k])
+                    mesh.angle_vectors.append(vec[k])
+                mesh.redraw_edges()
+                meshes.append(mesh)
+
+                for j in corners:
+
+                    if j not in sub_graph.vertex_indices:
+                        sub_graph.add_vertex(self.vertices[j])
 
         sub_graph.redraw_edges()
         sub_graph.summarize_stats()

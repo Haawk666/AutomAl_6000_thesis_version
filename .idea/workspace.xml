@@ -2,10 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="30e19c21-651c-42d8-9913-28ec51a34a6a" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/AACC.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AACC.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/GUI.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GUI_elements.py" beforeDir="false" afterPath="$PROJECT_DIR$/GUI_elements.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core.py" beforeDir="false" afterPath="$PROJECT_DIR$/core.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/graph.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graph_op.py" beforeDir="false" afterPath="$PROJECT_DIR$/graph_op.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/weak_untangling.py" beforeDir="false" afterPath="$PROJECT_DIR$/weak_untangling.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -92,93 +97,137 @@
           <entry key="project.closed" value="2" />
           <entry key="project.open.time.3" value="2" />
           <entry key="project.open.time.4" value="1" />
-          <entry key="project.open.time.5" value="1" />
-          <entry key="project.opened" value="4" />
+          <entry key="project.open.time.5" value="2" />
+          <entry key="project.opened" value="5" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="12239" />
+          <entry key="py" value="16708" />
           <entry key="txt" value="309" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="PLAIN_TEXT" value="309" />
-          <entry key="Python" value="12239" />
+          <entry key="Python" value="16708" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="py" value="27" />
+          <entry key="py" value="31" />
           <entry key="txt" value="5" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="PLAIN_TEXT" value="5" />
-          <entry key="Python" value="27" />
+          <entry key="Python" value="31" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/compatibility.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="819">
-              <caret line="65" column="44" selection-start-line="65" selection-start-column="44" selection-end-line="65" selection-end-column="44" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/core.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="390">
-              <caret line="215" column="36" selection-start-line="215" selection-start-column="36" selection-end-line="215" selection-end-column="36" />
-              <folding>
-                <element signature="e#68#86#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/GUI.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="311">
-              <caret line="385" column="44" selection-start-line="385" selection-start-column="44" selection-end-line="385" selection-end-column="44" />
-              <folding>
-                <element signature="e#424#466#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/GUI_elements.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="700">
-              <caret line="1749" column="66" selection-start-line="1749" selection-start-column="66" selection-end-line="1749" selection-end-column="66" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/graph.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="308">
-              <caret line="843" column="43" selection-start-line="843" selection-start-column="43" selection-end-line="843" selection-end-column="43" />
-              <folding>
-                <element signature="e#51#69#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <splitter split-orientation="horizontal" split-proportion="0.41937426">
+      <split-first>
+        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/compatibility.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="892">
+                  <caret line="72" selection-start-line="72" selection-end-line="72" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/GUI.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="2596">
+                  <caret line="1662" column="76" selection-start-line="1662" selection-start-column="76" selection-end-line="1662" selection-end-column="76" />
+                  <folding>
+                    <element signature="e#424#466#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/GUI_elements.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="29699">
+                  <caret line="1752" selection-start-line="1752" selection-end-line="1752" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/graph.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="560">
+                  <caret line="380" column="28" selection-start-line="380" selection-start-column="28" selection-end-line="380" selection-end-column="28" />
+                  <folding>
+                    <element signature="e#51#69#0" expanded="true" />
+                    <marker date="1560973905505" expanded="true" signature="8863:8918" ph="..." />
+                    <marker date="1560973905505" expanded="true" signature="15277:15671" ph="..." />
+                    <marker date="1560973905505" expanded="true" signature="23340:24466" ph="..." />
+                    <marker date="1560973905505" expanded="true" signature="24518:24528" ph="..." />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/utils.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="403">
+                  <caret line="94" column="79" selection-start-line="94" selection-start-column="79" selection-end-line="94" selection-end-column="79" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/weak_untangling.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="-661">
+                  <caret line="50" column="32" selection-start-line="50" selection-start-column="32" selection-end-line="50" selection-end-column="32" />
+                  <folding>
+                    <marker date="1560973294766" expanded="true" signature="75:77" ph="..." />
+                    <marker date="1560973294766" expanded="true" signature="1462:2731" ph="..." />
+                    <marker date="1560973294766" expanded="true" signature="2762:5016" ph="..." />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/graph_op.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="-850">
+                  <caret line="138" column="45" selection-start-line="138" selection-start-column="45" selection-end-line="138" selection-end-column="45" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-first>
+      <split-second>
+        <leaf>
+          <file pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/core.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="506">
+                  <caret line="755" selection-start-line="755" selection-end-line="755" />
+                  <folding>
+                    <element signature="e#68#86#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-second>
+    </splitter>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -200,7 +249,6 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/compability.py" />
-        <option value="$PROJECT_DIR$/weak_untangling.py" />
         <option value="$PROJECT_DIR$/strong_untangling.py" />
         <option value="$PROJECT_DIR$/Upgrade.py" />
         <option value="$PROJECT_DIR$/upgrade_1/Core.py" />
@@ -217,10 +265,7 @@
         <option value="$PROJECT_DIR$/Saves/validation_set/filenames.txt" />
         <option value="$PROJECT_DIR$/concept_test_1.py" />
         <option value="$PROJECT_DIR$/concept_test_2.py" />
-        <option value="$PROJECT_DIR$/graph_op.py" />
         <option value="$PROJECT_DIR$/compatibility.py" />
-        <option value="$PROJECT_DIR$/graph.py" />
-        <option value="$PROJECT_DIR$/utils.py" />
         <option value="$PROJECT_DIR$/centre_cu.txt" />
         <option value="$PROJECT_DIR$/corner_mg.txt" />
         <option value="$PROJECT_DIR$/corner_si.txt" />
@@ -228,7 +273,11 @@
         <option value="$PROJECT_DIR$/centre_al.txt" />
         <option value="$PROJECT_DIR$/GUI_elements.py" />
         <option value="$PROJECT_DIR$/GUI.py" />
+        <option value="$PROJECT_DIR$/utils.py" />
+        <option value="$PROJECT_DIR$/graph_op.py" />
         <option value="$PROJECT_DIR$/core.py" />
+        <option value="$PROJECT_DIR$/weak_untangling.py" />
+        <option value="$PROJECT_DIR$/graph.py" />
       </list>
     </option>
   </component>
@@ -641,7 +690,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1035" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1176" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.12434141" />
@@ -649,8 +698,8 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3283859" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.33851278" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.21309656" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.3378119" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.21305183" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -772,9 +821,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/weak_untangling.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/changelog.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="731">
@@ -799,13 +845,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/concept_test_2.py" />
     <entry file="file://$PROJECT_DIR$/concept_test_1.py" />
-    <entry file="file://$PROJECT_DIR$/graph_op.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="985">
-          <caret line="195" selection-start-line="195" selection-end-line="195" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/corner_mg.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="340">
@@ -813,81 +852,80 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/centre_cu.txt">
+    <entry file="file://$PROJECT_DIR$/centre_cu.txt" />
+    <entry file="file://$PROJECT_DIR$/corner_si.txt" />
+    <entry file="file://$PROJECT_DIR$/centre_mg.txt" />
+    <entry file="file://$PROJECT_DIR$/centre_al.txt" />
+    <entry file="file://$PROJECT_DIR$/GUI_elements.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="6" column="3" selection-start-line="6" selection-start-column="3" selection-end-line="6" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="148">
-          <caret line="76" column="28" selection-start-line="76" selection-start-column="28" selection-end-line="76" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/corner_si.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="20" column="3" selection-start-line="20" selection-start-column="3" selection-end-line="20" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/centre_mg.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="4" selection-start-line="2" selection-start-column="4" selection-end-line="2" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/centre_al.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="4" selection-start-line="2" selection-start-column="4" selection-end-line="2" selection-end-column="4" />
+        <state relative-caret-position="29699">
+          <caret line="1752" selection-start-line="1752" selection-end-line="1752" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/compatibility.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="819">
-          <caret line="65" column="44" selection-start-line="65" selection-start-column="44" selection-end-line="65" selection-end-column="44" />
+        <state relative-caret-position="892">
+          <caret line="72" selection-start-line="72" selection-end-line="72" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/graph.py">
+    <entry file="file://$PROJECT_DIR$/utils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="308">
-          <caret line="843" column="43" selection-start-line="843" selection-start-column="43" selection-end-line="843" selection-end-column="43" />
-          <folding>
-            <element signature="e#51#69#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GUI_elements.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="700">
-          <caret line="1749" column="66" selection-start-line="1749" selection-start-column="66" selection-end-line="1749" selection-end-column="66" />
+        <state relative-caret-position="403">
+          <caret line="94" column="79" selection-start-line="94" selection-start-column="79" selection-end-line="94" selection-end-column="79" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/GUI.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="311">
-          <caret line="385" column="44" selection-start-line="385" selection-start-column="44" selection-end-line="385" selection-end-column="44" />
+        <state relative-caret-position="2596">
+          <caret line="1662" column="76" selection-start-line="1662" selection-start-column="76" selection-end-line="1662" selection-end-column="76" />
           <folding>
             <element signature="e#424#466#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/graph_op.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-850">
+          <caret line="138" column="45" selection-start-line="138" selection-start-column="45" selection-end-line="138" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/core.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="215" column="36" selection-start-line="215" selection-start-column="36" selection-end-line="215" selection-end-column="36" />
+        <state relative-caret-position="506">
+          <caret line="755" selection-start-line="755" selection-end-line="755" />
           <folding>
             <element signature="e#68#86#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/weak_untangling.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-661">
+          <caret line="50" column="32" selection-start-line="50" selection-start-column="32" selection-end-line="50" selection-end-column="32" />
+          <folding>
+            <marker date="1560973294766" expanded="true" signature="75:77" ph="..." />
+            <marker date="1560973294766" expanded="true" signature="1462:2731" ph="..." />
+            <marker date="1560973294766" expanded="true" signature="2762:5016" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graph.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="560">
+          <caret line="380" column="28" selection-start-line="380" selection-start-column="28" selection-end-line="380" selection-end-column="28" />
+          <folding>
+            <element signature="e#51#69#0" expanded="true" />
+            <marker date="1560973905505" expanded="true" signature="8863:8918" ph="..." />
+            <marker date="1560973905505" expanded="true" signature="15277:15671" ph="..." />
+            <marker date="1560973905505" expanded="true" signature="23340:24466" ph="..." />
+            <marker date="1560973905505" expanded="true" signature="24518:24528" ph="..." />
           </folding>
         </state>
       </provider>

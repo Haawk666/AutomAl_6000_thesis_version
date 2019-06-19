@@ -92,7 +92,7 @@ def find_angle_from_points(p1, p2, pivot):
     vec_2 = (p2[0] - pivot[0], p2[1] - pivot[1])
     alpha = find_angle(vec_1[0], vec_2[0], vec_1[1], vec_2[1])
 
-    if vector_cross_product_magnitude(vec_1[0], vec_2[0], vec_1[1], vec_2[1]) < 0:
+    if vector_cross_product_magnitude(vec_1[0], vec_2[0], vec_1[1], vec_2[1]) > 0:
         alpha = 2 * np.pi - alpha
 
     return alpha

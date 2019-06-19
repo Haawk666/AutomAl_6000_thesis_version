@@ -10,6 +10,7 @@ import pickle
 import compatibility
 import legacy_items
 from matplotlib import pyplot as plt
+import weak_untangling
 
 
 class SuchSoftware:
@@ -738,7 +739,20 @@ class SuchSoftware:
         elif search_type == 10:
 
             self.report('    Starting experimental weak untangling...', force=True)
-            self.report('        Could not start weak untangling because it is not implemented yet!', force=True)
+            cont = True
+            while cont:
+                chi_before = self.graph.calc_chi()
+                self.report('    Looking for type 1:', force=True)
+                self.report('        Chi: {}'.format(chi_before), force=True)
+                num_types, changes = weak_untangling.process_type_1(self.graph)
+                chi_after = self.graph.calc_chi()
+                self.report('        Found {} type 1\'s, made {} changes'.format(num_types, changes), force=True)
+
+                if chi_after < chi_before:
+                    self.report('        repeating...', force=True)
+                else:
+                    cont = False
+            self.report('    Weak untangling complete', force=True)
 
         elif search_type == 11:
 

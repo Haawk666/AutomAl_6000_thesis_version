@@ -136,6 +136,7 @@ def remove_intersections(graph_obj):
                 strong_stong_intersections += 1
 
     for edge in remove_edges:
+        # Test inclusion of weak remove here!
         if not graph_obj.strong_remove_edge(edge[0], edge[1]):
             not_removed += 1
 
