@@ -1658,6 +1658,7 @@ class MenuBar:
         run_validation_test_action = QtWidgets.QAction('Run algorithm benchmark', self.ui_obj)
         test_consistency_action = QtWidgets.QAction('Reset levels', self.ui_obj)
         invert_precipitate_levels_action = QtWidgets.QAction('Invert precipitate levels', self.ui_obj)
+        ad_hoc_action = QtWidgets.QAction('Ad Hoc functionality', self.ui_obj)
         # - help
         there_is_no_help_action = QtWidgets.QAction('HJALP!', self.ui_obj)
 
@@ -1702,6 +1703,7 @@ class MenuBar:
         debug.addAction(display_deviations_action)
         debug.addAction(test_consistency_action)
         debug.addAction(invert_precipitate_levels_action)
+        debug.addAction(ad_hoc_action)
         # - Help
         help.addAction(there_is_no_help_action)
 
@@ -1745,6 +1747,7 @@ class MenuBar:
         display_deviations_action.triggered.connect(self.ui_obj.display_deviations_trigger)
         test_consistency_action.triggered.connect(self.ui_obj.test_consistency_trigger)
         invert_precipitate_levels_action.triggered.connect(self.ui_obj.invert_precipitate_columns_trigger)
+        ad_hoc_action.triggered.connect(self.ui_obj.ad_hoc_trigger)
         # - hjelp
         there_is_no_help_action.triggered.connect(self.ui_obj.there_is_no_help_trigger)
 

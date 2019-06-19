@@ -380,6 +380,11 @@ class MainUI(QtWidgets.QMainWindow):
     def exit_trigger(self):
         self.close()
 
+    def ad_hoc_trigger(self):
+
+        print('Triggered')
+        self.project_instance.ad_hoc_stats()
+
     def set_threshold_trigger(self):
 
         if self.project_loaded:

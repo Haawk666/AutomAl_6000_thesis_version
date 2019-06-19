@@ -169,6 +169,55 @@ class SuchSoftware:
         # Initialize an empty graph
         self.graph = graph.AtomicGraph(map_size=self.map_size)
 
+    def ad_hoc_stats(self):
+
+        groups = ['Cu', 'Si', 'Mg_1', 'Mg_2', 'Al']
+        species = []
+        variance = []
+
+        with open('centre_cu.txt', mode='r') as f:
+            for line in f:
+                line = line.replace('\n', '')
+                species.append(groups[0])
+                i = int(line)
+                *_, var = self.graph.calc_central_angle_variance(i)
+                variance.append(var)
+
+        with open('corner_si.txt', mode='r') as f:
+            for line in f:
+                line = line.replace('\n', '')
+                species.append(groups[1])
+                i = int(line)
+                *_, var = self.graph.calc_central_angle_variance(i)
+                variance.append(var)
+
+        with open('corner_mg.txt', mode='r') as f:
+            for line in f:
+                line = line.replace('\n', '')
+                species.append(groups[2])
+                i = int(line)
+                *_, var = self.graph.calc_central_angle_variance(i)
+                variance.append(var)
+
+        with open('centre_mg.txt', mode='r') as f:
+            for line in f:
+                line = line.replace('\n', '')
+                species.append(groups[3])
+                i = int(line)
+                *_, var = self.graph.calc_central_angle_variance(i)
+                variance.append(var)
+
+        with open('centre_al.txt', mode='r') as f:
+            for line in f:
+                line = line.replace('\n', '')
+                species.append(groups[4])
+                i = int(line)
+                *_, var = self.graph.calc_central_angle_variance(i)
+                variance.append(var)
+
+        plt.scatter(species, variance)
+        plt.show()
+
     def report(self, string, force=False, update=False):
         if self.debug_mode or force:
             if self.debug_obj is not None:
