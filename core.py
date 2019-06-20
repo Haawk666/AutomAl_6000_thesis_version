@@ -280,6 +280,9 @@ class SuchSoftware:
         self.report('    Central angle variance = {}'.format(variance), force=True)
         self.report('    Rotation map: {}'.format(str(rotation_map)), force=True)
         self.report('    Central angles: {}'.format(str(angles)), force=True)
+        self.report('    Is edge column: {}'.format(str(self.graph.vertices[i].is_edge_column)), force=True)
+        self.report('    Level: {}'.format(self.graph.vertices[i].level), force=True)
+        self.report('    Anti-level: {}'.format(self.graph.vertices[i].anti_level()), force=True)
         self.report(' ', force=True)
 
     def image_report(self):
@@ -709,19 +712,74 @@ class SuchSoftware:
         elif search_type == 10:
 
             self.report('    Starting experimental weak untangling...', force=True)
+
             cont = True
+            counter = 0
             while cont:
-                chi_before = self.graph.calc_chi()
+                self.graph.redraw_edges()
+                chi_before = self.graph.chi
                 self.report('    Looking for type 1:', force=True)
                 self.report('        Chi: {}'.format(chi_before), force=True)
                 num_types, changes = weak_untangling.process_type_1(self.graph)
-                chi_after = self.graph.calc_chi()
+                self.graph.redraw_edges()
+                chi_after = self.graph.chi
                 self.report('        Found {} type 1\'s, made {} changes'.format(num_types, changes), force=True)
 
-                if chi_after < chi_before:
+                if chi_after <= chi_before:
                     self.report('        repeating...', force=True)
+                    counter += 1
                 else:
                     cont = False
+
+                if counter > 10:
+                    cont = False
+                    self.report('        Emergency abort!', force=True)
+
+            cont = True
+            counter = 0
+            while cont:
+                self.graph.redraw_edges()
+                chi_before = self.graph.chi
+                self.report('    Looking for type 2:', force=True)
+                self.report('        Chi: {}'.format(chi_before), force=True)
+                num_types, changes = weak_untangling.process_type_2(self.graph)
+                self.graph.redraw_edges()
+                chi_after = self.graph.chi
+                self.report('        Found {} type 2\'s, made {} changes'.format(num_types, changes), force=True)
+
+                if chi_after <= chi_before:
+                    self.report('        repeating...', force=True)
+                    counter += 1
+                else:
+                    cont = False
+
+                if counter > 10:
+                    cont = False
+                    self.report('        Emergency abort!', force=True)
+
+            cont = True
+            counter = 0
+            while cont:
+                self.graph.redraw_edges()
+                chi_before = self.graph.chi
+                self.report('    Looking for type 3:', force=True)
+                self.report('        Chi: {}'.format(chi_before), force=True)
+                num_types, changes = weak_untangling.process_type_3(self.graph)
+                self.graph.redraw_edges()
+                chi_after = self.graph.chi
+                self.report('        Found {} type 3\'s, made {} changes'.format(num_types, changes), force=True)
+
+                if chi_after <= chi_before:
+                    self.report('        repeating...', force=True)
+                    counter += 1
+                else:
+                    cont = False
+
+                if counter > 10:
+                    cont = False
+                    self.report('        Emergency abort!', force=True)
+
+            self.graph.redraw_edges()
             self.report('    Weak untangling complete', force=True)
 
         elif search_type == 11:
@@ -853,6 +911,16 @@ class SuchSoftware:
             plt.plot(runs, measures)
             plt.show()
             graph_op.sort_neighbourhood(self.graph)
+
+        elif search_type == 18:
+
+            self.report('    Finding edge columns....', force=True)
+            self.find_edge_columns()
+            for vertex in self.graph.vertices:
+                if vertex.is_edge_column and not vertex.set_by_user:
+                    vertex.reset_prob_vector(bias=3)
+                    vertex.reset_symmetry_vector(bias=-1)
+            self.report('    Found edge columns.', force=True)
 
         else:
 

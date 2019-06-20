@@ -718,7 +718,8 @@ class MainUI(QtWidgets.QMainWindow):
                        '14 - Search for intersections',
                        '15 - Experimental',
                        '16 - Experimental angle score',
-                       '17 - Experimental levels']
+                       '17 - Experimental levels',
+                       '18 - Find edge columns']
 
             string, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Search step", strings, 0, False)
             if ok_pressed and strings:
@@ -730,7 +731,7 @@ class MainUI(QtWidgets.QMainWindow):
                         choice = k
                 if not choice == -1:
                     self.project_instance.column_characterization(self.selected_column, choice)
-                    self.update_central_widget()
+                    self.update_display()
                 else:
                     self.report('Invalid selection. Was not able to start column detection.', force=True)
 

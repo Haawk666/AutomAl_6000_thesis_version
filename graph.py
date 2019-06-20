@@ -525,14 +525,43 @@ class AtomicGraph:
 
             if self.vertices[anti_partner].partner_query(i):
 
-                print('{} {} {}'.format(i, j, anti_partner))
-
                 self.perturb_j_k(i, j, anti_partner)
+                print('    break 1')
                 break
 
         else:
-            print('Could not weak remove ({}, {})'.format(i, j))
-            return False
+
+            print('    Did not find i in i.anti_partners')
+
+            for anti_partner_2 in self.vertices[i].anti_partners():
+
+                found = False
+
+                for anti_partner_partner in self.vertices[anti_partner_2].partners():
+
+                    print('    Testing condition on {} -> {} and {} -> {}'.format(anti_partner_2, anti_partner_partner, self.vertices[i].level, self.vertices[anti_partner_2].anti_level()))
+
+                    if not self.vertices[anti_partner_partner].partner_query(anti_partner_2) and self.vertices[i].level == self.vertices[anti_partner_2].anti_level():
+
+                        self.perturb_j_k(i, j, anti_partner_2)
+                        found = True
+                        print('    break 2')
+                        break
+
+                    else:
+
+                        print('    Condition did not pass!')
+
+                if found:
+                    print('    break 3')
+                    break
+
+            else:
+
+                return False
+
+            return True
+
         return True
 
     def strong_remove_edge(self, i, j):
