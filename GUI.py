@@ -382,8 +382,10 @@ class MainUI(QtWidgets.QMainWindow):
 
     def ad_hoc_trigger(self):
 
-        print('Triggered')
-        self.project_instance.ad_hoc_stats()
+        if self.project_loaded:
+            message = QtWidgets.QMessageBox()
+            message.setText('No functions set')
+            message.exec_()
 
     def set_threshold_trigger(self):
 
