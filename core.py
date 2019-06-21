@@ -11,6 +11,7 @@ import compatibility
 import legacy_items
 from matplotlib import pyplot as plt
 import weak_untangling
+import strong_untangling
 
 
 class SuchSoftware:
@@ -713,79 +714,119 @@ class SuchSoftware:
 
             self.report('    Starting experimental weak untangling...', force=True)
 
-            cont = True
-            counter = 0
-            while cont:
-                self.graph.redraw_edges()
-                chi_before = self.graph.chi
-                self.report('    Looking for type 1:', force=True)
-                self.report('        Chi: {}'.format(chi_before), force=True)
-                num_types, changes = weak_untangling.process_type_1(self.graph)
-                self.graph.redraw_edges()
-                chi_after = self.graph.chi
-                self.report('        Found {} type 1\'s, made {} changes'.format(num_types, changes), force=True)
+            static = False
+            total_changes = 0
+            total_counter = 0
 
-                if chi_after <= chi_before:
-                    self.report('        repeating...', force=True)
-                    counter += 1
-                else:
-                    cont = False
+            while not static:
 
-                if counter > 10:
-                    cont = False
-                    self.report('        Emergency abort!', force=True)
+                for type_num in range(1, 6):
 
-            cont = True
-            counter = 0
-            while cont:
-                self.graph.redraw_edges()
-                chi_before = self.graph.chi
-                self.report('    Looking for type 2:', force=True)
-                self.report('        Chi: {}'.format(chi_before), force=True)
-                num_types, changes = weak_untangling.process_type_2(self.graph)
-                self.graph.redraw_edges()
-                chi_after = self.graph.chi
-                self.report('        Found {} type 2\'s, made {} changes'.format(num_types, changes), force=True)
+                    cont = True
+                    counter = 0
+                    while cont:
+                        self.graph.redraw_edges()
+                        chi_before = self.graph.chi
+                        self.report('    Looking for type {}:'.format(type_num), force=True)
+                        self.report('        Chi: {}'.format(chi_before), force=True)
+                        if type_num == 1:
+                            num_types, changes = weak_untangling.process_type_1(self.graph)
+                        elif type_num == 2:
+                            num_types, changes = weak_untangling.process_type_2(self.graph)
+                        elif type_num == 3:
+                            num_types, changes = weak_untangling.process_type_3(self.graph)
+                        elif type_num == 4:
+                            num_types, changes = weak_untangling.process_type_4(self.graph)
+                        elif type_num == 5:
+                            num_types, changes = weak_untangling.process_type_5(self.graph)
+                        else:
+                            changes = 0
+                            num_types = 0
+                        total_changes += changes
+                        self.column_characterization(starting_index, search_type=14)
+                        self.graph.redraw_edges()
+                        chi_after = self.graph.chi
+                        self.report('        Found {} type {}\'s, made {} changes'.format(num_types, type_num, changes), force=True)
+                        self.report('        Chi: {}'.format(chi_before), force=True)
 
-                if chi_after <= chi_before:
-                    self.report('        repeating...', force=True)
-                    counter += 1
-                else:
-                    cont = False
+                        if chi_after <= chi_before:
+                            self.report('        repeating...', force=True)
+                            counter += 1
+                        else:
+                            cont = False
 
-                if counter > 10:
-                    cont = False
-                    self.report('        Emergency abort!', force=True)
+                        if changes == 0:
+                            cont = False
+                            self.report('        No changes made, continuing...', force=True)
 
-            cont = True
-            counter = 0
-            while cont:
-                self.graph.redraw_edges()
-                chi_before = self.graph.chi
-                self.report('    Looking for type 3:', force=True)
-                self.report('        Chi: {}'.format(chi_before), force=True)
-                num_types, changes = weak_untangling.process_type_3(self.graph)
-                self.graph.redraw_edges()
-                chi_after = self.graph.chi
-                self.report('        Found {} type 3\'s, made {} changes'.format(num_types, changes), force=True)
+                        if counter > 4:
+                            cont = False
+                            self.report('        Emergency abort!', force=True)
 
-                if chi_after <= chi_before:
-                    self.report('        repeating...', force=True)
-                    counter += 1
-                else:
-                    cont = False
+                total_counter += 1
 
-                if counter > 10:
-                    cont = False
-                    self.report('        Emergency abort!', force=True)
+                if total_changes == 0:
+                    static = True
+
+                if total_counter > 3:
+                    static = True
 
             self.graph.redraw_edges()
             self.report('    Weak untangling complete', force=True)
 
         elif search_type == 11:
 
-            self.report('    Starting strong untangling...', force=True)
-            self.report('        Could not start strong untangling because it is not implemented yet!', force=True)
+            self.report('    Starting experimental strong untangling...', force=True)
+
+            static = False
+            total_changes = 0
+            total_counter = 0
+
+            while not static:
+
+                for type_num in range(1, 2):
+
+                    cont = True
+                    counter = 0
+                    while cont:
+                        self.graph.redraw_edges()
+                        chi_before = self.graph.chi
+                        self.report('    Looking for type {}:'.format(type_num), force=True)
+                        self.report('        Chi: {}'.format(chi_before), force=True)
+                        if type_num == 1:
+                            changes = strong_untangling.level_1_untangling(self.graph)
+                        else:
+                            changes = 0
+                        total_changes += changes
+                        self.graph.redraw_edges()
+                        chi_after = self.graph.chi
+                        self.report('        Made {} changes'.format(type_num, changes), force=True)
+                        self.report('        Chi: {}'.format(chi_before), force=True)
+
+                        if chi_after <= chi_before and counter > 0:
+                            self.report('        repeating...', force=True)
+                            counter += 1
+                        else:
+                            cont = False
+
+                        if changes == 0:
+                            cont = False
+                            self.report('        No changes made, continuing...', force=True)
+
+                        if counter > 4:
+                            cont = False
+                            self.report('        Emergency abort!', force=True)
+
+                total_counter += 1
+
+                if total_changes == 0:
+                    static = True
+
+                if total_counter > 3:
+                    static = True
+
+            self.graph.redraw_edges()
+            self.report('    Strong untangling complete', force=True)
 
         elif search_type == 12:
 
@@ -804,12 +845,10 @@ class SuchSoftware:
             self.report('    User-set columns was re-set.', force=True)
 
         elif search_type == 14:
+
             self.report('    Looking for intersections', force=True)
             intersections = self.graph.find_intersects()
             num_intersections = len(intersections)
-            self.report('        Found:', force=True)
-            for intersection in intersections:
-                self.report('            {}'.format(str(intersection)), force=True)
             not_removed, strong_intersections, ww, ss = graph_op.remove_intersections(self.graph)
             intersections = self.graph.find_intersects()
             self.report('        Found {} intersections'.format(num_intersections), force=True)
@@ -817,12 +856,6 @@ class SuchSoftware:
             self.report('        Found {} weak-weak intersections'.format(ww), force=True)
             self.report('        {} weak intersections were not removed'.format(not_removed), force=True)
             self.report('        {} literal intersections still remain'.format(len(intersections)), force=True)
-            self.report('        Intersections:', force=True)
-            for intersection in intersections:
-                self.report('            {}'.format(str(intersection)), force=True)
-            self.report('        Strong intersections:', force=True)
-            for strong_intersection in strong_intersections:
-                self.report('            {}'.format(str(strong_intersection)), force=True)
 
         elif search_type == 15:
 

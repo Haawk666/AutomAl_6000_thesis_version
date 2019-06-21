@@ -7,6 +7,16 @@ import scipy.optimize as opt
 from copy import deepcopy
 
 
+def circularize_next_index(i, i_max):
+
+    if i == i_max + 1:
+        return 0
+    elif i == -1:
+        return i_max
+    else:
+        return i
+
+
 def gen_gauss(amp, x_0, y_0, x_size, y_size, a, b, c, offset):
     mat = np.zeros((y_size, x_size))
     for x in range(0, x_size - 1):

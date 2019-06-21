@@ -701,8 +701,8 @@ class MainUI(QtWidgets.QMainWindow):
 
         if self.project_loaded and not self.selected_column == -1:
 
-            strings = ['0 - Full column characerization algorithm with legacy untangling',
-                       '1 - Full column charaterization algorithm with experimental untangling',
+            strings = ['0 - Full column characterization algorithm with legacy untangling',
+                       '1 - Full column characterization algorithm with experimental untangling',
                        '2 - Run spatial mapping',
                        '3 - Apply angle statistics',
                        '4 - Apply intensity statistics',
@@ -711,7 +711,7 @@ class MainUI(QtWidgets.QMainWindow):
                        '7 - Redraw edges',
                        '8 - Run legacy weak untangling',
                        '9 - Run legacy strong untangling',
-                       '10 - Run Experimental weak untangling',
+                       '10 - Run experimental weak untangling',
                        '11 - Run experimental strong untangling',
                        '12 - Reset probability vectors',
                        '13 - Reset user-set columns',
@@ -1637,7 +1637,7 @@ class MainUI(QtWidgets.QMainWindow):
 
             if not self.project_instance.graph.vertices[self.selected_column].neighbour_indices == []:
 
-                sub_graph, meshes = self.project_instance.graph.get_atomic_configuration(self.selected_column)
+                sub_graph = self.project_instance.graph.get_atomic_configuration(self.selected_column)
                 r = self.project_instance.r * scale_factor
 
                 # Draw edges
@@ -1672,7 +1672,7 @@ class MainUI(QtWidgets.QMainWindow):
                 central_angles = []
                 m_max = 0
 
-                for m, mesh in enumerate(meshes):
+                for m, mesh in enumerate(sub_graph.meshes):
 
                     m_max = m
 
@@ -1689,7 +1689,7 @@ class MainUI(QtWidgets.QMainWindow):
 
                     for i, corner in enumerate(mesh.vertices):
 
-                        p1 = (corner.real_coor_x, corner.real_coor_y)
+                        p1 = corner.real_coor()
                         p2 = (p1[0] + 0.3 * r * mesh.angle_vectors[i][0], p1[1] + 0.3 * r * mesh.angle_vectors[i][1])
 
                         arrow, head = self.make_arrow_obj(p1, p2, r, scale_factor, False)
@@ -1703,7 +1703,7 @@ class MainUI(QtWidgets.QMainWindow):
                         angle_text.setX(2 * scale_factor * p2[0] - 0.5 * rect.width())
                         angle_text.setY(2 * scale_factor * p2[1] - 0.5 * rect.height())
 
-                        # self.graphicScene_7.addItem(angle_text)
+                        self.graphicScene_7.addItem(angle_text)
                         self.graphicScene_7.addItem(arrow)
                         self.report('        a{}{} = {}'.format(m, i, 57.2957795 * angle), force=True)
 
