@@ -1036,6 +1036,12 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_plot_variance.setMaximumWidth(200)
         self.btn_plot_variance.setFont(self.font_tiny)
 
+        self.btn_plot_angles = QtWidgets.QPushButton('Plot angles', self)
+        self.btn_plot_angles.clicked.connect(self.ui_obj.plot_angles_trigger)
+        self.btn_plot_angles.setMaximumHeight(20)
+        self.btn_plot_angles.setMaximumWidth(200)
+        self.btn_plot_angles.setFont(self.font_tiny)
+
         btn_debug_btns_layout = QtWidgets.QHBoxLayout()
         btn_debug_btns_layout.addWidget(self.btn_set_indices)
         btn_debug_btns_layout.addWidget(self.btn_set_indices_2)
@@ -1072,6 +1078,7 @@ class ControlWindow(QtWidgets.QWidget):
         btn_graph_btns_layout = QtWidgets.QHBoxLayout()
         btn_graph_btns_layout.addWidget(self.btn_set_perturb_mode)
         btn_graph_btns_layout.addWidget(self.btn_plot_variance)
+        btn_graph_btns_layout.addWidget(self.btn_plot_angles)
         btn_graph_btns_layout.addStretch()
 
         # Info layout

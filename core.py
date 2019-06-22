@@ -10,6 +10,7 @@ import pickle
 import compatibility
 import legacy_items
 from matplotlib import pyplot as plt
+from matplotlib.gridspec import GridSpec
 import weak_untangling
 import strong_untangling
 
@@ -189,6 +190,166 @@ class SuchSoftware:
             plt.xlabel('Atomic species')
             plt.ylabel('Variance (radians^2)')
             plt.show()
+
+    def plot_theoretical_min_max_angles(self):
+
+        alpha = np.linspace(1, 3.5, 1000)
+
+        fig, (ax_min, ax_max) = plt.subplots(ncols=1, nrows=2)
+
+        ax_min.plot(alpha, utils.normal_dist(alpha, 2 * np.pi / 3, self.dist_3_std), 'y',
+                    label='Cu ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(np.pi / 3, self.dist_3_std))
+        ax_min.plot(alpha, utils.normal_dist(alpha, 2 * np.pi / 3, self.dist_3_std), 'r',
+                    label='Si ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(np.pi / 3, self.dist_3_std))
+        ax_min.plot(alpha, utils.normal_dist(alpha, np.pi / 2, self.dist_4_std), 'g',
+                    label='Al ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(np.pi / 4, self.dist_4_std))
+        ax_min.plot(alpha, utils.normal_dist(alpha, 2 * np.pi / 5, self.dist_5_std), 'm',
+                    label='Mg ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(2 * np.pi / 5, self.dist_5_std))
+
+        ax_min.set_title('Minimum central angles fitted density')
+        ax_min.legend()
+
+        ax_max.plot(alpha, utils.normal_dist(alpha, 2 * np.pi / 3, self.dist_3_std), 'y',
+                    label='Cu ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(2 * np.pi / 3, self.dist_3_std))
+        ax_max.plot(alpha, utils.normal_dist(alpha, 2 * np.pi / 3, self.dist_3_std), 'r',
+                    label='Si ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(2 * np.pi / 3, self.dist_3_std))
+        ax_max.plot(alpha, utils.normal_dist(alpha, np.pi, self.dist_4_std), 'g',
+                    label='Al ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(np.pi, self.dist_4_std))
+
+        ax_max.set_title('Maximum central angles fitted density')
+        ax_max.legend()
+
+        plt.tight_layout()
+        plt.show()
+
+    def plot_min_max_angles(self):
+
+        if not self.graph.num_vertices == 0:
+
+            if not self.graph.vertices[0].neighbour_indices == 0:
+
+                species = []
+                angles = []
+                colors = []
+
+                si_min_angles = []
+                si_max_angles = []
+                cu_min_angles = []
+                cu_max_angles = []
+                al_min_angles = []
+                al_max_angles = []
+                mg_min_angles = []
+                mg_max_angles = []
+
+                for vertex in self.graph.vertices:
+
+                    if not vertex.is_edge_column:
+
+                        species.append(vertex.species())
+                        species.append(vertex.species())
+                        max_, min_, *_ = graph_op.base_angle_score(self.graph, vertex.i, self.dist_3_std, self.dist_4_std, self.dist_5_std, apply = False)
+                        angles.append(max_)
+                        angles.append(min_)
+
+                        if species[-1] == 'Cu':
+
+                            cu_min_angles.append(min_)
+                            cu_max_angles.append(max_)
+                            colors.append('y')
+                            colors.append('y')
+
+                        elif species[-1] == 'Si':
+
+                            si_min_angles.append(min_)
+                            si_max_angles.append(max_)
+                            colors.append('r')
+                            colors.append('r')
+
+                        elif species[-1] == 'Al':
+
+                            al_min_angles.append(min_)
+                            al_max_angles.append(max_)
+                            colors.append('g')
+                            colors.append('g')
+
+                        elif species[-1] == 'Mg':
+
+                            mg_min_angles.append(min_)
+                            mg_max_angles.append(max_)
+                            colors.append('m')
+                            colors.append('m')
+
+                        else:
+
+                            print('Error')
+
+                cu_min_std = np.sqrt(utils.variance(cu_min_angles))
+                cu_max_std = np.sqrt(utils.variance(cu_max_angles))
+                si_min_std = np.sqrt(utils.variance(si_min_angles))
+                si_max_std = np.sqrt(utils.variance(si_max_angles))
+                al_min_std = np.sqrt(utils.variance(al_min_angles))
+                al_max_std = np.sqrt(utils.variance(al_max_angles))
+                mg_min_std = np.sqrt(utils.variance(mg_min_angles))
+                mg_max_std = np.sqrt(utils.variance(mg_max_angles))
+
+                cu_min_mean = utils.mean_val(cu_min_angles)
+                cu_max_mean = utils.mean_val(cu_max_angles)
+                si_min_mean = utils.mean_val(si_min_angles)
+                si_max_mean = utils.mean_val(si_max_angles)
+                al_min_mean = utils.mean_val(al_min_angles)
+                al_max_mean = utils.mean_val(al_max_angles)
+                mg_min_mean = utils.mean_val(mg_min_angles)
+                mg_max_mean = utils.mean_val(mg_max_angles)
+
+                self.report('Angle stats:-----------', force=True)
+                self.report('')
+
+                alpha = np.linspace(1, 3.5, 1000)
+
+                fig = plt.figure(constrained_layout=True)
+                gs = GridSpec(2, 2, figure=fig)
+                ax_min = fig.add_subplot(gs[0, 0])
+                ax_max = fig.add_subplot(gs[1, 0])
+                ax_scatter = fig.add_subplot(gs[:, 1])
+
+                ax_min.plot(alpha, utils.normal_dist(alpha, cu_min_mean, cu_min_std), 'y',
+                            label='Cu ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(cu_min_mean, cu_min_std))
+                ax_min.plot(alpha, utils.normal_dist(alpha, si_min_mean, si_min_std), 'r',
+                            label='Si ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(si_min_mean, si_min_std))
+                ax_min.plot(alpha, utils.normal_dist(alpha, al_min_mean, al_min_std), 'g',
+                            label='Al ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(al_min_mean, al_min_std))
+                ax_min.plot(alpha, utils.normal_dist(alpha, mg_min_mean, mg_min_std), 'm',
+                            label='Mg ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(mg_min_mean, mg_min_std))
+
+                ax_min.set_title('Minimum central angles fitted density')
+                ax_min.set_xlabel('Min angle (radians)')
+                ax_min.legend()
+
+                ax_max.plot(alpha, utils.normal_dist(alpha, cu_max_mean, cu_max_std), 'y',
+                            label='Cu ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(cu_max_mean, cu_max_std))
+                ax_max.plot(alpha, utils.normal_dist(alpha, si_max_mean, si_max_std), 'r',
+                            label='Si ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(si_max_mean, si_max_std))
+                ax_max.plot(alpha, utils.normal_dist(alpha, al_max_mean, al_max_std), 'g',
+                            label='Al ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(al_max_mean, al_max_std))
+                ax_max.plot(alpha, utils.normal_dist(alpha, mg_max_mean, mg_max_std), 'm',
+                            label='Mg ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(mg_max_mean, mg_max_std))
+
+                ax_max.set_title('Maximum central angles fitted density')
+                ax_max.set_xlabel('max angle (radians)')
+                ax_max.legend()
+
+                ax_scatter.scatter(cu_min_angles, cu_max_angles, c='y', label='Cu')
+                ax_scatter.scatter(si_min_angles, si_max_angles, c='r', label='Si')
+                ax_scatter.scatter(al_min_angles, al_max_angles, c='g', label='Al')
+                ax_scatter.scatter(mg_min_angles, mg_max_angles, c='m', label='Mg')
+                ax_scatter.set_title('Scatter-plot of min-max angles')
+                ax_scatter.set_xlabel('Min angle (radians)')
+                ax_scatter.set_ylabel('max angle (radians)')
+                ax_scatter.legend()
+
+                fig.suptitle('beta pp')
+
+                plt.show()
 
     def report(self, string, force=False, update=False):
         if self.debug_mode or force:
@@ -927,14 +1088,21 @@ class SuchSoftware:
 
         elif search_type == 16:
 
+            self.report('Running experimental angle analysis', force=True)
+
             for i in range(0, self.num_columns):
                 if not self.graph.vertices[i].set_by_user:
                     self.graph.vertices[i].reset_symmetry_vector()
-                    self.graph.vertices[i].symmetry_vector =\
+                    self.graph.vertices[i].reset_prob_vector()
+                    self.graph.vertices[i].prob_vector =\
                         graph_op.base_angle_score(self.graph, i, self.dist_3_std, self.dist_4_std, self.dist_5_std)
-                    self.graph.vertices[i].symmetry_vector =\
-                        graph_op.mesh_angle_score(self.graph, i, self.dist_3_std, self.dist_4_std, self.dist_5_std)
-                    self.graph.vertices[i].multiply_symmetry()
+                    self.graph.vertices[i].prob_vector = np.array(self.graph.vertices[i].prob_vector)
+                    self.graph.vertices[i].define_species()
+                    # self.graph.vertices[i].symmetry_vector =\
+                        # graph_op.mesh_angle_score(self.graph, i, self.dist_3_std, self.dist_4_std, self.dist_5_std)
+                    # self.graph.vertices[i].multiply_symmetry()
+
+            self.report('Angle analysis complete!', force=True)
 
         elif search_type == 17:
 

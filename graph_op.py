@@ -163,34 +163,51 @@ def base_angle_score(graph_obj, i, dist_3_std, dist_4_std, dist_5_std, apply=Tru
         for i in range(0, 3):
             alpha[i] = 2 * np.pi - alpha[i]
 
-    mu_max_3 = 2 * np.pi / 3
-    mu_max_4 = np.pi
-    mu_max_5 = None
-    mu_min_3 = 2 * np.pi / 3
-    mu_min_4 = np.pi / 2
-    mu_min_5 = 2 * np.pi / 5
+    cu_min_mean = 1.92
+    si_min_mean = 1.69
+    al_min_mean = 1.56
+    mg_min_mean = 1.26
 
-    cf_max_3 = utils.normal_dist(max(alpha), mu_max_3, dist_3_std)
-    cf_max_4 = utils.normal_dist(max(alpha), mu_max_4, dist_4_std)
-    cf_max_5 = None
-    cf_min_3 = utils.normal_dist(min(alpha), mu_min_3, dist_3_std)
-    cf_min_4 = utils.normal_dist(min(alpha), mu_min_4, dist_4_std)
-    cf_min_5 = utils.normal_dist(min(alpha), mu_min_5, dist_5_std)
-    cf_max = [cf_max_3, cf_max_4, cf_min_5]
-    cf_min = [cf_min_3, cf_min_4, cf_min_5]
+    cu_min_std = 0.19 + 0.4
+    si_min_std = 0.21 + 0.4
+    al_min_std = 0.05 + 0.4
+    mg_min_std = 0.05 + 0.4
+
+    cu_max_mean = 2.28
+    si_max_mean = 2.40
+    al_max_mean = 3.11
+    mg_max_mean = 3.50
+
+    cu_max_std = 0.26 + 0.4
+    si_max_std = 0.17 + 0.4
+    al_max_std = 0.07 + 0.4
+    mg_max_std = 0.42 + 0.4
+
+    cf_cu_min = utils.normal_dist(min(alpha), cu_min_mean, cu_min_std)
+    cf_si_min = utils.normal_dist(min(alpha), si_min_mean, si_min_std)
+    cf_al_min = utils.normal_dist(min(alpha), al_min_mean, al_min_std)
+    cf_mg_min = utils.normal_dist(min(alpha), mg_min_mean, mg_min_std)
+
+    cf_cu_max = utils.normal_dist(max(alpha), cu_max_mean, cu_max_std)
+    cf_si_max = utils.normal_dist(max(alpha), si_max_mean, si_max_std)
+    cf_al_max = utils.normal_dist(max(alpha), al_max_mean, al_max_std)
+    cf_mg_max = utils.normal_dist(max(alpha), mg_max_mean, mg_max_std)
+
+    cf_min = [cf_cu_min, cf_si_min, 0, cf_al_min, 0, cf_mg_min, 0]
+    cf_max = [cf_cu_max, cf_si_max, 0, cf_al_max, 0, cf_mg_max, 0]
 
     if apply:
 
-        probs = [a * b for a, b in zip(cf_max, graph_obj.vertices[i].symmetry_vector)]
-        probs = utils.normalize_list(probs)
-        probs = [a * b for a, b in zip(cf_min, probs)]
-        probs = utils.normalize_list(probs)
+        cf = [a * b for a, b in zip(cf_min, cf_max)]
+        probs = [a * b for a, b in zip(cf, graph_obj.vertices[i].prob_vector)]
+
+        print('max: {}, min: {}\ncf_min: {}\ncf_max: {}\ncf: {}\nprobs: {}'.format(max(alpha), min(alpha), cf_min, cf_max, cf, probs))
 
         return probs
 
     else:
 
-        return max(alpha), min(alpha), cf_max_3, cf_max_4, cf_min_3, cf_min_4, cf_min_5
+        return max(alpha), min(alpha), cf_min, cf_max
 
 
 def mesh_angle_score(graph_obj, i, dist_3_std, dist_4_std, dist_5_std):

@@ -383,9 +383,8 @@ class MainUI(QtWidgets.QMainWindow):
     def ad_hoc_trigger(self):
 
         if self.project_loaded:
-            message = QtWidgets.QMessageBox()
-            message.setText('No functions set')
-            message.exec_()
+
+            self.project_instance.plot_theoretical_min_max_angles()
 
     def set_threshold_trigger(self):
 
@@ -1720,6 +1719,12 @@ class MainUI(QtWidgets.QMainWindow):
         if self.project_instance is not None:
 
             self.project_instance.plot_variances()
+
+    def plot_angles_trigger(self):
+
+        if self.project_instance is not None:
+
+            self.project_instance.plot_min_max_angles()
 
     def draw_connections(self, index=-1):
 

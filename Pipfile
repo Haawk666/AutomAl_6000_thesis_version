@@ -10,6 +10,7 @@ pyqt5 = "*"
 pillow = "*"
 scipy = "*"
 matplotlib = "*"
+basic-units = "*"
 
 [requires]
 python_version = "3.7"
