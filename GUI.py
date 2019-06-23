@@ -897,6 +897,7 @@ class MainUI(QtWidgets.QMainWindow):
         if self.project_loaded and self.project_instance.num_columns > 0 and self.control_instance is not None:
 
             deviations = 0
+            symmetry_deviations = 0
             flags = 0
             correct_flags = 0
             erroneous_flags = 0
@@ -905,15 +906,20 @@ class MainUI(QtWidgets.QMainWindow):
 
             for x in range(0, self.project_instance.num_columns):
 
-                if self.project_instance.graph.vertices[x].h_index == self.control_instance.columns[x].h_index:
+                if self.project_instance.graph.vertices[x].h_index == self.control_instance.graph.vertices[x].h_index:
                     pass
+                elif self.project_instance.graph.vertices[x].h_index == 0 and self.control_instance.graph.vertices[x].h_index == 1:
+                    deviations = deviations + 1
+                elif self.project_instance.graph.vertices[x].h_index == 1 and self.control_instance.graph.vertices[x].h_index == 0:
+                    deviations = deviations + 1
                 else:
                     deviations = deviations + 1
+                    symmetry_deviations += 1
 
                 if self.project_instance.graph.vertices[x].is_unpopular or self.project_instance.graph.vertices[x].is_popular:
 
                     flags = flags + 1
-                    if self.project_instance.graph.vertices[x].h_index == self.control_instance.columns[x].h_index:
+                    if self.project_instance.graph.vertices[x].h_index == self.control_instance.graph.vertices[x].h_index:
                         erroneous_flags = erroneous_flags + 1
                     else:
                         correct_flags = correct_flags + 1
@@ -927,7 +933,7 @@ class MainUI(QtWidgets.QMainWindow):
             print('Deviations: ' + str(deviations))
             message = QtWidgets.QMessageBox()
             message.setText('Flags: ' + str(flags) + '\nDeviations: ' + str(deviations) + '\nPercentage: ' + str(
-                deviations / self.project_instance.num_columns) + '\nCorrect flags: ' + str(correct_flags) +
+                deviations / self.project_instance.num_columns) + '\nSymmetry deviations: ' + str(symmetry_deviations) + '\nCorrect flags: ' + str(correct_flags) +
                 '\nErroneous flags: ' + str(erroneous_flags) + '\nundetected errors: ' + str(undetected_errors) +
                 '\nPopular: ' + str(popular) + '\nUnpopular: ' + str(unpopular))
             message.exec_()
@@ -950,7 +956,7 @@ class MainUI(QtWidgets.QMainWindow):
             self.update_central_widget()
 
     @ staticmethod
-    def there_is_no_help_trigger(self):
+    def there_is_no_help_trigger():
 
         message = QtWidgets.QMessageBox()
         message.setText('Mental Helses Hjelpetelefon er åpen døgnet rundt på 116 123.')

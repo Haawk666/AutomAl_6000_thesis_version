@@ -307,9 +307,10 @@ class SuchSoftware:
                 alpha = np.linspace(1, 3.5, 1000)
 
                 fig = plt.figure(constrained_layout=True)
-                gs = GridSpec(2, 2, figure=fig)
+                gs = GridSpec(3, 2, figure=fig)
                 ax_min = fig.add_subplot(gs[0, 0])
                 ax_max = fig.add_subplot(gs[1, 0])
+                ax_co = fig.add_subplot(gs[2, 0])
                 ax_scatter = fig.add_subplot(gs[:, 1])
 
                 ax_min.plot(alpha, utils.normal_dist(alpha, cu_min_mean, cu_min_std), 'y',
@@ -751,6 +752,7 @@ class SuchSoftware:
             self.report('    Analyzing intensities...', force=True)
             for i in range(0, self.num_columns):
                 if not self.graph.vertices[i].set_by_user and not self.graph.vertices[i].is_edge_column:
+
                     graph_op.apply_intensity_score(self.graph, i, self.num_selections, self.intensities[self.alloy],
                                                    self.dist_8_std)
             self.report('    Intensity analysis complete.', force=True, update=True)
@@ -1094,6 +1096,7 @@ class SuchSoftware:
                 if not self.graph.vertices[i].set_by_user:
                     self.graph.vertices[i].reset_symmetry_vector()
                     self.graph.vertices[i].reset_prob_vector()
+                    print('    Reset to: {}'.format(self.graph.vertices[i].prob_vector))
                     self.graph.vertices[i].prob_vector =\
                         graph_op.base_angle_score(self.graph, i, self.dist_3_std, self.dist_4_std, self.dist_5_std)
                     self.graph.vertices[i].prob_vector = np.array(self.graph.vertices[i].prob_vector)

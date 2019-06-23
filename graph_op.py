@@ -164,24 +164,24 @@ def base_angle_score(graph_obj, i, dist_3_std, dist_4_std, dist_5_std, apply=Tru
             alpha[i] = 2 * np.pi - alpha[i]
 
     cu_min_mean = 1.92
-    si_min_mean = 1.69
+    si_min_mean = 1.80
     al_min_mean = 1.56
     mg_min_mean = 1.26
 
-    cu_min_std = 0.19 + 0.4
-    si_min_std = 0.21 + 0.4
-    al_min_std = 0.05 + 0.4
-    mg_min_std = 0.05 + 0.4
+    cu_min_std = 0.19 * 2
+    si_min_std = 0.21 * 2.5
+    al_min_std = 0.05 * 2
+    mg_min_std = 0.05 * 2
 
     cu_max_mean = 2.28
-    si_max_mean = 2.40
+    si_max_mean = 2.30
     al_max_mean = 3.11
     mg_max_mean = 3.50
 
-    cu_max_std = 0.26 + 0.4
-    si_max_std = 0.17 + 0.4
-    al_max_std = 0.07 + 0.4
-    mg_max_std = 0.42 + 0.4
+    cu_max_std = 0.26 * 2
+    si_max_std = 0.17 * 2.5
+    al_max_std = 0.07 * 2
+    mg_max_std = 0.42 * 2
 
     cf_cu_min = utils.normal_dist(min(alpha), cu_min_mean, cu_min_std)
     cf_si_min = utils.normal_dist(min(alpha), si_min_mean, si_min_std)
@@ -199,9 +199,9 @@ def base_angle_score(graph_obj, i, dist_3_std, dist_4_std, dist_5_std, apply=Tru
     if apply:
 
         cf = [a * b for a, b in zip(cf_min, cf_max)]
-        probs = [a * b for a, b in zip(cf, graph_obj.vertices[i].prob_vector)]
+        probs = utils.normalize_list(cf)
 
-        print('max: {}, min: {}\ncf_min: {}\ncf_max: {}\ncf: {}\nprobs: {}'.format(max(alpha), min(alpha), cf_min, cf_max, cf, probs))
+        print('alpha: {}\nmax: {}, min: {}\ncf_min: {}\ncf_max: {}\ncf: {}\nprobs: {}\n\n'.format(alpha, max(alpha), min(alpha), cf_min, cf_max, cf, probs))
 
         return probs
 
