@@ -277,26 +277,31 @@ def base_angle_score(graph_obj, i, dist_3_std, dist_4_std, dist_5_std, apply=Tru
     mg_2_max_std = 0.09
 
     cf_cu_min = utils.normal_dist(min(alpha), cu_min_mean, cu_min_std)
-    cf_si_min = 0.5 * utils.normal_dist(min(alpha), si_1_min_mean, si_1_min_std) + 0.5 * utils.normal_dist(min(alpha), si_2_min_mean, si_2_min_std)
+    cf_si_1_min = utils.normal_dist(min(alpha), si_1_min_mean, si_1_min_std)
+    cf_si_2_min = utils.normal_dist(min(alpha), si_2_min_mean, si_2_min_std)
     cf_al_min = utils.normal_dist(min(alpha), al_min_mean, al_min_std)
-    cf_mg_min = 0.5 * utils.normal_dist(min(alpha), mg_1_min_mean, mg_1_min_std) + 0.5 * utils.normal_dist(min(alpha), mg_2_min_mean, mg_2_min_std)
+    cf_mg_1_min = utils.normal_dist(min(alpha), mg_1_min_mean, mg_1_min_std)
+    cf_mg_2_min = utils.normal_dist(min(alpha), mg_2_min_mean, mg_2_min_std)
 
     cf_cu_max = utils.normal_dist(max(alpha), cu_max_mean, cu_max_std)
-    cf_si_max = 0.5 * utils.normal_dist(max(alpha), si_1_max_mean, si_1_max_std) + 0.5 * utils.normal_dist(max(alpha), si_2_max_mean, si_2_max_std)
+    cf_si_1_max = utils.normal_dist(max(alpha), si_1_max_mean, si_1_max_std)
+    cf_si_2_max = utils.normal_dist(max(alpha), si_2_max_mean, si_2_max_std)
     cf_al_max = utils.normal_dist(max(alpha), al_max_mean, al_max_std)
-    cf_mg_max = 0.5 * utils.normal_dist(max(alpha), mg_1_max_mean, mg_1_max_std) + 0.5 * utils.normal_dist(max(alpha), mg_2_max_mean, mg_2_max_std)
+    cf_mg_1_max = utils.normal_dist(max(alpha), mg_1_max_mean, mg_1_max_std)
+    cf_mg_2_max = utils.normal_dist(max(alpha), mg_2_max_mean, mg_2_max_std)
 
-    cf_min = [cf_si_min, cf_cu_min, 0, cf_al_min, 0, cf_mg_min, 0]
-    cf_max = [cf_si_max, cf_cu_max, 0, cf_al_max, 0, cf_mg_max, 0]
+    cf_min = [cf_cu_min, cf_si_1_min, cf_si_2_min, cf_al_min, cf_mg_1_min, cf_mg_2_min]
+    cf_max = [cf_cu_max, cf_si_1_max, cf_si_2_max, cf_al_max, cf_mg_1_max, cf_mg_2_max]
 
     if apply:
 
         cf = [a * b for a, b in zip(cf_min, cf_max)]
         probs = utils.normalize_list(cf)
+        sum_probs = [probs[1] + probs[2], probs[0], 0, probs[3], 0, probs[4] + probs[5], 0]
 
-        print('alpha: {}\nmax: {}, min: {}\ncf_min: {}\ncf_max: {}\ncf: {}\nprobs: {}\n\n'.format(alpha, max(alpha), min(alpha), cf_min, cf_max, cf, probs))
+        print('alpha: {}\nmax: {}, min: {}\ncf_min: {}\ncf_max: {}\ncf: {}\nprobs: {}\nsum_probs: {}\n\n'.format(alpha, max(alpha), min(alpha), cf_min, cf_max, cf, probs, sum_probs))
 
-        return probs
+        return sum_probs
 
     else:
 
