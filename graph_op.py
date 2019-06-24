@@ -228,35 +228,63 @@ def base_angle_score(graph_obj, i, dist_3_std, dist_4_std, dist_5_std, apply=Tru
     # al_max_std = 0.09
     # mg_max_std = 0.49
 
-    cu_min_mean = 1.96
-    si_min_mean = 1.81
-    al_min_mean = 1.55
-    mg_min_mean = 1.25
+    # cu_min_mean = 1.96
+    # si_min_mean = 1.81
+    # al_min_mean = 1.55
+    # mg_min_mean = 1.25
+    #
+    # cu_min_std = 0.11
+    # si_min_std = 0.16
+    # al_min_std = 0.06
+    # mg_min_std = 0.07
+    #
+    # cu_max_mean = 2.27
+    # si_max_mean = 2.35
+    # al_max_mean = 3.11
+    # mg_max_mean = 3.20
+    #
+    # cu_max_std = 0.16
+    # si_max_std = 0.15
+    # al_max_std = 0.08
+    # mg_max_std = 0.46
 
-    cu_min_std = 0.11
-    si_min_std = 0.16
-    al_min_std = 0.06
-    mg_min_std = 0.07
+    cu_min_mean = 1.92
+    si_1_min_mean = 1.94
+    si_2_min_mean = 1.56
+    al_min_mean = 1.56
+    mg_1_min_mean = 1.30
+    mg_2_min_mean = 1.26
 
-    cu_max_mean = 2.27
-    si_max_mean = 2.35
+    cu_min_std = 0.19
+    si_1_min_std = 0.14
+    si_2_min_std = 0.08
+    al_min_std = 0.05
+    mg_1_min_std = 0.09
+    mg_2_min_std = 0.05
+
+    cu_max_mean = 2.28
+    si_1_max_mean = 2.25
+    si_2_max_mean = 2.48
     al_max_mean = 3.11
-    mg_max_mean = 3.20
+    mg_1_max_mean = 2.57
+    mg_2_max_mean = 3.69
 
-    cu_max_std = 0.16
-    si_max_std = 0.15
-    al_max_std = 0.08
-    mg_max_std = 0.46
+    cu_max_std = 0.26
+    si_1_max_std = 0.12
+    si_2_max_std = 0.15
+    al_max_std = 0.07
+    mg_1_max_std = 0.10
+    mg_2_max_std = 0.09
 
     cf_cu_min = utils.normal_dist(min(alpha), cu_min_mean, cu_min_std)
-    cf_si_min = utils.normal_dist(min(alpha), si_min_mean, si_min_std)
+    cf_si_min = 0.5 * utils.normal_dist(min(alpha), si_1_min_mean, si_1_min_std) + 0.5 * utils.normal_dist(min(alpha), si_2_min_mean, si_2_min_std)
     cf_al_min = utils.normal_dist(min(alpha), al_min_mean, al_min_std)
-    cf_mg_min = utils.normal_dist(min(alpha), mg_min_mean, mg_min_std)
+    cf_mg_min = 0.5 * utils.normal_dist(min(alpha), mg_1_min_mean, mg_1_min_std) + 0.5 * utils.normal_dist(min(alpha), mg_2_min_mean, mg_2_min_std)
 
     cf_cu_max = utils.normal_dist(max(alpha), cu_max_mean, cu_max_std)
-    cf_si_max = utils.normal_dist(max(alpha), si_max_mean, si_max_std)
+    cf_si_max = 0.5 * utils.normal_dist(max(alpha), si_1_max_mean, si_1_max_std) + 0.5 * utils.normal_dist(max(alpha), si_2_max_mean, si_2_max_std)
     cf_al_max = utils.normal_dist(max(alpha), al_max_mean, al_max_std)
-    cf_mg_max = utils.normal_dist(max(alpha), mg_max_mean, mg_max_std)
+    cf_mg_max = 0.5 * utils.normal_dist(max(alpha), mg_1_max_mean, mg_1_max_std) + 0.5 * utils.normal_dist(max(alpha), mg_2_max_mean, mg_2_max_std)
 
     cf_min = [cf_si_min, cf_cu_min, 0, cf_al_min, 0, cf_mg_min, 0]
     cf_max = [cf_si_max, cf_cu_max, 0, cf_al_max, 0, cf_mg_max, 0]

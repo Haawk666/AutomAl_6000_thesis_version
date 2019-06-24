@@ -13,6 +13,7 @@ import mat_op
 import core
 import GUI_elements
 import utils
+import dev_module
 
 
 class MainUI(QtWidgets.QMainWindow):
@@ -277,6 +278,8 @@ class MainUI(QtWidgets.QMainWindow):
                     self.pos_objects[self.selected_column].moveBy(1.0, 0.0)
                     self.overlay_objects[self.selected_column].moveBy(1.0, 0.0)
                     self.vertex_objects[self.selected_column].moveBy(1.0, 0.0)
+                elif key == QtCore.Qt.Key_V:
+                    self.project_instance.graph.vertices[self.selected_column].flag_2 = True
             if self.tabs.currentIndex() == 4:
                 pass
             if self.tabs.currentIndex() == 5:
@@ -382,9 +385,7 @@ class MainUI(QtWidgets.QMainWindow):
 
     def ad_hoc_trigger(self):
 
-        if self.project_loaded:
-
-            self.project_instance.plot_theoretical_min_max_angles()
+        pass
 
     def set_threshold_trigger(self):
 
@@ -889,7 +890,7 @@ class MainUI(QtWidgets.QMainWindow):
 
     def run_benchmark_trigger(self):
 
-        core.SuchSoftware.accumulate_statistics()
+        dev_module.accumulate_statistics()
 
     def display_deviations_trigger(self):
 
