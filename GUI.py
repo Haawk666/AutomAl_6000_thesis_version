@@ -889,8 +889,7 @@ class MainUI(QtWidgets.QMainWindow):
 
     def run_benchmark_trigger(self):
 
-        if self.project_instance is not None:
-            self.project_instance.run_test()
+        core.SuchSoftware.accumulate_statistics()
 
     def display_deviations_trigger(self):
 
@@ -1681,12 +1680,12 @@ class MainUI(QtWidgets.QMainWindow):
 
                     m_max = m
 
-                    central_angles.append(57.2957795 * mesh.angles[0])
+                    central_angles.append(mesh.angles[0])
 
                     self.report('Mesh {}:'.format(m), force=True)
                     self.report('    Is consistent: {}'.format(str(mesh.test_consistency())), force=True)
-                    self.report('    Sum of angles: {}'.format(str(57.2957795 * sum(mesh.angles))), force=True)
-                    self.report('    Variance of angles: {}'.format(utils.variance([57.2957795 * x for x in mesh.angles])), force=True)
+                    self.report('    Sum of angles: {}'.format(str(sum(mesh.angles))), force=True)
+                    self.report('    Variance of angles: {}'.format(utils.variance(mesh.angles)), force=True)
                     self.report('    Symmetry prob vector from central angle: {}'.format(str([0, 0, 0])), force=True)
                     self.report('    corners: {}'.format(mesh.vertex_indices), force=True)
 
@@ -1710,7 +1709,7 @@ class MainUI(QtWidgets.QMainWindow):
 
                         self.graphicScene_7.addItem(angle_text)
                         self.graphicScene_7.addItem(arrow)
-                        self.report('        a{}{} = {}'.format(m, i, 57.2957795 * angle), force=True)
+                        self.report('        a{}{} = {}'.format(m, i, angle), force=True)
 
                 self.report('Mean central angle: {}'.format(str(sum(central_angles) / (m_max + 1))), force=True)
                 self.report('Central angle variance: {}'.format(utils.variance(central_angles)), force=True)

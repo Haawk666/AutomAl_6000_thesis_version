@@ -61,6 +61,29 @@ def level_tree_traverse(graph_obj, i):
             level_tree_traverse(graph_obj, partner)
 
 
+def experimental_remove_intersections(graph_obj):
+    intersections = graph_obj.find_intersects()
+
+    for intersection in intersections:
+
+        edge_1 = (intersection[0], intersection[1])
+        edge_2 = (intersection[2], intersection[3])
+
+        if graph_obj.vertices[edge_1[0]].partner_query(edge_1[1]):
+            if edge_2[0] in graph_obj.vertices[edge_1[0]].anti_partners():
+                graph_obj.perturb_j_k(edge_1[0], edge_1[1], edge_2[0])
+            else:
+                if not graph_obj.strong_remove_edge(edge_1[0], edge_1[1]):
+                    print('Could not remove {} {}'.format(edge_1[0], edge_1[1]))
+
+        if graph_obj.vertices[edge_2[0]].partner_query(edge_2[1]):
+            if edge_1[0] in graph_obj.vertices[edge_2[0]].anti_partners():
+                graph_obj.perturb_j_k(edge_2[0], edge_2[1], edge_1[0])
+            else:
+                if not graph_obj.strong_remove_edge(edge_2[0], edge_2[1]):
+                    print('Could not remove {} {}'.format(edge_2[0], edge_2[1]))
+
+
 def remove_intersections(graph_obj):
 
     intersections = graph_obj.find_intersects()
@@ -133,12 +156,14 @@ def remove_intersections(graph_obj):
 
             if add:
                 strong_intersections.append(permutations[0])
+                print(permutations[0])
                 strong_stong_intersections += 1
 
     for edge in remove_edges:
         # Test inclusion of weak remove here!
         if not graph_obj.strong_remove_edge(edge[0], edge[1]):
             not_removed += 1
+            print()
 
     graph_obj.redraw_edges()
     graph_obj.summarize_stats()
@@ -163,25 +188,65 @@ def base_angle_score(graph_obj, i, dist_3_std, dist_4_std, dist_5_std, apply=Tru
         for i in range(0, 3):
             alpha[i] = 2 * np.pi - alpha[i]
 
-    cu_min_mean = 1.92
-    si_min_mean = 1.80
-    al_min_mean = 1.56
-    mg_min_mean = 1.26
+    # cu_min_mean = 1.92
+    # si_min_mean = 1.69
+    # al_min_mean = 1.56
+    # mg_min_mean = 1.26
+    #
+    # cu_min_std = 0.19
+    # si_min_std = 0.21
+    # al_min_std = 0.05
+    # mg_min_std = 0.05
+    #
+    # cu_max_mean = 2.28
+    # si_max_mean = 2.40
+    # al_max_mean = 3.11
+    # mg_max_mean = 3.50
+    #
+    # cu_max_std = 0.26
+    # si_max_std = 0.17
+    # al_max_std = 0.07
+    # mg_max_std = 0.42
 
-    cu_min_std = 0.19 * 2
-    si_min_std = 0.21 * 2.5
-    al_min_std = 0.05 * 2
-    mg_min_std = 0.05 * 2
+    # cu_min_mean = 1.99
+    # si_min_mean = 1.92
+    # al_min_mean = 1.53
+    # mg_min_mean = 1.24
+    #
+    # cu_min_std = 0.03
+    # si_min_std = 0.10
+    # al_min_std = 0.06
+    # mg_min_std = 0.08
+    #
+    # cu_max_mean = 2.25
+    # si_max_mean = 2.29
+    # al_max_mean = 3.11
+    # mg_max_mean = 2.90
+    #
+    # cu_max_std = 0.06
+    # si_max_std = 0.12
+    # al_max_std = 0.09
+    # mg_max_std = 0.49
 
-    cu_max_mean = 2.28
-    si_max_mean = 2.30
+    cu_min_mean = 1.96
+    si_min_mean = 1.81
+    al_min_mean = 1.55
+    mg_min_mean = 1.25
+
+    cu_min_std = 0.11
+    si_min_std = 0.16
+    al_min_std = 0.06
+    mg_min_std = 0.07
+
+    cu_max_mean = 2.27
+    si_max_mean = 2.35
     al_max_mean = 3.11
-    mg_max_mean = 3.50
+    mg_max_mean = 3.20
 
-    cu_max_std = 0.26 * 2
-    si_max_std = 0.17 * 2.5
-    al_max_std = 0.07 * 2
-    mg_max_std = 0.42 * 2
+    cu_max_std = 0.16
+    si_max_std = 0.15
+    al_max_std = 0.08
+    mg_max_std = 0.46
 
     cf_cu_min = utils.normal_dist(min(alpha), cu_min_mean, cu_min_std)
     cf_si_min = utils.normal_dist(min(alpha), si_min_mean, si_min_std)
@@ -193,8 +258,8 @@ def base_angle_score(graph_obj, i, dist_3_std, dist_4_std, dist_5_std, apply=Tru
     cf_al_max = utils.normal_dist(max(alpha), al_max_mean, al_max_std)
     cf_mg_max = utils.normal_dist(max(alpha), mg_max_mean, mg_max_std)
 
-    cf_min = [cf_cu_min, cf_si_min, 0, cf_al_min, 0, cf_mg_min, 0]
-    cf_max = [cf_cu_max, cf_si_max, 0, cf_al_max, 0, cf_mg_max, 0]
+    cf_min = [cf_si_min, cf_cu_min, 0, cf_al_min, 0, cf_mg_min, 0]
+    cf_max = [cf_si_max, cf_cu_max, 0, cf_al_max, 0, cf_mg_max, 0]
 
     if apply:
 
