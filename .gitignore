@@ -7,7 +7,7 @@ misc.xml
 modules.xml
 vcs.xml
 AACC.iml
-\.idea/
+.idea/
 
 # AACC-generated stuff:
 log_test.log
