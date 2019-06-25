@@ -2,4 +2,14 @@
 __pycache__/
 
 # IDE-generated stuff:
-.idea/
+workspace.xml
+misc.xml
+modules.xml
+vcs.xml
+AACC.iml
+\.idea/
+
+# AACC-generated stuff:
+log_test.log
+Images/Outputs/Buffers/
+
