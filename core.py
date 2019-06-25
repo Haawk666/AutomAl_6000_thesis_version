@@ -14,6 +14,27 @@ from matplotlib.gridspec import GridSpec
 import weak_untangling
 import strong_untangling
 import dev_module
+import logging
+
+# Instantiate logger
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+# Instantiate logging handlers and add formatter
+file_handler = logging.FileHandler('log_test.log')
+file_handler.setLevel(logging.INFO)
+
+stream_handler = logging.StreamHandler(sys.stdout)
+stream_handler.setLevel(logging.INFO)
+
+formatter = logging.Formatter('%(name)s:%(levelname)s:%(funcName)s:%(message)s')
+
+file_handler.setFormatter(formatter)
+stream_handler.setFormatter(formatter)
+
+# Add handler to logger
+logger.addHandler(file_handler)
+logger.addHandler(stream_handler)
 
 
 class SuchSoftware:
@@ -172,6 +193,14 @@ class SuchSoftware:
 
         # Initialize an empty graph
         self.graph = graph.AtomicGraph(map_size=self.map_size)
+
+    def set_verbose_level(self, debug_mode):
+
+        self.debug_mode = debug_mode
+        if self.debug_mode:
+            stream_handler.setLevel(logging.DEBUG)
+        else:
+            stream_handler.setLevel(logging.INFO)
 
     def plot_variances(self):
 
@@ -418,9 +447,9 @@ class SuchSoftware:
     def column_detection(self, search_type='s'):
         self.report(' ', force=True)
         if self.num_columns == 0:
-            self.report('Starting column detection. Search mode is \'{}\''.format(search_type), force=True)
+            logger.info('Starting column detection. Search mode is \'{}\''.format(search_type))
         else:
-            self.report('Continuing column detection. Search mode is \'{}\''.format(search_type), force=True)
+            logger.info('Continuing column detection. Search mode is \'{}\''.format(search_type))
         cont = True
         counter = self.num_columns
         self.column_circumference_mat = mat_op.gen_framed_mat(self.column_circumference_mat, self.r + self.overhead)
@@ -471,15 +500,14 @@ class SuchSoftware:
                 if np.max(self.search_mat) < self.threshold:
                     cont = False
             else:
-                self.report('Invalid search type sent to SuchSoftware.column_detection', force=True)
+                logger.error('Invalid search_type')
 
         self.column_circumference_mat = mat_op.gen_de_framed_mat(self.column_circumference_mat, self.r + self.overhead)
         self.search_mat = mat_op.gen_de_framed_mat(self.search_mat, self.r + self.overhead)
         self.im_mat = mat_op.gen_de_framed_mat(self.im_mat, self.r + self.overhead)
         self.calc_avg_gamma()
         self.summarize_stats()
-        self.report('Column detection complete! Found {} columns'.format(self.num_columns), force=True)
-        self.report(' ', force=True)
+        logger.info('Column detection complete! Found {} columns.'.format(self.num_columns))
 
     def find_nearest(self, i, n, weight=4):
 

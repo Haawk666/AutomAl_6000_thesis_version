@@ -2,6 +2,7 @@
 
 import numpy as np
 import utils
+import logging
 
 
 class Vertex:
@@ -524,37 +525,23 @@ class AtomicGraph:
         for anti_partner in self.vertices[i].anti_partners():
 
             if self.vertices[anti_partner].partner_query(i):
-
                 self.perturb_j_k(i, j, anti_partner)
-                print('    break 1')
                 break
 
         else:
 
-            print('    Did not find i in i.anti_partners')
-
             for anti_partner_2 in self.vertices[i].anti_partners():
-
                 found = False
-
                 for anti_partner_partner in self.vertices[anti_partner_2].partners():
-
-                    print('    Testing condition on {} -> {} and {} -> {}'.format(anti_partner_2, anti_partner_partner, self.vertices[i].level, self.vertices[anti_partner_2].anti_level()))
 
                     if aggresive and not self.vertices[anti_partner_partner].partner_query(anti_partner_2) and\
                             self.vertices[i].level == self.vertices[anti_partner_2].anti_level():
 
                         self.perturb_j_k(i, j, anti_partner_2)
                         found = True
-                        print('    break 2')
                         break
 
-                    else:
-
-                        print('    Condition did not pass!')
-
                 if found:
-                    print('    break 3')
                     break
 
             else:
@@ -707,12 +694,7 @@ class AtomicGraph:
         if not clockwise:
             i, j = j, i
 
-        # Check that j is partner to i
-        # if not self.vertices[i].partner_query(j):
-        #     raise NotImplementedError
-
         corners = [i, j]
-
         counter = 0
         stop = False
 
@@ -721,17 +703,12 @@ class AtomicGraph:
             angle, next_index = self.angle_sort(i, j, strict)
 
             if next_index == corners[0] or counter > 8:
-
                 _, nextnext = self.angle_sort(j, next_index, strict)
-
                 if not nextnext == corners[1]:
-
                     corners, i, j = self.rebase(corners, nextnext, next_index, append=False)
-
                 stop = True
 
             elif next_index in corners:
-
                 corners, i, j = self.rebase(corners, next_index, j)
                 counter = len(corners) - 2
 
@@ -746,19 +723,13 @@ class AtomicGraph:
         for m, corner in enumerate(corners):
 
             pivot = self.vertices[corner].real_coor()
-
             if m == 0:
-
                 p1 = self.vertices[corners[len(corners) - 1]].real_coor()
                 p2 = self.vertices[corners[m + 1]].real_coor()
-
             elif m == len(corners) - 1:
-
                 p1 = self.vertices[corners[m - 1]].real_coor()
                 p2 = self.vertices[corners[0]].real_coor()
-
             else:
-
                 p1 = self.vertices[corners[m - 1]].real_coor()
                 p2 = self.vertices[corners[m + 1]].real_coor()
 
@@ -779,15 +750,11 @@ class AtomicGraph:
     def rebase(corners, next_, j, append=True):
 
         for k, corner in enumerate(corners):
-
             if corner == next_:
-
                 del corners[k + 1:]
-
                 if append:
                     corners.append(j)
                 break
-
         return corners, next_, j
 
     def get_atomic_configuration(self, i, strict=False):
@@ -796,7 +763,6 @@ class AtomicGraph:
         sub_graph.add_vertex(self.vertices[i])
 
         for partner in self.vertices[i].partners():
-
             sub_graph.add_vertex(self.vertices[partner])
             corners, ang, vec = self.find_mesh(i, partner, strict=strict)
             mesh = Mesh()
@@ -808,13 +774,10 @@ class AtomicGraph:
             sub_graph.add_mesh(mesh)
 
             for j in corners:
-
                 if j not in sub_graph.vertex_indices:
-
                     sub_graph.add_vertex(self.vertices[j])
 
             if corners[-1] not in self.vertices[i].partners():
-
                 corners, ang, vec = self.find_mesh(i, corners[len(corners) - 1], strict=strict)
                 mesh = Mesh()
                 for k, corner in enumerate(corners):
@@ -825,7 +788,6 @@ class AtomicGraph:
                 sub_graph.add_mesh(mesh)
 
                 for j in corners:
-
                     if j not in sub_graph.vertex_indices:
                         sub_graph.add_vertex(self.vertices[j])
 
@@ -834,8 +796,6 @@ class AtomicGraph:
         return sub_graph
 
     def find_intersects(self):
-
-        # Extend?
 
         intersecting_segments = []
 
