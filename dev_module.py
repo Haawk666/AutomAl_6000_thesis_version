@@ -7,7 +7,6 @@ from matplotlib.gridspec import GridSpec
 import graph_op
 
 
-# Hello
 def set_mg_type(graph_obj):
 
     for k, vertex in enumerate(graph_obj.vertices):
