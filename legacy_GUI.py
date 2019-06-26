@@ -29,6 +29,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.savefile = None
         self.control_instance = None
         self.selected_column = -1
+        self.previous_selected_column = -1
 
         self.previous_pos_obj = None
         self.previous_overlay_obj = None
@@ -1232,6 +1233,67 @@ class MainUI(QtWidgets.QMainWindow):
                 self.control_window.chb_columns.setChecked(True)
                 self.toggle_column_trigger()
 
+    def select_column(self, i):
+
+        if i == -1:
+            self.deselect_trigger()
+        else:
+
+            self.control_window.lbl_column_index.setText('Column index: ' + str(i))
+            self.control_window.lbl_column_x_pos.setText('x: ' + str(self.project_instance.graph.vertices[i].im_coor_x))
+            self.control_window.lbl_column_y_pos.setText('y: ' + str(self.project_instance.graph.vertices[i].im_coor_y))
+            self.control_window.lbl_column_peak_gamma.setText(
+                'Peak gamma: ' + str(self.project_instance.graph.vertices[i].peak_gamma))
+            self.control_window.lbl_column_avg_gamma.setText(
+                'Avg gamma: ' + str(self.project_instance.graph.vertices[i].avg_gamma))
+            self.control_window.lbl_column_species.setText(
+                'Atomic species: ' + self.project_instance.graph.vertices[i].atomic_species)
+            self.control_window.lbl_column_level.setText('Level: ' + str(self.project_instance.graph.vertices[i].level))
+            self.control_window.lbl_confidence.setText(
+                'Confidence: ' + str(self.project_instance.graph.vertices[i].confidence))
+            self.control_window.lbl_symmetry_confidence.setText(
+                'Symmetry confidence: ' + str(
+                    self.project_instance.graph.vertices[self.selected_column].symmetry_confidence))
+            self.control_window.lbl_level_confidence.setText(
+                'Level confidence: ' + str(self.project_instance.graph.vertices[self.selected_column].level_confidence))
+            self.control_window.lbl_neighbours.setText(
+                'Nearest neighbours: ' + str(self.project_instance.graph.vertices[i].neighbour_indices))
+            rotation_partners, angles, variance = self.project_instance.graph.calc_central_angle_variance(
+                self.selected_column)
+            self.control_window.lbl_central_variance.setText('Central angle variance: ' + str(variance))
+
+            self.control_window.btn_new.setDisabled(False)
+            self.control_window.btn_deselect.setDisabled(False)
+            self.control_window.btn_delete.setDisabled(False)
+            self.control_window.btn_set_species.setDisabled(False)
+            self.control_window.btn_set_level.setDisabled(False)
+            self.control_window.btn_find_column.setDisabled(False)
+            self.control_window.chb_precipitate_column.setDisabled(False)
+            self.control_window.chb_show.setDisabled(False)
+            self.control_window.chb_move.setDisabled(False)
+
+            self.control_window.chb_show.blockSignals(True)
+            self.control_window.chb_show.setChecked(self.project_instance.graph.vertices[i].show_in_overlay)
+            self.control_window.chb_show.blockSignals(False)
+            self.control_window.chb_precipitate_column.blockSignals(True)
+            self.control_window.chb_precipitate_column.setChecked(
+                self.project_instance.graph.vertices[i].is_in_precipitate)
+            self.control_window.chb_precipitate_column.blockSignals(False)
+            self.control_window.chb_move.blockSignals(True)
+            self.control_window.chb_move.setChecked(False)
+            self.control_window.chb_move.blockSignals(False)
+
+            self.control_window.btn_set_move.setDisabled(True)
+            self.control_window.btn_cancel_move.setDisabled(True)
+
+            self.selected_column = i
+
+            if self.control_window.debug_box.isVisible():
+                self.draw_connections(self.selected_column)
+                self.graphicsView_3.setScene(self.graphicScene_3)
+
+            self.control_window.draw_histogram()
+
     def column_selected(self, i):
 
         if i == -1:
@@ -1289,7 +1351,7 @@ class MainUI(QtWidgets.QMainWindow):
                         corners, angles, vectors = self.project_instance.graph.find_mesh(self.selected_column, i)
                         print(str(len(corners)) + ': ' + str(i) + ' ' + str(self.selected_column))
 
-            self.selected_column = i
+            self.previous_selected_column, self.selected_column  = self.selected_column, i
 
             if self.control_window.debug_box.isVisible():
                 self.draw_connections(self.selected_column)

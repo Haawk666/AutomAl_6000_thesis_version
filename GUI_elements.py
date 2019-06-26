@@ -1,6 +1,41 @@
+# By Haakon Tvedt @ NTNU
+"""Module container for high-level custom GUI-elements"""
+
 from PyQt5 import QtWidgets, QtGui, QtCore
 import numpy as np
 import core
+import GUI_custom_components
+
+
+class AtomicGraph(QtWidgets.QGraphicsScene):
+
+    def __init__(self, *args, ui_obj=None):
+        """Initialize a custom QtWidgets.QGraphicsScene object for **atomic graphs**."""
+
+        super().__init__(*args)
+
+        self.ui_obj = ui_obj
+        self.interactive_vertex_objects = []
+        self.edges = []
+
+    def re_draw(self):
+        """Redraw contents."""
+        self.re_draw_vertices()
+        self.re_draw_edges()
+
+    def re_draw_vertices(self):
+        """Redraws all column elements."""
+        for vertex in self.ui_obj.project_instance.graph.vertices:
+            self.interactive_vertex_objects.append(GUI_custom_components.InteractiveGraphColumn(self.ui_obj, vertex.i))
+            self.addItem(self.interactive_vertex_objects[-1])
+
+    def re_draw_edges(self):
+        """Redraws all edge elements."""
+        for edge in self.ui_obj.project_instance.graph.edges:
+            pass
+
+
+
 
 
 class GraphInfoView(QtWidgets.QWidget):
