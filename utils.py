@@ -1,6 +1,6 @@
 # Utilities script
 # -------------------------------------------
-# This script contains a collection of static functions that are abstracted away from core.py
+"""General utility/convenience functions"""
 
 import numpy as np
 import scipy.optimize as opt
@@ -8,6 +8,23 @@ from copy import deepcopy
 
 
 def circularize_next_index(i, i_max):
+    """Make an index cyclic
+
+    parameters
+    ----------
+    i : int
+        Integer index to be converted to a cyclic index
+    i_max : int
+        The maximum valid value of i.
+
+    returns
+    ----------
+    i: int
+        returns cyclic index
+
+    note:
+    ----------
+    Python will automatically give you list[-1] = list[len(list) - 1], so checking for i == -1 might be redundant."""
 
     if i == i_max + 1:
         return 0

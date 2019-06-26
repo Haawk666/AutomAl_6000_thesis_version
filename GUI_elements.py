@@ -7,9 +7,62 @@ import core
 import GUI_custom_components
 
 
+class RawImage(QtWidgets.QGraphicsScene):
+
+    def __init__(self, *args, ui_obj=None, background=None):
+        """Initialize a custom QtWidgets.QGraphicsScene object for **raw image**."""
+
+        super().__init__(*args)
+
+        self.ui_obj = ui_obj
+        self.background_image = background
+        if self.background_image is not None:
+            self.addPixmap(self.background_image)
+
+
+class AtomicPositions(QtWidgets.QGraphicsScene):
+
+    def __init__(self, *args, ui_obj=None, background=None):
+        """Initialize a custom QtWidgets.QGraphicsScene object for **atomic positions**."""
+
+        super().__init__(*args)
+
+        self.ui_obj = ui_obj
+        self.interactive_position_objects = []
+        self.background_image = background
+        if self.background_image is not None:
+            self.addPixmap(self.background_image)
+
+    def re_draw(self):
+        """Redraw contents."""
+        for vertex in self.ui_obj.project_instance.graph.vertices:
+            self.interactive_position_objects.append(GUI_custom_components.InteractivePosColumn(self.ui_obj, vertex.i))
+            self.addItem(self.interactive_position_objects[-1])
+
+
+class OverlayComposition(QtWidgets.QGraphicsScene):
+
+    def __init__(self, *args, ui_obj=None, background=None):
+        """Initialize a custom QtWidgets.QGraphicsScene object for **overlay composition**."""
+
+        super().__init__(*args)
+
+        self.ui_obj = ui_obj
+        self.interactive_overlay_objects = []
+        self.background_image = background
+        if self.background_image is not None:
+            self.addPixmap(self.background_image)
+
+    def re_draw(self):
+        """Redraw contents."""
+        for vertex in self.ui_obj.project_instance.graph.vertices:
+            self.interactive_overlay_objects.append(GUI_custom_components.InteractiveOverlayColumn(self.ui_obj, vertex.i))
+            self.addItem(self.interactive_overlay_objects[-1])
+
+
 class AtomicGraph(QtWidgets.QGraphicsScene):
 
-    def __init__(self, *args, ui_obj=None):
+    def __init__(self, *args, ui_obj=None, background=None):
         """Initialize a custom QtWidgets.QGraphicsScene object for **atomic graphs**."""
 
         super().__init__(*args)
@@ -17,6 +70,9 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
         self.ui_obj = ui_obj
         self.interactive_vertex_objects = []
         self.edges = []
+        self.background_image = background
+        if self.background_image is not None:
+            self.addPixmap(self.background_image)
 
     def re_draw(self):
         """Redraw contents."""
@@ -35,7 +91,81 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
             pass
 
 
+class AtomicSubGraph(QtWidgets.QGraphicsScene):
 
+    def __init__(self, *args, ui_obj=None, background=None):
+        """Initialize a custom QtWidgets.QGraphicsScene object for **atomic sub-graphs**."""
+
+        super().__init__(*args)
+
+        self.ui_obj = ui_obj
+        self.interactive_vertex_objects = []
+        self.edges = []
+        self.background_image = background
+        if self.background_image is not None:
+            self.addPixmap(self.background_image)
+
+    def re_draw(self):
+        """Redraw contents."""
+        self.re_draw_vertices()
+        self.re_draw_edges()
+
+    def re_draw_vertices(self):
+        """Redraws all column elements."""
+        pass
+
+    def re_draw_edges(self):
+        """Redraws all edge elements."""
+        pass
+
+
+class ZoomGraphicsView(QtWidgets.QGraphicsView):
+    """An adaptation of QtWidgets.QGraphicsView that supports zooming"""
+
+    def __init__(self, parent=None, key_press_handler=None):
+        super(ZoomGraphicsView, self).__init__(parent)
+        self.key_press_handler = key_press_handler
+
+    def wheelEvent(self, event):
+
+        modifier = QtWidgets.QApplication.keyboardModifiers()
+        if modifier == QtCore.Qt.ShiftModifier:
+
+            # Zoom Factor
+            zoom_in_factor = 1.25
+            zoom_out_factor = 1 / zoom_in_factor
+
+            # Set Anchors
+            self.setTransformationAnchor(QtWidgets.QGraphicsView.NoAnchor)
+            self.setResizeAnchor(QtWidgets.QGraphicsView.NoAnchor)
+
+            # Save the scene pos
+            oldPos = self.mapToScene(event.pos())
+
+            # Zoom
+            if event.angleDelta().y() > 0:
+                zoomFactor = zoom_in_factor
+            else:
+                zoomFactor = zoom_out_factor
+            self.scale(zoomFactor, zoomFactor)
+
+            # Get the new position
+            newPos = self.mapToScene(event.pos())
+
+            # Move scene to old position
+            delta = newPos - oldPos
+            self.translate(delta.x(), delta.y())
+
+        else:
+
+            super(ZoomGraphicsView, self).wheelEvent(event)
+
+    def keyPressEvent(self, event):
+        if self.key_press_handler is not None:
+            self.key_press_handler(event.key())
+
+
+# Legacy items follow:--------------------------------------------------------------------------------------------------
 
 
 class GraphInfoView(QtWidgets.QWidget):
