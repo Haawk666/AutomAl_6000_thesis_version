@@ -10,6 +10,7 @@ import os.path
 
 
 def gen_fft(mat):
+    """Generate the fast Fourier transform of a matrix."""
     fourier = np.fft.fft2(mat)
     fourier = np.fft.fftshift(fourier)
     fourier = abs(fourier)
@@ -22,6 +23,7 @@ def gen_fft(mat):
 
 
 def normalize_static(mat):
+    """Normalize matrix such that its elements are \in [0, 1]"""
     # General matrix norm to interval (0, 1). Assumed to be float types
     if mat.min() == mat.max() or mat.max() == 0.0:
         pass

@@ -10,8 +10,19 @@ contents:
 
 .. toctree::
    :maxdepth: 2
+   :caption: Contents:
+
+utils module
+==================
+
 
 .. automodule:: utils
+   :members:
+
+mat_op module
+==================
+
+.. automodule:: mat_op
    :members:
 
 

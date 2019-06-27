@@ -87,13 +87,39 @@ class InteractiveOverlayColumn(InteractiveColumn):
         Inherits GUI_custom_components.InteractiveColumn. Is used to highlight atomic positions."""
         super().__init__(*args)
 
-        self.selected_pen = QtGui.QPen(QtCore.Qt.yellow)
-        self.selected_pen.setWidth(3)
-        self.transparent_brush = QtGui.QBrush(QtCore.Qt.transparent)
-        self.unselected_pen = QtGui.QPen(QtCore.Qt.red)
-        self.unselected_pen.setWidth(1)
-        self.hidden_pen = QtGui.QPen(QtCore.Qt.darkRed)
-        self.hidden_pen.setWidth(1)
+        self.brush_black = QtGui.QBrush(QtCore.Qt.black)
+
+        self.pen_al = QtGui.QPen(QtCore.Qt.green)
+        self.pen_al.setWidth(5)
+        self.brush_al = QtGui.QBrush(QtCore.Qt.green)
+
+        self.pen_mg = QtGui.QPen(QtGui.QColor(143, 0, 255))
+        self.pen_mg.setWidth(5)
+        self.brush_mg = QtGui.QBrush(QtGui.QColor(143, 0, 255))
+
+        self.pen_si = QtGui.QPen(QtCore.Qt.red)
+        self.pen_si.setWidth(5)
+        self.brush_si = QtGui.QBrush(QtCore.Qt.red)
+
+        self.pen_cu = QtGui.QPen(QtCore.Qt.yellow)
+        self.pen_cu.setWidth(5)
+        self.brush_cu = QtGui.QBrush(QtCore.Qt.yellow)
+
+        self.pen_zn = QtGui.QPen(QtGui.QColor(100, 100, 100))
+        self.pen_zn.setWidth(5)
+        self.brush_zn = QtGui.QBrush(QtGui.QColor(100, 100, 100))
+
+        self.pen_ag = QtGui.QPen(QtGui.QColor(200, 200, 200))
+        self.pen_ag.setWidth(5)
+        self.brush_ag = QtGui.QBrush(QtGui.QColor(200, 200, 200))
+
+        self.pen_un = QtGui.QPen(QtCore.Qt.blue)
+        self.pen_un.setWidth(5)
+        self.brush_un = QtGui.QBrush(QtCore.Qt.blue)
+
+        self.selected_pen = QtGui.QPen(QtCore.Qt.darkCyan)
+        self.selected_pen.setWidth(6)
+        self.brush_selected = QtGui.QBrush(QtCore.Qt.darkCyan)
 
         self.set_style()
 
@@ -101,12 +127,43 @@ class InteractiveOverlayColumn(InteractiveColumn):
         """Set the appearance of the shape"""
         if self.i == self.ui_obj.selected_column:
             self.setPen(self.selected_pen)
+            self.setBrush(self.brush_selected)
         else:
-            if self.vertex.show_in_overlay:
-                self.setPen(self.hidden_pen)
+            self.setBrush(self.brush_black)
+            if self.vertex.h_index == 0:
+                self.setPen(self.pen_cu)
+                if self.vertex.level == 0:
+                    self.setBrush(self.brush_cu)
+            elif self.vertex.h_index == 1:
+                self.setPen(self.pen_si)
+                if self.vertex.level == 0:
+                    self.setBrush(self.brush_si)
+            elif self.vertex.h_index == 2:
+                self.setPen(self.pen_zn)
+                if self.vertex.level == 0:
+                    self.setBrush(self.brush_zn)
+            elif self.vertex.h_index == 3:
+                self.setPen(self.pen_al)
+                if self.vertex.level == 0:
+                    self.setBrush(self.brush_al)
+            elif self.vertex.h_index == 4:
+                self.setPen(self.pen_ag)
+                if self.vertex.level == 0:
+                    self.setBrush(self.brush_ag)
+            elif self.vertex.h_index == 5:
+                self.setPen(self.pen_mg)
+                if self.vertex.level == 0:
+                    self.setBrush(self.brush_mg)
+            elif self.vertex.h_index == 6:
+                self.setPen(self.pen_un)
+                if self.vertex.level == 0:
+                    self.setBrush(self.brush_un)
             else:
-                self.setPen(self.unselected_pen)
-        self.setBrush(self.transparent_brush)
+                print('TODO: Logger')
+            if not self.vertex.show_in_overlay:
+                self.hide()
+            else:
+                self.show()
 
 
 class InteractiveGraphColumn(InteractiveColumn):
@@ -139,9 +196,38 @@ class InteractiveGraphColumn(InteractiveColumn):
             else:
                 self.setBrush(self.opaque_brush)
 
-class arrow():
 
-    def make_arrow_obj(self, p1, p2, r, scale_factor, consistent):
+class Arrow:
+
+    def __init__(self, p1, p2, r, scale_factor, consistent, dislocation):
+
+        self.inconsistent_pen = QtGui.QPen(QtCore.Qt.red)
+        self.inconsistent_pen.setWidth(3)
+        self.dislocation_pen = QtGui.QPen(QtCore.Qt.blue)
+        self.dislocation_pen.setWidth(3)
+        self.normal_pen = QtGui.QPen(QtCore.Qt.black)
+        self.normal_pen.setWidth(1)
+
+        self.arrow = None, None
+        self.make_arrow_obj(p1, p2, r, scale_factor)
+        self.set_style(consistent, dislocation)
+
+    def set_style(self, consistent, dislocation):
+
+        if not consistent:
+            self.arrow[0].setPen(self.inconsistent_pen)
+            self.arrow[1].setPen(self.inconsistent_pen)
+            self.arrow[1].show()
+        elif dislocation:
+            self.arrow[0].setPen(self.dislocation_pen)
+            self.arrow[1].setPen(self.dislocation_pen)
+            self.arrow[1].show()
+        else:
+            self.arrow[0].setPen(self.normal_pen)
+            self.arrow[1].setPen(self.normal_pen)
+            self.arrow[1].hide()
+
+    def make_arrow_obj(self, p1, p2, r, scale_factor):
 
         r_2 = QtCore.QPointF(2 * scale_factor * p2[0], 2 * scale_factor * p2[1])
         r_1 = QtCore.QPointF(2 * scale_factor * p1[0], 2 * scale_factor * p1[1])
@@ -154,7 +240,6 @@ class arrow():
         k_2 = r_1 + (1 - factor) * r_vec
 
         theta = np.pi / 4
-        self.red_pen.setWidth(3)
 
         l_1 = factor * QtCore.QPointF(r_vec.x() * np.cos(theta) + r_vec.y() * np.sin(theta),
                                       - r_vec.x() * np.sin(theta) + r_vec.y() * np.cos(theta))
@@ -185,18 +270,7 @@ class arrow():
         head_1 = QtWidgets.QGraphicsPolygonItem(poly_1)
         head_2 = QtWidgets.QGraphicsPolygonItem(poly_2)
 
-        if consistent:
-            pen = self.pen_connection
-            brush = self.brush_connection
-        else:
-            pen = self.red_pen
-            brush = self.red_brush
-
-        line.setPen(pen)
-        head_1.setPen(pen)
-        head_2.setBrush(brush)
-
-        return line, head_2
+        self.arrow = line, head_2
 
 
 

@@ -69,7 +69,7 @@ class Vertex:
 
         self.species_strings = None
         if species_strings is None:
-            self.species_strings = ['Si', 'Cu', 'Zn', 'Al', 'Ag', 'Mg', 'Un']
+            self.species_strings = ['Cu', 'Si', 'Zn', 'Al', 'Ag', 'Mg', 'Un']
         else:
             self.species_strings = species_strings
 

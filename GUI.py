@@ -82,6 +82,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.setCentralWidget(self.tabs)
 
         # Create menu bar
+        GUI_elements.MenuBar(self.menuBar(), self)
         # GUI_elements.MenuBar(self.menuBar(), self)
 
         # Generate elements
@@ -93,4 +94,250 @@ class MainUI(QtWidgets.QMainWindow):
 
         # Display
         self.show()
+
+    # ----------
+    # Business logic methods:
+    # ----------
+
+    def set_species(self, h):
+        """Set atmoic species of selected column"""
+        if self.project_loaded and not self.selected_column == -1:
+
+            # Update relevant graphics:
+            self.project_instance.graph.vertices[self.selected_column].force_species(h)
+            self.gs_overlay_composition.interactive_overlay_objects[self.selected_column].set_style()
+
+            # Update control window info:
+            self.control_window.lbl_column_species.setText(
+                'Atomic species: ' + self.project_instance.graph.vertices[self.selected_column].atomic_species)
+            self.control_window.lbl_confidence.setText(
+                'Confidence: ' + str(self.project_instance.graph.vertices[self.selected_column].confidence))
+            self.control_window.draw_histogram()
+
+    def set_level(self, level):
+        """Set level of selected column"""
+        if self.project_loaded and not self.selected_column == -1:
+
+            # Update relevant graphics:
+            self.project_instance.graph.vertices[self.selected_column].level = level
+            self.gs_overlay_composition.interactive_overlay_objects[self.selected_column].set_style()
+            self.gs_atomic_graph.interactive_vertex_objects[self.selected_column].set_style()
+
+            # Update control window info:
+            self.control_window.lbl_column_level.setText('Level: {}'.format(level))
+
+    # ----------
+    # Keyboard press methods methods:
+    # ----------
+
+    def keyPressEvent(self, event):
+        """Handles key-presses when central widget has focus. Used to switch between tabs"""
+        if event.key() == QtCore.Qt.Key_X:
+            if self.tabs.currentIndex() == 6:
+                self.tabs.setCurrentIndex(0)
+            else:
+                self.tabs.setCurrentIndex(self.tabs.currentIndex() + 1)
+        if event.key() == QtCore.Qt.Key_Z:
+            if self.tabs.currentIndex() == 0:
+                self.tabs.setCurrentIndex(6)
+            else:
+                self.tabs.setCurrentIndex(self.tabs.currentIndex() - 1)
+
+    def key_press_trigger(self, key):
+        """Process key-press events from graphic elements"""
+        if self.project_loaded and not self.selected_column == -1:
+            if self.tabs.currentIndex() == 0:
+                pass
+            if self.tabs.currentIndex() == 1 or self.tabs.currentIndex() == 2 or self.tabs.currentIndex() == 3:
+                if key == QtCore.Qt.Key_1:
+                    self.set_species(0)
+                elif key == QtCore.Qt.Key_2:
+                    self.set_species(1)
+                elif key == QtCore.Qt.Key_3:
+                    self.set_species(3)
+                elif key == QtCore.Qt.Key_4:
+                    self.set_species(5)
+                elif key == QtCore.Qt.Key_Plus:
+                    self.project_instance.graph.vertices[self.selected_column].level = \
+                        self.project_instance.graph.vertices[self.selected_column].anti_level()
+                elif key == QtCore.Qt.Key_W and self.control_window.chb_move.isChecked():
+                    self.pos_objects[self.selected_column].moveBy(0.0, -1.0)
+                    self.overlay_objects[self.selected_column].moveBy(0.0, -1.0)
+                    self.vertex_objects[self.selected_column].moveBy(0.0, -1.0)
+                elif key == QtCore.Qt.Key_S and self.control_window.chb_move.isChecked():
+                    self.pos_objects[self.selected_column].moveBy(0.0, 1.0)
+                    self.overlay_objects[self.selected_column].moveBy(0.0, 1.0)
+                    self.vertex_objects[self.selected_column].moveBy(0.0, 1.0)
+                elif key == QtCore.Qt.Key_A and self.control_window.chb_move.isChecked():
+                    self.pos_objects[self.selected_column].moveBy(-1.0, 0.0)
+                    self.overlay_objects[self.selected_column].moveBy(-1.0, 0.0)
+                    self.vertex_objects[self.selected_column].moveBy(-1.0, 0.0)
+                elif key == QtCore.Qt.Key_D and self.control_window.chb_move.isChecked():
+                    self.pos_objects[self.selected_column].moveBy(1.0, 0.0)
+                    self.overlay_objects[self.selected_column].moveBy(1.0, 0.0)
+                    self.vertex_objects[self.selected_column].moveBy(1.0, 0.0)
+            if self.tabs.currentIndex() == 4:
+                pass
+            if self.tabs.currentIndex() == 5:
+                pass
+            if self.tabs.currentIndex() == 6:
+                pass
+
+    # ----------
+    # Menu triggers:
+    # ----------
+
+    def menu_new_trigger(self):
+        pass
+
+    def menu_open_trigger(self):
+        pass
+
+    def menu_save_trigger(self):
+        pass
+
+    def menu_close_trigger(self):
+        pass
+
+    def menu_exit_trigger(self):
+        pass
+
+    def menu_view_image_title_trigger(self):
+        pass
+
+    def menu_show_stats_trigger(self):
+        pass
+
+    def menu_update_display(self):
+        pass
+
+    def menu_toggle_image_control_trigger(self):
+        pass
+
+    def menu_toggle_alg_1_control_trigger(self):
+        pass
+
+    def menu_toggle_alg_2_control_trigger(self):
+        pass
+
+    def menu_toggle_column_control_trigger(self):
+        pass
+
+    def menu_toggle_overlay_control_trigger(self):
+        pass
+
+    def menu_image_correction_trigger(self):
+        pass
+
+    def menu_image_filter_trigger(self):
+        pass
+
+    def menu_image_adjustments_trigger(self):
+        pass
+
+    def menu_continue_detection_trigger(self):
+        pass
+
+    def menu_restart_detection_trigger(self):
+        pass
+
+    def menu_continue_analysis_trigger(self):
+        pass
+
+    def menu_restart_analysis_trigger(self):
+        pass
+
+    def menu_export_data_trigger(self):
+        pass
+
+    def menu_export_raw_image_trigger(self):
+        pass
+
+    def menu_export_column_position_image_trigger(self):
+        pass
+
+    def menu_export_overlay_image_trigger(self):
+        pass
+
+    def menu_export_atomic_graph_trigger(self):
+        pass
+
+    def menu_toggle_debug_mode_trigger(self):
+        pass
+
+    def menu_add_mark_trigger(self):
+        pass
+
+    def menu_clear_flags_trigger(self):
+        pass
+
+    def menu_set_control_file_trigger(self):
+        pass
+
+    def menu_run_benchmark_trigger(self):
+        pass
+
+    def menu_display_deviations_trigger(self):
+        pass
+
+    def menu_test_consistency_trigger(self):
+        pass
+
+    def menu_invert_precipitate_columns_trigger(self):
+        pass
+
+    def menu_ad_hoc_trigger(self):
+        pass
+
+    def menu_there_is_no_help_trigger(self):
+        pass
+
+    # ----------
+    # Button triggers:
+    # ----------
+
+    def btn_set_species_trigger(self):
+        """Btn-trigger: Run 'set species' dialog."""
+        if self.project_loaded and not (self.selected_column == -1):
+
+            items = ('Al', 'Mg', 'Si', 'Cu', 'Un')
+            item, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Species", items, 0, False)
+
+            if ok_pressed and item:
+
+                if item == 'Al':
+                    h = 3
+                elif item == 'Si':
+                    h = 0
+                elif item == 'Mg':
+                    h = 5
+                elif item == 'Cu':
+                    h = 1
+                else:
+                    h = 6
+
+                self.set_species(h)
+
+    def btn_set_level_trigger(self):
+        """Btn-trigger: Run 'set level' dialog."""
+        if self.project_loaded and not (self.selected_column == -1):
+
+            items = ('0', '1')
+            item, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "level", items, 0, False)
+
+            if ok_pressed and item:
+
+                if item == '0':
+                    level = 0
+                elif item == '1':
+                    level = 1
+                else:
+                    level = 0
+
+                self.set_level(level)
+
+    # ----------
+    # Self state methods:
+    # ----------
+
 

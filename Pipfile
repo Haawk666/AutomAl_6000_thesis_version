@@ -9,8 +9,8 @@ verify_ssl = true
 pyqt5 = "*"
 pillow = "*"
 scipy = "*"
+pyinstaller = "*"
 matplotlib = "*"
-sphinx = "*"
 
 [requires]
 python_version = "3.7"
