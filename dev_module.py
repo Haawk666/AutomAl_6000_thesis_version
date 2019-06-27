@@ -271,8 +271,8 @@ def plot_test_data(cu_min_angles, si_1_min_angles, si_2_min_angles, al_min_angle
     # Surface intersection contours:
     colors = ['y', 'r', 'k', 'g', 'm', 'c']
     x, y = np.meshgrid(beta, alpha)
-    for a in range(2, 3):
-        for b in range(4, 5):
+    for a in range(0, 6):
+        for b in range(0, 6):
 
             if not a == b:
 
@@ -288,7 +288,7 @@ def plot_test_data(cu_min_angles, si_1_min_angles, si_2_min_angles, al_min_angle
                 F -= (sigma_b ** 2) * ((mean_min[a] ** 2) * std_max[a] ** 2 + (mean_max[a] ** 2) * std_min[a] ** 2)
                 F += 2 * (sigma_a ** 2) * (sigma_b ** 2) * np.log(sigma_b / sigma_a)
 
-                ax_scatter.contour(x, y, (A*x**2 + B*x*y + C*y**2 + D*x + E*y + F), [0], colors=colors[a])
+                ax_scatter.contour(x, y, (A * x ** 2 + B * x * y + C * y ** 2 + D * x + E * y + F), [0], colors=colors[a])
 
     ax_scatter.set_title('Scatter-plot of min-max angles')
     ax_scatter.set_xlabel('Min angle (radians)')
