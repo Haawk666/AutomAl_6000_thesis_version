@@ -83,7 +83,6 @@ class MainUI(QtWidgets.QMainWindow):
 
         # Create menu bar
         GUI_elements.MenuBar(self.menuBar(), self)
-        # GUI_elements.MenuBar(self.menuBar(), self)
 
         # Generate elements
         self.setWindowTitle('AACC - Automatic Atomic Column Characterizer - By Haakon Tvedt @ NTNU. Version {}.{}.{}'.
@@ -100,7 +99,7 @@ class MainUI(QtWidgets.QMainWindow):
     # ----------
 
     def set_species(self, h):
-        """Set atmoic species of selected column"""
+        """Set atomic species of selected column"""
         if self.project_loaded and not self.selected_column == -1:
 
             # Update relevant graphics:
@@ -125,6 +124,13 @@ class MainUI(QtWidgets.QMainWindow):
 
             # Update control window info:
             self.control_window.lbl_column_level.setText('Level: {}'.format(level))
+
+    # ----------
+    # Self state methods:
+    # ----------
+
+    def update_display(self):
+        pass
 
     # ----------
     # Keyboard press methods methods:
@@ -293,8 +299,47 @@ class MainUI(QtWidgets.QMainWindow):
         pass
 
     # ----------
-    # Button triggers:
+    # Set button triggers:
     # ----------
+
+    def btn_set_threshold_trigger(self):
+        pass
+
+    def btn_set_search_size_trigger(self):
+        pass
+
+    def btn_set_scale_trigger(self):
+        pass
+
+    def btn_set_alloy_trigger(self):
+        pass
+
+    def btn_set_start_trigger(self):
+        pass
+
+    def btn_set_std_1_trigger(self):
+        pass
+
+    def btn_set_std_2_trigger(self):
+        pass
+
+    def btn_set_std_3_trigger(self):
+        pass
+
+    def btn_set_std_4_trigger(self):
+        pass
+
+    def btn_set_std_5_trigger(self):
+        pass
+
+    def btn_set_std_8_trigger(self):
+        pass
+
+    def btn_set_cert_threshold_trigger(self):
+        pass
+
+    def btn_find_column_trigger(self):
+        pass
 
     def btn_set_species_trigger(self):
         """Btn-trigger: Run 'set species' dialog."""
@@ -337,7 +382,67 @@ class MainUI(QtWidgets.QMainWindow):
                 self.set_level(level)
 
     # ----------
-    # Self state methods:
+    # Other button triggers:
     # ----------
+
+    def btn_cancel_move_trigger(self):
+        pass
+
+    def btn_set_position_trigger(self):
+        pass
+
+    def btn_show_stats_trigger(self):
+        pass
+
+    def btn_view_image_title_trigger(self):
+        pass
+
+    def btn_export_overlay_image_trigger(self):
+        pass
+
+    def btn_continue_detection_trigger(self):
+        pass
+
+    def btn_restart_detection_trigger(self):
+        pass
+
+    def btn_continue_analysis_trigger(self):
+        pass
+
+    def btn_restart_analysis_trigger(self):
+        pass
+
+    def btn_invert_levels_trigger(self):
+        pass
+
+    def btn_delete_trigger(self):
+        pass
+
+    def btn_gen_sub_graph(self):
+        pass
+
+    def btn_deselect_trigger(self):
+        pass
+
+    def btn_new_column_trigger(self):
+        pass
+
+    def btn_set_style_trigger(self):
+        pass
+
+    def btn_set_indices_trigger(self):
+        pass
+
+    def btn_set_indices_2_trigger(self):
+        pass
+
+    def btn_set_perturb_mode_trigger(self):
+        pass
+
+    def btn_plot_variance_trigger(self):
+        pass
+
+    def btn_plot_angles_trigger(self):
+        pass
 
 

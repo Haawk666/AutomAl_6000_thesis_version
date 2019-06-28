@@ -10,11 +10,11 @@
 # ----------------------------------------
 #
 
-import legacy_GUI
+import GUI
 from PyQt5 import QtWidgets
 import sys
 
 app = QtWidgets.QApplication(sys.argv)
-program = legacy_GUI.MainUI()
+program = GUI.MainUI()
 sys.exit(app.exec_())
 

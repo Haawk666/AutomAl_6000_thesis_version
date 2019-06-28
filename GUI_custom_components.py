@@ -2,13 +2,8 @@
 """Module container for low-level custom GUI-elements"""
 
 from PyQt5 import QtWidgets, QtGui, QtCore
-import legacy_GUI
-import sys
 import numpy as np
-import mat_op
-import core
-import GUI_elements
-import utils
+import GUI_settings
 
 
 class InteractiveColumn(QtWidgets.QGraphicsEllipseItem):
@@ -34,7 +29,7 @@ class InteractiveColumn(QtWidgets.QGraphicsEllipseItem):
         self.ui_obj = ui_obj
         self.r = ui_obj.project_instance.r
         self.i = i
-        self.vertex = self.ui_obj.project_instance.grapg.vertices[self.i]
+        self.vertex = self.ui_obj.project_instance.graph.vertices[self.i]
         self.center_coor = self.vertex.real_coor()
         self.center_coor[0] -= self.r
         self.center_coor[1] -= self.r
@@ -57,13 +52,14 @@ class InteractivePosColumn(InteractiveColumn):
         Inherits GUI_custom_components.InteractiveColumn. Is used to highlight atomic positions."""
         super().__init__(*args)
 
-        self.selected_pen = QtGui.QPen(QtCore.Qt.yellow)
-        self.selected_pen.setWidth(3)
-        self.transparent_brush = QtGui.QBrush(QtCore.Qt.transparent)
-        self.unselected_pen = QtGui.QPen(QtCore.Qt.red)
-        self.unselected_pen.setWidth(1)
-        self.hidden_pen = QtGui.QPen(QtCore.Qt.darkRed)
-        self.hidden_pen.setWidth(1)
+        self.selected_pen = GUI_settings.pen_selected_2
+        self.selected_brush = GUI_settings.brush_selected_2
+
+        self.unselected_pen = GUI_settings.pen_atom_pos
+        self.unselected_brush = GUI_settings.brush_atom_pos
+
+        self.hidden_pen = GUI_settings.pen_atom_pos_hidden
+        self.hidden_brush = GUI_settings.brush_atom_pos_hidden
 
         self.set_style()
 
@@ -71,12 +67,14 @@ class InteractivePosColumn(InteractiveColumn):
         """Set the appearance of the shape"""
         if self.i == self.ui_obj.selected_column:
             self.setPen(self.selected_pen)
+            self.setBrush(self.selected_brush)
         else:
             if self.vertex.show_in_overlay:
                 self.setPen(self.hidden_pen)
+                self.setBrush(self.hidden_brush)
             else:
                 self.setPen(self.unselected_pen)
-        self.setBrush(self.transparent_brush)
+                self.setBrush(self.hidden_brush)
 
 
 class InteractiveOverlayColumn(InteractiveColumn):
@@ -87,39 +85,24 @@ class InteractiveOverlayColumn(InteractiveColumn):
         Inherits GUI_custom_components.InteractiveColumn. Is used to highlight atomic positions."""
         super().__init__(*args)
 
-        self.brush_black = QtGui.QBrush(QtCore.Qt.black)
+        self.pen_cu = GUI_settings.pen_cu
+        self.pen_si = GUI_settings.pen_si
+        self.pen_zn = GUI_settings.pen_zn
+        self.pen_al = GUI_settings.pen_al
+        self.pen_mg = GUI_settings.pen_mg
+        self.pen_ag = GUI_settings.pen_ag
+        self.pen_un = GUI_settings.pen_un
+        self.selected_pen = GUI_settings.pen_selected_1
 
-        self.pen_al = QtGui.QPen(QtCore.Qt.green)
-        self.pen_al.setWidth(5)
-        self.brush_al = QtGui.QBrush(QtCore.Qt.green)
-
-        self.pen_mg = QtGui.QPen(QtGui.QColor(143, 0, 255))
-        self.pen_mg.setWidth(5)
-        self.brush_mg = QtGui.QBrush(QtGui.QColor(143, 0, 255))
-
-        self.pen_si = QtGui.QPen(QtCore.Qt.red)
-        self.pen_si.setWidth(5)
-        self.brush_si = QtGui.QBrush(QtCore.Qt.red)
-
-        self.pen_cu = QtGui.QPen(QtCore.Qt.yellow)
-        self.pen_cu.setWidth(5)
-        self.brush_cu = QtGui.QBrush(QtCore.Qt.yellow)
-
-        self.pen_zn = QtGui.QPen(QtGui.QColor(100, 100, 100))
-        self.pen_zn.setWidth(5)
-        self.brush_zn = QtGui.QBrush(QtGui.QColor(100, 100, 100))
-
-        self.pen_ag = QtGui.QPen(QtGui.QColor(200, 200, 200))
-        self.pen_ag.setWidth(5)
-        self.brush_ag = QtGui.QBrush(QtGui.QColor(200, 200, 200))
-
-        self.pen_un = QtGui.QPen(QtCore.Qt.blue)
-        self.pen_un.setWidth(5)
-        self.brush_un = QtGui.QBrush(QtCore.Qt.blue)
-
-        self.selected_pen = QtGui.QPen(QtCore.Qt.darkCyan)
-        self.selected_pen.setWidth(6)
-        self.brush_selected = QtGui.QBrush(QtCore.Qt.darkCyan)
+        self.brush_cu = GUI_settings.brush_cu
+        self.brush_si = GUI_settings.brush_si
+        self.brush_al = GUI_settings.brush_al
+        self.brush_zn = GUI_settings.brush_zn
+        self.brush_mg = GUI_settings.brush_mg
+        self.brush_ag = GUI_settings.brush_ag
+        self.brush_un = GUI_settings.brush_un
+        self.brush_selected = GUI_settings.brush_selected_1
+        self.brush_black = GUI_settings.brush_black
 
         self.set_style()
 
@@ -174,13 +157,10 @@ class InteractiveGraphColumn(InteractiveColumn):
         Inherits GUI_custom_components.InteractiveColumn. Is used to highlight atomic positions."""
         super().__init__(*args)
 
-        self.selected_pen = QtGui.QPen(QtCore.Qt.blue)
-        self.selected_pen.setWidth(3)
-        self.transparent_brush = QtGui.QBrush(QtCore.Qt.white)
-        self.opaque_brush = QtGui.QBrush(QtCore.Qt.black)
-        self.selected_brush = QtGui.QBrush(QtCore.Qt.blue)
-        self.unselected_pen = QtGui.QPen(QtCore.Qt.black)
-        self.unselected_pen.setWidth(1)
+        self.selected_pen = GUI_settings.pen_selected_1
+        self.unselected_pen = GUI_settings.pen_graph
+        self.level_0_brush = GUI_settings.brush_graph_0
+        self.level_1_brush = GUI_settings.brush_graph_1
 
         self.set_style()
 
@@ -188,25 +168,22 @@ class InteractiveGraphColumn(InteractiveColumn):
         """Set the appearance of the shape"""
         if self.i == self.ui_obj.selected_column:
             self.setPen(self.selected_pen)
-            self.setBrush(self.selected_brush)
         else:
             self.setPen(self.unselected_pen)
-            if self.vertex.level == 0:
-                self.setBrush(self.transparent_brush)
-            else:
-                self.setBrush(self.opaque_brush)
+
+        if self.vertex.level == 0:
+            self.setBrush(self.level_0_brush)
+        else:
+            self.setBrush(self.level_1_brush)
 
 
 class Arrow:
 
     def __init__(self, p1, p2, r, scale_factor, consistent, dislocation):
 
-        self.inconsistent_pen = QtGui.QPen(QtCore.Qt.red)
-        self.inconsistent_pen.setWidth(3)
-        self.dislocation_pen = QtGui.QPen(QtCore.Qt.blue)
-        self.dislocation_pen.setWidth(3)
-        self.normal_pen = QtGui.QPen(QtCore.Qt.black)
-        self.normal_pen.setWidth(1)
+        self.inconsistent_pen = GUI_settings.pen_inconsistent_edge
+        self.dislocation_pen = GUI_settings.pen_dislocation_edge
+        self.normal_pen = GUI_settings.pen_edge
 
         self.arrow = None, None
         self.make_arrow_obj(p1, p2, r, scale_factor)
@@ -271,6 +248,94 @@ class Arrow:
         head_2 = QtWidgets.QGraphicsPolygonItem(poly_2)
 
         self.arrow = line, head_2
+
+
+class SmallButton(QtWidgets.QPushButton):
+
+    def __init__(self, *args, trigger_func=None):
+        super().__init__(*args)
+
+        self.font_tiny = QtGui.QFont()
+        self.font_tiny.setPixelSize(9)
+
+        self.trigger_func = trigger_func
+        self.clicked.connect(trigger_func)
+
+        self.setMaximumHeight(15)
+        self.setMaximumWidth(50)
+        self.setFont(self.font_tiny)
+
+
+class MediumButton(QtWidgets.QPushButton):
+
+    def __init__(self, *args, trigger_func=None):
+        super().__init__(*args)
+
+        self.font_tiny = QtGui.QFont()
+        self.font_tiny.setPixelSize(9)
+
+        self.trigger_func = trigger_func
+        self.clicked.connect(trigger_func)
+
+        self.setMaximumHeight(20)
+        self.setMaximumWidth(200)
+        self.setFont(self.font_tiny)
+
+
+class SetButton(QtWidgets.QPushButton):
+
+    def __init__(self, obj, trigger_func=None):
+        super().__init__('Set', obj)
+
+        self.font_tiny = QtGui.QFont()
+        self.font_tiny.setPixelSize(9)
+
+        self.trigger_func = trigger_func
+        self.clicked.connect(trigger_func)
+
+        self.setMaximumHeight(15)
+        self.setMaximumWidth(30)
+        self.setFont(self.font_tiny)
+
+
+class SetButtonLayout(QtWidgets.QHBoxLayout):
+
+    def __init__(self, *args, obj=None, trigger_func=None, label=None):
+        super().__init__(*args)
+
+        self.addWidget(SetButton(obj, trigger_func))
+        self.addWidget(label)
+        self.addStrech()
+
+
+class GroupBox(QtWidgets.QGroupBox):
+
+    def __init__(self, title):
+        super().__init__(title)
+
+        self.setStyleSheet('QGroupBox { font-weight: bold; } ')
+        self.setLayout(QtWidgets.QVBoxLayout())
+
+        self.shadow_box = QtWidgets.QGroupBox(title)
+        self.shadow_box.setStyleSheet('QGroupBox { font-weight: bold; } ')
+        self.shadow_box.hide()
+
+        self.visible = True
+
+    def toggle(self):
+
+        if self.visible:
+            self.visible = False
+            self.hide()
+            self.shadow_box.show()
+        else:
+            self.visible = True
+            self.show()
+            self.shadow_box.hide()
+
+
+
+
 
 
 

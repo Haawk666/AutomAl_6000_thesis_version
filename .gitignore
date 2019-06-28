@@ -9,6 +9,9 @@ vcs.xml
 AACC.iml
 .idea/
 
+# Sphinx stuff
+Docs/builds/
+
 # AACC-generated stuff:
 log_test.log
 Images/Outputs/Buffers/

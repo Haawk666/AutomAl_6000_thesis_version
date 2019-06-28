@@ -11,7 +11,7 @@ import numpy as np
 import numpy.core._dtype_ctypes  # This is needed because of a bug in pyinstaller
 import mat_op
 import core
-import GUI_elements
+import legacy_GUI_elements
 import utils
 import dev_module
 
@@ -36,11 +36,11 @@ class MainUI(QtWidgets.QMainWindow):
         self.previous_vertex_obj = None
 
         # Lists of graphical objects
-        dummy_instance = GUI_elements.InteractivePosColumn(0, 0, 0, 0)
+        dummy_instance = legacy_GUI_elements.InteractivePosColumn(0, 0, 0, 0)
         self.pos_objects = np.ndarray([1], dtype=type(dummy_instance))
-        dummy_instance = GUI_elements.InteractiveOverlayColumn(0, 0, 0, 0)
+        dummy_instance = legacy_GUI_elements.InteractiveOverlayColumn(0, 0, 0, 0)
         self.overlay_objects = np.ndarray([1], dtype=type(dummy_instance))
-        dummy_instance = GUI_elements.InteractiveGraphVertex(0, 0, 0, 0)
+        dummy_instance = legacy_GUI_elements.InteractiveGraphVertex(0, 0, 0, 0)
         self.vertex_objects = np.ndarray([1], dtype=type(dummy_instance))
         self.sub_vertex_objects = np.ndarray([1], dtype=type(dummy_instance))
 
@@ -118,7 +118,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.font_tiny.setPixelSize(9)
 
         # Create menu bar
-        GUI_elements.MenuBar(self.menuBar(), self)
+        legacy_GUI_elements.MenuBar(self.menuBar(), self)
 
         # Generate elements
         self.setWindowTitle(
@@ -143,13 +143,13 @@ class MainUI(QtWidgets.QMainWindow):
         self.graphicScene_6.addPixmap(self.graphic)
         self.graphicScene_7 = QtWidgets.QGraphicsScene()
         self.graphicScene_7.addPixmap(self.graphic)
-        self.graphicsView_1 = GUI_elements.ZGraphicsView(self.graphicScene_1, self.key_press)
-        self.graphicsView_2 = GUI_elements.ZGraphicsView(self.graphicScene_2, self.key_press)
-        self.graphicsView_3 = GUI_elements.ZGraphicsView(self.graphicScene_3, self.key_press)
-        self.graphicsView_4 = GUI_elements.ZGraphicsView(self.graphicScene_4, self.key_press)
-        self.graphicsView_5 = GUI_elements.ZGraphicsView(self.graphicScene_5, self.key_press)
-        self.graphicsView_6 = GUI_elements.ZGraphicsView(self.graphicScene_6, self.key_press)
-        self.graphicsView_7 = GUI_elements.ZGraphicsView(self.graphicScene_7, self.key_press)
+        self.graphicsView_1 = legacy_GUI_elements.ZGraphicsView(self.graphicScene_1, self.key_press)
+        self.graphicsView_2 = legacy_GUI_elements.ZGraphicsView(self.graphicScene_2, self.key_press)
+        self.graphicsView_3 = legacy_GUI_elements.ZGraphicsView(self.graphicScene_3, self.key_press)
+        self.graphicsView_4 = legacy_GUI_elements.ZGraphicsView(self.graphicScene_4, self.key_press)
+        self.graphicsView_5 = legacy_GUI_elements.ZGraphicsView(self.graphicScene_5, self.key_press)
+        self.graphicsView_6 = legacy_GUI_elements.ZGraphicsView(self.graphicScene_6, self.key_press)
+        self.graphicsView_7 = legacy_GUI_elements.ZGraphicsView(self.graphicScene_7, self.key_press)
 
         self.tabs = QtWidgets.QTabWidget()
 
@@ -165,7 +165,7 @@ class MainUI(QtWidgets.QMainWindow):
 
         # Generate control window
 
-        self.control_window = GUI_elements.ControlWindow(obj=self)
+        self.control_window = legacy_GUI_elements.ControlWindow(obj=self)
 
         self.info_display_area = QtWidgets.QScrollArea()
         self.info_display_area.setWidget(self.control_window)
@@ -179,7 +179,7 @@ class MainUI(QtWidgets.QMainWindow):
 
         self.addDockWidget(QtCore.Qt.LeftDockWidgetArea, self.info_display)
 
-        self.terminal_window = GUI_elements.Terminal()
+        self.terminal_window = legacy_GUI_elements.Terminal()
 
         self.btn_save_log = QtWidgets.QPushButton('Save log', self)
         self.btn_save_log.clicked.connect(self.save_log_trigger)
@@ -452,7 +452,7 @@ class MainUI(QtWidgets.QMainWindow):
 
             if self.project_instance.graph.vertices[self.selected_column].neighbour_indices is not None:
 
-                dialog = GUI_elements.SetIndicesDialog()
+                dialog = legacy_GUI_elements.SetIndicesDialog()
                 dialog.reference_object(self, self.selected_column)
                 dialog.gen_layout()
                 dialog.exec_()
@@ -463,7 +463,7 @@ class MainUI(QtWidgets.QMainWindow):
 
             if self.project_instance.graph.vertices[self.selected_column].neighbour_indices is not None:
 
-                dialog = GUI_elements.SetIndicesManuallyDialog()
+                dialog = legacy_GUI_elements.SetIndicesManuallyDialog()
                 dialog.reference_object(self, self.selected_column)
                 dialog.gen_layout()
                 dialog.exec_()
@@ -1424,16 +1424,19 @@ class MainUI(QtWidgets.QMainWindow):
         self.control_window.lbl_search_size.setText('Search size: ' + str(self.project_instance.search_size))
         self.control_window.lbl_scale.setText('Scale (pm / pixel): ' + str(self.project_instance.scale))
         self.control_window.lbl_overhead_radii.setText('Overhead (pixels): ' + str(self.project_instance.overhead))
+
         chi = self.project_instance.graph.calc_chi()
         avg_species_confidence = self.project_instance.graph.calc_avg_species_confidence()
         avg_symmetry_confidence = self.project_instance.graph.calc_avg_symmetry_confidence()
         avg_level_confidence = self.project_instance.graph.calc_avg_level_confidence()
         avg_variance = self.project_instance.graph.calc_avg_central_angle_variance()
+
         self.control_window.lbl_chi.setText('Chi: ' + str(chi))
         self.control_window.lbl_avg_species_confidence.setText('Average species confidence: ' + str(avg_species_confidence))
         self.control_window.lbl_avg_symmetry_confidence.setText('Average symmetry confidence: ' + str(avg_symmetry_confidence))
         self.control_window.lbl_avg_level_confidence.setText('Average level confidence: ' + str(avg_level_confidence))
         self.control_window.lbl_avg_variance.setText('Average angle variance: ' + str(avg_variance))
+
         if self.project_instance.alloy == 0:
             self.control_window.lbl_alloy.setText('Alloy: Al-Mg-Si-(Cu)')
         elif self.project_instance.alloy == 1:
@@ -1457,13 +1460,13 @@ class MainUI(QtWidgets.QMainWindow):
 
         r = self.project_instance.r
 
-        dummy_instance = GUI_elements.InteractivePosColumn(0, 0, 0, 0)
+        dummy_instance = legacy_GUI_elements.InteractivePosColumn(0, 0, 0, 0)
         self.pos_objects = np.ndarray([1], dtype=type(dummy_instance))
 
         if self.project_instance.num_columns > 0:
             for i in range(0, self.project_instance.num_columns):
 
-                custom_ellipse_pos = GUI_elements.InteractivePosColumn(0, 0, 2 * r, 2 * r)
+                custom_ellipse_pos = legacy_GUI_elements.InteractivePosColumn(0, 0, 2 * r, 2 * r)
                 custom_ellipse_pos.moveBy(self.project_instance.graph.vertices[i].real_coor_x - r,
                                           self.project_instance.graph.vertices[i].real_coor_y - r)
                 custom_ellipse_pos.reference_object(self, i)
@@ -1499,13 +1502,13 @@ class MainUI(QtWidgets.QMainWindow):
 
             r = self.project_instance.r
 
-            dummy_instance = GUI_elements.InteractiveOverlayColumn(0, 0, 0, 0)
+            dummy_instance = legacy_GUI_elements.InteractiveOverlayColumn(0, 0, 0, 0)
             self.overlay_objects = np.ndarray([1], dtype=type(dummy_instance))
 
             if self.project_instance.num_columns > 0:
                 for i in range(0, self.project_instance.num_columns):
 
-                    custom_ellipse_overlay = GUI_elements.InteractiveOverlayColumn(0, 0, r, r)
+                    custom_ellipse_overlay = legacy_GUI_elements.InteractiveOverlayColumn(0, 0, r, r)
                     custom_ellipse_overlay.moveBy(self.project_instance.graph.vertices[i].im_coor_x - np.round(r / 2),
                                                   self.project_instance.graph.vertices[i].im_coor_y - np.round(r / 2))
                     custom_ellipse_overlay.reference_object(self, i)
@@ -1662,7 +1665,7 @@ class MainUI(QtWidgets.QMainWindow):
 
             # Draw vertices
 
-            dummy_instance = GUI_elements.InteractiveGraphVertex(0, 0, 0, 0)
+            dummy_instance = legacy_GUI_elements.InteractiveGraphVertex(0, 0, 0, 0)
             self.vertex_objects = np.ndarray([1], dtype=type(dummy_instance))
 
             for i in range(0, self.project_instance.num_columns):
@@ -1682,7 +1685,7 @@ class MainUI(QtWidgets.QMainWindow):
 
     def draw_vertex(self, r, scale_factor, i):
 
-        custom_ellipse_overlay = GUI_elements.InteractiveGraphVertex(0, 0, r, r)
+        custom_ellipse_overlay = legacy_GUI_elements.InteractiveGraphVertex(0, 0, r, r)
         custom_ellipse_overlay.moveBy(
             2 * scale_factor * self.project_instance.graph.vertices[i].real_coor_x - r / 2,
             2 * scale_factor * self.project_instance.graph.vertices[i].real_coor_y - r / 2)

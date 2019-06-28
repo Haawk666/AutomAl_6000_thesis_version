@@ -194,6 +194,15 @@ class SuchSoftware:
         # Initialize an empty graph
         self.graph = graph.AtomicGraph(map_size=self.map_size)
 
+    def alloy_string(self):
+
+        if self.alloy == 0:
+            return 'Alloy: Al-Mg-Si-(Cu)'
+        elif self.alloy == 1:
+            return 'Alloy: Al-Mg-Si'
+        else:
+            return 'Alloy: Unknown'
+
     def set_verbose_level(self, debug_mode):
 
         self.debug_mode = debug_mode
