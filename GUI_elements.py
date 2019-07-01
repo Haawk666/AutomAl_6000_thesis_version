@@ -2,7 +2,6 @@
 """Module container for high-level custom GUI-elements"""
 
 from PyQt5 import QtWidgets, QtGui, QtCore
-import numpy as np
 import graph_op
 import GUI_custom_components
 import GUI_settings
@@ -351,32 +350,32 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_legend.setChecked(True)
         self.chb_scalebar.setChecked(False)
 
-        self.chb_precipitate_column.toggled.connect(self.ui_obj.toggle_precipitate_trigger)
-        self.chb_show.toggled.connect(self.ui_obj.toggle_show_trigger)
-        self.chb_move.toggled.connect(self.ui_obj.move_trigger)
+        self.chb_precipitate_column.toggled.connect(self.ui_obj.chb_placeholder_trigger)
+        self.chb_show.toggled.connect(self.ui_obj.chb_placeholder_trigger)
+        self.chb_move.toggled.connect(self.ui_obj.chb_placeholder_trigger)
 
-        self.chb_graph.toggled.connect(self.ui_obj.toggle_graph_detail_trigger)
+        self.chb_graph.toggled.connect(self.ui_obj.chb_placeholder_trigger)
 
-        self.chb_raw_image.toggled.connect(self.ui_obj.update_central_widget)
-        self.chb_black_background.toggled.connect(self.ui_obj.update_central_widget)
-        self.chb_structures.toggled.connect(self.ui_obj.update_central_widget)
-        self.chb_boarders.toggled.connect(self.ui_obj.update_central_widget)
-        self.chb_si_columns.toggled.connect(self.ui_obj.toggle_si_trigger)
-        self.chb_si_network.toggled.connect(self.ui_obj.update_central_widget)
-        self.chb_cu_columns.toggled.connect(self.ui_obj.toggle_cu_trigger)
-        self.chb_cu_network.toggled.connect(self.ui_obj.update_central_widget)
-        self.chb_al_columns.toggled.connect(self.ui_obj.toggle_al_trigger)
-        self.chb_al_network.toggled.connect(self.ui_obj.update_central_widget)
-        self.chb_ag_columns.toggled.connect(self.ui_obj.toggle_ag_trigger)
-        self.chb_ag_network.toggled.connect(self.ui_obj.update_central_widget)
-        self.chb_mg_columns.toggled.connect(self.ui_obj.toggle_mg_trigger)
-        self.chb_mg_network.toggled.connect(self.ui_obj.update_central_widget)
-        self.chb_un_columns.toggled.connect(self.ui_obj.toggle_un_trigger)
-        self.chb_columns.toggled.connect(self.ui_obj.toggle_column_trigger)
-        self.chb_al_mesh.toggled.connect(self.ui_obj.toggle_al_mesh_trigger)
-        self.chb_neighbours.toggled.connect(self.ui_obj.update_central_widget)
-        self.chb_legend.toggled.connect(self.ui_obj.update_central_widget)
-        self.chb_scalebar.toggled.connect(self.ui_obj.update_central_widget)
+        self.chb_raw_image.toggled.connect(self.ui_obj.chb_placeholder_trigger)
+        self.chb_black_background.toggled.connect(self.ui_obj.chb_placeholder_trigger)
+        self.chb_structures.toggled.connect(self.ui_obj.chb_placeholder_trigger)
+        self.chb_boarders.toggled.connect(self.ui_obj.chb_placeholder_trigger)
+        self.chb_si_columns.toggled.connect(self.ui_obj.chb_placeholder_trigger)
+        self.chb_si_network.toggled.connect(self.ui_obj.chb_placeholder_trigger)
+        self.chb_cu_columns.toggled.connect(self.ui_obj.chb_placeholder_trigger)
+        self.chb_cu_network.toggled.connect(self.ui_obj.chb_placeholder_trigger)
+        self.chb_al_columns.toggled.connect(self.ui_obj.chb_placeholder_trigger)
+        self.chb_al_network.toggled.connect(self.ui_obj.chb_placeholder_trigger)
+        self.chb_ag_columns.toggled.connect(self.ui_obj.chb_placeholder_trigger)
+        self.chb_ag_network.toggled.connect(self.ui_obj.chb_placeholder_trigger)
+        self.chb_mg_columns.toggled.connect(self.ui_obj.chb_placeholder_trigger)
+        self.chb_mg_network.toggled.connect(self.ui_obj.chb_placeholder_trigger)
+        self.chb_un_columns.toggled.connect(self.ui_obj.chb_placeholder_trigger)
+        self.chb_columns.toggled.connect(self.ui_obj.chb_placeholder_trigger)
+        self.chb_al_mesh.toggled.connect(self.ui_obj.chb_placeholder_trigger)
+        self.chb_neighbours.toggled.connect(self.ui_obj.chb_placeholder_trigger)
+        self.chb_legend.toggled.connect(self.ui_obj.chb_placeholder_trigger)
+        self.chb_scalebar.toggled.connect(self.ui_obj.chb_placeholder_trigger)
 
         # The Set values buttons
         self.btn_set_threshold_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_threshold_trigger, label=self.lbl_detection_threshold)
@@ -474,7 +473,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.image_box_layout.addWidget(self.lbl_image_height)
         self.image_box_layout.addWidget(self.lbl_num_detected_columns)
         self.image_box = GUI_custom_components.GroupBox('Image')
-        self.image_box.setLayout(self.info_display_layout_1)
+        self.image_box.setLayout(self.image_box_layout)
 
         self.debug_box_layout = QtWidgets.QVBoxLayout()
         self.debug_box_layout.addLayout(btn_debug_btns_layout)
@@ -486,7 +485,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.debug_box_layout.addLayout(self.btn_set_std_5_layout)
         self.debug_box_layout.addLayout(self.btn_set_std_8_layout)
         self.debug_box_layout.addLayout(self.btn_set_cert_threshold_layout)
-        self.debug_box = QtWidgets.QGroupBox('Advanced debug mode')
+        self.debug_box = GUI_custom_components.GroupBox('Advanced debug mode')
         self.debug_box.setLayout(self.debug_box_layout)
 
         self.alg_1_box_layout = QtWidgets.QVBoxLayout()
@@ -714,7 +713,7 @@ class ControlWindow(QtWidgets.QWidget):
         box_seperation = 10
         box_displacement = 25
 
-        if self.ui_obj.project_loaded and not self.ui_obj.selected_column == -1:
+        if not self.ui_obj.selected_column == -1:
 
             si_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].prob_vector[0])
             cu_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].prob_vector[1])
@@ -746,12 +745,12 @@ class ControlWindow(QtWidgets.QWidget):
         si_box.setY(100 - box_height)
         si_text = QtWidgets.QGraphicsSimpleTextItem()
         si_text.setText('Si')
-        si_text.setFont(self.font_tiny)
+        si_text.setFont(GUI_settings.font_tiny)
         si_text.setX(x_box + 3)
         si_text.setY(100 + 4)
         si_number = QtWidgets.QGraphicsSimpleTextItem()
         si_number.setText(str(box_height / 100))
-        si_number.setFont(self.font_tiny)
+        si_number.setFont(GUI_settings.font_tiny)
         si_number.setX(x_box - 1)
         si_number.setY(100 - box_height - 10)
 
@@ -763,12 +762,12 @@ class ControlWindow(QtWidgets.QWidget):
         cu_box.setY(100 - box_height)
         cu_text = QtWidgets.QGraphicsSimpleTextItem()
         cu_text.setText('Cu')
-        cu_text.setFont(self.font_tiny)
+        cu_text.setFont(GUI_settings.font_tiny)
         cu_text.setX(x_box + 2)
         cu_text.setY(100 + 4)
         cu_number = QtWidgets.QGraphicsSimpleTextItem()
         cu_number.setText(str(box_height / 100))
-        cu_number.setFont(self.font_tiny)
+        cu_number.setFont(GUI_settings.font_tiny)
         cu_number.setX(x_box - 1)
         cu_number.setY(100 - box_height - 10)
 
@@ -780,12 +779,12 @@ class ControlWindow(QtWidgets.QWidget):
         zn_box.setY(100 - box_height)
         zn_text = QtWidgets.QGraphicsSimpleTextItem()
         zn_text.setText('Zn')
-        zn_text.setFont(self.font_tiny)
+        zn_text.setFont(GUI_settings.font_tiny)
         zn_text.setX(x_box + 2)
         zn_text.setY(100 + 4)
         zn_number = QtWidgets.QGraphicsSimpleTextItem()
         zn_number.setText(str(box_height / 100))
-        zn_number.setFont(self.font_tiny)
+        zn_number.setFont(GUI_settings.font_tiny)
         zn_number.setX(x_box - 1)
         zn_number.setY(100 - box_height - 10)
 
@@ -797,12 +796,12 @@ class ControlWindow(QtWidgets.QWidget):
         al_box.setY(100 - box_height)
         al_text = QtWidgets.QGraphicsSimpleTextItem()
         al_text.setText('Al')
-        al_text.setFont(self.font_tiny)
+        al_text.setFont(GUI_settings.font_tiny)
         al_text.setX(x_box + 2)
         al_text.setY(100 + 4)
         al_number = QtWidgets.QGraphicsSimpleTextItem()
         al_number.setText(str(box_height / 100))
-        al_number.setFont(self.font_tiny)
+        al_number.setFont(GUI_settings.font_tiny)
         al_number.setX(x_box - 1)
         al_number.setY(100 - box_height - 10)
 
@@ -814,12 +813,12 @@ class ControlWindow(QtWidgets.QWidget):
         ag_box.setY(100 - box_height)
         ag_text = QtWidgets.QGraphicsSimpleTextItem()
         ag_text.setText('Ag')
-        ag_text.setFont(self.font_tiny)
+        ag_text.setFont(GUI_settings.font_tiny)
         ag_text.setX(x_box + 2)
         ag_text.setY(100 + 4)
         ag_number = QtWidgets.QGraphicsSimpleTextItem()
         ag_number.setText(str(box_height / 100))
-        ag_number.setFont(self.font_tiny)
+        ag_number.setFont(GUI_settings.font_tiny)
         ag_number.setX(x_box - 1)
         ag_number.setY(100 - box_height - 10)
 
@@ -831,12 +830,12 @@ class ControlWindow(QtWidgets.QWidget):
         mg_box.setY(100 - box_height)
         mg_text = QtWidgets.QGraphicsSimpleTextItem()
         mg_text.setText('Mg')
-        mg_text.setFont(self.font_tiny)
+        mg_text.setFont(GUI_settings.font_tiny)
         mg_text.setX(x_box + 2)
         mg_text.setY(100 + 4)
         mg_number = QtWidgets.QGraphicsSimpleTextItem()
         mg_number.setText(str(box_height / 100))
-        mg_number.setFont(self.font_tiny)
+        mg_number.setFont(GUI_settings.font_tiny)
         mg_number.setX(x_box - 1)
         mg_number.setY(100 - box_height - 10)
 
@@ -848,12 +847,12 @@ class ControlWindow(QtWidgets.QWidget):
         un_box.setY(100 - box_height)
         un_text = QtWidgets.QGraphicsSimpleTextItem()
         un_text.setText('Un')
-        un_text.setFont(self.font_tiny)
+        un_text.setFont(GUI_settings.font_tiny)
         un_text.setX(x_box + 2)
         un_text.setY(100 + 4)
         un_number = QtWidgets.QGraphicsSimpleTextItem()
         un_number.setText(str(box_height / 100))
-        un_number.setFont(self.font_tiny)
+        un_number.setFont(GUI_settings.font_tiny)
         un_number.setX(x_box - 1)
         un_number.setY(100 - box_height - 10)
 

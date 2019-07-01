@@ -4,14 +4,11 @@ interface."""
 
 from PyQt5 import QtWidgets, QtGui, QtCore
 import sys
+import logging
 import numpy as np
-import numpy.core._dtype_ctypes  # This is needed because of a bug in pyinstaller
-import mat_op
 import core
 import GUI_elements
-import utils
-import dev_module
-import logging
+import mat_op
 
 # Instantiate logger
 logger = logging.getLogger(__name__)
@@ -49,6 +46,7 @@ class MainUI(QtWidgets.QMainWindow):
 
         # Tab contents:
         self.no_graphic = QtGui.QPixmap('Images\\no_image.png')
+        self.graphic = QtGui.QPixmap('Images\\no_image.png')
 
         # gs = QGraphicsView
         self.gs_raw_image = GUI_elements.RawImage(ui_obj=self, background=self.no_graphic)
@@ -84,12 +82,29 @@ class MainUI(QtWidgets.QMainWindow):
         # Create menu bar
         GUI_elements.MenuBar(self.menuBar(), self)
 
+        # Create Control window
+        self.control_window = GUI_elements.ControlWindow(obj=self)
+
+        self.control_window_scroll = QtWidgets.QScrollArea()
+        self.control_window_scroll.setWidget(self.control_window)
+        self.control_window_scroll.setWidgetResizable(True)
+        self.control_window_scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+
+        self.control_window_dock = QtWidgets.QDockWidget()
+        self.control_window_dock.setWidget(self.control_window_scroll)
+        self.control_window_dock.setWindowTitle('Control window')
+        self.control_window_dock.setMinimumWidth(300)
+
+        self.addDockWidget(QtCore.Qt.LeftDockWidgetArea, self.control_window_dock)
+
         # Generate elements
         self.setWindowTitle('AACC - Automatic Atomic Column Characterizer - By Haakon Tvedt @ NTNU. Version {}.{}.{}'.
                             format(self.version[0], self.version[1], self.version[2]))
         self.resize(1500, 900)
         self.move(50, 30)
         self.statusBar().showMessage('Ready')
+
+        self.debug_mode = False
 
         # Display
         self.show()
@@ -125,12 +140,61 @@ class MainUI(QtWidgets.QMainWindow):
             # Update control window info:
             self.control_window.lbl_column_level.setText('Level: {}'.format(level))
 
+    def receive_console_output(self, string, update):
+        if not string == '':
+            self.terminal_window.appendPlainText(string)
+            self.terminal_window.repaint()
+        else:
+            self.terminal_window.repaint()
+        if update:
+            self.update_display()
+
+    def report(self, string, force=False):
+        if self.debug_mode or force:
+            pass
+
     # ----------
     # Self state methods:
     # ----------
 
     def update_display(self):
+        self.update_central_widget()
+        self.update_control_window()
+
+    def update_central_widget(self):
+        self.update_raw_image()
+        self.update_column_positions()
+        self.update_overlay()
+        self.update_graph()
+        self.update_search_matrix()
+        self.update_FFT()
+
+    def update_raw_image(self):
+        mat_op.im_out_static(self.project_instance.im_mat.astype(np.float64), 'Images\Outputs\Buffers\\raw_image.png')
+        self.graphic = QtGui.QPixmap('Images\Outputs\Buffers\\raw_image.png')
+        self.gs_raw_image = GUI_elements.RawImage(ui_obj=self, background=self.graphic)
+        self.gv_raw_image = GUI_elements.ZoomGraphicsView(self.gs_raw_image)
+
+    def update_column_positions(self):
         pass
+
+    def update_overlay(self):
+        pass
+
+    def update_graph(self):
+        pass
+
+    def update_sub_graph(self):
+        pass
+
+    def update_search_matrix(self):
+        pass
+
+    def update_FFT(self):
+        pass
+
+    def update_control_window(self):
+        self.control_window.update_display()
 
     # ----------
     # Keyboard press methods methods:
@@ -197,7 +261,25 @@ class MainUI(QtWidgets.QMainWindow):
         pass
 
     def menu_open_trigger(self):
-        pass
+        filename = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', '')
+        if filename[0]:
+            self.statusBar().showMessage('Working...')
+            self.project_instance = core.SuchSoftware.load(filename[0])
+            if self.project_instance is not None:
+                self.project_instance.debug_obj = self.receive_console_output
+                if self.control_window.debug_box.isVisible():
+                    self.project_instance.debug_mode = True
+                else:
+                    self.project_instance.debug_mode = False
+                self.control_instance = None
+                self.project_loaded = True
+                self.savefile = filename[0]
+                self.update_display()
+                self.report('Loaded {}'.format(filename[0]), force=True)
+            else:
+                self.report('File was not loaded. Something must have gone wrong!', force=True)
+        else:
+            self.statusBar().showMessage('Ready')
 
     def menu_save_trigger(self):
         pass
@@ -445,4 +527,9 @@ class MainUI(QtWidgets.QMainWindow):
     def btn_plot_angles_trigger(self):
         pass
 
+    # ----------
+    # Checkbox triggers:
+    # ----------
 
+    def chb_placeholder_trigger(self):
+        pass

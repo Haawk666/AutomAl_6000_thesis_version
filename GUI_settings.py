@@ -1,5 +1,8 @@
 from PyQt5 import QtGui, QtCore
 
+font_tiny = QtGui.QFont()
+font_tiny.setPixelSize(9)
+
 pen_boarder = QtGui.QPen(QtCore.Qt.black)
 pen_boarder.setWidth(1)
 

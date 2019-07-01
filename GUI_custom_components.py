@@ -255,15 +255,12 @@ class SmallButton(QtWidgets.QPushButton):
     def __init__(self, *args, trigger_func=None):
         super().__init__(*args)
 
-        self.font_tiny = QtGui.QFont()
-        self.font_tiny.setPixelSize(9)
-
         self.trigger_func = trigger_func
         self.clicked.connect(trigger_func)
 
         self.setMaximumHeight(15)
         self.setMaximumWidth(50)
-        self.setFont(self.font_tiny)
+        self.setFont(GUI_settings.font_tiny)
 
 
 class MediumButton(QtWidgets.QPushButton):
@@ -271,15 +268,12 @@ class MediumButton(QtWidgets.QPushButton):
     def __init__(self, *args, trigger_func=None):
         super().__init__(*args)
 
-        self.font_tiny = QtGui.QFont()
-        self.font_tiny.setPixelSize(9)
-
         self.trigger_func = trigger_func
         self.clicked.connect(trigger_func)
 
         self.setMaximumHeight(20)
         self.setMaximumWidth(200)
-        self.setFont(self.font_tiny)
+        self.setFont(GUI_settings.font_tiny)
 
 
 class SetButton(QtWidgets.QPushButton):
@@ -287,15 +281,12 @@ class SetButton(QtWidgets.QPushButton):
     def __init__(self, obj, trigger_func=None):
         super().__init__('Set', obj)
 
-        self.font_tiny = QtGui.QFont()
-        self.font_tiny.setPixelSize(9)
-
         self.trigger_func = trigger_func
         self.clicked.connect(trigger_func)
 
         self.setMaximumHeight(15)
         self.setMaximumWidth(30)
-        self.setFont(self.font_tiny)
+        self.setFont(GUI_settings.font_tiny)
 
 
 class SetButtonLayout(QtWidgets.QHBoxLayout):
@@ -305,7 +296,7 @@ class SetButtonLayout(QtWidgets.QHBoxLayout):
 
         self.addWidget(SetButton(obj, trigger_func))
         self.addWidget(label)
-        self.addStrech()
+        self.addStretch()
 
 
 class GroupBox(QtWidgets.QGroupBox):
@@ -314,13 +305,13 @@ class GroupBox(QtWidgets.QGroupBox):
         super().__init__(title)
 
         self.setStyleSheet('QGroupBox { font-weight: bold; } ')
-        self.setLayout(QtWidgets.QVBoxLayout())
 
         self.shadow_box = QtWidgets.QGroupBox(title)
         self.shadow_box.setStyleSheet('QGroupBox { font-weight: bold; } ')
         self.shadow_box.hide()
 
         self.visible = True
+        self.show()
 
     def toggle(self):
 
@@ -332,6 +323,18 @@ class GroupBox(QtWidgets.QGroupBox):
             self.visible = True
             self.show()
             self.shadow_box.hide()
+
+    def set_visible(self):
+
+        self.visible = True
+        self.show()
+        self.shadow_box.hide()
+
+    def set_hidden(self):
+
+        self.visible = False
+        self.hide()
+        self.shadow_box.show()
 
 
 
