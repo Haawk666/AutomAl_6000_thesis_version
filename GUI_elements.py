@@ -94,12 +94,15 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
 
     def re_draw_vertices(self):
         """Redraws all column elements."""
+        self.interactive_vertex_objects = []
         for vertex in self.ui_obj.project_instance.graph.vertices:
             self.interactive_vertex_objects.append(GUI_custom_components.InteractiveGraphColumn(self.ui_obj, vertex.i, vertex.r, self.scale_factor))
             self.addItem(self.interactive_vertex_objects[-1])
 
     def re_draw_edges(self, r):
         """Redraws all edge elements."""
+        self.ui_obj.project_instance.graph.redraw_edges()
+        self.edges = []
         for edge in self.ui_obj.project_instance.graph.edges:
             consistent = edge.is_reciprocated
             dislocation = not edge.is_legal_levels
@@ -154,9 +157,10 @@ class AtomicSubGraph(QtWidgets.QGraphicsScene):
 class ZoomGraphicsView(QtWidgets.QGraphicsView):
     """An adaptation of QtWidgets.QGraphicsView that supports zooming"""
 
-    def __init__(self, parent=None, ui_obj=None):
+    def __init__(self, parent=None, ui_obj=None, trigger_func=None):
         super(ZoomGraphicsView, self).__init__(parent)
         self.ui_obj = ui_obj
+        self.trigger_func = trigger_func
 
     def wheelEvent(self, event):
 
@@ -193,8 +197,8 @@ class ZoomGraphicsView(QtWidgets.QGraphicsView):
             super(ZoomGraphicsView, self).wheelEvent(event)
 
     def keyPressEvent(self, event):
-        if self.ui_obj is not None:
-            self.ui_obj.key_press_trigger(event.key())
+        if self.trigger_func is not None:
+            self.trigger_func(event.key())
 
 
 # ----------
@@ -612,12 +616,19 @@ class ControlWindow(QtWidgets.QWidget):
         # Top level layout
         self.info_display_layout = QtWidgets.QVBoxLayout()
         self.info_display_layout.addWidget(self.image_box)
+        self.info_display_layout.addWidget(self.image_box.shadow_box)
         self.info_display_layout.addWidget(self.debug_box)
+        self.info_display_layout.addWidget(self.debug_box.shadow_box)
         self.info_display_layout.addWidget(self.alg_1_box)
+        self.info_display_layout.addWidget(self.alg_1_box.shadow_box)
         self.info_display_layout.addWidget(self.alg_2_box)
+        self.info_display_layout.addWidget(self.alg_2_box.shadow_box)
         self.info_display_layout.addWidget(self.column_box)
+        self.info_display_layout.addWidget(self.column_box.shadow_box)
         self.info_display_layout.addWidget(self.graph_box)
+        self.info_display_layout.addWidget(self.graph_box.shadow_box)
         self.info_display_layout.addWidget(self.overlay_box)
+        self.info_display_layout.addWidget(self.overlay_box.shadow_box)
         self.info_display_layout.addStretch()
 
         self.setLayout(self.info_display_layout)

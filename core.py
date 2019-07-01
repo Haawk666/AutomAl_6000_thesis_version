@@ -167,17 +167,18 @@ class SuchSoftware:
         self.certainty_threshold = 0.8
         self.overhead = int(6 * (self.r / 10))
 
-        self.dist_1_std = 20.0
-        self.dist_2_std = 18.0
-        self.dist_3_std = 0.4
-        self.dist_4_std = 0.34
-        self.dist_5_std = 0.48
-        self.dist_8_std = 1.2
-
         # Initialize an empty graph
         self.graph = graph.AtomicGraph(map_size=self.map_size)
 
         logger.info('Generated instance from {}'.format(filename_full))
+
+        # DEPRECATED:
+        self.dist_1_std = 0
+        self.dist_2_std = 0
+        self.dist_3_std = 0
+        self.dist_4_std = 0
+        self.dist_5_std = 0
+        self.dist_8_std = 0
 
     def alloy_string(self):
 
@@ -404,11 +405,10 @@ class SuchSoftware:
 
     def save(self, filename_full):
         with open(filename_full, 'wb') as f:
-            _ = self.debug_obj
             self.debug_obj = None
             self.version_saved = self.version
             pickle.dump(self, f, pickle.HIGHEST_PROTOCOL)
-            self.debug_obj = _
+        logger.info('Saved {}'.format(filename_full))
 
     @staticmethod
     def load(filename_full):
@@ -474,8 +474,8 @@ class SuchSoftware:
             self.column_circumference_mat = mat_op.draw_circle(self.column_circumference_mat, x_fit_pix, y_fit_pix,
                                                                self.r)
 
-            self.report(str(counter) + ': (' + str(x_fit_real_coor) + ', ' + str(y_fit_real_coor) + ') | (' + str(
-                pos[1]) + ', ' + str(pos[0]) + ')', force=False)
+            logger.debug(str(counter) + ': (' + str(x_fit_real_coor) + ', ' + str(y_fit_real_coor) + ') | (' + str(
+                pos[1]) + ', ' + str(pos[0]) + ')')
 
             self.num_columns += 1
             self.num_un += 1
@@ -1009,7 +1009,7 @@ class SuchSoftware:
 
         elif search_type == 16:
 
-            self.report('Running experimental angle analysis', force=True)
+            logger.info('Running experimental angle analysis')
 
             for i in range(0, self.num_columns):
                 if not self.graph.vertices[i].set_by_user and not self.graph.vertices[i].is_edge_column:
@@ -1018,14 +1018,11 @@ class SuchSoftware:
                     print('vertex {}: --------------------'.format(i))
                     print('    Reset to: {}'.format(self.graph.vertices[i].prob_vector))
                     self.graph.vertices[i].prob_vector =\
-                        graph_op.base_angle_score(self.graph, i, self.dist_3_std, self.dist_4_std, self.dist_5_std)
+                        graph_op.base_angle_score(self.graph, i)
                     self.graph.vertices[i].prob_vector = np.array(self.graph.vertices[i].prob_vector)
                     self.graph.vertices[i].define_species()
-                    # self.graph.vertices[i].symmetry_vector =\
-                        # graph_op.mesh_angle_score(self.graph, i, self.dist_3_std, self.dist_4_std, self.dist_5_std)
-                    # self.graph.vertices[i].multiply_symmetry()
 
-            self.report('Angle analysis complete!', force=True)
+            logger.info('Angle analysis complete!')
 
         elif search_type == 17:
 
@@ -1350,7 +1347,7 @@ class SuchSoftware:
                 self.column_centre_mat[self.graph.vertices[x].im_coor_y, self.graph.vertices[x].im_coor_x, 1] = x
 
     def reset_graph(self):
-        self.graph = graph.AtomicGraph
+        self.graph = graph.AtomicGraph()
         self.num_columns = 0
         self.redraw_centre_mat()
         self.redraw_circumference_mat()

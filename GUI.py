@@ -45,13 +45,13 @@ class MainUI(QtWidgets.QMainWindow):
         self.gs_fft = GUI_elements.RawImage(ui_obj=self, background=self.no_graphic)
 
         # gv = QGraphicsView
-        self.gv_raw_image = GUI_elements.ZoomGraphicsView(self.gs_raw_image)
-        self.gv_atomic_positions = GUI_elements.ZoomGraphicsView(self.gs_atomic_positions)
-        self.gv_overlay_composition = GUI_elements.ZoomGraphicsView(self.gs_overlay_composition)
-        self.gv_atomic_graph = GUI_elements.ZoomGraphicsView(self.gs_atomic_graph)
-        self.gv_atomic_sub_graph = GUI_elements.ZoomGraphicsView(self.gs_atomic_sub_graph)
-        self.gv_search_matrix = GUI_elements.ZoomGraphicsView(self.gs_search_matrix)
-        self.gv_fft = GUI_elements.ZoomGraphicsView(self.gs_fft)
+        self.gv_raw_image = GUI_elements.ZoomGraphicsView(self.gs_raw_image, ui_obj=self, trigger_func=self.key_press_trigger)
+        self.gv_atomic_positions = GUI_elements.ZoomGraphicsView(self.gs_atomic_positions, ui_obj=self, trigger_func=self.key_press_trigger)
+        self.gv_overlay_composition = GUI_elements.ZoomGraphicsView(self.gs_overlay_composition, ui_obj=self, trigger_func=self.key_press_trigger)
+        self.gv_atomic_graph = GUI_elements.ZoomGraphicsView(self.gs_atomic_graph, ui_obj=self, trigger_func=self.key_press_trigger)
+        self.gv_atomic_sub_graph = GUI_elements.ZoomGraphicsView(self.gs_atomic_sub_graph, ui_obj=self, trigger_func=self.key_press_trigger)
+        self.gv_search_matrix = GUI_elements.ZoomGraphicsView(self.gs_search_matrix, ui_obj=self, trigger_func=self.key_press_trigger)
+        self.gv_fft = GUI_elements.ZoomGraphicsView(self.gs_fft, ui_obj=self, trigger_func=self.key_press_trigger)
 
         # Set up tabs for central widget
         self.tabs = QtWidgets.QTabWidget()
@@ -126,27 +126,24 @@ class MainUI(QtWidgets.QMainWindow):
     def set_species(self, h):
         """Set atomic species of selected column"""
         if self.project_loaded and not self.selected_column == -1:
-
             # Update relevant graphics:
             self.project_instance.graph.vertices[self.selected_column].force_species(h)
             self.gs_overlay_composition.interactive_overlay_objects[self.selected_column].set_style()
-
             # Update control window info:
             self.control_window.lbl_column_species.setText(
                 'Atomic species: ' + self.project_instance.graph.vertices[self.selected_column].atomic_species)
             self.control_window.lbl_confidence.setText(
                 'Confidence: ' + str(self.project_instance.graph.vertices[self.selected_column].confidence))
             self.control_window.draw_histogram()
+            self.control_window.lbl_prob_vector.setText('Probability vector: {}'.format(self.project_instance.graph.vertices[self.selected_column].prob_vector))
 
     def set_level(self, level):
         """Set level of selected column"""
         if self.project_loaded and not self.selected_column == -1:
-
             # Update relevant graphics:
             self.project_instance.graph.vertices[self.selected_column].level = level
             self.gs_overlay_composition.interactive_overlay_objects[self.selected_column].set_style()
             self.gs_atomic_graph.interactive_vertex_objects[self.selected_column].set_style()
-
             # Update control window info:
             self.control_window.lbl_column_level.setText('Level: {}'.format(level))
 
@@ -157,6 +154,7 @@ class MainUI(QtWidgets.QMainWindow):
     def update_display(self):
         self.update_central_widget()
         self.update_control_window()
+        self.statusBar().showMessage('Ready.')
 
     def update_central_widget(self):
         if self.project_instance is not None:
@@ -271,8 +269,7 @@ class MainUI(QtWidgets.QMainWindow):
                 elif key == QtCore.Qt.Key_4:
                     self.set_species(5)
                 elif key == QtCore.Qt.Key_Plus:
-                    self.project_instance.graph.vertices[self.selected_column].level = \
-                        self.project_instance.graph.vertices[self.selected_column].anti_level()
+                    self.set_level(self.project_instance.graph.vertices[self.selected_column].anti_level())
                 elif key == QtCore.Qt.Key_W and self.control_window.chb_move.isChecked():
                     self.pos_objects[self.selected_column].moveBy(0.0, -1.0)
                     self.overlay_objects[self.selected_column].moveBy(0.0, -1.0)
@@ -333,7 +330,17 @@ class MainUI(QtWidgets.QMainWindow):
             self.statusBar().showMessage('Ready')
 
     def menu_save_trigger(self):
-        pass
+        if self.savefile is None:
+            filename = QtWidgets.QFileDialog.getSaveFileName(self, 'Save file', '')
+        else:
+            filename = QtWidgets.QFileDialog.getSaveFileName(self, 'Save file', self.savefile)
+
+        if filename[0]:
+            self.statusBar().showMessage('Working...')
+            self.project_instance.save(filename[0])
+            self.update_display()
+        else:
+            self.statusBar().showMessage('Ready')
 
     def menu_close_trigger(self):
         self.btn_cancel_move_trigger()
@@ -344,19 +351,22 @@ class MainUI(QtWidgets.QMainWindow):
         self.update_display()
 
     def menu_exit_trigger(self):
-        pass
+        self.close()
 
     def menu_view_image_title_trigger(self):
-        pass
+        logger.info(self.project_instance.filename_full)
 
     def menu_show_stats_trigger(self):
         pass
 
     def menu_update_display(self):
-        pass
+        self.update_display()
 
-    def menu_toggle_image_control_trigger(self):
-        pass
+    def menu_toggle_image_control_trigger(self, state):
+        if state:
+            self.control_window.image_box.set_visible()
+        else:
+            self.control_window.image_box.set_hidden()
 
     def menu_toggle_alg_1_control_trigger(self):
         pass
@@ -584,10 +594,19 @@ class MainUI(QtWidgets.QMainWindow):
         pass
 
     def btn_save_log_trigger(self):
-        pass
+        filename = QtWidgets.QFileDialog.getSaveFileName(self, 'Save file', '')
+        if filename[0]:
+            self.statusBar().showMessage('Working...')
+            logger.info('Saving log file...')
+            string = self.terminal_window.toPlainText()
+            with open(filename[0], 'w') as f:
+                for line in iter(string.splitlines()):
+                    f.write(line)
+            f.close()
+            logger.info('Saved log to {}'.format(filename[0]))
 
     def btn_clear_log_trigger(self):
-        pass
+        self.terminal_window.handler.widget.clear()
 
     # ----------
     # Checkbox triggers:

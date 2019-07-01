@@ -299,6 +299,16 @@ class SetButtonLayout(QtWidgets.QHBoxLayout):
         self.addStretch()
 
 
+class ShadowBox(QtWidgets.QGroupBox):
+
+    def __init__(self, title, obj=None):
+        super().__init__(title)
+        self.ui_obj = obj
+
+    def rewrite_this_shit(self):
+        pass
+
+
 class GroupBox(QtWidgets.QGroupBox):
 
     def __init__(self, title):
@@ -311,10 +321,8 @@ class GroupBox(QtWidgets.QGroupBox):
         self.shadow_box.hide()
 
         self.visible = True
-        self.show()
 
     def toggle(self):
-
         if self.visible:
             self.visible = False
             self.hide()
@@ -325,16 +333,17 @@ class GroupBox(QtWidgets.QGroupBox):
             self.shadow_box.hide()
 
     def set_visible(self):
-
         self.visible = True
         self.show()
         self.shadow_box.hide()
 
     def set_hidden(self):
-
         self.visible = False
         self.hide()
         self.shadow_box.show()
+
+    def mouseDoubleClickEvent(self, *args):
+        self.toggle()
 
 
 
