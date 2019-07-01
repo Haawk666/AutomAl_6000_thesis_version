@@ -162,39 +162,85 @@ class MainUI(QtWidgets.QMainWindow):
         self.update_control_window()
 
     def update_central_widget(self):
-        self.update_raw_image()
-        self.update_column_positions()
-        self.update_overlay()
+        if self.project_instance is not None:
+            mat_op.im_out_static(self.project_instance.im_mat.astype(np.float64), 'Images\Outputs\Buffers\\raw_image.png')
+            mat_op.im_out_static(self.project_instance.search_mat.astype(np.float64), 'Images\Outputs\Buffers\search_image.png')
+            mat_op.im_out_static(self.project_instance.fft_im_mat.astype(np.float64), 'Images\Outputs\Buffers\FFT.png')
+            void = False
+        else:
+            void = True
+        self.update_raw_image(void=void)
+        self.update_column_positions(void=void)
+        self.update_overlay(void=void)
         self.update_graph()
-        self.update_search_matrix()
-        self.update_FFT()
+        self.update_search_matrix(void=void)
+        self.update_fft(void=void)
 
-    def update_raw_image(self):
-        mat_op.im_out_static(self.project_instance.im_mat.astype(np.float64), 'Images\Outputs\Buffers\\raw_image.png')
-        self.graphic = QtGui.QPixmap('Images\Outputs\Buffers\\raw_image.png')
-        self.gs_raw_image = GUI_elements.RawImage(ui_obj=self, background=self.graphic)
-        self.gv_raw_image = GUI_elements.ZoomGraphicsView(self.gs_raw_image)
+    def update_raw_image(self, void=False):
+        if void:
+            graphic_ = self.no_graphic
+        else:
+            graphic_ = QtGui.QPixmap('Images\Outputs\Buffers\\raw_image.png')
+        self.gs_raw_image = GUI_elements.RawImage(ui_obj=self, background=graphic_)
+        self.gv_raw_image.setScene(self.gs_raw_image)
 
-    def update_column_positions(self):
-        pass
+    def update_column_positions(self, void=False):
+        if void:
+            graphic_ = self.no_graphic
+        else:
+            graphic_ = QtGui.QPixmap('Images\Outputs\Buffers\\raw_image.png')
+        self.gs_atomic_positions = GUI_elements.AtomicPositions(ui_obj=self, background=graphic_)
+        self.gs_atomic_positions.re_draw()
+        self.gv_atomic_positions.setScene(self.gs_atomic_positions)
 
-    def update_overlay(self):
-        pass
+    def update_overlay(self, void=False):
+        if void:
+            graphic_ = self.no_graphic
+        else:
+            graphic_ = QtGui.QPixmap('Images\Outputs\Buffers\\raw_image.png')
+        self.gs_overlay_composition = GUI_elements.OverlayComposition(ui_obj=self, background=graphic_)
+        self.gs_overlay_composition.re_draw()
+        self.gv_overlay_composition.setScene(self.gs_overlay_composition)
 
     def update_graph(self):
-        pass
+        self.gs_atomic_graph = GUI_elements.AtomicGraph(ui_obj=self, scale_factor=2)
+        self.gs_atomic_graph.re_draw()
+        self.gv_atomic_graph.setScene(self.gs_atomic_graph)
 
     def update_sub_graph(self):
         pass
 
-    def update_search_matrix(self):
-        pass
+    def update_search_matrix(self, void=False):
+        if void:
+            graphic_ = self.no_graphic
+        else:
+            graphic_ = QtGui.QPixmap('Images\Outputs\Buffers\search_image.png')
+        self.gs_raw_image = GUI_elements.RawImage(ui_obj=self, background=graphic_)
+        self.gv_search_matrix.setScene(self.gs_raw_image)
 
-    def update_FFT(self):
-        pass
+    def update_fft(self, void=False):
+        if void:
+            graphic_ = self.no_graphic
+        else:
+            graphic_ = QtGui.QPixmap('Images\Outputs\Buffers\FFT.png')
+        self.gs_raw_image = GUI_elements.RawImage(ui_obj=self, background=graphic_)
+        self.gv_fft.setScene(self.gs_raw_image)
 
     def update_control_window(self):
         self.control_window.update_display()
+
+    def column_selected(self, i):
+        self.previous_selected_column, self.selected_column = self.selected_column, i
+        self.control_window.select_column()
+        if not i == -1:
+            j = self.previous_selected_column
+            if not j == -1:
+                self.gs_atomic_positions.interactive_position_objects[j].set_style()
+                self.gs_overlay_composition.interactive_overlay_objects[j].set_style()
+                self.gs_atomic_graph.interactive_vertex_objects[j].set_style()
+            self.gs_atomic_positions.interactive_position_objects[i].set_style()
+            self.gs_overlay_composition.interactive_overlay_objects[i].set_style()
+            self.gs_atomic_graph.interactive_vertex_objects[i].set_style()
 
     # ----------
     # Keyboard press methods methods:
@@ -285,7 +331,12 @@ class MainUI(QtWidgets.QMainWindow):
         pass
 
     def menu_close_trigger(self):
-        pass
+        self.btn_cancel_move_trigger()
+        self.column_selected(-1)
+        self.project_instance = None
+        self.control_instance = None
+        self.project_loaded = False
+        self.update_display()
 
     def menu_exit_trigger(self):
         pass

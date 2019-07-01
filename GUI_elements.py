@@ -40,9 +40,11 @@ class AtomicPositions(QtWidgets.QGraphicsScene):
 
     def re_draw(self):
         """Redraw contents."""
-        for vertex in self.ui_obj.project_instance.graph.vertices:
-            self.interactive_position_objects.append(GUI_custom_components.InteractivePosColumn(self.ui_obj, vertex.i))
-            self.addItem(self.interactive_position_objects[-1])
+        self.interactive_position_objects = []
+        if self.ui_obj.project_instance is not None:
+            for vertex in self.ui_obj.project_instance.graph.vertices:
+                self.interactive_position_objects.append(GUI_custom_components.InteractivePosColumn(self.ui_obj, vertex.i, 2 * vertex.r))
+                self.addItem(self.interactive_position_objects[-1])
 
 
 class OverlayComposition(QtWidgets.QGraphicsScene):
@@ -60,9 +62,11 @@ class OverlayComposition(QtWidgets.QGraphicsScene):
 
     def re_draw(self):
         """Redraw contents."""
-        for vertex in self.ui_obj.project_instance.graph.vertices:
-            self.interactive_overlay_objects.append(GUI_custom_components.InteractiveOverlayColumn(self.ui_obj, vertex.i))
-            self.addItem(self.interactive_overlay_objects[-1])
+        self.interactive_overlay_objects = []
+        if self.ui_obj.project_instance is not None:
+            for vertex in self.ui_obj.project_instance.graph.vertices:
+                self.interactive_overlay_objects.append(GUI_custom_components.InteractiveOverlayColumn(self.ui_obj, vertex.i, vertex.r))
+                self.addItem(self.interactive_overlay_objects[-1])
 
 
 class AtomicGraph(QtWidgets.QGraphicsScene):
@@ -73,7 +77,6 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
         super().__init__(*args)
 
         self.ui_obj = ui_obj
-        self.r = self.ui_obj.project_instance.r
         self.scale_factor = scale_factor
         self.interactive_vertex_objects = []
         self.edges = []
@@ -84,23 +87,24 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
 
     def re_draw(self):
         """Redraw contents."""
-        self.re_draw_vertices()
-        self.re_draw_edges()
+        if self.ui_obj.project_instance is not None:
+            self.re_draw_edges(self.ui_obj.project_instance.r)
+            self.re_draw_vertices()
 
     def re_draw_vertices(self):
         """Redraws all column elements."""
         for vertex in self.ui_obj.project_instance.graph.vertices:
-            self.interactive_vertex_objects.append(GUI_custom_components.InteractiveGraphColumn(self.ui_obj, vertex.i))
+            self.interactive_vertex_objects.append(GUI_custom_components.InteractiveGraphColumn(self.ui_obj, vertex.i, vertex.r, self.scale_factor))
             self.addItem(self.interactive_vertex_objects[-1])
 
-    def re_draw_edges(self):
+    def re_draw_edges(self, r):
         """Redraws all edge elements."""
         for edge in self.ui_obj.project_instance.graph.edges:
             consistent = edge.is_reciprocated
             dislocation = not edge.is_legal_levels
             p1 = edge.vertex_a.real_coor()
             p2 = edge.vertex_b.real_coor()
-            self.edges.append(GUI_custom_components.Arrow(p1, p2, self.r, self.scale_factor, consistent, dislocation))
+            self.edges.append(GUI_custom_components.Arrow(p1, p2, r, self.scale_factor, consistent, dislocation))
             self.addItem(self.edges[-1].arrow[0])
             self.addItem(self.edges[-1].arrow[1])
 
@@ -124,8 +128,9 @@ class AtomicSubGraph(QtWidgets.QGraphicsScene):
 
     def re_draw(self):
         """Redraw contents."""
-        self.re_draw_vertices()
-        self.re_draw_edges()
+        if self.ui_obj.project_instance is not None:
+            self.re_draw_vertices()
+            self.re_draw_edges()
 
     def re_draw_vertices(self):
         """Redraws all column elements."""
@@ -897,38 +902,38 @@ class ControlWindow(QtWidgets.QWidget):
             vertex = self.ui_obj.project_instance.graph.vertices[i]
 
             self.lbl_column_index.setText('Column index: {}'.format(i))
-            self.lbl_column_x_pos.setText('x: {}'.format(vertex.im_coor_x()))
-            self.lbl_column_y_pos.setText('y: {}'.format(vertex.im_coor_y()))
-            self.lbl_column_peak_gamma.setText('Peak gamma: {}'.format())
-            self.lbl_column_avg_gamma.setText('Avg gamma: {}'.format())
-            self.lbl_column_species.setText('Atomic species: {}'.format())
-            self.lbl_column_level.setText('Level: {}'.format())
-            self.lbl_confidence.setText('Confidence: {}'.format())
-            self.lbl_symmetry_confidence.setText('Symmetry confidence: {}'.format())
-            self.lbl_level_confidence.setText('Level confidence: {}'.format())
-            self.lbl_prob_vector.setText('Probability vector: {}'.format())
-            self.lbl_neighbours.setText('Nearest neighbours: {}'.format())
-            *_, variance = self.project_instance.graph.calc_central_angle_variance(self.selected_column)
+            self.lbl_column_x_pos.setText('x: {}'.format(vertex.im_coor_x))
+            self.lbl_column_y_pos.setText('y: {}'.format(vertex.im_coor_y))
+            self.lbl_column_peak_gamma.setText('Peak gamma: {}'.format(vertex.peak_gamma))
+            self.lbl_column_avg_gamma.setText('Avg gamma: {}'.format(vertex.avg_gamma))
+            self.lbl_column_species.setText('Atomic species: {}'.format(vertex.species()))
+            self.lbl_column_level.setText('Level: {}'.format(vertex.level))
+            self.lbl_confidence.setText('Confidence: {}'.format(vertex.confidence))
+            self.lbl_symmetry_confidence.setText('Symmetry confidence: {}'.format(vertex.symmetry_confidence))
+            self.lbl_level_confidence.setText('Level confidence: {}'.format(vertex.level_confidence))
+            self.lbl_prob_vector.setText('Probability vector: {}'.format(vertex.prob_vector))
+            self.lbl_neighbours.setText('Nearest neighbours: {}'.format(vertex.neighbour_indices))
+            *_, variance = self.ui_obj.project_instance.graph.calc_central_angle_variance(self.ui_obj.selected_column)
             alpha_max, alpha_min, *_ = graph_op.base_angle_score(self.ui_obj.project_instance.graph, i, apply=False)
-            self.lbl_central_variance.setText('Central angle variance: {}'.format())
-            self.lbl_alpha_max = QtWidgets.QLabel('Alpha max: {}'.format())
-            self.lbl_alpha_min = QtWidgets.QLabel('Alpha min: {}'.format())
+            self.lbl_central_variance.setText('Central angle variance: {}'.format(variance))
+            self.lbl_alpha_max = QtWidgets.QLabel('Alpha max: {}'.format(alpha_max))
+            self.lbl_alpha_min = QtWidgets.QLabel('Alpha min: {}'.format(alpha_min))
 
             self.btn_new.setDisabled(False)
             self.btn_deselect.setDisabled(False)
             self.btn_delete.setDisabled(False)
-            self.btn_set_species.setDisabled(False)
-            self.btn_set_level.setDisabled(False)
-            self.btn_find_column.setDisabled(False)
+            self.btn_set_species_layout.itemAt(0).widget().setDisabled(False)
+            self.btn_set_level_layout.itemAt(0).widget().setDisabled(False)
+            self.btn_find_column_layout.itemAt(0).widget().setDisabled(False)
             self.chb_precipitate_column.setDisabled(False)
             self.chb_show.setDisabled(False)
             self.chb_move.setDisabled(False)
 
             self.chb_show.blockSignals(True)
-            self.chb_show.setChecked(self.project_instance.graph.vertices[i].show_in_overlay)
+            self.chb_show.setChecked(self.ui_obj.project_instance.graph.vertices[i].show_in_overlay)
             self.chb_show.blockSignals(False)
             self.chb_precipitate_column.blockSignals(True)
-            self.chb_precipitate_column.setChecked(self.project_instance.graph.vertices[i].is_in_precipitate)
+            self.chb_precipitate_column.setChecked(self.ui_obj.project_instance.graph.vertices[i].is_in_precipitate)
             self.chb_precipitate_column.blockSignals(False)
             self.chb_move.blockSignals(True)
             self.chb_move.setChecked(False)
@@ -937,22 +942,7 @@ class ControlWindow(QtWidgets.QWidget):
             self.btn_set_move.setDisabled(True)
             self.btn_cancel_move.setDisabled(True)
 
-            if not self.selected_column == -1 and self.control_window.debug_box.isVisible() and not self.project_instance.graph.vertices[self.selected_column].neighbour_indices == []:
-
-                for x in range(0, self.project_instance.graph.vertices[self.selected_column].n()):
-
-                    if self.project_instance.graph.vertices[self.selected_column].neighbour_indices[x] == i:
-
-                        corners, angles, vectors = self.project_instance.graph.find_mesh(self.selected_column, i)
-                        print(str(len(corners)) + ': ' + str(i) + ' ' + str(self.selected_column))
-
-            self.previous_selected_column, self.selected_column  = self.selected_column, i
-
-            if self.control_window.debug_box.isVisible():
-                self.draw_connections(self.selected_column)
-                self.graphicsView_3.setScene(self.graphicScene_3)
-
-            self.control_window.draw_histogram()
+            self.draw_histogram()
 
     def deselect_column(self):
 

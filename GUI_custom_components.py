@@ -13,7 +13,7 @@ class InteractiveColumn(QtWidgets.QGraphicsEllipseItem):
     Inherits PyQt5.QtWidgets.QGraphicsEllipseItem()
     """
 
-    def __init__(self, ui_obj=None, i=-1):
+    def __init__(self, ui_obj=None, i=-1, r=5, scale_factor=1):
 
         """Initialize with optional reference to a MainUI object.
 
@@ -27,21 +27,21 @@ class InteractiveColumn(QtWidgets.QGraphicsEllipseItem):
         """
 
         self.ui_obj = ui_obj
-        self.r = ui_obj.project_instance.r
+        self.r = r
         self.i = i
         self.vertex = self.ui_obj.project_instance.graph.vertices[self.i]
         self.center_coor = self.vertex.real_coor()
-        self.center_coor[0] -= self.r
-        self.center_coor[1] -= self.r
+        self.center_coor = scale_factor * self.center_coor[0] - np.round(self.r / 2), scale_factor * self.center_coor[1] - np.round(self.r / 2)
 
-        super().__init__(0, 0, 2 * self.r, 2 * self.r)
+        super().__init__(0, 0, self.r, self.r)
 
         self.moveBy(self.center_coor[0], self.center_coor[1])
+        self.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable)
 
     def mouseReleaseEvent(self, event: 'QtWidgets.QGraphicsEllipseItem.mouseReleaseEvent'):
 
         """Pass a mouse release event on to the ui_obj reference object"""
-        self.ui_obj.column_selected()
+        self.ui_obj.column_selected(self.i)
 
 
 class InteractivePosColumn(InteractiveColumn):
@@ -206,8 +206,8 @@ class Arrow:
 
     def make_arrow_obj(self, p1, p2, r, scale_factor):
 
-        r_2 = QtCore.QPointF(2 * scale_factor * p2[0], 2 * scale_factor * p2[1])
-        r_1 = QtCore.QPointF(2 * scale_factor * p1[0], 2 * scale_factor * p1[1])
+        r_2 = QtCore.QPointF(scale_factor * p2[0], scale_factor * p2[1])
+        r_1 = QtCore.QPointF(scale_factor * p1[0], scale_factor * p1[1])
 
         r_vec = r_2 - r_1
         r_mag = np.sqrt((r_2.x() - r_1.x()) ** 2 + (r_2.y() - r_1.y()) ** 2)
@@ -240,10 +240,10 @@ class Arrow:
         poly_1 = QtGui.QPolygonF(tri_1)
         poly_2 = QtGui.QPolygonF(tri_2)
 
-        line = QtWidgets.QGraphicsLineItem(2 * scale_factor * p1[0],
-                                           2 * scale_factor * p1[1],
-                                           2 * scale_factor * p2[0],
-                                           2 * scale_factor * p2[1])
+        line = QtWidgets.QGraphicsLineItem(scale_factor * p1[0],
+                                           scale_factor * p1[1],
+                                           scale_factor * p2[0],
+                                           scale_factor * p2[1])
         head_1 = QtWidgets.QGraphicsPolygonItem(poly_1)
         head_2 = QtWidgets.QGraphicsPolygonItem(poly_2)
 
