@@ -2,6 +2,7 @@
 """Module container for high-level custom GUI-elements"""
 
 from PyQt5 import QtWidgets, QtGui, QtCore
+import logging
 import graph_op
 import GUI_custom_components
 import GUI_settings
@@ -199,6 +200,64 @@ class ZoomGraphicsView(QtWidgets.QGraphicsView):
 # ----------
 # Custom Main window tools:
 # ----------
+
+
+class TerminalTextEdit(QtWidgets.QPlainTextEdit):
+
+    def __init__(self, *args):
+        super().__init__(*args)
+
+        self.setReadOnly(True)
+        self.setWordWrapMode(QtGui.QTextOption.NoWrap)
+        self.setLineWrapMode(QtWidgets.QPlainTextEdit.NoWrap)
+
+
+class TerminalHandler(logging.Handler):
+
+    def __init__(self):
+        super().__init__()
+
+        self.widget = TerminalTextEdit()
+
+        self.setLevel(logging.INFO)
+        self.setFormatter(logging.Formatter('%(name)s:%(levelname)s:%(funcName)s:%(message)s'))
+
+    def set_mode(self, debug=False):
+
+        if debug:
+            self.setLevel(logging.DEBUG)
+            self.setFormatter(logging.Formatter('%(name)s: %(levelname)s: %(funcName)s: %(message)s'))
+        else:
+            self.setLevel(logging.INFO)
+            self.setFormatter(logging.Formatter('%(name)s: %(message)s'))
+
+    def emit(self, record):
+        msg = self.format(record)
+        self.widget.appendPlainText(msg)
+
+
+class Terminal(QtWidgets.QWidget):
+
+    def __init__(self, *args, obj=None):
+        super().__init__(*args)
+
+        self.ui_obj = obj
+
+        self.handler = TerminalHandler()
+
+        self.btn_save_log = GUI_custom_components.SmallButton('Save log', self, trigger_func=self.ui_obj.btn_save_log_trigger)
+        self.btn_clear_log = GUI_custom_components.SmallButton('Clear log', self, trigger_func=self.ui_obj.btn_clear_log_trigger)
+
+        self.terminal_btns_layout = QtWidgets.QHBoxLayout()
+        self.terminal_btns_layout.addWidget(self.btn_save_log)
+        self.terminal_btns_layout.addWidget(self.btn_clear_log)
+        self.terminal_btns_layout.addStretch()
+
+        self.terminal_display_layout = QtWidgets.QVBoxLayout()
+        self.terminal_display_layout.addLayout(self.terminal_btns_layout)
+        self.terminal_display_layout.addWidget(self.handler.widget)
+
+        self.setLayout(self.terminal_display_layout)
 
 
 class ControlWindow(QtWidgets.QWidget):

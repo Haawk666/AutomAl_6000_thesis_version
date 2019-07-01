@@ -114,13 +114,13 @@ class InteractiveOverlayColumn(InteractiveColumn):
         else:
             self.setBrush(self.brush_black)
             if self.vertex.h_index == 0:
-                self.setPen(self.pen_cu)
-                if self.vertex.level == 0:
-                    self.setBrush(self.brush_cu)
-            elif self.vertex.h_index == 1:
                 self.setPen(self.pen_si)
                 if self.vertex.level == 0:
                     self.setBrush(self.brush_si)
+            elif self.vertex.h_index == 1:
+                self.setPen(self.pen_cu)
+                if self.vertex.level == 0:
+                    self.setBrush(self.brush_cu)
             elif self.vertex.h_index == 2:
                 self.setPen(self.pen_zn)
                 if self.vertex.level == 0:

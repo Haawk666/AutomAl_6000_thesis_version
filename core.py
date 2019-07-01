@@ -10,7 +10,6 @@ import pickle
 import compatibility
 import legacy_items
 from matplotlib import pyplot as plt
-from matplotlib.gridspec import GridSpec
 import weak_untangling
 import strong_untangling
 import dev_module
@@ -19,22 +18,6 @@ import logging
 # Instantiate logger
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
-
-# Instantiate logging handlers and add formatter
-file_handler = logging.FileHandler('log_test.log')
-file_handler.setLevel(logging.INFO)
-
-stream_handler = logging.StreamHandler(sys.stdout)
-stream_handler.setLevel(logging.INFO)
-
-formatter = logging.Formatter('%(name)s:%(levelname)s:%(funcName)s:%(message)s')
-
-file_handler.setFormatter(formatter)
-stream_handler.setFormatter(formatter)
-
-# Add handler to logger
-logger.addHandler(file_handler)
-logger.addHandler(stream_handler)
 
 
 class SuchSoftware:
@@ -194,6 +177,8 @@ class SuchSoftware:
         # Initialize an empty graph
         self.graph = graph.AtomicGraph(map_size=self.map_size)
 
+        logger.info('Generated instance from {}'.format(filename_full))
+
     def alloy_string(self):
 
         if self.alloy == 0:
@@ -202,14 +187,6 @@ class SuchSoftware:
             return 'Alloy: Al-Mg-Si'
         else:
             return 'Alloy: Unknown'
-
-    def set_verbose_level(self, debug_mode):
-
-        self.debug_mode = debug_mode
-        if self.debug_mode:
-            stream_handler.setLevel(logging.DEBUG)
-        else:
-            stream_handler.setLevel(logging.INFO)
 
     def plot_variances(self):
 
@@ -434,23 +411,25 @@ class SuchSoftware:
             self.debug_obj = _
 
     @staticmethod
-    def load(filename_full, report=None):
+    def load(filename_full):
         with open(filename_full, 'rb') as f:
             try:
                 obj = pickle.load(f)
             except:
                 obj = None
-                if report is not None:
-                    report('core: Failed to load save-file!', update=True)
-                else:
-                    print('core: Failed to load save-file!')
+                logger.error('Failed to load save-file!')
             else:
                 if not obj.version_saved == SuchSoftware.version:
-                    if report is not None:
-                        report('core: Attempted to load uncompatible save-file. Running conversion script...', update=False)
-                    else:
-                        print('core: Attempted to load uncompatible save-file. Running conversion script...')
+                    logger.info('Attempted to load un-compatible save-file. Running conversion script...')
                     obj = compatibility.convert(obj, obj.version_saved, SuchSoftware.version)
+                    if obj is None:
+                        logger.error('Conversion unsuccessful!')
+                        logger.error('Failed to load save-file!')
+                    else:
+                        logger.info('Conversion successful!')
+                        logger.info('Loaded {}'.format(obj.filename_full))
+                else:
+                    logger.info('Loaded {}'.format(obj.filename_full))
             return obj
 
     def column_detection(self, search_type='s'):

@@ -3,7 +3,6 @@
 interface."""
 
 from PyQt5 import QtWidgets, QtGui, QtCore
-import sys
 import logging
 import numpy as np
 import core
@@ -11,21 +10,9 @@ import GUI_elements
 import mat_op
 
 # Instantiate logger
-logger = logging.getLogger(__name__)
+logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
-
-# Instantiate logging handlers and add formatter
-file_handler = logging.FileHandler('log_test.log')
-file_handler.setLevel(logging.INFO)
-stream_handler = logging.StreamHandler(sys.stdout)
-stream_handler.setLevel(logging.INFO)
-formatter = logging.Formatter('%(name)s:%(levelname)s:%(funcName)s:%(message)s')
-file_handler.setFormatter(formatter)
-stream_handler.setFormatter(formatter)
-
-# Add handlers to logger
-logger.addHandler(file_handler)
-logger.addHandler(stream_handler)
+logger.name = 'GUI'
 
 
 class MainUI(QtWidgets.QMainWindow):
@@ -84,6 +71,7 @@ class MainUI(QtWidgets.QMainWindow):
 
         # Create Control window
         self.control_window = GUI_elements.ControlWindow(obj=self)
+        self.control_window.debug_box.set_hidden()
 
         self.control_window_scroll = QtWidgets.QScrollArea()
         self.control_window_scroll.setWidget(self.control_window)
@@ -97,6 +85,23 @@ class MainUI(QtWidgets.QMainWindow):
 
         self.addDockWidget(QtCore.Qt.LeftDockWidgetArea, self.control_window_dock)
 
+        # Create terminal window
+        self.terminal_window = GUI_elements.Terminal(obj=self)
+        self.terminal_window.handler.set_mode(False)
+        logger.addHandler(self.terminal_window.handler)
+
+        self.terminal_window_scroll = QtWidgets.QScrollArea()
+        self.terminal_window_scroll.setWidget(self.terminal_window)
+        self.terminal_window_scroll.setWidgetResizable(True)
+        self.terminal_window_scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+
+        self.terminal_window_dock = QtWidgets.QDockWidget()
+        self.terminal_window_dock.setWidget(self.terminal_window_scroll)
+        self.terminal_window_dock.setWindowTitle('Terminal window')
+        self.terminal_window_dock.setMinimumWidth(300)
+
+        self.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.terminal_window_dock)
+
         # Generate elements
         self.setWindowTitle('AACC - Automatic Atomic Column Characterizer - By Haakon Tvedt @ NTNU. Version {}.{}.{}'.
                             format(self.version[0], self.version[1], self.version[2]))
@@ -108,6 +113,11 @@ class MainUI(QtWidgets.QMainWindow):
 
         # Display
         self.show()
+
+        # Intro
+        logger.info('Welcome to AACC by Haakon Tvedt')
+        logger.info('GUI version: {}.{}.{}'.format(self.version[0], self.version[1], self.version[2]))
+        logger.info('core version: {}.{}.{}\n------------------------'.format(core.SuchSoftware.version[0], core.SuchSoftware.version[1], core.SuchSoftware.version[2]))
 
     # ----------
     # Business logic methods:
@@ -139,19 +149,6 @@ class MainUI(QtWidgets.QMainWindow):
 
             # Update control window info:
             self.control_window.lbl_column_level.setText('Level: {}'.format(level))
-
-    def receive_console_output(self, string, update):
-        if not string == '':
-            self.terminal_window.appendPlainText(string)
-            self.terminal_window.repaint()
-        else:
-            self.terminal_window.repaint()
-        if update:
-            self.update_display()
-
-    def report(self, string, force=False):
-        if self.debug_mode or force:
-            pass
 
     # ----------
     # Self state methods:
@@ -304,7 +301,15 @@ class MainUI(QtWidgets.QMainWindow):
     # ----------
 
     def menu_new_trigger(self):
-        pass
+        filename = QtWidgets.QFileDialog.getOpenFileName(self, 'Select dm3', '')
+        if filename[0]:
+            self.statusBar().showMessage('Working...')
+            self.project_instance = core.SuchSoftware(filename[0])
+            self.control_instance = None
+            self.project_loaded = True
+            self.update_display()
+        else:
+            self.statusBar().showMessage('Ready')
 
     def menu_open_trigger(self):
         filename = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', '')
@@ -312,18 +317,18 @@ class MainUI(QtWidgets.QMainWindow):
             self.statusBar().showMessage('Working...')
             self.project_instance = core.SuchSoftware.load(filename[0])
             if self.project_instance is not None:
-                self.project_instance.debug_obj = self.receive_console_output
-                if self.control_window.debug_box.isVisible():
+                if self.control_window.debug_box.visible:
                     self.project_instance.debug_mode = True
+                    self.terminal_window.handler.set_mode(True)
                 else:
                     self.project_instance.debug_mode = False
+                    self.terminal_window.handler.set_mode(False)
                 self.control_instance = None
                 self.project_loaded = True
                 self.savefile = filename[0]
                 self.update_display()
-                self.report('Loaded {}'.format(filename[0]), force=True)
             else:
-                self.report('File was not loaded. Something must have gone wrong!', force=True)
+                logger.info('File was not loaded. Something must have gone wrong!')
         else:
             self.statusBar().showMessage('Ready')
 
@@ -576,6 +581,12 @@ class MainUI(QtWidgets.QMainWindow):
         pass
 
     def btn_plot_angles_trigger(self):
+        pass
+
+    def btn_save_log_trigger(self):
+        pass
+
+    def btn_clear_log_trigger(self):
         pass
 
     # ----------
