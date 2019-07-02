@@ -399,13 +399,19 @@ class MainUI(QtWidgets.QMainWindow):
             self.control_window.overlay_box.set_hidden()
 
     def menu_image_correction_trigger(self):
-        pass
+        message = QtWidgets.QMessageBox()
+        message.setText('Not implemented yet')
+        message.exec_()
 
     def menu_image_filter_trigger(self):
-        pass
+        message = QtWidgets.QMessageBox()
+        message.setText('Not implemented yet')
+        message.exec_()
 
     def menu_image_adjustments_trigger(self):
-        pass
+        message = QtWidgets.QMessageBox()
+        message.setText('Not implemented yet')
+        message.exec_()
 
     def menu_continue_detection_trigger(self):
         pass
@@ -423,7 +429,21 @@ class MainUI(QtWidgets.QMainWindow):
         pass
 
     def menu_export_raw_image_trigger(self):
-        pass
+        if self.project_loaded:
+            filename = QtWidgets.QFileDialog.getSaveFileName(self, "Save image", '', "PNG (*.png);;BMP Files (*.bmp);;JPEG (*.JPEG)")
+            if filename[0]:
+                self.update_raw_image()
+                rect_f = self.gs_raw_image.sceneRect()
+                img = QtGui.QImage(rect_f.size().toSize(), QtGui.QImage.Format_ARGB32)
+                img.fill(QtCore.Qt.white)
+                p = QtGui.QPainter(img)
+                self.gs_raw_image.render(p, target=QtCore.QRectF(img.rect()), source=rect_f)
+                p.end()
+                saved = img.save(filename[0])
+                if saved:
+                    logger.info('Successfully exported raw image to file!')
+                else:
+                    logger.error('Could not export image!')
 
     def menu_export_column_position_image_trigger(self):
         pass
@@ -434,17 +454,27 @@ class MainUI(QtWidgets.QMainWindow):
     def menu_export_atomic_graph_trigger(self):
         pass
 
-    def menu_toggle_debug_mode_trigger(self):
-        pass
+    def menu_toggle_debug_mode_trigger(self, state):
+        if state:
+            self.control_window.debug_box.set_visible()
+        else:
+            self.control_window.debug_box.set_hidden()
 
     def menu_add_mark_trigger(self):
-        pass
+        logger.info('-------------')
 
     def menu_clear_flags_trigger(self):
-        pass
+        if self.project_instance is not None:
+            self.project_instance.graph.reset_all_flags()
 
     def menu_set_control_file_trigger(self):
-        pass
+        filename = QtWidgets.QFileDialog.getOpenFileName(self, 'Open control file', '')
+        if filename[0]:
+            self.control_instance = core.SuchSoftware.load(filename[0])
+            if self.control_instance is not None:
+                self.project_instance.debug_mode = False
+            else:
+                logger.info('Control-file was not loaded. Something must have gone wrong!')
 
     def menu_run_benchmark_trigger(self):
         pass
@@ -456,13 +486,18 @@ class MainUI(QtWidgets.QMainWindow):
         pass
 
     def menu_invert_precipitate_columns_trigger(self):
-        pass
+        if self.project_loaded:
+            self.project_instance.graph.invert_levels()
+            self.update_central_widget()
+            self.control_window.select_column()
 
     def menu_ad_hoc_trigger(self):
         pass
 
     def menu_there_is_no_help_trigger(self):
-        pass
+        message = QtWidgets.QMessageBox()
+        message.setText('Not implemented yet')
+        message.exec_()
 
     # ----------
     # Set button triggers:
