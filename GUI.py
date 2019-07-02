@@ -67,7 +67,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.setCentralWidget(self.tabs)
 
         # Create menu bar
-        GUI_elements.MenuBar(self.menuBar(), self)
+        self.menu = GUI_elements.MenuBar(self.menuBar(), self)
 
         # Create Control window
         self.control_window = GUI_elements.ControlWindow(obj=self)
@@ -368,17 +368,35 @@ class MainUI(QtWidgets.QMainWindow):
         else:
             self.control_window.image_box.set_hidden()
 
-    def menu_toggle_alg_1_control_trigger(self):
-        pass
+    def menu_toggle_alg_1_control_trigger(self, state):
+        if state:
+            self.control_window.alg_1_box.set_visible()
+        else:
+            self.control_window.alg_1_box.set_hidden()
 
-    def menu_toggle_alg_2_control_trigger(self):
-        pass
+    def menu_toggle_alg_2_control_trigger(self, state):
+        if state:
+            self.control_window.alg_2_box.set_visible()
+        else:
+            self.control_window.alg_2_box.set_hidden()
 
-    def menu_toggle_column_control_trigger(self):
-        pass
+    def menu_toggle_column_control_trigger(self, state):
+        if state:
+            self.control_window.column_box.set_visible()
+        else:
+            self.control_window.column_box.set_hidden()
 
-    def menu_toggle_overlay_control_trigger(self):
-        pass
+    def menu_toggle_graph_control_trigger(self, state):
+        if state:
+            self.control_window.graph_box.set_visible()
+        else:
+            self.control_window.graph_box.set_hidden()
+
+    def menu_toggle_overlay_control_trigger(self, state):
+        if state:
+            self.control_window.overlay_box.set_visible()
+        else:
+            self.control_window.overlay_box.set_hidden()
 
     def menu_image_correction_trigger(self):
         pass

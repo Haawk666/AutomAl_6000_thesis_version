@@ -299,56 +299,43 @@ class SetButtonLayout(QtWidgets.QHBoxLayout):
         self.addStretch()
 
 
-class ShadowBox(QtWidgets.QGroupBox):
-
-    def __init__(self, title, obj=None):
-        super().__init__(title)
-        self.ui_obj = obj
-
-    def rewrite_this_shit(self):
-        pass
-
-
 class GroupBox(QtWidgets.QGroupBox):
 
-    def __init__(self, title):
+    def __init__(self, title, menu_action=None):
         super().__init__(title)
 
+        self.menu_action = menu_action
         self.setStyleSheet('QGroupBox { font-weight: bold; } ')
-
-        self.shadow_box = QtWidgets.QGroupBox(title)
-        self.shadow_box.setStyleSheet('QGroupBox { font-weight: bold; } ')
-        self.shadow_box.hide()
-
         self.visible = True
 
-    def toggle(self):
+    def set_state(self):
         if self.visible:
-            self.visible = False
-            self.hide()
-            self.shadow_box.show()
+            self.menu_action.blockSignals(True)
+            self.menu_action.setChecked(True)
+            self.menu_action.blockSignals(False)
+            for widget in self.children():
+                if widget is not None and widget.isWidgetType():
+                    widget.show()
         else:
-            self.visible = True
-            self.show()
-            self.shadow_box.hide()
+            self.menu_action.blockSignals(True)
+            self.menu_action.setChecked(False)
+            self.menu_action.blockSignals(False)
+            for widget in self.children():
+                if widget is not None and widget.isWidgetType():
+                    widget.hide()
 
     def set_visible(self):
         self.visible = True
-        self.show()
-        self.shadow_box.hide()
+        self.set_state()
 
     def set_hidden(self):
         self.visible = False
-        self.hide()
-        self.shadow_box.show()
+        self.set_state()
+
+    def toggle(self):
+        self.visible = not self.visible
+        self.set_state()
 
     def mouseDoubleClickEvent(self, *args):
         self.toggle()
-
-
-
-
-
-
-
 
