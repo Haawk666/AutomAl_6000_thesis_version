@@ -4,6 +4,10 @@ import numpy as np
 import utils
 import logging
 
+# Instantiate logger
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
 
 class Vertex:
 

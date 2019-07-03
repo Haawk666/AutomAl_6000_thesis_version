@@ -29,6 +29,7 @@ class InteractiveColumn(QtWidgets.QGraphicsEllipseItem):
         self.ui_obj = ui_obj
         self.r = r
         self.i = i
+        self.scale_factor = scale_factor
         self.vertex = self.ui_obj.project_instance.graph.vertices[self.i]
         self.center_coor = self.vertex.real_coor()
         self.center_coor = scale_factor * self.center_coor[0] - np.round(self.r / 2), scale_factor * self.center_coor[1] - np.round(self.r / 2)
@@ -39,9 +40,9 @@ class InteractiveColumn(QtWidgets.QGraphicsEllipseItem):
         self.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable)
 
     def mouseReleaseEvent(self, event: 'QtWidgets.QGraphicsEllipseItem.mouseReleaseEvent'):
-
         """Pass a mouse release event on to the ui_obj reference object"""
         self.ui_obj.column_selected(self.i)
+        # super().__init__()
 
 
 class InteractivePosColumn(InteractiveColumn):

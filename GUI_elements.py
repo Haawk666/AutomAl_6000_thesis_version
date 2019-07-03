@@ -420,7 +420,7 @@ class ControlWindow(QtWidgets.QWidget):
 
         self.chb_precipitate_column.toggled.connect(self.ui_obj.chb_placeholder_trigger)
         self.chb_show.toggled.connect(self.ui_obj.chb_placeholder_trigger)
-        self.chb_move.toggled.connect(self.ui_obj.chb_placeholder_trigger)
+        self.chb_move.toggled.connect(self.ui_obj.chb_enable_move)
 
         self.chb_graph.toggled.connect(self.ui_obj.chb_placeholder_trigger)
 
@@ -626,150 +626,95 @@ class ControlWindow(QtWidgets.QWidget):
 
         self.setLayout(self.info_display_layout)
 
+        # Make button and checkbox lists to enable looping over all widgets
+        self.set_btn_list = []
+        self.btn_move_list = []
+        self.btn_list = []
+        self.chb_list = []
+
+        self.set_btn_list.append(self.btn_set_threshold_layout.itemAt(0).widget())
+        self.set_btn_list.append(self.btn_set_search_size_layout.itemAt(0).widget())
+        self.set_btn_list.append(self.btn_set_scale_layout.itemAt(0).widget())
+        self.set_btn_list.append(self.btn_set_alloy_layout.itemAt(0).widget())
+        self.set_btn_list.append(self.btn_set_start_layout.itemAt(0).widget())
+        self.set_btn_list.append(self.btn_set_std_1_layout.itemAt(0).widget())
+        self.set_btn_list.append(self.btn_set_std_2_layout.itemAt(0).widget())
+        self.set_btn_list.append(self.btn_set_std_3_layout.itemAt(0).widget())
+        self.set_btn_list.append(self.btn_set_std_4_layout.itemAt(0).widget())
+        self.set_btn_list.append(self.btn_set_std_5_layout.itemAt(0).widget())
+        self.set_btn_list.append(self.btn_set_std_8_layout.itemAt(0).widget())
+        self.set_btn_list.append(self.btn_set_cert_threshold_layout.itemAt(0).widget())
+        self.set_btn_list.append(self.btn_find_column_layout.itemAt(0).widget())
+        self.set_btn_list.append(self.btn_set_species_layout.itemAt(0).widget())
+        self.set_btn_list.append(self.btn_set_level_layout.itemAt(0).widget())
+
+        self.btn_move_list.append(self.btn_cancel_move)
+        self.btn_move_list.append(self.btn_set_move)
+
+        self.btn_list.append(self.btn_show_stats)
+        self.btn_list.append(self.btn_show_source)
+        self.btn_list.append(self.btn_export)
+        self.btn_list.append(self.btn_start_alg_1)
+        self.btn_list.append(self.btn_reset_alg_1)
+        self.btn_list.append(self.btn_start_alg_2)
+        self.btn_list.append(self.btn_reset_alg_2)
+        self.btn_list.append(self.btn_invert_lvl_alg_2)
+        self.btn_list.append(self.btn_delete)
+        self.btn_list.append(self.btn_sub)
+        self.btn_list.append(self.btn_deselect)
+        self.btn_list.append(self.btn_new)
+        self.btn_list.append(self.btn_set_style)
+        self.btn_list.append(self.btn_set_indices)
+        self.btn_list.append(self.btn_set_indices_2)
+        self.btn_list.append(self.btn_set_perturb_mode)
+        self.btn_list.append(self.btn_plot_variance)
+        self.btn_list.append(self.btn_plot_angles)
+
+        self.chb_list.append(self.chb_precipitate_column)
+        self.chb_list.append(self.chb_show)
+        self.chb_list.append(self.chb_move)
+        self.chb_list.append(self.chb_graph)
+        self.chb_list.append(self.chb_raw_image)
+        self.chb_list.append(self.chb_black_background)
+        self.chb_list.append(self.chb_structures)
+        self.chb_list.append(self.chb_boarders)
+        self.chb_list.append(self.chb_si_columns)
+        self.chb_list.append(self.chb_si_network)
+        self.chb_list.append(self.chb_mg_columns)
+        self.chb_list.append(self.chb_mg_network)
+        self.chb_list.append(self.chb_al_columns)
+        self.chb_list.append(self.chb_al_network)
+        self.chb_list.append(self.chb_cu_columns)
+        self.chb_list.append(self.chb_cu_network)
+        self.chb_list.append(self.chb_ag_columns)
+        self.chb_list.append(self.chb_ag_network)
+        self.chb_list.append(self.chb_un_columns)
+        self.chb_list.append(self.chb_columns)
+        self.chb_list.append(self.chb_al_mesh)
+        self.chb_list.append(self.chb_neighbours)
+        self.chb_list.append(self.chb_legend)
+        self.chb_list.append(self.chb_scalebar)
+
     def mode_move(self, on):
-
-        if on:
-
-            if self.chb_move.isChecked():
-                if self.ui_obj.project_loaded and not self.ui_obj.selected_column == -1:
-
-                    self.ui_obj.pos_objects[self.ui_obj.selected_column].setFlag(QtWidgets.QGraphicsItem.ItemIsMovable)
-
-                    self.btn_show_stats.setDisabled(True)
-                    self.btn_show_source.setDisabled(True)
-                    self.btn_export.setDisabled(True)
-
-                    self.btn_start_alg_1.setDisabled(True)
-                    self.btn_reset_alg_1.setDisabled(True)
-
-                    self.btn_start_alg_2.setDisabled(True)
-                    self.btn_reset_alg_2.setDisabled(True)
-                    self.btn_invert_lvl_alg_2.setDisabled(True)
-
-                    self.btn_new.setDisabled(True)
-                    self.btn_deselect.setDisabled(True)
-                    self.btn_delete.setDisabled(True)
-                    self.btn_set_species.setDisabled(True)
-                    self.btn_set_level.setDisabled(True)
-                    self.btn_find_column.setDisabled(True)
-                    self.btn_set_move.setDisabled(False)
-                    self.btn_cancel_move.setDisabled(False)
-                    self.chb_show.setDisabled(True)
-                    self.chb_precipitate_column.setDisabled(True)
-
-                    self.btn_set_threshold.setDisabled(True)
-                    self.btn_set_search_size.setDisabled(True)
-                    self.btn_set_scale.setDisabled(True)
-
-                    self.btn_set_alloy.setDisabled(True)
-                    self.btn_set_std_1.setDisabled(True)
-                    self.btn_set_std_2.setDisabled(True)
-                    self.btn_set_std_3.setDisabled(True)
-                    self.btn_set_std_4.setDisabled(True)
-                    self.btn_set_std_5.setDisabled(True)
-                    self.btn_set_std_8.setDisabled(True)
-                    self.btn_set_cert_threshold.setDisabled(True)
-
-                    self.btn_set_style.setDisabled(True)
-
-                    self.chb_raw_image.setDisabled(True)
-                    self.chb_black_background.setDisabled(True)
-                    self.chb_structures.setDisabled(True)
-                    self.chb_boarders.setDisabled(True)
-                    self.chb_si_columns.setDisabled(True)
-                    self.chb_si_network.setDisabled(True)
-                    self.chb_cu_columns.setDisabled(True)
-                    self.chb_cu_network.setDisabled(True)
-                    self.chb_al_columns.setDisabled(True)
-                    self.chb_al_network.setDisabled(True)
-                    self.chb_ag_columns.setDisabled(True)
-                    self.chb_ag_network.setDisabled(True)
-                    self.chb_mg_columns.setDisabled(True)
-                    self.chb_mg_network.setDisabled(True)
-                    self.chb_un_columns.setDisabled(True)
-                    self.chb_columns.setDisabled(True)
-                    self.chb_al_mesh.setDisabled(True)
-                    self.chb_neighbours.setDisabled(True)
-                    self.chb_legend.setDisabled(True)
-                    self.chb_scalebar.setDisabled(True)
-
-                    for i in range(0, self.ui_obj.project_instance.num_columns):
-                        self.ui_obj.pos_objects[i].setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable, False)
-                        self.ui_obj.overlay_objects[i].setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable, False)
-
-                    self.ui_obj.statusBar().showMessage('Ready to move...')
-            else:
-                if self.ui_obj.project_loaded and not self.ui_obj.selected_column == -1:
-                    self.ui_obj.cancel_move_trigger()
-
-        else:
-
+        if self.ui_obj.project_loaded and not self.ui_obj.selected_column == -1:
             self.chb_move.blockSignals(True)
-            self.chb_move.setChecked(False)
+            self.chb_move.setChecked(on)
             self.chb_move.blockSignals(False)
-
-            self.btn_show_stats.setDisabled(False)
-            self.btn_show_source.setDisabled(False)
-            self.btn_export.setDisabled(False)
-
-            self.btn_start_alg_1.setDisabled(False)
-            self.btn_reset_alg_1.setDisabled(False)
-
-            self.btn_start_alg_2.setDisabled(False)
-            self.btn_reset_alg_2.setDisabled(False)
-            self.btn_invert_lvl_alg_2.setDisabled(False)
-
-            self.btn_set_threshold.setDisabled(False)
-            self.btn_set_search_size.setDisabled(False)
-            self.btn_set_scale.setDisabled(False)
-
-            self.btn_set_alloy.setDisabled(False)
-            self.btn_set_std_1.setDisabled(False)
-            self.btn_set_std_2.setDisabled(False)
-            self.btn_set_std_3.setDisabled(False)
-            self.btn_set_std_4.setDisabled(False)
-            self.btn_set_std_5.setDisabled(False)
-            self.btn_set_std_8.setDisabled(False)
-            self.btn_set_cert_threshold.setDisabled(False)
-
-            self.btn_new.setDisabled(False)
-            self.btn_deselect.setDisabled(False)
-            self.btn_delete.setDisabled(False)
-            self.btn_set_species.setDisabled(False)
-            self.btn_set_level.setDisabled(False)
-            self.btn_find_column.setDisabled(False)
-            self.chb_show.setDisabled(False)
-            self.chb_precipitate_column.setDisabled(False)
-
-            self.btn_set_style.setDisabled(False)
-
-            self.chb_raw_image.setDisabled(False)
-            self.chb_black_background.setDisabled(False)
-            self.chb_structures.setDisabled(False)
-            self.chb_boarders.setDisabled(False)
-            self.chb_si_columns.setDisabled(False)
-            self.chb_si_network.setDisabled(False)
-            self.chb_cu_columns.setDisabled(False)
-            self.chb_cu_network.setDisabled(False)
-            self.chb_al_columns.setDisabled(False)
-            self.chb_al_network.setDisabled(False)
-            self.chb_ag_columns.setDisabled(False)
-            self.chb_ag_network.setDisabled(False)
-            self.chb_mg_columns.setDisabled(False)
-            self.chb_mg_network.setDisabled(False)
-            self.chb_un_columns.setDisabled(False)
-            self.chb_columns.setDisabled(False)
-            self.chb_al_mesh.setDisabled(False)
-            self.chb_neighbours.setDisabled(False)
-            self.chb_legend.setDisabled(False)
-            self.chb_scalebar.setDisabled(False)
-
-            self.btn_cancel_move.setChecked(False)
-            self.btn_set_move.setChecked(False)
-            self.btn_cancel_move.setDisabled(True)
-            self.btn_set_move.setDisabled(True)
-
-            self.ui_obj.update_central_widget()
+            for i, pos_obj in enumerate(self.ui_obj.gs_atomic_positions.interactive_position_objects):
+                if not i == self.ui_obj.selected_column:
+                    pos_obj.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable, not on)
+                else:
+                    pos_obj.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, on)
+                self.ui_obj.gs_overlay_composition.interactive_overlay_objects[i].setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable, not on)
+                self.ui_obj.gs_atomic_graph.interactive_vertex_objects[i].setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable, not on)
+            for chb in self.chb_list:
+                chb.setDisabled(on)
+            for btn in self.btn_list:
+                btn.setDisabled(on)
+            for btn in self.set_btn_list:
+                btn.setDisabled(on)
+            self.btn_set_move.setDisabled(not on)
+            self.btn_cancel_move.setDisabled(not on)
 
     def mode_debug(self, on):
 
@@ -975,11 +920,16 @@ class ControlWindow(QtWidgets.QWidget):
             self.lbl_symmetry_confidence.setText('Symmetry confidence: {}'.format(vertex.symmetry_confidence))
             self.lbl_level_confidence.setText('Level confidence: {}'.format(vertex.level_confidence))
             self.lbl_neighbours.setText('Nearest neighbours: {}'.format(vertex.neighbour_indices))
-            *_, variance = self.ui_obj.project_instance.graph.calc_central_angle_variance(self.ui_obj.selected_column)
-            alpha_max, alpha_min, *_ = graph_op.base_angle_score(self.ui_obj.project_instance.graph, i, apply=False)
-            self.lbl_central_variance.setText('Central angle variance: {}'.format(variance))
-            self.lbl_alpha_max = QtWidgets.QLabel('Alpha max: {}'.format(alpha_max))
-            self.lbl_alpha_min = QtWidgets.QLabel('Alpha min: {}'.format(alpha_min))
+            if not vertex.neighbour_indices == []:
+                *_, variance = self.ui_obj.project_instance.graph.calc_central_angle_variance(self.ui_obj.selected_column)
+                alpha_max, alpha_min = graph_op.base_angle_score(self.ui_obj.project_instance.graph, i, apply=False)
+                self.lbl_central_variance.setText('Central angle variance: {}'.format(variance))
+                self.lbl_alpha_max = QtWidgets.QLabel('Alpha max: {}'.format(alpha_max))
+                self.lbl_alpha_min = QtWidgets.QLabel('Alpha min: {}'.format(alpha_min))
+            else:
+                self.lbl_central_variance.setText('Central angle variance: ')
+                self.lbl_alpha_max = QtWidgets.QLabel('Alpha max: ')
+                self.lbl_alpha_min = QtWidgets.QLabel('Alpha min: ')
 
             self.btn_new.setDisabled(False)
             self.btn_deselect.setDisabled(False)

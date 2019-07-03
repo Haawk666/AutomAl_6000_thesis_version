@@ -197,69 +197,48 @@ class SuchSoftware:
 
     def vertex_report(self, i):
 
-        self.report('Vertex properties: ------------', force=True)
-        self.report('    Index: {}'.format(self.graph.vertices[i].i), force=True)
-        self.report('    Image pos: ({}, {})'.format(self.graph.vertices[i].im_coor_x,
-                                                     self.graph.vertices[i].im_coor_y), force=True)
-        self.report('    Real pos: ({}, {})'.format(self.graph.vertices[i].real_coor_x,
-                                                    self.graph.vertices[i].real_coor_y), force=True)
-        self.report('    Atomic Species: {}'.format(self.graph.vertices[i].atomic_species), force=True)
-        self.report(('    Probability vector: {}'.format(self.graph.vertices[i].prob_vector).replace('\n', '')), force=True)
-        self.report('    Partner vector: {}'.format(self.graph.vertices[i].partners()), force=True)
-        self.report('    Level confidence: {}'.format(self.graph.vertices[i].level_confidence), force=True)
-        alpha_max, alpha_min, cf_max_3, cf_max_4, cf_min_3, cf_min_4, cf_min_5 = graph_op.base_angle_score(self.graph, i, self.dist_3_std, self.dist_4_std, self.dist_5_std, False)
-        self.report('    Alpha max: {}'.format(alpha_max), force=True)
-        self.report('    Alpha min: {}'.format(alpha_min), force=True)
-        self.report('    cf_max_3: {}'.format(cf_max_3), force=True)
-        self.report('    cf_max_4: {}'.format(cf_max_4), force=True)
-        self.report('    cf_min_3: {}'.format(cf_min_3), force=True)
-        self.report('    cf_min_4: {}'.format(cf_min_4), force=True)
-        self.report('    cf_min_5: {}'.format(cf_min_5), force=True)
+        logger.info('Vertex properties: ------------')
+        logger.info('    Index: {}'.format(self.graph.vertices[i].i))
+        logger.info('    Image pos: ({}, {})'.format(self.graph.vertices[i].im_coor_x,
+                                                     self.graph.vertices[i].im_coor_y))
+        logger.info('    Real pos: ({}, {})'.format(self.graph.vertices[i].real_coor_x,
+                                                    self.graph.vertices[i].real_coor_y))
+        logger.info('    Atomic Species: {}'.format(self.graph.vertices[i].atomic_species))
+        logger.info(('    Probability vector: {}'.format(self.graph.vertices[i].prob_vector).replace('\n', '')))
+        logger.info('    Partner vector: {}'.format(self.graph.vertices[i].partners()))
+        logger.info('    Level confidence: {}'.format(self.graph.vertices[i].level_confidence))
+        alpha_max, alpha_min = graph_op.base_angle_score(self.graph, i, apply=False)
+        logger.info('    Alpha max: {}'.format(alpha_max))
+        logger.info('    Alpha min: {}'.format(alpha_min))
         rotation_map, angles, variance = self.graph.calc_central_angle_variance(i)
-        self.report('    Central angle variance = {}'.format(variance), force=True)
-        self.report('    Rotation map: {}'.format(str(rotation_map)), force=True)
-        self.report('    Central angles: {}'.format(str(angles)), force=True)
-        self.report('    Is edge column: {}'.format(str(self.graph.vertices[i].is_edge_column)), force=True)
-        self.report('    Level: {}'.format(self.graph.vertices[i].level), force=True)
-        self.report('    Anti-level: {}'.format(self.graph.vertices[i].anti_level()), force=True)
-        self.report(' ', force=True)
+        logger.info('    Central angle variance = {}'.format(variance))
+        logger.info('    Rotation map: {}'.format(str(rotation_map)))
+        logger.info('    Central angles: {}'.format(str(angles)))
+        logger.info('    Is edge column: {}'.format(str(self.graph.vertices[i].is_edge_column)))
+        logger.info('    Level: {}'.format(self.graph.vertices[i].level))
+        logger.info('    Anti-level: {}'.format(self.graph.vertices[i].anti_level()))
 
     def image_report(self):
         self.summarize_stats()
-        self.report(' ', force=True)
-        self.report('Project properties: ---------', force=True)
-        for line in iter(self.display_stats_string.splitlines()):
-            self.report('    {}'.format(line), force=True)
-        self.report(' ', force=True)
+        logger.info('Project properties: ---------')
+        for line in iter(self.stats_string.splitlines()):
+            logger.info('    {}'.format(line))
 
     def set_alloy_mat(self):
-
         if self.alloy == 0:
-
             for x in range(0, SuchSoftware.num_selections):
                 if x == 2 or x == 4:
                     self.alloy_mat[x] = 0
                 else:
                     self.alloy_mat[x] = 1
-
-            string = 'Alloy set to \'Al-Mg-Si-(Cu)\'.'
-
         elif self.alloy == 1:
-
             for x in range(0, SuchSoftware.num_selections):
                 if x == 2 or x == 4 or x == 1:
                     self.alloy_mat[x] = 0
                 else:
                     self.alloy_mat[x] = 1
-
-            string = 'Alloy set to \'Al-Mg-Si\'.'
-
         else:
-
-            string = 'Failed to set alloy. Unknown alloy number'
-
-        if not (self.filename_full == 'empty' or self.filename_full == 'Empty'):
-            self.report(string, force=True)
+            logger.error('Could not set alloy vector. Unknown alloy')
 
     def save(self, filename_full):
         with open(filename_full, 'wb') as f:
@@ -285,13 +264,12 @@ class SuchSoftware:
                         logger.error('Failed to load save-file!')
                     else:
                         logger.info('Conversion successful!')
-                        logger.info('Loaded {}'.format(obj.filename_full))
+                        logger.info('Loaded {}'.format(filename_full))
                 else:
-                    logger.info('Loaded {}'.format(obj.filename_full))
+                    logger.info('Loaded {}'.format(filename_full))
             return obj
 
     def column_detection(self, search_type='s'):
-        self.report(' ', force=True)
         if self.num_columns == 0:
             logger.info('Starting column detection. Search mode is \'{}\''.format(search_type))
         else:
@@ -387,11 +365,11 @@ class SuchSoftware:
         if num_found < n:
 
             indices, distances = self.find_nearest(i, n, weight=2 * weight)
-            self.report('        Did not find enough neighbours for vertex {}. increasing search area.'.format(i), force=False)
+            logger.debug('        Did not find enough neighbours for vertex {}. increasing search area.'.format(i))
 
         else:
 
-            self.report('        Found {} total neighbours for vertex {}'.format(total_num, i), force=False)
+            logger.debug('        Found {} total neighbours for vertex {}'.format(total_num, i))
 
             # Use built-in sort instead of this home-made shit:
             temp_indices = np.ndarray([n], dtype=np.int)
@@ -432,16 +410,16 @@ class SuchSoftware:
 
         if search_type == 0:
 
-            self.report('Starting column characterization from vertex {}...'.format(starting_index), force=True)
-            self.report('    Setting alloy...', force=True)
+            logger.info('Starting column characterization from vertex {}...'.format(starting_index))
+            logger.info('Setting alloy...')
             self.set_alloy_mat()
-            self.report('    Alloy set.', force=True)
-            self.report('    Finding edge columns....', force=True)
+            logger.info('Alloy set.')
+            logger.info('Finding edge columns....')
             self.find_edge_columns()
             for i in range(0, self.num_columns):
                 if self.graph.vertices[i].is_edge_column and not self.graph.vertices[i].set_by_user:
                     self.graph.vertices[i].reset_prob_vector(bias=3)
-            self.report('    Found edge columns.', force=True)
+            logger.info('Found edge columns.')
             # Reset prob vectors:
             self.column_characterization(starting_index, search_type=12)
             # Spatial mapping:
@@ -457,25 +435,25 @@ class SuchSoftware:
             # Add edges:
             self.column_characterization(starting_index, search_type=7)
             # Summarize:
-            self.report('    Summarizing stats.', force=True)
+            logger.info('Summarizing stats.')
             self.summarize_stats()
             # Legacy weak untanglng
             self.column_characterization(starting_index, search_type=8)
             # Legacy strong untangling
             self.column_characterization(starting_index, search_type=9)
             # Summarize:
-            self.report('    Summarizing stats.', force=True)
+            logger.info('Summarizing stats.')
             self.summarize_stats()
             # Complete:
-            self.report('Column characterization complete.', force=True)
-            self.report(' ', force=True)
+            logger.info('Column characterization complete.')
+            logger.info(' ')
 
         elif search_type == 1:
 
-            self.report('Starting column characterization from vertex {}...'.format(starting_index), force=True)
-            self.report('    Setting alloy', force=True)
+            logger.info('Starting column characterization from vertex {}...'.format(starting_index))
+            logger.info('Setting alloy')
             self.set_alloy_mat()
-            self.report('    Alloy set.', force=True)
+            logger.info('Alloy set.')
 
             self.column_characterization(starting_index, search_type=2)
 
@@ -489,74 +467,71 @@ class SuchSoftware:
 
             self.column_characterization(starting_index, search_type=7)
 
-            self.report('    Summarizing stats.', force=True)
+            logger.info('Summarizing stats.')
             self.summarize_stats()
 
             self.column_characterization(starting_index, search_type=10)
 
             self.column_characterization(starting_index, search_type=11)
 
-            self.report('    Summarizing stats.', force=True)
+            logger.info('Summarizing stats.')
             self.summarize_stats()
 
-            self.report('Column characterization complete.', force=True)
-            self.report(' ', force=True)
+            logger.info('Column characterization complete.')
 
         elif search_type == 2:
 
-            self.report('    Mapping spatial locality...', force=True)
+            logger.info('Mapping spatial locality...')
             self.redraw_centre_mat()
             self.redraw_circumference_mat()
             for i in range(0, self.num_columns):
                 self.graph.vertices[i].neighbour_indices, _ = self.find_nearest(i, self.map_size)
             self.find_edge_columns()
-            self.report('    Spatial mapping complete.', force=True)
+            logger.info('Spatial mapping complete.')
 
         elif search_type == 3:
 
-            self.report('    Analysing angles...', force=True)
+            logger.info('Analysing angles...')
             for i, vertex in enumerate(self.graph.vertices):
                 if not vertex.set_by_user and not vertex.is_edge_column:
                     vertex.reset_prob_vector(bias=vertex.h_index)
                     graph_op.apply_angle_score(self.graph, i, self.dist_3_std, self.dist_4_std, self.dist_5_std,
                                                self.num_selections)
 
-            self.report('    Angle analysis complete.', force=True, update=True)
+            logger.info('Angle analysis complete.')
 
         elif search_type == 4:
 
-            self.report('    Analyzing intensities...', force=True)
+            logger.info('Analyzing intensities...')
             for i in range(0, self.num_columns):
                 if not self.graph.vertices[i].set_by_user and not self.graph.vertices[i].is_edge_column:
 
                     graph_op.apply_intensity_score(self.graph, i, self.num_selections, self.intensities[self.alloy],
                                                    self.dist_8_std)
-            self.report('    Intensity analysis complete.', force=True, update=True)
+            logger.info('Intensity analysis complete.')
 
         elif search_type == 5:
 
-            self.report('    Finding particle with legacy method....', force=True)
+            logger.info('Finding particle with legacy method....')
             legacy_items.precipitate_controller(self.graph, starting_index)
             # graph_op.precipitate_controller(self.graph, starting_index)
-            self.report('    Found particle.', force=True)
+            logger.info('Found particle.')
 
         elif search_type == 6:
 
-            self.report('    Running legacy level definition algorithm....', force=True)
+            logger.info('Running legacy level definition algorithm....')
             legacy_items.define_levels(self.graph, starting_index, self.graph.vertices[starting_index].level)
-            # graph_op.set_levels(self.graph, starting_index, self.report, self.graph.vertices[starting_index].level,
-                               # self.num_selections)
-            self.report('    Levels set.', force=True, update=True)
+            logger.info('    Levels set.')
 
         elif search_type == 7:
 
-            self.report('    adding edges to graph...', force=True)
+            logger.info('Adding edges to graph...')
             self.graph.redraw_edges()
-            self.report('    Edges added.', force=True, update=True)
+            logger.info('Edges added.')
 
         elif search_type == 8:
 
-            self.report('    Starting legacy weak untangling...', force=True)
+            logger.info('Starting legacy weak untangling...')
             for i in range(0, self.num_columns):
                 legacy_items.find_consistent_perturbations_simple(self.graph, i, sub=True)
             self.graph.redraw_edges()
@@ -642,16 +617,16 @@ class SuchSoftware:
                 legacy_items.find_consistent_perturbations_advanced(self.graph, i, experimental=True)
             self.graph.redraw_edges()
             self.summarize_stats()
-            self.report('    Legacy weak untangling complete!', force=True)
+            logger.info('Legacy weak untangling complete!')
 
         elif search_type == 9:
 
-            self.report('    Starting strong untangling...', force=True)
-            self.report('        Could not start strong untangling because it is not implemented yet!', force=True)
+            logger.info('Starting strong untangling...')
+            logger.info('Could not start strong untangling because it is not implemented yet!')
 
         elif search_type == 10:
 
-            self.report('    Starting experimental weak untangling...', force=True)
+            logger.info('Starting experimental weak untangling...')
 
             static = False
             total_changes = 0
@@ -666,8 +641,9 @@ class SuchSoftware:
                     while cont:
                         self.graph.redraw_edges()
                         chi_before = self.graph.chi
-                        self.report('    Looking for type {}:'.format(type_num), force=True)
-                        self.report('        Chi: {}'.format(chi_before), force=True)
+                        self.column_characterization(starting_index, search_type=14)
+                        logger.info('Looking for type {}:'.format(type_num))
+                        logger.info('Chi: {}'.format(chi_before))
                         if type_num == 1:
                             num_types, changes = weak_untangling.process_type_1(self.graph)
                         elif type_num == 2:
@@ -682,25 +658,24 @@ class SuchSoftware:
                             changes = 0
                             num_types = 0
                         total_changes += changes
-                        self.column_characterization(starting_index, search_type=14)
                         self.graph.redraw_edges()
                         chi_after = self.graph.chi
-                        self.report('        Found {} type {}\'s, made {} changes'.format(num_types, type_num, changes), force=True)
-                        self.report('        Chi: {}'.format(chi_before), force=True)
+                        logger.info('Found {} type {}\'s, made {} changes'.format(num_types, type_num, changes))
+                        logger.info('Chi: {}'.format(chi_before))
 
                         if chi_after <= chi_before:
-                            self.report('        repeating...', force=True)
+                            logger.info('repeating...')
                             counter += 1
                         else:
                             cont = False
 
                         if changes == 0:
                             cont = False
-                            self.report('        No changes made, continuing...', force=True)
+                            logger.info('No changes made, continuing...')
 
                         if counter > 4:
                             cont = False
-                            self.report('        Emergency abort!', force=True)
+                            logger.info('Emergency abort!')
 
                 total_counter += 1
 
@@ -711,11 +686,11 @@ class SuchSoftware:
                     static = True
 
             self.graph.redraw_edges()
-            self.report('    Weak untangling complete', force=True)
+            logger.info('Weak untangling complete')
 
         elif search_type == 11:
 
-            self.report('    Starting experimental strong untangling...', force=True)
+            logger.info('Starting experimental strong untangling...')
 
             static = False
             total_changes = 0
@@ -730,31 +705,31 @@ class SuchSoftware:
                     while cont:
                         self.graph.redraw_edges()
                         chi_before = self.graph.chi
-                        self.report('    Looking for type {}:'.format(type_num), force=True)
-                        self.report('        Chi: {}'.format(chi_before), force=True)
+                        logger.info('Looking for type {}:'.format(type_num))
+                        logger.info('Chi: {}'.format(chi_before))
                         if type_num == 1:
-                            changes = strong_untangling.level_1_untangling(self.graph)
+                            pass
                         else:
                             changes = 0
                         total_changes += changes
                         self.graph.redraw_edges()
                         chi_after = self.graph.chi
-                        self.report('        Made {} changes'.format(type_num, changes), force=True)
-                        self.report('        Chi: {}'.format(chi_before), force=True)
+                        logger.info('Made {} changes'.format(type_num, changes))
+                        logger.info('Chi: {}'.format(chi_before))
 
                         if chi_after <= chi_before and counter > 0:
-                            self.report('        repeating...', force=True)
+                            logger.info('repeating...')
                             counter += 1
                         else:
                             cont = False
 
                         if changes == 0:
                             cont = False
-                            self.report('        No changes made, continuing...', force=True)
+                            logger.info('No changes made, continuing...')
 
                         if counter > 4:
                             cont = False
-                            self.report('        Emergency abort!', force=True)
+                            logger.info('Emergency abort!')
 
                 total_counter += 1
 
@@ -765,51 +740,51 @@ class SuchSoftware:
                     static = True
 
             self.graph.redraw_edges()
-            self.report('    Strong untangling complete', force=True)
+            logger.info('Strong untangling complete')
 
         elif search_type == 12:
 
-            self.report('    Resetting probability vectors with zero bias...', force=True)
+            logger.info('Resetting probability vectors with zero bias...')
             for i in range(0, self.num_columns):
                 if not self.graph.vertices[i].set_by_user and not self.graph.vertices[i].is_edge_column:
                     self.graph.vertices[i].reset_prob_vector()
-            self.report('    Probability vectors reset.', force=True)
+            logger.info('Probability vectors reset.')
 
         elif search_type == 13:
 
-            self.report('    Resetting user-set columns...', force=True)
+            logger.info('Resetting user-set columns...')
             for i in range(0, self.num_columns):
                 if self.graph.vertices[i].set_by_user:
                     self.graph.vertices[i].reset_prob_vector()
-            self.report('    User-set columns was re-set.', force=True)
+            logger.info('User-set columns was re-set.')
 
         elif search_type == 14:
 
-            self.report('    Looking for intersections', force=True)
+            logger.info('Looking for intersections')
             intersections = self.graph.find_intersects()
             num_intersections = len(intersections)
             # not_removed, strong_intersections, ww, ss = graph_op.remove_intersections(self.graph)
             graph_op.experimental_remove_intersections(self.graph)
             intersections = self.graph.find_intersects()
-            self.report('        Found {} intersections'.format(num_intersections), force=True)
+            logger.info('Found {} intersections'.format(num_intersections))
             # self.report('        Found {} strong intersections'.format(ss), force=True)
             # self.report('        Found {} weak-weak intersections'.format(ww), force=True)
             # self.report('        {} weak intersections were not removed'.format(not_removed), force=True)
-            self.report('        {} literal intersections still remain'.format(len(intersections)), force=True)
+            logger.info('{} literal intersections still remain'.format(len(intersections)))
 
         elif search_type == 15:
 
-            self.report('Starting column characterization from vertex {}...'.format(starting_index), force=True)
-            self.report('    Setting alloy...', force=True)
+            logger.info('Starting column characterization from vertex {}...'.format(starting_index))
+            logger.info('Setting alloy...')
             self.set_alloy_mat()
-            self.report('    Alloy set.', force=True)
-            self.report('    Finding edge columns....', force=True)
+            logger.info('Alloy set.')
+            logger.info('Finding edge columns....')
             self.find_edge_columns()
             for vertex in self.graph.vertices:
                 if vertex.is_edge_column and not vertex.set_by_user:
                     vertex.reset_prob_vector(bias=3)
                     vertex.reset_symmetry_vector(bias=-1)
-            self.report('    Found edge columns.', force=True)
+            logger.info('Found edge columns.')
             # Reset prob vectors:
             self.column_characterization(starting_index, search_type=12)
             # Spatial mapping:
@@ -827,7 +802,7 @@ class SuchSoftware:
             # Remove crossing edges
             self.column_characterization(starting_index, search_type=14)
             # Weak
-            self.report('    Starting experimental weak untangling...', force=True)
+            logger.info('Starting experimental weak untangling...')
             for i in range(0, self.num_columns):
                 legacy_items.find_consistent_perturbations_simple(self.graph, i, sub=True)
             self.graph.redraw_edges()
@@ -856,14 +831,13 @@ class SuchSoftware:
             self.column_characterization(starting_index, search_type=5)
             self.column_characterization(starting_index, search_type=6)
             # Summarize:
-            self.report('    Summarizing stats.', force=True)
+            logger.info('Summarizing stats.')
             self.summarize_stats()
             # Summarize:
-            self.report('    Summarizing stats.', force=True)
+            logger.info('Summarizing stats.')
             self.summarize_stats()
             # Complete:
-            self.report('Column characterization complete.', force=True)
-            self.report(' ', force=True)
+            logger.info('Column characterization complete.')
 
         elif search_type == 16:
 
@@ -893,17 +867,17 @@ class SuchSoftware:
 
         elif search_type == 18:
 
-            self.report('    Finding edge columns....', force=True)
+            logger.info('Finding edge columns....')
             self.find_edge_columns()
             for vertex in self.graph.vertices:
                 if vertex.is_edge_column and not vertex.set_by_user:
                     vertex.reset_prob_vector(bias=3)
                     vertex.reset_symmetry_vector(bias=-1)
-            self.report('    Found edge columns.', force=True)
+            logger.info('Found edge columns.')
 
         else:
 
-            self.report('Error: No such search type!', force=True)
+            logger.error('No such search type!')
 
     def calc_avg_gamma(self):
         if self.num_columns > 0:

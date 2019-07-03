@@ -4,6 +4,7 @@ interface."""
 
 from PyQt5 import QtWidgets, QtGui, QtCore
 import logging
+import sys
 import numpy as np
 import core
 import GUI_elements
@@ -30,6 +31,8 @@ class MainUI(QtWidgets.QMainWindow):
         self.control_instance = None
         self.selected_column = -1
         self.previous_selected_column = -1
+        self.selection_history = []
+        self.perturb_mode = False
 
         # Tab contents:
         self.no_graphic = QtGui.QPixmap('Images\\no_image.png')
@@ -225,17 +228,27 @@ class MainUI(QtWidgets.QMainWindow):
         self.control_window.update_display()
 
     def column_selected(self, i):
-        self.previous_selected_column, self.selected_column = self.selected_column, i
-        self.control_window.select_column()
-        if not i == -1:
-            j = self.previous_selected_column
-            if not j == -1:
-                self.gs_atomic_positions.interactive_position_objects[j].set_style()
-                self.gs_overlay_composition.interactive_overlay_objects[j].set_style()
-                self.gs_atomic_graph.interactive_vertex_objects[j].set_style()
-            self.gs_atomic_positions.interactive_position_objects[i].set_style()
-            self.gs_overlay_composition.interactive_overlay_objects[i].set_style()
-            self.gs_atomic_graph.interactive_vertex_objects[i].set_style()
+        if self.control_window.chb_move.isChecked():
+            pass
+        else:
+            self.previous_selected_column, self.selected_column = self.selected_column, i
+            self.control_window.select_column()
+            if not i == -1:
+                j = self.previous_selected_column
+                if not j == -1:
+                    self.gs_atomic_positions.interactive_position_objects[j].set_style()
+                    self.gs_overlay_composition.interactive_overlay_objects[j].set_style()
+                    self.gs_atomic_graph.interactive_vertex_objects[j].set_style()
+                self.gs_atomic_positions.interactive_position_objects[i].set_style()
+                self.gs_overlay_composition.interactive_overlay_objects[i].set_style()
+                self.gs_atomic_graph.interactive_vertex_objects[i].set_style()
+            if self.perturb_mode:
+                if len(self.selection_history) == 2:
+                    self.project_instance.graph.perturb_j_k(self.selection_history[0], self.selection_history[1], self.selected_column)
+                    self.selection_history = []
+                    self.update_central_widget()
+                else:
+                    self.selection_history.append(self.selected_column)
 
     # ----------
     # Keyboard press methods methods:
@@ -271,21 +284,13 @@ class MainUI(QtWidgets.QMainWindow):
                 elif key == QtCore.Qt.Key_Plus:
                     self.set_level(self.project_instance.graph.vertices[self.selected_column].anti_level())
                 elif key == QtCore.Qt.Key_W and self.control_window.chb_move.isChecked():
-                    self.pos_objects[self.selected_column].moveBy(0.0, -1.0)
-                    self.overlay_objects[self.selected_column].moveBy(0.0, -1.0)
-                    self.vertex_objects[self.selected_column].moveBy(0.0, -1.0)
+                    self.gs_atomic_positions.interactive_position_objects[self.selected_column].moveBy(0.0, -1.0)
                 elif key == QtCore.Qt.Key_S and self.control_window.chb_move.isChecked():
-                    self.pos_objects[self.selected_column].moveBy(0.0, 1.0)
-                    self.overlay_objects[self.selected_column].moveBy(0.0, 1.0)
-                    self.vertex_objects[self.selected_column].moveBy(0.0, 1.0)
+                    self.gs_atomic_positions.interactive_position_objects[self.selected_column].moveBy(0.0, 1.0)
                 elif key == QtCore.Qt.Key_A and self.control_window.chb_move.isChecked():
-                    self.pos_objects[self.selected_column].moveBy(-1.0, 0.0)
-                    self.overlay_objects[self.selected_column].moveBy(-1.0, 0.0)
-                    self.vertex_objects[self.selected_column].moveBy(-1.0, 0.0)
+                    self.gs_atomic_positions.interactive_position_objects[self.selected_column].moveBy(-1.0, 0.0)
                 elif key == QtCore.Qt.Key_D and self.control_window.chb_move.isChecked():
-                    self.pos_objects[self.selected_column].moveBy(1.0, 0.0)
-                    self.overlay_objects[self.selected_column].moveBy(1.0, 0.0)
-                    self.vertex_objects[self.selected_column].moveBy(1.0, 0.0)
+                    self.gs_atomic_positions.interactive_position_objects[self.selected_column].moveBy(1.0, 0.0)
             if self.tabs.currentIndex() == 4:
                 pass
             if self.tabs.currentIndex() == 5:
@@ -311,6 +316,7 @@ class MainUI(QtWidgets.QMainWindow):
     def menu_open_trigger(self):
         filename = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', '')
         if filename[0]:
+            print(filename[0])
             self.statusBar().showMessage('Working...')
             self.project_instance = core.SuchSoftware.load(filename[0])
             if self.project_instance is not None:
@@ -546,7 +552,9 @@ class MainUI(QtWidgets.QMainWindow):
                 self.control_window.lbl_alloy.setText(self.project_instance.alloy_string())
 
     def btn_set_start_trigger(self):
-        pass
+        if self.project_instance is not None and not self.selected_column == -1:
+            self.project_instance.starting_index = self.selected_column
+            self.control_window.lbl_starting_index.setText('Default starting index: {}'.format(self.project_instance.starting_index))
 
     def btn_set_std_1_trigger(self):
         pass
@@ -570,7 +578,11 @@ class MainUI(QtWidgets.QMainWindow):
         pass
 
     def btn_find_column_trigger(self):
-        pass
+        if self.project_loaded:
+            index, ok_pressed = QtWidgets.QInputDialog.getInt(self, "Set", "Find column by index:", 0, 0, 100000, 1)
+            if ok_pressed:
+                if index < self.project_instance.num_columns:
+                    self.gs_atomic_positions.interactive_position_objects[index].mouseReleaseEvent(QtWidgets.QGraphicsEllipseItem.mouseReleaseEvent)
 
     def btn_set_species_trigger(self):
         """Btn-trigger: Run 'set species' dialog."""
@@ -617,34 +629,83 @@ class MainUI(QtWidgets.QMainWindow):
     # ----------
 
     def btn_cancel_move_trigger(self):
-        pass
+        self.control_window.mode_move(False)
+        self.update_central_widget()
 
     def btn_set_position_trigger(self):
-        pass
+        x = self.gs_atomic_positions.interactive_position_objects[self.selected_column].x() + self.project_instance.r
+        y = self.gs_atomic_positions.interactive_position_objects[self.selected_column].y() + self.project_instance.r
+        self.project_instance.graph.vertices[self.selected_column].real_coor_x = x
+        self.project_instance.graph.vertices[self.selected_column].real_coor_y = y
+        self.project_instance.graph.vertices[self.selected_column].im_coor_x = int(np.floor(x))
+        self.project_instance.graph.vertices[self.selected_column].im_coor_y = int(np.floor(y))
+        self.control_window.mode_move(False)
+        self.update_central_widget()
 
     def btn_show_stats_trigger(self):
         pass
 
     def btn_view_image_title_trigger(self):
-        pass
+        self.menu_view_image_title_trigger()
 
     def btn_export_overlay_image_trigger(self):
         pass
 
     def btn_continue_detection_trigger(self):
-        pass
+        if self.project_loaded:
+            items = ('s', 't', 'other')
+            item, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Search type", items, 0, False)
+            if ok_pressed and item:
+                self.statusBar().showMessage('Working...')
+                self.project_instance.redraw_search_mat()
+                self.project_instance.column_detection(item)
+                self.update_display()
 
     def btn_restart_detection_trigger(self):
         pass
 
     def btn_continue_analysis_trigger(self):
-        pass
+        if self.project_loaded and not self.selected_column == -1:
+
+            strings = ['0 - Full column characterization algorithm with legacy untangling',
+                       '1 - Full column characterization algorithm with experimental untangling',
+                       '2 - Run spatial mapping',
+                       '3 - Apply angle statistics',
+                       '4 - Apply intensity statistics',
+                       '5 - Run particle detection',
+                       '6 - Set levels',
+                       '7 - Redraw edges',
+                       '8 - Run legacy weak untangling',
+                       '9 - Run legacy strong untangling',
+                       '10 - Run experimental weak untangling',
+                       '11 - Run experimental strong untangling',
+                       '12 - Reset probability vectors',
+                       '13 - Reset user-set columns',
+                       '14 - Search for intersections',
+                       '15 - Experimental',
+                       '16 - Experimental angle score',
+                       '17 - Experimental levels',
+                       '18 - Find edge columns']
+
+            string, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Search step", strings, 0, False)
+            if ok_pressed and strings:
+                self.statusBar().showMessage('Analyzing... This may take a long time...')
+                sys.setrecursionlimit(10000)
+                choice = -1
+                for k in range(0, len(strings)):
+                    if string == strings[k]:
+                        choice = k
+                if not choice == -1:
+                    self.project_instance.column_characterization(self.selected_column, choice)
+                    self.update_display()
+                else:
+                    logger.error('Invalid selection. Was not able to start column detection.')
 
     def btn_restart_analysis_trigger(self):
         pass
 
     def btn_invert_levels_trigger(self):
-        pass
+        self.menu_invert_precipitate_columns_trigger()
 
     def btn_delete_trigger(self):
         pass
@@ -668,7 +729,9 @@ class MainUI(QtWidgets.QMainWindow):
         pass
 
     def btn_set_perturb_mode_trigger(self):
-        pass
+        self.perturb_mode = not self.perturb_mode
+        if not self.perturb_mode:
+            self.selection_history = []
 
     def btn_plot_variance_trigger(self):
         pass
@@ -697,3 +760,7 @@ class MainUI(QtWidgets.QMainWindow):
 
     def chb_placeholder_trigger(self):
         pass
+
+    def chb_enable_move(self, state):
+        self.control_window.mode_move(state)
+
