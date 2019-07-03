@@ -504,16 +504,46 @@ class MainUI(QtWidgets.QMainWindow):
     # ----------
 
     def btn_set_threshold_trigger(self):
-        pass
+        if self.project_instance is not None:
+            threshold, ok_pressed = QtWidgets.QInputDialog.getDouble(self, "Set", "Threshold value (decimal between 0 and 1):", self.project_instance.threshold, 0, 1, 5)
+            if ok_pressed:
+                self.project_instance.threshold = threshold
+                self.control_window.lbl_detection_threshold.setText('Detection threshold value: {}'.format(self.project_instance.threshold))
 
     def btn_set_search_size_trigger(self):
-        pass
+        if self.project_instance is not None:
+            search_size, ok_pressed = QtWidgets.QInputDialog.getInt(self, "Set", "Search size:",
+                                                                    self.project_instance.search_size, 0, 100000, 100)
+            if ok_pressed:
+                self.project_instance.search_size = search_size
+                self.control_window.lbl_search_size.setText('Search size: {}'.format(self.project_instance.search_size))
 
     def btn_set_scale_trigger(self):
-        pass
+        if self.project_instance is not None:
+            scale, ok_pressed = QtWidgets.QInputDialog.getDouble(self, "Set", "Image scale (pm/pixel):", self.project_instance.scale, 0, 10000, 4)
+            if ok_pressed:
+                self.project_instance.scale = scale
+                self.project_instance.r = int(100 / scale)
+                self.project_instance.overhead = int(6 * (self.r / 10))
+                self.control_window.lbl_scale.setText('Scale (pm / pixel): {}'.format(self.project_instance.scale))
+                self.control_window.lbl_atomic_radii.setText('Approx atomic radii (pixels): {}'.format(self.project_instance.r))
+                self.control_window.lbl_overhead_radii.setText('Overhead (pixels): {}'.format(self.project_instance.overhead))
+                self.project_instance.redraw_search_mat()
+                self.update_central_widget()
 
     def btn_set_alloy_trigger(self):
-        pass
+        if self.project_instance is not None:
+            items = ('Al-Mg-Si-(Cu)', 'Al-Mg-Si')
+            item, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Alloy:", items, 0, False)
+            if ok_pressed and item:
+                if item == 'Al-Mg-Si-(Cu)':
+                    self.project_instance.alloy = 0
+                elif item == 'Al-Mg-Si':
+                    self.project_instance.alloy = 1
+                else:
+                    print('Error!')
+                self.project_instance.set_alloy_mat()
+                self.control_window.lbl_alloy.setText(self.project_instance.alloy_string())
 
     def btn_set_start_trigger(self):
         pass

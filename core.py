@@ -157,7 +157,7 @@ class SuchSoftware:
         self.precipitate_number_percentage_mg = 0.0
         self.precipitate_number_percentage_un = 0.0
 
-        self.display_stats_string = 'Empty'
+        self.stats_string = 'Empty'
         self.export_data_string = ' '
 
         # These are hyper-parameters of the algorithms. See the documentation.
@@ -181,7 +181,6 @@ class SuchSoftware:
         self.dist_8_std = 0
 
     def alloy_string(self):
-
         if self.alloy == 0:
             return 'Alloy: Al-Mg-Si-(Cu)'
         elif self.alloy == 1:
@@ -189,156 +188,15 @@ class SuchSoftware:
         else:
             return 'Alloy: Unknown'
 
-    def plot_variances(self):
-
-        if not self.graph.num_vertices == 0:
-
-            species = []
-            variance = []
-
-            for vertex in self.graph.vertices:
-                if not vertex.is_edge_column:
-                    species.append(vertex.species())
-                    *_, var = self.graph.calc_central_angle_variance(vertex.i)
-                    variance.append(var)
-
-            plt.scatter(species, variance)
-            plt.title('Central angle variance scatter-plot in\n{}'.format(self.filename_full))
-            plt.xlabel('Atomic species')
-            plt.ylabel('Variance (radians^2)')
-            plt.show()
-
-    def plot_theoretical_min_max_angles(self):
-
-        alpha = np.linspace(1, 3.5, 1000)
-
-        fig, (ax_min, ax_max) = plt.subplots(ncols=1, nrows=2)
-
-        ax_min.plot(alpha, utils.normal_dist(alpha, 2 * np.pi / 3, self.dist_3_std), 'y',
-                    label='Cu ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(np.pi / 3, self.dist_3_std))
-        ax_min.plot(alpha, utils.normal_dist(alpha, 2 * np.pi / 3, self.dist_3_std), 'r',
-                    label='Si ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(np.pi / 3, self.dist_3_std))
-        ax_min.plot(alpha, utils.normal_dist(alpha, np.pi / 2, self.dist_4_std), 'g',
-                    label='Al ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(np.pi / 4, self.dist_4_std))
-        ax_min.plot(alpha, utils.normal_dist(alpha, 2 * np.pi / 5, self.dist_5_std), 'm',
-                    label='Mg ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(2 * np.pi / 5, self.dist_5_std))
-
-        ax_min.set_title('Minimum central angles fitted density')
-        ax_min.legend()
-
-        ax_max.plot(alpha, utils.normal_dist(alpha, 2 * np.pi / 3, self.dist_3_std), 'y',
-                    label='Cu ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(2 * np.pi / 3, self.dist_3_std))
-        ax_max.plot(alpha, utils.normal_dist(alpha, 2 * np.pi / 3, self.dist_3_std), 'r',
-                    label='Si ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(2 * np.pi / 3, self.dist_3_std))
-        ax_max.plot(alpha, utils.normal_dist(alpha, np.pi, self.dist_4_std), 'g',
-                    label='Al ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(np.pi, self.dist_4_std))
-
-        ax_max.set_title('Maximum central angles fitted density')
-        ax_max.legend()
-
-        plt.tight_layout()
-        plt.show()
-
-    def plot_min_max_angles(self):
-
-        if not self.graph.num_vertices == 0:
-
-            if not self.graph.vertices[0].neighbour_indices == []:
-
-                cu_min_angles = []
-                si_min_angles = []
-                al_min_angles = []
-                mg_min_angles = []
-
-                cu_max_angles = []
-                si_max_angles = []
-                al_max_angles = []
-                mg_max_angles = []
-
-                cu_intensities = []
-                si_intensities = []
-                al_intensities = []
-                mg_intensities = []
-
-                cu_min_angles, si_min_angles, al_min_angles, mg_min_angles, cu_max_angles, si_max_angles,\
-                    al_max_angles, mg_max_angles, cu_intensities, si_intensities, al_intensities, mg_intensities =\
-                    dev_module.accumulate_test_data(self, cu_min_angles, si_min_angles, al_min_angles, mg_min_angles, cu_max_angles,
-                                              si_max_angles, al_max_angles, mg_max_angles, cu_intensities,
-                                              si_intensities, al_intensities, mg_intensities)
-
-                dev_module.plot_test_data(cu_min_angles, si_min_angles, al_min_angles, mg_min_angles, cu_max_angles,
-                                    si_max_angles, al_max_angles, mg_max_angles, cu_intensities, si_intensities,
-                                    al_intensities, mg_intensities)
-
-    def report(self, string, force=False, update=False):
-        if self.debug_mode or force:
-            if self.debug_obj is not None:
-                if not string == '':
-                    self.debug_obj('core: ' + string, update)
-                else:
-                    self.debug_obj(string, update)
-            else:
-                print(string)
-
-    def run_test(self):
-
-        deviations = []
-        averages = []
-        number_of_vertices = []
-        filenames = []
-        number_of_files = 0
-
-        with open('Saves/validation_set/filenames.txt', mode='r') as f:
-            for line in f:
-                line = line.replace('\n', '')
-                filename, control = line.split(',')
-                filenames.append(filename)
-                filename = 'Saves/validation_set/' + filename
-                control = 'Saves/validation_set/' + control
-                deviation, avg = SuchSoftware.run_individual_test(filename, control)
-                deviations.append(deviation)
-                averages.append(avg)
-                number_of_vertices.append(int(deviation / avg))
-                number_of_files += 1
-
-        self.report('Algorithm test:-----', force=True)
-        self.report('Number of files tested: {}'.format(number_of_files), force=True)
-        self.report('Total deviations found: {}'.format(sum(deviations)), force=True)
-        self.report('Total vertices checked: {}'.format(sum(number_of_vertices)), force=True)
-        self.report('Average deviation: {}'.format(sum(deviations) / sum(number_of_vertices)), force=True)
-        self.report('Individual results: (filename, deviations, number of vertices, average)', force=True)
-        for i, item in enumerate(deviations):
-            self.report('    {}, {}, {}, {}'.format(filenames[i], deviations[i], number_of_vertices[i], averages[i]), force=True)
-
-    @staticmethod
-    def run_individual_test(filename, control_file, mode=0):
-
-        file = SuchSoftware.load(filename)
-        control = SuchSoftware.load(control_file)
-        i = file.starting_index
-
-        file.column_characterization(i, search_type=mode)
-
-        deviations, avg = SuchSoftware.measure_deviance(file, control)
-
-        file.save(filename + '_test_result')
-
-        return deviations, avg
-
-    @staticmethod
-    def measure_deviance(obj, control):
-        if obj.graph.num_vertices == control.graph.num_vertices:
-            deviations = 0
-            for vertex, control_vertex in zip(obj.graph.vertices, control.graph.vertices):
-                if not vertex.is_edge_column:
-                    if not vertex.h_index == control_vertex.h_index:
-                        deviations = deviations + 1
-            return deviations, deviations / obj.graph.num_vertices
-        else:
-            return None
+    def stats_summary(self):
+        self.summarize_stats()
+        string = 'Image summary: ----------\n'
+        for line in iter(self.stats_string.splitlines()):
+            string += '          ' + line
+        logger.info(string)
 
     def vertex_report(self, i):
-        self.report(' ', force=True)
+
         self.report('Vertex properties: ------------', force=True)
         self.report('    Index: {}'.format(self.graph.vertices[i].i), force=True)
         self.report('    Image pos: ({}, {})'.format(self.graph.vertices[i].im_coor_x,
@@ -1200,7 +1058,7 @@ class SuchSoftware:
                         self.num_precipitate_un += 1
                         self.precipitate_number_percentage_un += 1
                 else:
-                    print('Error in summarize_stats()')
+                    logger.warning('Unexpected behaviour in core.SuchSoftware.summarize_stats()')
 
             self.avg_peak_gamma = self.avg_peak_gamma / self.num_columns
             self.avg_avg_gamma = self.avg_avg_gamma / self.num_columns
@@ -1261,7 +1119,7 @@ class SuchSoftware:
 
     def build_stat_string(self):
 
-        self.display_stats_string = ('Number of detected columns: ' + str(self.num_columns) + '\n'
+        self.stats_string = ('Number of detected columns: ' + str(self.num_columns) + '\n'
             'Number of detected precipitate columns: ' + str(self.num_precipitate_columns) + '\n\n'
             'Number of inconsistencies: ' + str(self.num_inconsistencies) + '\n'
             'Number of popular: ' + str(self.num_popular) + '\n'
