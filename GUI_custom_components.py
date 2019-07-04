@@ -55,13 +55,10 @@ class InteractivePosColumn(InteractiveColumn):
 
         self.selected_pen = GUI_settings.pen_selected_2
         self.selected_brush = GUI_settings.brush_selected_2
-
         self.unselected_pen = GUI_settings.pen_atom_pos
         self.unselected_brush = GUI_settings.brush_atom_pos
-
         self.hidden_pen = GUI_settings.pen_atom_pos_hidden
         self.hidden_brush = GUI_settings.brush_atom_pos_hidden
-
         self.set_style()
 
     def set_style(self):
@@ -94,7 +91,6 @@ class InteractiveOverlayColumn(InteractiveColumn):
         self.pen_ag = GUI_settings.pen_ag
         self.pen_un = GUI_settings.pen_un
         self.selected_pen = GUI_settings.pen_selected_1
-
         self.brush_cu = GUI_settings.brush_cu
         self.brush_si = GUI_settings.brush_si
         self.brush_al = GUI_settings.brush_al
@@ -171,7 +167,6 @@ class InteractiveGraphColumn(InteractiveColumn):
             self.setPen(self.selected_pen)
         else:
             self.setPen(self.unselected_pen)
-
         if self.vertex.level == 0:
             self.setBrush(self.level_0_brush)
         else:
@@ -185,7 +180,6 @@ class Arrow:
         self.inconsistent_pen = GUI_settings.pen_inconsistent_edge
         self.dislocation_pen = GUI_settings.pen_dislocation_edge
         self.normal_pen = GUI_settings.pen_edge
-
         self.arrow = None, None
         self.make_arrow_obj(p1, p2, r, scale_factor)
         self.set_style(consistent, dislocation)
@@ -258,7 +252,6 @@ class SmallButton(QtWidgets.QPushButton):
 
         self.trigger_func = trigger_func
         self.clicked.connect(trigger_func)
-
         self.setMaximumHeight(15)
         self.setMaximumWidth(50)
         self.setFont(GUI_settings.font_tiny)
@@ -271,7 +264,6 @@ class MediumButton(QtWidgets.QPushButton):
 
         self.trigger_func = trigger_func
         self.clicked.connect(trigger_func)
-
         self.setMaximumHeight(20)
         self.setMaximumWidth(200)
         self.setFont(GUI_settings.font_tiny)
@@ -284,7 +276,6 @@ class SetButton(QtWidgets.QPushButton):
 
         self.trigger_func = trigger_func
         self.clicked.connect(trigger_func)
-
         self.setMaximumHeight(15)
         self.setMaximumWidth(30)
         self.setFont(GUI_settings.font_tiny)

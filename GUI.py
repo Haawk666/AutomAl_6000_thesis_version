@@ -316,7 +316,7 @@ class MainUI(QtWidgets.QMainWindow):
     def menu_open_trigger(self):
         filename = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', '')
         if filename[0]:
-            print(filename[0])
+            logger.info('Opening file {}'.format(filename[0]))
             self.statusBar().showMessage('Working...')
             self.project_instance = core.SuchSoftware.load(filename[0])
             if self.project_instance is not None:

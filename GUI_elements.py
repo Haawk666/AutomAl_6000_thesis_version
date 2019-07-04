@@ -238,6 +238,7 @@ class TerminalHandler(logging.Handler):
     def emit(self, record):
         msg = self.format(record)
         self.widget.appendPlainText(msg)
+        QtWidgets.QApplication.processEvents()
 
 
 class Terminal(QtWidgets.QWidget):

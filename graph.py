@@ -323,13 +323,6 @@ class Vertex:
     def species(self):
         return self.species_strings[self.h_index]
 
-    def print(self):
-        print('\nVertex properties:\n----------')
-        print('Index: {}\nImage pos: ({}, {})\nReal pos: ({}, {})'.format(self.i, self.im_coor_x, self.im_coor_y,
-                                                                          self.real_coor_x, self.real_coor_y))
-        print('Atomic Species: {}'.format(self.atomic_species))
-        print('Probability vector: {}'.format(self.prob_vector))
-
 
 class Edge:
 
@@ -490,6 +483,7 @@ class AtomicGraph:
             self.num_popular += 1
         if vertex.is_unpopular:
             self.num_unpopular += 1
+        logger.debug('Added vertex with index {}'.format(vertex.i))
 
     def reset_vertex(self, i):
         self.vertices[i].level = 0
