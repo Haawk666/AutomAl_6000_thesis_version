@@ -157,7 +157,7 @@ class MainUI(QtWidgets.QMainWindow):
     def update_display(self):
         self.update_central_widget()
         self.update_control_window()
-        self.statusBar().showMessage('Ready.')
+        self.sys_message('Ready.')
 
     def update_central_widget(self):
         if self.project_instance is not None:
@@ -233,12 +233,12 @@ class MainUI(QtWidgets.QMainWindow):
         else:
             self.previous_selected_column, self.selected_column = self.selected_column, i
             self.control_window.select_column()
+            j = self.previous_selected_column
+            if not j == -1:
+                self.gs_atomic_positions.interactive_position_objects[j].set_style()
+                self.gs_overlay_composition.interactive_overlay_objects[j].set_style()
+                self.gs_atomic_graph.interactive_vertex_objects[j].set_style()
             if not i == -1:
-                j = self.previous_selected_column
-                if not j == -1:
-                    self.gs_atomic_positions.interactive_position_objects[j].set_style()
-                    self.gs_overlay_composition.interactive_overlay_objects[j].set_style()
-                    self.gs_atomic_graph.interactive_vertex_objects[j].set_style()
                 self.gs_atomic_positions.interactive_position_objects[i].set_style()
                 self.gs_overlay_composition.interactive_overlay_objects[i].set_style()
                 self.gs_atomic_graph.interactive_vertex_objects[i].set_style()
@@ -249,6 +249,10 @@ class MainUI(QtWidgets.QMainWindow):
                     self.update_central_widget()
                 else:
                     self.selection_history.append(self.selected_column)
+
+    def sys_message(self, msg):
+        self.statusBar().showMessage(msg)
+        QtWidgets.QApplication.processEvents()
 
     # ----------
     # Keyboard press methods methods:
@@ -305,19 +309,19 @@ class MainUI(QtWidgets.QMainWindow):
     def menu_new_trigger(self):
         filename = QtWidgets.QFileDialog.getOpenFileName(self, 'Select dm3', '')
         if filename[0]:
-            self.statusBar().showMessage('Working...')
+            self.sys_message('Working...')
             self.project_instance = core.SuchSoftware(filename[0])
             self.control_instance = None
             self.project_loaded = True
             self.update_display()
         else:
-            self.statusBar().showMessage('Ready')
+            self.sys_message('Ready')
 
     def menu_open_trigger(self):
         filename = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', '')
         if filename[0]:
             logger.info('Opening file {}'.format(filename[0]))
-            self.statusBar().showMessage('Working...')
+            self.sys_message('Working...')
             self.project_instance = core.SuchSoftware.load(filename[0])
             if self.project_instance is not None:
                 if self.control_window.debug_box.visible:
@@ -333,7 +337,7 @@ class MainUI(QtWidgets.QMainWindow):
             else:
                 logger.info('File was not loaded. Something must have gone wrong!')
         else:
-            self.statusBar().showMessage('Ready')
+            self.sys_message('Ready')
 
     def menu_save_trigger(self):
         if self.savefile is None:
@@ -363,7 +367,7 @@ class MainUI(QtWidgets.QMainWindow):
         logger.info(self.project_instance.filename_full)
 
     def menu_show_stats_trigger(self):
-        pass
+        self.project_instance.stats_summary()
 
     def menu_update_display(self):
         self.update_display()
@@ -452,13 +456,55 @@ class MainUI(QtWidgets.QMainWindow):
                     logger.error('Could not export image!')
 
     def menu_export_column_position_image_trigger(self):
-        pass
+        if self.project_loaded:
+            filename = QtWidgets.QFileDialog.getSaveFileName(self, "Save image", '', "PNG (*.png);;BMP Files (*.bmp);;JPEG (*.JPEG)")
+            if filename[0]:
+                self.update_column_positions()
+                rect_f = self.gs_atomic_positions.sceneRect()
+                img = QtGui.QImage(rect_f.size().toSize(), QtGui.QImage.Format_ARGB32)
+                img.fill(QtCore.Qt.white)
+                p = QtGui.QPainter(img)
+                self.gs_atomic_positions.render(p, target=QtCore.QRectF(img.rect()), source=rect_f)
+                p.end()
+                saved = img.save(filename[0])
+                if saved:
+                    logger.info('Successfully exported column positions image to file!')
+                else:
+                    logger.error('Could not export image!')
 
     def menu_export_overlay_image_trigger(self):
-        pass
+        if self.project_loaded:
+            filename = QtWidgets.QFileDialog.getSaveFileName(self, "Save image", '', "PNG (*.png);;BMP Files (*.bmp);;JPEG (*.JPEG)")
+            if filename[0]:
+                self.update_overlay()
+                rect_f = self.gs_overlay_composition.sceneRect()
+                img = QtGui.QImage(rect_f.size().toSize(), QtGui.QImage.Format_ARGB32)
+                img.fill(QtCore.Qt.white)
+                p = QtGui.QPainter(img)
+                self.gs_overlay_composition.render(p, target=QtCore.QRectF(img.rect()), source=rect_f)
+                p.end()
+                saved = img.save(filename[0])
+                if saved:
+                    logger.info('Successfully exported overlay image to file!')
+                else:
+                    logger.error('Could not export image!')
 
     def menu_export_atomic_graph_trigger(self):
-        pass
+        if self.project_loaded:
+            filename = QtWidgets.QFileDialog.getSaveFileName(self, "Save image", '', "PNG (*.png);;BMP Files (*.bmp);;JPEG (*.JPEG)")
+            if filename[0]:
+                self.update_graph()
+                rect_f = self.gs_atomic_graph.sceneRect()
+                img = QtGui.QImage(rect_f.size().toSize(), QtGui.QImage.Format_ARGB32)
+                img.fill(QtCore.Qt.white)
+                p = QtGui.QPainter(img)
+                self.gs_atomic_graph.render(p, target=QtCore.QRectF(img.rect()), source=rect_f)
+                p.end()
+                saved = img.save(filename[0])
+                if saved:
+                    logger.info('Successfully exported graph image to file!')
+                else:
+                    logger.error('Could not export image!')
 
     def menu_toggle_debug_mode_trigger(self, state):
         if state:
@@ -486,7 +532,28 @@ class MainUI(QtWidgets.QMainWindow):
         pass
 
     def menu_display_deviations_trigger(self):
-        pass
+        if self.project_instance is not None and self.control_instance is not None and self.project_instance.num_columns > 0:
+            if not len(self.project_instance.graph.vertices) == len(self.control_instance.graph.vertices):
+                msg = 'Could not compare instances!'
+            else:
+                deviations = 0
+                symmetry_deviations = 0
+                for vertex, control_vertex in zip(self.project_instance.graph.vertices, self.control_instance.graph.vertices):
+                    if vertex.h_index == control_vertex.h_index:
+                        pass
+                    elif vertex.h_index == 0 and control_vertex.h_index == 1:
+                        deviations += 1
+                    elif vertex.h_index == 1 and control_vertex.h_index == 0:
+                        deviations += 1
+                    else:
+                        deviations += 1
+                        symmetry_deviations += 1
+
+                msg = 'Control comparison:----------\n    Deviations: {}\n    Symmetry deviations: {}'.format(deviations, symmetry_deviations)
+            message = QtWidgets.QMessageBox()
+            message.setText(msg)
+            message.exec_()
+            logger.info(msg)
 
     def menu_test_consistency_trigger(self):
         pass
@@ -498,7 +565,11 @@ class MainUI(QtWidgets.QMainWindow):
             self.control_window.select_column()
 
     def menu_ad_hoc_trigger(self):
-        pass
+        if self.project_instance is not None and not self.selected_column == -1:
+            self.project_instance.vertex_report(self.selected_column)
+
+    def menu_toggle_tooltips_trigger(self, state):
+        self.control_window.mode_tooltip(state)
 
     def menu_there_is_no_help_trigger(self):
         message = QtWidgets.QMessageBox()
@@ -643,13 +714,13 @@ class MainUI(QtWidgets.QMainWindow):
         self.update_central_widget()
 
     def btn_show_stats_trigger(self):
-        pass
+        self.project_instance.stats_summary()
 
     def btn_view_image_title_trigger(self):
         self.menu_view_image_title_trigger()
 
     def btn_export_overlay_image_trigger(self):
-        pass
+        self.menu_export_overlay_image_trigger()
 
     def btn_continue_detection_trigger(self):
         if self.project_loaded:
@@ -662,7 +733,9 @@ class MainUI(QtWidgets.QMainWindow):
                 self.update_display()
 
     def btn_restart_detection_trigger(self):
-        pass
+        if self.project_instance is not None:
+            self.project_instance.reset_graph()
+            self.btn_continue_detection_trigger()
 
     def btn_continue_analysis_trigger(self):
         if self.project_loaded and not self.selected_column == -1:
@@ -702,7 +775,9 @@ class MainUI(QtWidgets.QMainWindow):
                     logger.error('Invalid selection. Was not able to start column detection.')
 
     def btn_restart_analysis_trigger(self):
-        pass
+        if self.project_instance is not None:
+            self.project_instance.reset_vertex_properties()
+            self.btn_continue_analysis_trigger()
 
     def btn_invert_levels_trigger(self):
         self.menu_invert_precipitate_columns_trigger()
@@ -714,7 +789,7 @@ class MainUI(QtWidgets.QMainWindow):
         pass
 
     def btn_deselect_trigger(self):
-        pass
+        self.column_selected(-1)
 
     def btn_new_column_trigger(self):
         pass
@@ -728,8 +803,8 @@ class MainUI(QtWidgets.QMainWindow):
     def btn_set_indices_2_trigger(self):
         pass
 
-    def btn_set_perturb_mode_trigger(self):
-        self.perturb_mode = not self.perturb_mode
+    def btn_set_perturb_mode_trigger(self, state):
+        self.perturb_mode = state
         if not self.perturb_mode:
             self.selection_history = []
 
@@ -760,6 +835,12 @@ class MainUI(QtWidgets.QMainWindow):
 
     def chb_placeholder_trigger(self):
         pass
+
+    def chb_graph_detail_trigger(self):
+        if self.project_instance is not None:
+            self.sys_message('Working...')
+            self.gs_atomic_graph.re_draw_edges(self.project_instance.r)
+            self.sys_message('Ready.')
 
     def chb_enable_move(self, state):
         self.control_window.mode_move(state)

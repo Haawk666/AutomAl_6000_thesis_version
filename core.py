@@ -192,31 +192,29 @@ class SuchSoftware:
         self.summarize_stats()
         string = 'Image summary: ----------\n'
         for line in iter(self.stats_string.splitlines()):
-            string += '          ' + line
+            string += '    ' + line + '\n'
         logger.info(string)
 
     def vertex_report(self, i):
-
-        logger.info('Vertex properties: ------------')
-        logger.info('    Index: {}'.format(self.graph.vertices[i].i))
-        logger.info('    Image pos: ({}, {})'.format(self.graph.vertices[i].im_coor_x,
-                                                     self.graph.vertices[i].im_coor_y))
-        logger.info('    Real pos: ({}, {})'.format(self.graph.vertices[i].real_coor_x,
-                                                    self.graph.vertices[i].real_coor_y))
-        logger.info('    Atomic Species: {}'.format(self.graph.vertices[i].atomic_species))
-        logger.info(('    Probability vector: {}'.format(self.graph.vertices[i].prob_vector).replace('\n', '')))
-        logger.info('    Partner vector: {}'.format(self.graph.vertices[i].partners()))
-        logger.info('    Level confidence: {}'.format(self.graph.vertices[i].level_confidence))
+        vertex = self.graph.vertices[i]
         alpha_max, alpha_min = graph_op.base_angle_score(self.graph, i, apply=False)
-        logger.info('    Alpha max: {}'.format(alpha_max))
-        logger.info('    Alpha min: {}'.format(alpha_min))
         rotation_map, angles, variance = self.graph.calc_central_angle_variance(i)
-        logger.info('    Central angle variance = {}'.format(variance))
-        logger.info('    Rotation map: {}'.format(str(rotation_map)))
-        logger.info('    Central angles: {}'.format(str(angles)))
-        logger.info('    Is edge column: {}'.format(str(self.graph.vertices[i].is_edge_column)))
-        logger.info('    Level: {}'.format(self.graph.vertices[i].level))
-        logger.info('    Anti-level: {}'.format(self.graph.vertices[i].anti_level()))
+        string = 'Vertex summary: ----------\n' + \
+                 '    Index: {}\n'.format(vertex.i) + \
+                 '    Image pos: ({}, {})\n'.format(vertex.im_coor_x, vertex.im_coor_y) + \
+                 '    Real pos: ({}, {})\n'.format(vertex.real_coor_x, vertex.real_coor_y) + \
+                 '    Atomic Species: {}\n'.format(vertex.species()) + \
+                 '    Probability vector: {}\n'.format(vertex.prob_vector).replace('\n', '') + \
+                 '    Partner vector: {}\n'.format(vertex.partners()) + \
+                 '    Alpha max: {}\n'.format(alpha_max) + \
+                 '    Alpha min: {}\n'.format(alpha_min) + \
+                 '    Central angle variance = {}\n'.format(variance) + \
+                 '    Rotation map: {}\n'.format(str(rotation_map)) + \
+                 '    Central angles: {}\n'.format(str(angles)) + \
+                 '    Is edge column: {}\n'.format(vertex.is_edge_column) + \
+                 '    Level: {}\n'.format(vertex.level) + \
+                 '    Anti-level: {}\n'.format(vertex.anti_level())
+        logger.info(string)
 
     def image_report(self):
         self.summarize_stats()
@@ -310,7 +308,7 @@ class SuchSoftware:
             self.column_circumference_mat = mat_op.draw_circle(self.column_circumference_mat, x_fit_pix, y_fit_pix,
                                                                self.r)
 
-            logger.debug(str(counter) + ': (' + str(x_fit_real_coor) + ', ' + str(y_fit_real_coor) + ') | (' + str(
+            logger.info(str(counter) + ': (' + str(x_fit_real_coor) + ', ' + str(y_fit_real_coor) + ') | (' + str(
                 pos[1]) + ', ' + str(pos[0]) + ')')
 
             self.num_columns += 1
@@ -708,7 +706,7 @@ class SuchSoftware:
                         logger.info('Looking for type {}:'.format(type_num))
                         logger.info('Chi: {}'.format(chi_before))
                         if type_num == 1:
-                            pass
+                            changes = 0
                         else:
                             changes = 0
                         total_changes += changes
@@ -881,16 +879,10 @@ class SuchSoftware:
 
     def calc_avg_gamma(self):
         if self.num_columns > 0:
-
-            self.im_mat = mat_op.gen_framed_mat(self.im_mat, self.r)
-
-            for x in range(0, self.num_columns):
-
-                self.graph.vertices[x].avg_gamma, self.graph.vertices[x].peak_gamma =\
-                    mat_op.average(self.im_mat, self.graph.vertices[x].im_coor_x + self.r,
-                                   self.graph.vertices[x].im_coor_y + self.r, self.r)
-
-            self.im_mat = mat_op.gen_de_framed_mat(self.im_mat, self.r)
+            temp_mat = mat_op.gen_framed_mat(self.im_mat, self.r)
+            for vertex in self.graph.vertices:
+                vertex.avg_gamma, vertex.peak_gamma = mat_op.average(temp_mat, vertex.im_coor_x + self.r,
+                                                                     vertex.im_coor_y + self.r, self.r)
 
     def summarize_stats(self):
 

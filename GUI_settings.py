@@ -1,3 +1,7 @@
+# By Haakon Tvedt @ NTNU
+"""Module container for style settings of the GUI"""
+
+
 from PyQt5 import QtGui, QtCore
 
 font_tiny = QtGui.QFont()

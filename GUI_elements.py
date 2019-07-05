@@ -6,6 +6,7 @@ import logging
 import graph_op
 import GUI_custom_components
 import GUI_settings
+import GUI_tooltips
 
 
 # ----------
@@ -102,6 +103,9 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
     def re_draw_edges(self, r):
         """Redraws all edge elements."""
         self.ui_obj.project_instance.graph.redraw_edges()
+        for edge_item in self.edges:
+            self.removeItem(edge_item.arrow[0])
+            self.removeItem(edge_item.arrow[1])
         self.edges = []
         for edge in self.ui_obj.project_instance.graph.edges:
             consistent = edge.is_reciprocated
@@ -111,6 +115,9 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
             self.edges.append(GUI_custom_components.Arrow(p1, p2, r, self.scale_factor, consistent, dislocation))
             self.addItem(self.edges[-1].arrow[0])
             self.addItem(self.edges[-1].arrow[1])
+            if not self.ui_obj.control_window.chb_graph.isChecked() and not consistent:
+                self.edges[-1].arrow[0].hide()
+                self.edges[-1].arrow[1].hide()
 
 
 class AtomicSubGraph(QtWidgets.QGraphicsScene):
@@ -335,7 +342,6 @@ class ControlWindow(QtWidgets.QWidget):
         self.lbl_avg_species_confidence = QtWidgets.QLabel('Average species confidence: ')
 
         # Checkboxes
-
         self.chb_precipitate_column = QtWidgets.QCheckBox('Precipitate column')
         self.chb_show = QtWidgets.QCheckBox('Show in overlay')
         self.chb_move = QtWidgets.QCheckBox('Enable move')
@@ -423,7 +429,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_show.toggled.connect(self.ui_obj.chb_placeholder_trigger)
         self.chb_move.toggled.connect(self.ui_obj.chb_enable_move)
 
-        self.chb_graph.toggled.connect(self.ui_obj.chb_placeholder_trigger)
+        self.chb_graph.toggled.connect(self.ui_obj.chb_graph_detail_trigger)
 
         self.chb_raw_image.toggled.connect(self.ui_obj.chb_placeholder_trigger)
         self.chb_black_background.toggled.connect(self.ui_obj.chb_placeholder_trigger)
@@ -486,6 +492,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_set_indices = GUI_custom_components.MediumButton('Set neighbours', self, trigger_func=self.ui_obj.btn_set_indices_trigger)
         self.btn_set_indices_2 = GUI_custom_components.MediumButton('Set neighbours manually', self, trigger_func=self.ui_obj.btn_set_indices_2_trigger)
         self.btn_set_perturb_mode = GUI_custom_components.MediumButton('Perturb mode', self, trigger_func=self.ui_obj.btn_set_perturb_mode_trigger)
+        self.btn_set_perturb_mode.setCheckable(True)
         self.btn_plot_variance = GUI_custom_components.MediumButton('Plot variance', self, trigger_func=self.ui_obj.btn_plot_variance_trigger)
         self.btn_plot_angles = GUI_custom_components.MediumButton('Plot angles', self, trigger_func=self.ui_obj.btn_plot_angles_trigger)
 
@@ -696,6 +703,29 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_list.append(self.chb_legend)
         self.chb_list.append(self.chb_scalebar)
 
+        # Set tooltips:
+        self.mode_tooltip(self.ui_obj.menu.toggle_tooltips_action.isChecked())
+
+    def mode_tooltip(self, on):
+        if on:
+            for widget, tooltip in zip(self.set_btn_list, GUI_tooltips.control_window_set_list):
+                widget.setToolTip(tooltip)
+            for widget, tooltip in zip(self.btn_move_list, GUI_tooltips.control_window_move_list):
+                widget.setToolTip(tooltip)
+            for widget, tooltip in zip(self.btn_list, GUI_tooltips.control_window_btn_list):
+                widget.setToolTip(tooltip)
+            for widget, tooltip in zip(self.chb_list, GUI_tooltips.control_window_chb_list):
+                widget.setToolTip(tooltip)
+        else:
+            for widget in self.set_btn_list:
+                widget.setToolTip('')
+            for widget in self.btn_move_list:
+                widget.setToolTip('')
+            for widget in self.btn_list:
+                widget.setToolTip('')
+            for widget in self.chb_list:
+                widget.setToolTip('')
+
     def mode_move(self, on):
         if self.ui_obj.project_loaded and not self.ui_obj.selected_column == -1:
             self.chb_move.blockSignals(True)
@@ -716,10 +746,6 @@ class ControlWindow(QtWidgets.QWidget):
                 btn.setDisabled(on)
             self.btn_set_move.setDisabled(not on)
             self.btn_cancel_move.setDisabled(not on)
-
-    def mode_debug(self, on):
-
-        pass
 
     def draw_histogram(self):
 
@@ -1138,6 +1164,9 @@ class MenuBar:
         invert_precipitate_levels_action = QtWidgets.QAction('Invert precipitate levels', self.ui_obj)
         ad_hoc_action = QtWidgets.QAction('Ad Hoc functionality', self.ui_obj)
         # - help
+        self.toggle_tooltips_action = QtWidgets.QAction('Show tooltips', self.ui_obj)
+        self.toggle_tooltips_action.setCheckable(True)
+        self.toggle_tooltips_action.setChecked(True)
         there_is_no_help_action = QtWidgets.QAction('HJALP!', self.ui_obj)
 
         # Add actions to menus
@@ -1184,6 +1213,8 @@ class MenuBar:
         debug.addAction(invert_precipitate_levels_action)
         debug.addAction(ad_hoc_action)
         # - Help
+        help.addAction(self.toggle_tooltips_action)
+        help.addSeparator()
         help.addAction(there_is_no_help_action)
 
         # Events
@@ -1229,6 +1260,7 @@ class MenuBar:
         invert_precipitate_levels_action.triggered.connect(self.ui_obj.menu_invert_precipitate_columns_trigger)
         ad_hoc_action.triggered.connect(self.ui_obj.menu_ad_hoc_trigger)
         # - hjelp
+        self.toggle_tooltips_action.triggered.connect(self.ui_obj.menu_toggle_tooltips_trigger)
         there_is_no_help_action.triggered.connect(self.ui_obj.menu_there_is_no_help_trigger)
 
 

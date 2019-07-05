@@ -298,16 +298,3 @@ def cm_fit(mat, x_0, y_0, r):
     y_fit = weighted_y_sum / total_mass
     return x_fit, y_fit
 
-
-
-
-
-
-
-
-
-
-
-
-
-

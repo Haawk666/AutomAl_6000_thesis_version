@@ -242,6 +242,10 @@ class Arrow:
         head_1 = QtWidgets.QGraphicsPolygonItem(poly_1)
         head_2 = QtWidgets.QGraphicsPolygonItem(poly_2)
 
+        line.setZValue(-1)
+        head_1.setZValue(-1)
+        head_2.setZValue(-1)
+
         self.arrow = line, head_2
 
 
