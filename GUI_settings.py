@@ -4,13 +4,37 @@
 
 from PyQt5 import QtGui, QtCore
 
+theme = 'dark'
+
+dark_palette = QtGui.QPalette()
+dark_palette.setColor(QtGui.QPalette.Window, QtGui.QColor(53, 53, 53))
+dark_palette.setColor(QtGui.QPalette.WindowText, QtCore.Qt.white)
+dark_palette.setColor(QtGui.QPalette.Base, QtGui.QColor(25, 25, 25))
+dark_palette.setColor(QtGui.QPalette.AlternateBase, QtGui.QColor(53, 53, 53))
+dark_palette.setColor(QtGui.QPalette.ToolTipBase, QtCore.Qt.white)
+dark_palette.setColor(QtGui.QPalette.ToolTipText, QtCore.Qt.white)
+dark_palette.setColor(QtGui.QPalette.Text, QtCore.Qt.white)
+dark_palette.setColor(QtGui.QPalette.Button, QtGui.QColor(53, 53, 53))
+dark_palette.setColor(QtGui.QPalette.ButtonText, QtCore.Qt.white)
+dark_palette.setColor(QtGui.QPalette.BrightText, QtCore.Qt.red)
+dark_palette.setColor(QtGui.QPalette.Link, QtGui.QColor(42, 130, 218))
+dark_palette.setColor(QtGui.QPalette.Highlight, QtGui.QColor(42, 130, 218))
+dark_palette.setColor(QtGui.QPalette.HighlightedText, QtCore.Qt.black)
+
 font_tiny = QtGui.QFont()
 font_tiny.setPixelSize(9)
+
+white_font_tiny = QtGui.QFont()
+white_font_tiny.setPixelSize(9)
+
+white_pen = QtGui.QPen(QtCore.Qt.white)
+white_pen.setWidth(1)
 
 pen_boarder = QtGui.QPen(QtCore.Qt.black)
 pen_boarder.setWidth(1)
 
 brush_black = QtGui.QBrush(QtCore.Qt.black)
+background_brush = QtGui.QBrush(QtGui.QColor(180, 180, 180))
 
 pen_al = QtGui.QPen(QtCore.Qt.green)
 pen_al.setWidth(5)

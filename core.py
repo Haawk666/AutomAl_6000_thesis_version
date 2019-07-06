@@ -216,12 +216,6 @@ class SuchSoftware:
                  '    Anti-level: {}\n'.format(vertex.anti_level())
         logger.info(string)
 
-    def image_report(self):
-        self.summarize_stats()
-        logger.info('Project properties: ---------')
-        for line in iter(self.stats_string.splitlines()):
-            logger.info('    {}'.format(line))
-
     def set_alloy_mat(self):
         if self.alloy == 0:
             for x in range(0, SuchSoftware.num_selections):

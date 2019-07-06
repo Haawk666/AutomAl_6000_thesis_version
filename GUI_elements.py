@@ -85,6 +85,8 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
         self.background_image = background
         if self.background_image is not None:
             self.addPixmap(self.background_image)
+        if GUI_settings.theme == 'dark':
+            self.setBackgroundBrush(GUI_settings.background_brush)
         self.re_draw()
 
     def re_draw(self):
@@ -133,6 +135,8 @@ class AtomicSubGraph(QtWidgets.QGraphicsScene):
         self.background_image = background
         if self.background_image is not None:
             self.addPixmap(self.background_image)
+        if GUI_settings.theme == 'dark':
+            self.setBackgroundBrush(GUI_settings.background_brush)
         self.sub_graph = sub_graph
         if sub_graph is not None:
             self.re_draw()
@@ -291,6 +295,8 @@ class ControlWindow(QtWidgets.QWidget):
         self.probGraphicView.setMaximumHeight(self.height)
         self.probGraphicView.setMinimumWidth(self.width)
         self.probGraphicView.setMaximumWidth(self.width)
+        if GUI_settings.theme == 'dark':
+            self.probGraphicView.setBackgroundBrush(GUI_settings.background_brush)
 
         self.probGraphicLayout = QtWidgets.QHBoxLayout()
         self.probGraphicLayout.addWidget(self.probGraphicView)
@@ -924,6 +930,9 @@ class ControlWindow(QtWidgets.QWidget):
         probGraphicScene.addItem(mg_number)
         probGraphicScene.addItem(un_number)
 
+        if GUI_settings.theme == 'dark':
+            probGraphicScene.palette().setColor(QtGui.QPalette.Text, QtCore.Qt.white)
+
         self.probGraphicView.setScene(probGraphicScene)
 
     def select_column(self):
@@ -1167,6 +1176,7 @@ class MenuBar:
         self.toggle_tooltips_action = QtWidgets.QAction('Show tooltips', self.ui_obj)
         self.toggle_tooltips_action.setCheckable(True)
         self.toggle_tooltips_action.setChecked(True)
+        set_theme_action = QtWidgets.QAction('Set theme', self.ui_obj)
         there_is_no_help_action = QtWidgets.QAction('HJALP!', self.ui_obj)
 
         # Add actions to menus
@@ -1215,6 +1225,7 @@ class MenuBar:
         # - Help
         help.addAction(self.toggle_tooltips_action)
         help.addSeparator()
+        help.addAction(set_theme_action)
         help.addAction(there_is_no_help_action)
 
         # Events
@@ -1261,6 +1272,7 @@ class MenuBar:
         ad_hoc_action.triggered.connect(self.ui_obj.menu_ad_hoc_trigger)
         # - hjelp
         self.toggle_tooltips_action.triggered.connect(self.ui_obj.menu_toggle_tooltips_trigger)
+        set_theme_action.triggered.connect(self.ui_obj.menu_set_theme_trigger)
         there_is_no_help_action.triggered.connect(self.ui_obj.menu_there_is_no_help_trigger)
 
 

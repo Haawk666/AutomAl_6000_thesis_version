@@ -8,6 +8,7 @@ import sys
 import numpy as np
 import core
 import GUI_elements
+import GUI_settings
 import mat_op
 
 # Instantiate logger
@@ -570,6 +571,15 @@ class MainUI(QtWidgets.QMainWindow):
 
     def menu_toggle_tooltips_trigger(self, state):
         self.control_window.mode_tooltip(state)
+
+    def menu_set_theme_trigger(self):
+        items = ('Dark', 'Classic')
+        item, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Select theme", "Theme:", items, 0, False)
+        if ok_pressed and item:
+            GUI_settings.theme = item
+            message = QtWidgets.QMessageBox()
+            message.setText('Save your work and restart the program for the changes to take effect!')
+            message.exec_()
 
     def menu_there_is_no_help_trigger(self):
         message = QtWidgets.QMessageBox()

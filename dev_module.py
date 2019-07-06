@@ -4,14 +4,13 @@ import graph_op
 import numpy as np
 import utils
 from matplotlib.gridspec import GridSpec
-import graph_op
 
 
 def set_mg_type(graph_obj):
 
     for k, vertex in enumerate(graph_obj.vertices):
 
-        max_, min_, *_ = graph_op.base_angle_score(graph_obj, vertex.i, 1, 1, 1, apply=False)
+        max_, min_, *_ = graph_op.base_angle_score(graph_obj, vertex.i, apply=False)
 
         if vertex.species() == 'Mg':
 
@@ -88,8 +87,7 @@ def accumulate_test_data(obj, cu_min_angles, si_1_min_angles, si_2_min_angles, a
 
         if not vertex.is_edge_column:
 
-            max_, min_, *_ = graph_op.base_angle_score(obj.graph, vertex.i, obj.dist_3_std, obj.dist_4_std,
-                                                       obj.dist_5_std, apply=False)
+            max_, min_, *_ = graph_op.base_angle_score(obj.graph, vertex.i, apply=False)
 
             if vertex.species() == 'Cu':
                 cu_min_angles.append(min_)
