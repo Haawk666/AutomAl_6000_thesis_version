@@ -8,7 +8,7 @@ import sys
 import numpy as np
 import core
 import GUI_elements
-import GUI_settings
+import utils
 import mat_op
 
 # Instantiate logger
@@ -437,7 +437,9 @@ class MainUI(QtWidgets.QMainWindow):
         pass
 
     def menu_export_data_trigger(self):
-        pass
+        if self.project_instance is not None:
+            if self.project_instance.num_columns > 0:
+                GUI_elements.DataExportWizard()
 
     def menu_export_raw_image_trigger(self):
         if self.project_loaded:
@@ -571,12 +573,14 @@ class MainUI(QtWidgets.QMainWindow):
 
     def menu_toggle_tooltips_trigger(self, state):
         self.control_window.mode_tooltip(state)
+        self.terminal_window.mode_tooltip(state)
+        utils.replace_line('GUI_settings.py', 7, 'tooltips = {}\n'.format(state))
 
     def menu_set_theme_trigger(self):
-        items = ('Dark', 'Classic')
+        items = ('dark', 'classic')
         item, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Select theme", "Theme:", items, 0, False)
         if ok_pressed and item:
-            GUI_settings.theme = item
+            utils.replace_line('GUI_settings.py', 6, 'theme = \'{}\'\n'.format(item))
             message = QtWidgets.QMessageBox()
             message.setText('Save your work and restart the program for the changes to take effect!')
             message.exec_()
@@ -668,12 +672,9 @@ class MainUI(QtWidgets.QMainWindow):
     def btn_set_species_trigger(self):
         """Btn-trigger: Run 'set species' dialog."""
         if self.project_loaded and not (self.selected_column == -1):
-
             items = ('Al', 'Mg', 'Si', 'Cu', 'Un')
             item, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Species", items, 0, False)
-
             if ok_pressed and item:
-
                 if item == 'Al':
                     h = 3
                 elif item == 'Si':
@@ -684,25 +685,20 @@ class MainUI(QtWidgets.QMainWindow):
                     h = 1
                 else:
                     h = 6
-
                 self.set_species(h)
 
     def btn_set_level_trigger(self):
         """Btn-trigger: Run 'set level' dialog."""
         if self.project_loaded and not (self.selected_column == -1):
-
             items = ('0', '1')
             item, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "level", items, 0, False)
-
             if ok_pressed and item:
-
                 if item == '0':
                     level = 0
                 elif item == '1':
                     level = 1
                 else:
                     level = 0
-
                 self.set_level(level)
 
     # ----------
@@ -845,6 +841,11 @@ class MainUI(QtWidgets.QMainWindow):
 
     def chb_placeholder_trigger(self):
         pass
+
+    def chb_raw_image_trigger(self, state):
+        if self.project_instance is not None:
+            self.sys_message('Working...')
+            self.sys_message('Ready.')
 
     def chb_graph_detail_trigger(self):
         if self.project_instance is not None:

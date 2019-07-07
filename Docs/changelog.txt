@@ -4,27 +4,21 @@ From specialization project version to first restructured version 0.0.0
 
 New features in 0.0.0:
 -----------------
-- Fully restructured the core program from scrathch and retouched the GUI to reflect the changes.
+- Fully restructured both the core program and the GUI from scratch.
   This will hopefully make the program structure more sensible and thus make life easier in the future.
   Tried to lay good structural foundations for future features
   
 - Added terminal output as a new widget, allowing the core to report on its progress and other program
-  info to be displayed. SuchSoftware is now instantiated with a reference to a function in MainUI to
-  enable progress reporting to the GUI. The core is however still modular, if it is called from a
-  different environment than the GUI, it will instead report progress with the print() call.
-  Added a lot of reporting all around the software. When 'advanced debug' is selected, this reporting
-  is more plentiful and detailed, but might be messy and superflous for standard use. The console feed
-  can be saved to a log file with the new 'save log' button. Thsi file can then be easily shared when
-  discussing replication of bugs, hopefully aiding in the bux-fixing process in the future.
+  info to be displayed. The logging module is now used to generate intermodular reporting.
 
 - Marginally improved column detection: Vertex positions are now calculated as float values rather
   than pixel indicies. This allows columns to have more fine-tuned positions and evades pixel
   snapping as it used to. It has escpecially improved the accuracy of column positions in realtively
   low resolution images (Such as large particles).
   
-- The re-implementation of the column characterization algorithm in the new structure is sligthly
-  different, and this seems to have been a slight improvement. No other changes have been made to the
-  algorithms though, as the focus of this update has been to prepare the software for future work.
+- Column characterization has had a major ovehaul. New and better statistical analysis has uncovered new distributions
+  over several parameters. Weak and strong untangling has been done from scratch. New methods for analysing levels,
+  finding intersections much more have been implemented, and is in early testing.
   
 - Implemented better version handling. If the core detects a save-file from a previous version, it will
   run a script that loads the instance in a compatible version and transforms the data to the current
@@ -66,12 +60,23 @@ New features in 0.0.0:
   
 - Added an option in the overlay filters to toggle show/hide columns that have been set by the user.
 
-- Vectorized some old code, producing a slight optimization on some sub-processes. One of the major
-  time-consumers of the column characterization algorithm now seem to be the mapping of locality
-  (fining the 8 nearest vertices to every vertex). Finding a better way to achieve this than what is
-  implemented now, will make a big difference in the computational effort of the characterization.
+- Vectorized some old code, producing a slight optimization on some sub-processes.
 
-- Introduced a edge intersection detection method
+- Wrote program-wide tooltips.
+
+- Added the option of a new 'dark' theme that is better for reviewing images in the dark!
+
+- implemented perturbation mode.
+
+- Made several plotting features for data-mining purposes.
+
+- Implemented concept of sub-graphs and a new tab for this.
+
+- Made an api for writing plugins, as well as an example plugin.
+
+- Wrote a data-export wizard!
+
+- Made a new group-box type that can be expanded or collapsed by doubble-clicking
   
 
 Bugfixes:

@@ -7,6 +7,7 @@ import graph_op
 import GUI_custom_components
 import GUI_settings
 import GUI_tooltips
+import csv
 
 
 # ----------
@@ -59,7 +60,7 @@ class OverlayComposition(QtWidgets.QGraphicsScene):
         self.ui_obj = ui_obj
         self.interactive_overlay_objects = []
         self.background_image = background
-        if self.background_image is not None:
+        if background is not None:
             self.addPixmap(self.background_image)
 
     def re_draw(self):
@@ -275,6 +276,17 @@ class Terminal(QtWidgets.QWidget):
 
         self.setLayout(self.terminal_display_layout)
 
+        # Set tooltips:
+        self.mode_tooltip(self.ui_obj.menu.toggle_tooltips_action.isChecked())
+
+    def mode_tooltip(self, on):
+        if on:
+            self.btn_save_log.setToolTip(GUI_tooltips.btn_save_log)
+            self.btn_clear_log.setToolTip(GUI_tooltips.btn_clear_log)
+        else:
+            self.btn_save_log.setToolTip('')
+            self.btn_clear_log.setToolTip('')
+
 
 class ControlWindow(QtWidgets.QWidget):
 
@@ -301,6 +313,8 @@ class ControlWindow(QtWidgets.QWidget):
         self.probGraphicLayout = QtWidgets.QHBoxLayout()
         self.probGraphicLayout.addWidget(self.probGraphicView)
         self.probGraphicLayout.addStretch()
+
+        self.draw_histogram()
 
         # Labels
         self.lbl_num_detected_columns = QtWidgets.QLabel('Number of detected columns: ')
@@ -437,7 +451,7 @@ class ControlWindow(QtWidgets.QWidget):
 
         self.chb_graph.toggled.connect(self.ui_obj.chb_graph_detail_trigger)
 
-        self.chb_raw_image.toggled.connect(self.ui_obj.chb_placeholder_trigger)
+        self.chb_raw_image.toggled.connect(self.ui_obj.chb_raw_image_trigger)
         self.chb_black_background.toggled.connect(self.ui_obj.chb_placeholder_trigger)
         self.chb_structures.toggled.connect(self.ui_obj.chb_placeholder_trigger)
         self.chb_boarders.toggled.connect(self.ui_obj.chb_placeholder_trigger)
@@ -1175,7 +1189,7 @@ class MenuBar:
         # - help
         self.toggle_tooltips_action = QtWidgets.QAction('Show tooltips', self.ui_obj)
         self.toggle_tooltips_action.setCheckable(True)
-        self.toggle_tooltips_action.setChecked(True)
+        self.toggle_tooltips_action.setChecked(GUI_settings.tooltips)
         set_theme_action = QtWidgets.QAction('Set theme', self.ui_obj)
         there_is_no_help_action = QtWidgets.QAction('HJALP!', self.ui_obj)
 
@@ -1279,4 +1293,80 @@ class MenuBar:
 # ----------
 # Custom dialogs:
 # ----------
+
+
+class DataExportWizard(QtWidgets.QDialog):
+
+    def __init__(self, *args, ui_obj=None):
+        super().__init__(*args)
+
+        self.ui_obj = ui_obj
+
+        self.btn_next = QtWidgets.QPushButton('Next')
+        self.btn_next.clicked.connect(self.next_trigger)
+        self.btn_cancel = QtWidgets.QPushButton('Cancel')
+        self.btn_cancel.clicked.connect(self.cancel_trigger)
+        self.btn_layout = QtWidgets.QHBoxLayout()
+        self.btn_layout.addWidget(self.btn_cancel)
+        self.btn_layout.addWidget(self.btn_next)
+
+        self.lbl_select_data = QtWidgets.QLabel('Select the target format for data-export.')
+        self.combo_1 = QtWidgets.QComboBox()
+
+        self.lbl_customize_1 = QtWidgets.QLabel('Select column-centered data or edge-centered data:')
+        self.combo_2 = QtWidgets.QComboBox()
+
+        self.step = 0
+        self.target = '.csv'
+
+        self.set_layout()
+        self.exec_()
+
+    def page_1_layout(self):
+        VLayout = QtWidgets.QVBoxLayout()
+        self.combo_1.addItem('.csv')
+        self.combo_1.addItem('.svg')
+        VLayout.addWidget(self.lbl_select_data)
+        VLayout.addWidget(self.combo_1)
+        return VLayout
+
+    def page_2_layout(self):
+        VLayout = QtWidgets.QVBoxLayout()
+        self.combo_2.addItem('Column-centered')
+        self.combo_2.addItem('Edge_centered')
+        VLayout.addWidget(self.lbl_customize_1)
+        VLayout.addWidget(self.combo_2)
+        return VLayout
+
+    def page_csv_layout(self):
+        pass
+
+    def set_layout(self):
+
+        VLayout = QtWidgets.QVBoxLayout()
+
+        if self.step == 0:
+            VLayout = self.page_1_layout()
+        elif self.step == 1:
+            VLayout = self.page_2_layout()
+        else:
+            print('Error')
+
+        VLayout.addLayout(self.btn_layout)
+
+        self.setLayout(VLayout)
+
+    def next_trigger(self):
+        if self.step == 0:
+            self.target = self.combo_1.currentText()
+            self.step = 1
+        elif self.step == 1:
+            self.category = self.combo_2.currentText()
+            self.step = 2
+        self.set_layout()
+
+    def cancel_trigger(self):
+        self.close()
+
+
 

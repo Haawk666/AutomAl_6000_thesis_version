@@ -270,7 +270,7 @@ def gaussian_fit(mat, x_0, y_0, r):
                 counter = counter + 1
     print(counter)
     guess = [temp_mat.max(), r, r, 0.0001, 0.0001, 0.0001, 0]
-    (params, uncert) = opt.curve_fit(gauss_func, xy, zobs, p0=guess, sigma=sigma, absolute_sigma=1, maxfev=6400)
+    (params, uncert) = opt.curve_fit(gauss_func, xy, zobs, p0=guess, sigma=sigma, absolute_sigma=True, maxfev=6400)
     print(params)
     mat = gen_gauss(params[0], np.floor(params[1]), np.floor(params[2]), 2 * r + 1, 2 * r + 1, params[3], params[4], params[5], params[6])
     # Translate to coordinates of the real image:
@@ -297,4 +297,13 @@ def cm_fit(mat, x_0, y_0, r):
     x_fit = weighted_x_sum / total_mass
     y_fit = weighted_y_sum / total_mass
     return x_fit, y_fit
+
+
+def replace_line(filename, line_number, new_line):
+    """Open file <filename> and replace line 'line-number' with 'new_line' message."""
+    with open(filename, mode='r') as f:
+        entries = f.readlines()
+        entries[line_number] = new_line
+    with open(filename, mode='w') as f:
+        f.writelines(entries)
 
