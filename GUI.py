@@ -439,7 +439,7 @@ class MainUI(QtWidgets.QMainWindow):
     def menu_export_data_trigger(self):
         if self.project_instance is not None:
             if self.project_instance.num_columns > 0:
-                GUI_elements.DataExportWizard()
+                GUI_elements.DataExportWizard(ui_obj=self)
 
     def menu_export_raw_image_trigger(self):
         if self.project_loaded:

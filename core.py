@@ -239,6 +239,16 @@ class SuchSoftware:
             pickle.dump(self, f, pickle.HIGHEST_PROTOCOL)
         logger.info('Saved {}'.format(filename_full))
 
+    def export(self, format_, filename, column_centered=True):
+        """Export data to csv file."""
+        if column_centered:
+            print(format_)
+            print(filename)
+        else:
+            print(format_)
+            print(filename)
+
+
     @staticmethod
     def load(filename_full):
         with open(filename_full, 'rb') as f:

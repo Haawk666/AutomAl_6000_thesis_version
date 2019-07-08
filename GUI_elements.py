@@ -7,6 +7,7 @@ import graph_op
 import GUI_custom_components
 import GUI_settings
 import GUI_tooltips
+import GUI
 import csv
 
 
@@ -1116,6 +1117,16 @@ class MenuBar:
         self.bar_obj = bar_obj
         self.ui_obj = ui_obj
 
+        # Increase the visibility of separators when 'dark' theme!
+        self.bar_obj.setStyleSheet("""
+                            QMenu::separator {
+                                height: 1px;
+                                background: grey;
+                                margin-left: 10px;
+                                margin-right: 5px;
+                            }
+                        """)
+
         # Main headers
         file = self.bar_obj.addMenu('File')
         edit = self.bar_obj.addMenu('Edit')
@@ -1302,70 +1313,452 @@ class DataExportWizard(QtWidgets.QDialog):
 
         self.ui_obj = ui_obj
 
-        self.btn_next = QtWidgets.QPushButton('Next')
-        self.btn_next.clicked.connect(self.next_trigger)
-        self.btn_cancel = QtWidgets.QPushButton('Cancel')
-        self.btn_cancel.clicked.connect(self.cancel_trigger)
-        self.btn_layout = QtWidgets.QHBoxLayout()
-        self.btn_layout.addWidget(self.btn_cancel)
-        self.btn_layout.addWidget(self.btn_next)
+        self.setWindowTitle('Data export wizard')
 
+        self.btn_next = QtWidgets.QPushButton('Next')
+        self.btn_next.clicked.connect(self.btn_next_trigger)
+        self.btn_back = QtWidgets.QPushButton('Back')
+        self.btn_back.clicked.connect(self.btn_back_trigger)
+        self.btn_cancel = QtWidgets.QPushButton('Cancel')
+        self.btn_cancel.clicked.connect(self.btn_cancel_trigger)
+
+        self.btn_layout = QtWidgets.QHBoxLayout()
+        self.stack_layout = QtWidgets.QStackedLayout()
+        self.top_layout = QtWidgets.QVBoxLayout()
+
+        self.widget_frame_1 = QtWidgets.QWidget()
+        self.widget_frame_2_a = QtWidgets.QWidget()
+        self.widget_frame_2_b = QtWidgets.QWidget()
+        self.widget_frame_3_a = QtWidgets.QWidget()
+        self.widget_frame_3_b = QtWidgets.QWidget()
+        self.widget_frame_4_a = QtWidgets.QWidget()
+        self.widget_frame_4_b = QtWidgets.QWidget()
+
+        # Frame 1
         self.lbl_select_data = QtWidgets.QLabel('Select the target format for data-export.')
         self.combo_1 = QtWidgets.QComboBox()
 
+        # Frame 2 a
         self.lbl_customize_1 = QtWidgets.QLabel('Select column-centered data or edge-centered data:')
         self.combo_2 = QtWidgets.QComboBox()
 
+        # Frame 2 b
+        self.lbl_not_implemented = QtWidgets.QLabel('This option has not been implemented yet!')
+
+        # Frame 3 a
+        self.list_1 = QtWidgets.QListWidget()
+        self.list_2 = QtWidgets.QListWidget()
+        self.btn_list_1_up = QtWidgets.QPushButton('Move up')
+        self.btn_list_1_up.clicked.connect(self.btn_list_1_up_trigger)
+        self.btn_list_1_down = QtWidgets.QPushButton('Move down')
+        self.btn_list_1_down.clicked.connect(self.btn_list_1_down_trigger)
+        self.btn_list_2_up = QtWidgets.QPushButton('Move up')
+        self.btn_list_2_up.clicked.connect(self.btn_list_2_up_trigger)
+        self.btn_list_2_down = QtWidgets.QPushButton('Move down')
+        self.btn_list_2_down.clicked.connect(self.btn_list_2_down_trigger)
+        self.btn_add = QtWidgets.QPushButton('Add')
+        self.btn_add.clicked.connect(self.btn_add_item_trigger)
+        self.btn_remove = QtWidgets.QPushButton('Remove')
+        self.btn_remove.clicked.connect(self.btn_remove_item_trigger)
+        self.lbl_included_data = QtWidgets.QLabel('Included data-columns:')
+        self.lbl_available_data = QtWidgets.QLabel('Available data-columns:')
+
+        # Frame 3 b
+        self.list_3 = QtWidgets.QListWidget()
+        self.list_4 = QtWidgets.QListWidget()
+        self.btn_list_3_up = QtWidgets.QPushButton('Move up')
+        self.btn_list_3_up.clicked.connect(self.btn_list_3_up_trigger)
+        self.btn_list_3_down = QtWidgets.QPushButton('Move down')
+        self.btn_list_3_down.clicked.connect(self.btn_list_3_down_trigger)
+        self.btn_list_4_up = QtWidgets.QPushButton('Move up')
+        self.btn_list_4_up.clicked.connect(self.btn_list_4_up_trigger)
+        self.btn_list_4_down = QtWidgets.QPushButton('Move down')
+        self.btn_list_4_down.clicked.connect(self.btn_list_4_down_trigger)
+        self.btn_add_2 = QtWidgets.QPushButton('Add')
+        self.btn_add_2.clicked.connect(self.btn_add_2_item_trigger)
+        self.btn_remove_2 = QtWidgets.QPushButton('Remove')
+        self.btn_remove_2.clicked.connect(self.btn_remove_2_item_trigger)
+        self.lbl_included_data_2 = QtWidgets.QLabel('Included data-columns:')
+        self.lbl_available_data_2 = QtWidgets.QLabel('Available data-columns:')
+
+        # Frame 4 a
+        self.lbl_filter = QtWidgets.QLabel('Set inclusion filter: (Columns with unchecked properties will not be included)')
+        self.chb_edge_columns = QtWidgets.QCheckBox('Include edge columns')
+        self.chb_matrix_columns = QtWidgets.QCheckBox('Include aluminium matrix columns')
+        self.chb_hidden_columns = QtWidgets.QCheckBox('Include columns that are set to be hidden in the overlay')
+
+        # Frame 4 b
+        self.lbl_filter_2 = QtWidgets.QLabel('Set inclusion filter: (Columns with unchecked properties will not be included)')
+        self.chb_edge_edges = QtWidgets.QCheckBox('Include edges that are associated with one or two edge columns')
+
         self.step = 0
-        self.target = '.csv'
+        self.state_list = []
 
         self.set_layout()
         self.exec_()
 
     def page_1_layout(self):
-        VLayout = QtWidgets.QVBoxLayout()
         self.combo_1.addItem('.csv')
         self.combo_1.addItem('.svg')
-        VLayout.addWidget(self.lbl_select_data)
-        VLayout.addWidget(self.combo_1)
-        return VLayout
 
-    def page_2_layout(self):
-        VLayout = QtWidgets.QVBoxLayout()
+        h_layout = QtWidgets.QHBoxLayout()
+        v_layout = QtWidgets.QVBoxLayout()
+
+        v_layout.addStretch()
+        v_layout.addWidget(self.lbl_select_data)
+        v_layout.addWidget(self.combo_1)
+        v_layout.addStretch()
+
+        h_layout.addStretch()
+        h_layout.addLayout(v_layout)
+        h_layout.addStretch()
+
+        self.widget_frame_1.setLayout(h_layout)
+
+    def page_2_a_layout(self):
         self.combo_2.addItem('Column-centered')
         self.combo_2.addItem('Edge_centered')
-        VLayout.addWidget(self.lbl_customize_1)
-        VLayout.addWidget(self.combo_2)
-        return VLayout
 
-    def page_csv_layout(self):
-        pass
+        h_layout = QtWidgets.QHBoxLayout()
+        v_layout = QtWidgets.QVBoxLayout()
+
+        v_layout.addStretch()
+        v_layout.addWidget(self.lbl_customize_1)
+        v_layout.addWidget(self.combo_2)
+        v_layout.addStretch()
+
+        h_layout.addStretch()
+        h_layout.addLayout(v_layout)
+        h_layout.addStretch()
+
+        self.widget_frame_2_a.setLayout(h_layout)
+
+    def page_2_b_layout(self):
+        h_layout = QtWidgets.QHBoxLayout()
+        v_layout = QtWidgets.QVBoxLayout()
+
+        v_layout.addStretch()
+        v_layout.addWidget(self.lbl_not_implemented)
+        v_layout.addStretch()
+
+        h_layout.addLayout(v_layout)
+
+        self.widget_frame_2_b.setLayout(h_layout)
+
+    def page_3_a_layout(self):
+        self.list_2.addItem('Unique column index')
+        self.list_2.addItem('Atomic species')
+        self.list_2.addItem('z-height')
+        self.list_2.addItem('peak relative z-contrast')
+
+        h_layout = QtWidgets.QHBoxLayout()
+        v_layout_1 = QtWidgets.QVBoxLayout()
+        v_layout_2 = QtWidgets.QVBoxLayout()
+        v_layout_3 = QtWidgets.QVBoxLayout()
+        v_layout_4 = QtWidgets.QVBoxLayout()
+        v_layout_5 = QtWidgets.QVBoxLayout()
+
+        v_layout_1.addStretch()
+        v_layout_1.addWidget(self.btn_list_1_up)
+        v_layout_1.addWidget(self.btn_list_1_down)
+        v_layout_1.addStretch()
+
+        v_layout_2.addWidget(self.lbl_included_data)
+        v_layout_2.addWidget(self.list_1)
+
+        v_layout_3.addStretch()
+        v_layout_3.addWidget(self.btn_add)
+        v_layout_3.addWidget(self.btn_remove)
+        v_layout_3.addStretch()
+
+        v_layout_4.addWidget(self.lbl_available_data)
+        v_layout_4.addWidget(self.list_2)
+
+        v_layout_5.addStretch()
+        v_layout_5.addWidget(self.btn_list_2_up)
+        v_layout_5.addWidget(self.btn_list_2_down)
+        v_layout_5.addStretch()
+
+        h_layout.addLayout(v_layout_1)
+        h_layout.addLayout(v_layout_2)
+        h_layout.addLayout(v_layout_3)
+        h_layout.addLayout(v_layout_4)
+        h_layout.addLayout(v_layout_5)
+
+        self.widget_frame_3_a.setLayout(h_layout)
+
+    def page_3_b_layout(self):
+        self.list_4.addItem('Unique edge index')
+        self.list_4.addItem('Projected length')
+        self.list_4.addItem('Real length')
+        self.list_4.addItem('Atomic species a')
+        self.list_4.addItem('Atomic species b')
+        self.list_4.addItem('Deviation from expected hard-sphere distance')
+
+        h_layout = QtWidgets.QHBoxLayout()
+        v_layout_1 = QtWidgets.QVBoxLayout()
+        v_layout_2 = QtWidgets.QVBoxLayout()
+        v_layout_3 = QtWidgets.QVBoxLayout()
+        v_layout_4 = QtWidgets.QVBoxLayout()
+        v_layout_5 = QtWidgets.QVBoxLayout()
+
+        v_layout_1.addStretch()
+        v_layout_1.addWidget(self.btn_list_3_up)
+        v_layout_1.addWidget(self.btn_list_3_down)
+        v_layout_1.addStretch()
+
+        v_layout_2.addWidget(self.lbl_included_data_2)
+        v_layout_2.addWidget(self.list_3)
+
+        v_layout_3.addStretch()
+        v_layout_3.addWidget(self.btn_add_2)
+        v_layout_3.addWidget(self.btn_remove_2)
+        v_layout_3.addStretch()
+
+        v_layout_4.addWidget(self.lbl_available_data_2)
+        v_layout_4.addWidget(self.list_4)
+
+        v_layout_5.addStretch()
+        v_layout_5.addWidget(self.btn_list_4_up)
+        v_layout_5.addWidget(self.btn_list_4_down)
+        v_layout_5.addStretch()
+
+        h_layout.addLayout(v_layout_1)
+        h_layout.addLayout(v_layout_2)
+        h_layout.addLayout(v_layout_3)
+        h_layout.addLayout(v_layout_4)
+        h_layout.addLayout(v_layout_5)
+
+        self.widget_frame_3_b.setLayout(h_layout)
+
+    def page_4_a_layout(self):
+
+        h_layout = QtWidgets.QHBoxLayout()
+        v_layout = QtWidgets.QVBoxLayout()
+
+        v_layout.addStretch()
+        v_layout.addWidget(self.lbl_filter)
+        v_layout.addWidget(self.chb_edge_columns)
+        v_layout.addWidget(self.chb_matrix_columns)
+        v_layout.addWidget(self.chb_hidden_columns)
+        v_layout.addStretch()
+
+        h_layout.addStretch()
+        h_layout.addLayout(v_layout)
+        h_layout.addStretch()
+
+        self.widget_frame_4_a.setLayout(h_layout)
+
+    def page_4_b_layout(self):
+        h_layout = QtWidgets.QHBoxLayout()
+        v_layout = QtWidgets.QVBoxLayout()
+
+        v_layout.addStretch()
+        v_layout.addWidget(self.lbl_filter_2)
+        v_layout.addWidget(self.chb_edge_edges)
+        v_layout.addStretch()
+
+        h_layout.addStretch()
+        h_layout.addLayout(v_layout)
+        h_layout.addStretch()
+
+        self.widget_frame_4_b.setLayout(h_layout)
 
     def set_layout(self):
+        self.btn_layout.addWidget(self.btn_cancel)
+        self.btn_layout.addWidget(self.btn_back)
+        self.btn_layout.addWidget(self.btn_next)
 
-        VLayout = QtWidgets.QVBoxLayout()
+        self.page_1_layout()
+        self.stack_layout.addWidget(self.widget_frame_1)
 
+        self.page_2_a_layout()
+        self.stack_layout.addWidget(self.widget_frame_2_a)
+
+        self.page_2_b_layout()
+        self.stack_layout.addWidget(self.widget_frame_2_b)
+
+        self.page_3_a_layout()
+        self.stack_layout.addWidget(self.widget_frame_3_a)
+
+        self.page_3_b_layout()
+        self.stack_layout.addWidget(self.widget_frame_3_b)
+
+        self.page_4_a_layout()
+        self.stack_layout.addWidget(self.widget_frame_4_a)
+
+        self.page_4_b_layout()
+        self.stack_layout.addWidget(self.widget_frame_4_b)
+
+        self.top_layout.addLayout(self.stack_layout)
+        self.top_layout.addLayout(self.btn_layout)
+
+        self.setLayout(self.top_layout)
+
+    def btn_list_2_up_trigger(self):
+        if self.list_2.currentItem() is not None:
+            text = self.list_2.currentItem().text()
+            index = self.list_2.currentRow()
+            if not index == 0:
+                self.list_2.takeItem(self.list_2.row(self.list_2.currentItem()))
+                self.list_2.insertItem(index - 1, text)
+                self.list_2.setCurrentRow(index - 1)
+
+    def btn_list_2_down_trigger(self):
+        if self.list_2.currentItem() is not None:
+            text = self.list_2.currentItem().text()
+            index = self.list_2.currentRow()
+            if not index == self.list_2.count() - 1:
+                self.list_2.takeItem(self.list_2.row(self.list_2.currentItem()))
+                self.list_2.insertItem(index + 1, text)
+                self.list_2.setCurrentRow(index + 1)
+
+    def btn_list_1_up_trigger(self):
+        if self.list_1.currentItem() is not None:
+            text = self.list_1.currentItem().text()
+            index = self.list_1.currentRow()
+            if not index == 0:
+                self.list_1.takeItem(self.list_1.row(self.list_1.currentItem()))
+                self.list_1.insertItem(index - 1, text)
+                self.list_1.setCurrentRow(index - 1)
+
+    def btn_list_1_down_trigger(self):
+        if self.list_1.currentItem() is not None:
+            text = self.list_1.currentItem().text()
+            index = self.list_1.currentRow()
+            if not index == self.list_1.count() - 1:
+                self.list_1.takeItem(self.list_1.row(self.list_1.currentItem()))
+                self.list_1.insertItem(index + 1, text)
+                self.list_1.setCurrentRow(index + 1)
+
+    def btn_add_item_trigger(self):
+        if self.list_2.currentItem() is not None:
+            self.list_1.addItem(self.list_2.currentItem().text())
+            self.list_2.takeItem(self.list_2.row(self.list_2.currentItem()))
+
+    def btn_remove_item_trigger(self):
+        if self.list_1.currentItem() is not None:
+            self.list_2.addItem(self.list_1.currentItem().text())
+            self.list_1.takeItem(self.list_1.row(self.list_1.currentItem()))
+
+    def btn_list_3_up_trigger(self):
+        if self.list_3.currentItem() is not None:
+            text = self.list_3.currentItem().text()
+            index = self.list_3.currentRow()
+            if not index == 0:
+                self.list_3.takeItem(self.list_3.row(self.list_3.currentItem()))
+                self.list_3.insertItem(index - 1, text)
+                self.list_3.setCurrentRow(index - 1)
+
+    def btn_list_3_down_trigger(self):
+        if self.list_3.currentItem() is not None:
+            text = self.list_3.currentItem().text()
+            index = self.list_3.currentRow()
+            if not index == self.list_3.count() - 1:
+                self.list_3.takeItem(self.list_3.row(self.list_3.currentItem()))
+                self.list_3.insertItem(index + 1, text)
+                self.list_3.setCurrentRow(index + 1)
+
+    def btn_list_4_up_trigger(self):
+        if self.list_4.currentItem() is not None:
+            text = self.list_4.currentItem().text()
+            index = self.list_4.currentRow()
+            if not index == 0:
+                self.list_4.takeItem(self.list_4.row(self.list_4.currentItem()))
+                self.list_4.insertItem(index - 1, text)
+                self.list_4.setCurrentRow(index - 1)
+
+    def btn_list_4_down_trigger(self):
+        if self.list_4.currentItem() is not None:
+            text = self.list_4.currentItem().text()
+            index = self.list_4.currentRow()
+            if not index == self.list_4.count() - 1:
+                self.list_4.takeItem(self.list_4.row(self.list_4.currentItem()))
+                self.list_4.insertItem(index + 1, text)
+                self.list_4.setCurrentRow(index + 1)
+
+    def btn_add_2_item_trigger(self):
+        if self.list_4.currentItem() is not None:
+            self.list_3.addItem(self.list_4.currentItem().text())
+            self.list_4.takeItem(self.list_4.row(self.list_4.currentItem()))
+
+    def btn_remove_2_item_trigger(self):
+        if self.list_3.currentItem() is not None:
+            self.list_4.addItem(self.list_3.currentItem().text())
+            self.list_3.takeItem(self.list_3.row(self.list_3.currentItem()))
+
+    def export(self):
+        filename = QtWidgets.QFileDialog.getSaveFileName(self, "Select output file", '', "Comma separated file (*.csv)")
+        if filename[0]:
+            format_ = ''
+            if self.combo_2.currentIndex() == 0:
+                column_centered = True
+                for index in range(self.list_1.count()):
+                    if not index == 0:
+                        format_ += ','
+                    format_ += self.list_1.item(index).text()
+            else:
+                column_centered = False
+                for index in range(self.list_3.count()):
+                    if not index == 0:
+                        format_ += ','
+                    format_ += self.list_3.item(index).text()
+            self.ui_obj.project_instance.export(format_, filename[0], column_centered=column_centered)
+            GUI.logger.info('Successfully exported {}'.format(filename[0]))
+        self.btn_cancel_trigger()
+
+    def btn_next_trigger(self):
         if self.step == 0:
-            VLayout = self.page_1_layout()
+            self.step = 1
+            if self.combo_1.currentIndex() == 0:
+                self.stack_layout.setCurrentIndex(1)
+            else:
+                self.stack_layout.setCurrentIndex(2)
+                self.btn_next.setText('Finish')
         elif self.step == 1:
-            VLayout = self.page_2_layout()
+            self.step = 2
+            if self.combo_1.currentIndex() == 1:
+                self.btn_cancel_trigger()
+            else:
+                if self.combo_2.currentIndex() == 0:
+                    self.stack_layout.setCurrentIndex(3)
+                else:
+                    self.stack_layout.setCurrentIndex(4)
+        elif self.step == 2:
+            self.step = 3
+            if self.combo_2.currentIndex() == 0:
+                self.stack_layout.setCurrentIndex(5)
+            else:
+                self.stack_layout.setCurrentIndex(6)
+            self.btn_next.setText('Export')
+        elif self.step == 3:
+            self.export()
+        else:
+            print('error')
+
+    def btn_back_trigger(self):
+        if self.step == 0:
+            self.btn_cancel_trigger()
+        elif self.step == 1:
+            self.step -= 1
+            self.stack_layout.setCurrentIndex(0)
+            if self.btn_next.text() == 'Finish':
+                self.btn_next.setText('Next')
+        elif self.step == 2:
+            self.step -= 1
+            self.stack_layout.setCurrentIndex(1)
+        elif self.step == 3:
+            self.step -= 1
+            if self.combo_2.currentIndex() == 0:
+                self.stack_layout.setCurrentIndex(3)
+            else:
+                self.stack_layout.setCurrentIndex(4)
+            if self.btn_next.text() == 'Export':
+                self.btn_next.setText('Next')
         else:
             print('Error')
 
-        VLayout.addLayout(self.btn_layout)
-
-        self.setLayout(VLayout)
-
-    def next_trigger(self):
-        if self.step == 0:
-            self.target = self.combo_1.currentText()
-            self.step = 1
-        elif self.step == 1:
-            self.category = self.combo_2.currentText()
-            self.step = 2
-        self.set_layout()
-
-    def cancel_trigger(self):
+    def btn_cancel_trigger(self):
         self.close()
 
 
