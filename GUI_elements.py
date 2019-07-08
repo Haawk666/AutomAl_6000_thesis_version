@@ -1565,9 +1565,11 @@ class DataExportWizard(QtWidgets.QDialog):
         self.widget_frame_4_b.setLayout(h_layout)
 
     def set_layout(self):
+        self.btn_layout.addStretch()
         self.btn_layout.addWidget(self.btn_cancel)
         self.btn_layout.addWidget(self.btn_back)
         self.btn_layout.addWidget(self.btn_next)
+        self.btn_layout.addStretch()
 
         self.page_1_layout()
         self.stack_layout.addWidget(self.widget_frame_1)

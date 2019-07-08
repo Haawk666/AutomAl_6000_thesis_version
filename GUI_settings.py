@@ -4,7 +4,7 @@
 
 from PyQt5 import QtGui, QtCore
 
-theme = 'classic'
+theme = 'dark'
 tooltips = True
 
 dark_palette = QtGui.QPalette()
