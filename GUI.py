@@ -245,9 +245,8 @@ class MainUI(QtWidgets.QMainWindow):
                 self.gs_atomic_graph.interactive_vertex_objects[i].set_style()
             if self.perturb_mode:
                 if len(self.selection_history) == 2:
-                    self.project_instance.graph.perturb_j_k(self.selection_history[0], self.selection_history[1], self.selected_column)
+                    self.gs_atomic_graph.perturb_edge(self.selection_history[0], self.selection_history[1], self.selected_column)
                     self.selection_history = []
-                    self.update_central_widget()
                 else:
                     self.selection_history.append(self.selected_column)
 
@@ -813,6 +812,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.perturb_mode = state
         if not self.perturb_mode:
             self.selection_history = []
+            self.update_graph()
 
     def btn_plot_variance_trigger(self):
         pass

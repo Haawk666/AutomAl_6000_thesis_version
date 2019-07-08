@@ -10,6 +10,10 @@ import GUI_tooltips
 import GUI
 import csv
 
+# Instantiate logger
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
 
 # ----------
 # Custom QGraphicsScene and QGraphicsView classes:
@@ -90,6 +94,32 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
         if GUI_settings.theme == 'dark':
             self.setBackgroundBrush(GUI_settings.background_brush)
         self.re_draw()
+
+    def perturb_edge(self, i, j, k):
+        """Finds the edge from i to j, and makes it point from i to k."""
+
+        for m, edge in enumerate(self.ui_obj.project_instance.graph.edges):
+            if edge.vertex_a.i == i and edge.vertex_b.i == j:
+                self.removeItem(self.edges[m].arrow[0])
+                self.removeItem(self.edges[m].arrow[1])
+                p1 = self.ui_obj.project_instance.graph.vertices[i].real_coor()
+                p2 = self.ui_obj.project_instance.graph.vertices[k].real_coor()
+                consistent = self.ui_obj.project_instance.graph.vertices[k].partner_query(i)
+                if self.ui_obj.project_instance.graph.vertices[i].level == self.ui_obj.project_instance.graph.vertices[k].level:
+                    dislocation = True
+                else:
+                    dislocation = False
+                self.edges[m] = GUI_custom_components.Arrow(p1, p2, self.ui_obj.project_instance.r, self.scale_factor, consistent, dislocation)
+                self.addItem(self.edges[m].arrow[0])
+                self.addItem(self.edges[m].arrow[1])
+                if not self.ui_obj.control_window.chb_graph.isChecked() and not consistent:
+                    self.edges[m].arrow[0].hide()
+                    self.edges[m].arrow[1].hide()
+                self.ui_obj.project_instance.graph.perturb_j_k(i, j, k)
+                self.ui_obj.project_instance.graph.redraw_edges()
+                break
+        else:
+            logger.error('Could not perturb edge!')
 
     def re_draw(self):
         """Redraw contents."""
