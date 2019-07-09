@@ -8,6 +8,7 @@ import sys
 import numpy as np
 import core
 import GUI_elements
+import GUI_settings
 import utils
 import mat_op
 
@@ -34,41 +35,6 @@ class MainUI(QtWidgets.QMainWindow):
         self.previous_selected_column = -1
         self.selection_history = []
         self.perturb_mode = False
-
-        # Tab contents:
-        self.no_graphic = QtGui.QPixmap('Images\\no_image.png')
-        self.graphic = QtGui.QPixmap('Images\\no_image.png')
-
-        # gs = QGraphicsView
-        self.gs_raw_image = GUI_elements.RawImage(ui_obj=self, background=self.no_graphic)
-        self.gs_atomic_positions = GUI_elements.AtomicPositions(ui_obj=self, background=self.no_graphic)
-        self.gs_overlay_composition = GUI_elements.OverlayComposition(ui_obj=self, background=self.no_graphic)
-        self.gs_atomic_graph = GUI_elements.AtomicGraph(ui_obj=self, background=self.no_graphic)
-        self.gs_atomic_sub_graph = GUI_elements.AtomicSubGraph(ui_obj=self, background=self.no_graphic)
-        self.gs_search_matrix = GUI_elements.RawImage(ui_obj=self, background=self.no_graphic)
-        self.gs_fft = GUI_elements.RawImage(ui_obj=self, background=self.no_graphic)
-
-        # gv = QGraphicsView
-        self.gv_raw_image = GUI_elements.ZoomGraphicsView(self.gs_raw_image, ui_obj=self, trigger_func=self.key_press_trigger)
-        self.gv_atomic_positions = GUI_elements.ZoomGraphicsView(self.gs_atomic_positions, ui_obj=self, trigger_func=self.key_press_trigger)
-        self.gv_overlay_composition = GUI_elements.ZoomGraphicsView(self.gs_overlay_composition, ui_obj=self, trigger_func=self.key_press_trigger)
-        self.gv_atomic_graph = GUI_elements.ZoomGraphicsView(self.gs_atomic_graph, ui_obj=self, trigger_func=self.key_press_trigger)
-        self.gv_atomic_sub_graph = GUI_elements.ZoomGraphicsView(self.gs_atomic_sub_graph, ui_obj=self, trigger_func=self.key_press_trigger)
-        self.gv_search_matrix = GUI_elements.ZoomGraphicsView(self.gs_search_matrix, ui_obj=self, trigger_func=self.key_press_trigger)
-        self.gv_fft = GUI_elements.ZoomGraphicsView(self.gs_fft, ui_obj=self, trigger_func=self.key_press_trigger)
-
-        # Set up tabs for central widget
-        self.tabs = QtWidgets.QTabWidget()
-
-        self.tab_raw_image = self.tabs.addTab(self.gv_raw_image, 'Raw image')
-        self.tab_atomic_positions = self.tabs.addTab(self.gv_atomic_positions, 'Atomic positions')
-        self.tab_overlay_composition = self.tabs.addTab(self.gv_overlay_composition, 'Overlay composition')
-        self.tab_atomic_graph = self.tabs.addTab(self.gv_atomic_graph, 'Atomic graph')
-        self.tab_atomic_sub_graph = self.tabs.addTab(self.gv_atomic_sub_graph, 'Atomic sub-graph')
-        self.tab_search_matrix = self.tabs.addTab(self.gv_search_matrix, 'Search matrix')
-        self.tab_fft = self.tabs.addTab(self.gv_fft, 'FFT image')
-
-        self.setCentralWidget(self.tabs)
 
         # Create menu bar
         self.menu = GUI_elements.MenuBar(self.menuBar(), self)
@@ -105,6 +71,41 @@ class MainUI(QtWidgets.QMainWindow):
         self.terminal_window_dock.setMinimumWidth(300)
 
         self.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.terminal_window_dock)
+
+        # Tab contents:
+        self.no_graphic = QtGui.QPixmap('Images\\no_image.png')
+        self.graphic = QtGui.QPixmap('Images\\no_image.png')
+
+        # gs = QGraphicsView
+        self.gs_raw_image = GUI_elements.RawImage(ui_obj=self, background=self.no_graphic)
+        self.gs_atomic_positions = GUI_elements.AtomicPositions(ui_obj=self, background=self.no_graphic)
+        self.gs_overlay_composition = GUI_elements.OverlayComposition(ui_obj=self, background=self.no_graphic)
+        self.gs_atomic_graph = GUI_elements.AtomicGraph(ui_obj=self, background=self.no_graphic)
+        self.gs_atomic_sub_graph = GUI_elements.AtomicSubGraph(ui_obj=self, background=self.no_graphic)
+        self.gs_search_matrix = GUI_elements.RawImage(ui_obj=self, background=self.no_graphic)
+        self.gs_fft = GUI_elements.RawImage(ui_obj=self, background=self.no_graphic)
+
+        # gv = QGraphicsView
+        self.gv_raw_image = GUI_elements.ZoomGraphicsView(self.gs_raw_image, ui_obj=self, trigger_func=self.key_press_trigger)
+        self.gv_atomic_positions = GUI_elements.ZoomGraphicsView(self.gs_atomic_positions, ui_obj=self, trigger_func=self.key_press_trigger)
+        self.gv_overlay_composition = GUI_elements.ZoomGraphicsView(self.gs_overlay_composition, ui_obj=self, trigger_func=self.key_press_trigger)
+        self.gv_atomic_graph = GUI_elements.ZoomGraphicsView(self.gs_atomic_graph, ui_obj=self, trigger_func=self.key_press_trigger)
+        self.gv_atomic_sub_graph = GUI_elements.ZoomGraphicsView(self.gs_atomic_sub_graph, ui_obj=self, trigger_func=self.key_press_trigger)
+        self.gv_search_matrix = GUI_elements.ZoomGraphicsView(self.gs_search_matrix, ui_obj=self, trigger_func=self.key_press_trigger)
+        self.gv_fft = GUI_elements.ZoomGraphicsView(self.gs_fft, ui_obj=self, trigger_func=self.key_press_trigger)
+
+        # Set up tabs for central widget
+        self.tabs = QtWidgets.QTabWidget()
+
+        self.tab_raw_image = self.tabs.addTab(self.gv_raw_image, 'Raw image')
+        self.tab_atomic_positions = self.tabs.addTab(self.gv_atomic_positions, 'Atomic positions')
+        self.tab_overlay_composition = self.tabs.addTab(self.gv_overlay_composition, 'Overlay composition')
+        self.tab_atomic_graph = self.tabs.addTab(self.gv_atomic_graph, 'Atomic graph')
+        self.tab_atomic_sub_graph = self.tabs.addTab(self.gv_atomic_sub_graph, 'Atomic sub-graph')
+        self.tab_search_matrix = self.tabs.addTab(self.gv_search_matrix, 'Search matrix')
+        self.tab_fft = self.tabs.addTab(self.gv_fft, 'FFT image')
+
+        self.setCentralWidget(self.tabs)
 
         # Generate elements
         self.setWindowTitle('AACC - Automatic Atomic Column Characterizer - By Haakon Tvedt @ NTNU. Version {}.{}.{}'.
@@ -853,13 +854,18 @@ class MainUI(QtWidgets.QMainWindow):
     # Checkbox triggers:
     # ----------
 
-    def chb_placeholder_trigger(self):
-        pass
+    def chb_precipitate_column_trigger(self, state):
+        if self.project_instance is not None and not self.selected_column == -1:
+            self.project_instance.graph.vertices[self.selected_column].is_in_precipitate = state
 
-    def chb_raw_image_trigger(self, state):
-        if self.project_instance is not None:
-            self.sys_message('Working...')
-            self.sys_message('Ready.')
+    def chb_show_trigger(self, state):
+        if self.project_instance is not None and not self.selected_column == -1:
+            self.project_instance.graph.vertices[self.selected_column].show_in_overlay = state
+            self.gs_atomic_positions.interactive_position_objects[self.selected_column].set_style()
+            self.gs_overlay_composition.interactive_overlay_objects[self.selected_column].set_style()
+
+    def chb_enable_move_trigger(self, state):
+        self.control_window.mode_move(state)
 
     def chb_graph_detail_trigger(self):
         if self.project_instance is not None:
@@ -867,6 +873,24 @@ class MainUI(QtWidgets.QMainWindow):
             self.gs_atomic_graph.re_draw_edges(self.project_instance.r)
             self.sys_message('Ready.')
 
-    def chb_enable_move(self, state):
-        self.control_window.mode_move(state)
+    def chb_raw_image_trigger(self, state):
+        if self.project_instance is not None:
+            self.sys_message('Working...')
+            if state:
+                self.gs_overlay_composition.pixmap.show()
+            else:
+                self.gs_overlay_composition.pixmap.hide()
+            self.sys_message('Ready.')
+
+    def chb_black_background_trigger(self, state):
+        if state:
+            self.gs_overlay_composition.setBackgroundBrush(GUI_settings.brush_black)
+        else:
+            if GUI_settings.theme == 'dark':
+                self.gs_overlay_composition.setBackgroundBrush(GUI_settings.background_brush)
+            else:
+                self.gs_overlay_composition.setBackgroundBrush(GUI_settings.brush_white)
+
+    def chb_placeholder_trigger(self):
+        pass
 

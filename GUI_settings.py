@@ -35,6 +35,7 @@ pen_boarder = QtGui.QPen(QtCore.Qt.black)
 pen_boarder.setWidth(1)
 
 brush_black = QtGui.QBrush(QtCore.Qt.black)
+brush_white = QtGui.QBrush(QtCore.Qt.white)
 background_brush = QtGui.QBrush(QtGui.QColor(180, 180, 180))
 
 pen_al = QtGui.QPen(QtCore.Qt.green)

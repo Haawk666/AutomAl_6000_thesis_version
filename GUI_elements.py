@@ -66,8 +66,20 @@ class OverlayComposition(QtWidgets.QGraphicsScene):
         self.ui_obj = ui_obj
         self.interactive_overlay_objects = []
         self.background_image = background
+        self.pixmap = None
         if background is not None:
-            self.addPixmap(self.background_image)
+            self.pixmap = self.addPixmap(self.background_image)
+            if self.ui_obj.control_window.chb_raw_image.isChecked():
+                self.pixmap.show()
+            else:
+                self.pixmap.hide()
+        if self.ui_obj.control_window.chb_black_background.isChecked():
+            self.setBackgroundBrush(GUI_settings.brush_black)
+        else:
+            if GUI_settings.theme == 'dark':
+                self.setBackgroundBrush(GUI_settings.background_brush)
+            else:
+                self.setBackgroundBrush(GUI_settings.brush_white)
 
     def re_draw(self):
         """Redraw contents."""
@@ -76,6 +88,10 @@ class OverlayComposition(QtWidgets.QGraphicsScene):
             for vertex in self.ui_obj.project_instance.graph.vertices:
                 self.interactive_overlay_objects.append(GUI_custom_components.InteractiveOverlayColumn(self.ui_obj, vertex.i, vertex.r))
                 self.addItem(self.interactive_overlay_objects[-1])
+                if vertex.show_in_overlay:
+                    self.interactive_overlay_objects[-1].show()
+                else:
+                    self.interactive_overlay_objects[-1].hide()
 
 
 class AtomicGraph(QtWidgets.QGraphicsScene):
@@ -529,14 +545,14 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_legend.setChecked(True)
         self.chb_scalebar.setChecked(False)
 
-        self.chb_precipitate_column.toggled.connect(self.ui_obj.chb_placeholder_trigger)
-        self.chb_show.toggled.connect(self.ui_obj.chb_placeholder_trigger)
-        self.chb_move.toggled.connect(self.ui_obj.chb_enable_move)
+        self.chb_precipitate_column.toggled.connect(self.ui_obj.chb_precipitate_column_trigger)
+        self.chb_show.toggled.connect(self.ui_obj.chb_show_trigger)
+        self.chb_move.toggled.connect(self.ui_obj.chb_enable_move_trigger)
 
         self.chb_graph.toggled.connect(self.ui_obj.chb_graph_detail_trigger)
 
         self.chb_raw_image.toggled.connect(self.ui_obj.chb_raw_image_trigger)
-        self.chb_black_background.toggled.connect(self.ui_obj.chb_placeholder_trigger)
+        self.chb_black_background.toggled.connect(self.ui_obj.chb_black_background_trigger)
         self.chb_structures.toggled.connect(self.ui_obj.chb_placeholder_trigger)
         self.chb_boarders.toggled.connect(self.ui_obj.chb_placeholder_trigger)
         self.chb_si_columns.toggled.connect(self.ui_obj.chb_placeholder_trigger)
@@ -1181,16 +1197,6 @@ class ControlWindow(QtWidgets.QWidget):
         self.lbl_avg_symmetry_confidence.setText('Average symmetry confidence: ')
         self.lbl_avg_level_confidence.setText('Average level confidence: ')
         self.lbl_avg_variance.setText('Average angle variance: ')
-
-        self.chb_raw_image.setChecked(True)
-        self.chb_structures.setChecked(True)
-        self.chb_si_network.setChecked(False)
-        self.chb_mg_network.setChecked(False)
-        self.chb_al_network.setChecked(False)
-        self.chb_boarders.setChecked(False)
-        self.chb_columns.setChecked(True)
-        self.chb_legend.setChecked(True)
-        self.chb_scalebar.setChecked(False)
 
 
 class MenuBar:

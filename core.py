@@ -312,7 +312,7 @@ class SuchSoftware:
             self.column_circumference_mat = mat_op.draw_circle(self.column_circumference_mat, x_fit_pix, y_fit_pix,
                                                                self.r)
 
-            logger.info(str(counter) + ': (' + str(x_fit_real_coor) + ', ' + str(y_fit_real_coor) + ') | (' + str(
+            logger.debug(str(counter) + ': (' + str(x_fit_real_coor) + ', ' + str(y_fit_real_coor) + ') | (' + str(
                 pos[1]) + ', ' + str(pos[0]) + ')')
 
             self.num_columns += 1
