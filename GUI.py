@@ -740,10 +740,11 @@ class MainUI(QtWidgets.QMainWindow):
             items = ('s', 't', 'other')
             item, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Search type", items, 0, False)
             if ok_pressed and item:
-                self.statusBar().showMessage('Working...')
+                self.sys_message('Working...')
                 self.project_instance.redraw_search_mat()
                 self.project_instance.column_detection(item)
                 self.update_display()
+                self.sys_message('Ready.')
 
     def btn_restart_detection_trigger(self):
         if self.project_instance is not None:
@@ -823,12 +824,6 @@ class MainUI(QtWidgets.QMainWindow):
     def btn_set_indices_2_trigger(self):
         pass
 
-    def btn_set_perturb_mode_trigger(self, state):
-        self.perturb_mode = state
-        if not self.perturb_mode:
-            self.selection_history = []
-            self.update_graph()
-
     def btn_plot_variance_trigger(self):
         pass
 
@@ -838,13 +833,14 @@ class MainUI(QtWidgets.QMainWindow):
     def btn_save_log_trigger(self):
         filename = QtWidgets.QFileDialog.getSaveFileName(self, 'Save file', '')
         if filename[0]:
-            self.statusBar().showMessage('Working...')
+            self.sys_message('Working...')
             logger.info('Saving log file...')
             string = self.terminal_window.toPlainText()
             with open(filename[0], 'w') as f:
                 for line in iter(string.splitlines()):
                     f.write(line)
             f.close()
+            self.sys_message('Ready.')
             logger.info('Saved log to {}'.format(filename[0]))
 
     def btn_clear_log_trigger(self):
@@ -865,7 +861,17 @@ class MainUI(QtWidgets.QMainWindow):
             self.gs_overlay_composition.interactive_overlay_objects[self.selected_column].set_style()
 
     def chb_enable_move_trigger(self, state):
+        self.sys_message('Working...')
         self.control_window.mode_move(state)
+        self.sys_message('Ready.')
+
+    def chb_set_perturb_mode_trigger(self, state):
+        self.perturb_mode = state
+        if not self.perturb_mode:
+            self.sys_message('Working...')
+            self.selection_history = []
+            self.update_graph()
+            self.sys_message('Ready.')
 
     def chb_graph_detail_trigger(self):
         if self.project_instance is not None:
@@ -890,6 +896,85 @@ class MainUI(QtWidgets.QMainWindow):
                 self.gs_overlay_composition.setBackgroundBrush(GUI_settings.background_brush)
             else:
                 self.gs_overlay_composition.setBackgroundBrush(GUI_settings.brush_white)
+
+    def chb_toggle_si_trigger(self, state):
+        if self.project_instance is not None and self.project_instance.num_columns > 0:
+            self.sys_message('Working...')
+            for vertex in self.project_instance.graph.vertices:
+                if vertex.h_index == 0:
+                    vertex.show_in_overlay = state
+            for graphic_item in self.gs_overlay_composition.interactive_overlay_objects:
+                graphic_item.set_style()
+            self.sys_message('Ready.')
+
+    def chb_toggle_cu_trigger(self, state):
+        if self.project_instance is not None and self.project_instance.num_columns > 0:
+            self.sys_message('Working...')
+            for vertex in self.project_instance.graph.vertices:
+                if vertex.h_index == 1:
+                    vertex.show_in_overlay = state
+            for graphic_item in self.gs_overlay_composition.interactive_overlay_objects:
+                graphic_item.set_style()
+            self.sys_message('Ready.')
+
+    def chb_toggle_al_trigger(self, state):
+        if self.project_instance is not None and self.project_instance.num_columns > 0:
+            self.sys_message('Working...')
+            for vertex in self.project_instance.graph.vertices:
+                if vertex.h_index == 3:
+                    vertex.show_in_overlay = state
+            for graphic_item in self.gs_overlay_composition.interactive_overlay_objects:
+                graphic_item.set_style()
+            self.sys_message('Ready.')
+
+    def chb_toggle_ag_trigger(self, state):
+        if self.project_instance is not None and self.project_instance.num_columns > 0:
+            self.sys_message('Working...')
+            for vertex in self.project_instance.graph.vertices:
+                if vertex.h_index == 4:
+                    vertex.show_in_overlay = state
+            for graphic_item in self.gs_overlay_composition.interactive_overlay_objects:
+                graphic_item.set_style()
+            self.sys_message('Ready.')
+
+    def chb_toggle_mg_trigger(self, state):
+        if self.project_instance is not None and self.project_instance.num_columns > 0:
+            self.sys_message('Working...')
+            for vertex in self.project_instance.graph.vertices:
+                if vertex.h_index == 5:
+                    vertex.show_in_overlay = state
+            for graphic_item in self.gs_overlay_composition.interactive_overlay_objects:
+                graphic_item.set_style()
+            self.sys_message('Ready.')
+
+    def chb_toggle_un_trigger(self, state):
+        if self.project_instance is not None and self.project_instance.num_columns > 0:
+            self.sys_message('Working...')
+            for vertex in self.project_instance.graph.vertices:
+                if vertex.h_index == 6:
+                    vertex.show_in_overlay = state
+            for graphic_item in self.gs_overlay_composition.interactive_overlay_objects:
+                graphic_item.set_style()
+            self.sys_message('Ready.')
+
+    def chb_toggle_all_trigger(self, state):
+        if self.project_instance is not None and self.project_instance.num_columns > 0:
+            self.sys_message('Working...')
+            for vertex in self.project_instance.graph.vertices:
+                vertex.show_in_overlay = state
+            for graphic_item in self.gs_overlay_composition.interactive_overlay_objects:
+                graphic_item.set_style()
+            self.sys_message('Ready.')
+
+    def chb_matrix_trigger(self, state):
+        if self.project_instance is not None and self.project_instance.num_columns > 0:
+            self.sys_message('Working...')
+            for vertex in self.project_instance.graph.vertices:
+                if not vertex.is_in_precipitate:
+                    vertex.show_in_overlay = state
+            for graphic_item in self.gs_overlay_composition.interactive_overlay_objects:
+                graphic_item.set_style()
+            self.sys_message('Ready.')
 
     def chb_placeholder_trigger(self):
         pass

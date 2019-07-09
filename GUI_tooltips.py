@@ -42,15 +42,15 @@ btn_new = 'Not implemented'
 btn_set_style = 'Not implemented'
 btn_set_indices = 'Manually perturb the neighbour indices of the selected column'
 btn_set_indices_2 = 'Manually set the neighbour indices of the selected column'
-btn_set_perturb_mode = 'Initiate perturbation mode. Selecting three different columns will have the following\n' \
-                       'effect: The second and third selected columns will switch positions in the neighbour\n' \
-                       'indices in the first selected column.'
 btn_plot_variance = 'Plot central angle variance'
 btn_plot_angles = 'Plot several parameters'
 
 chb_precipitate_column = 'Toggle weahter the selected column is counted to be part of the particle or matrix.'
 chb_show = 'Toggle the apparence of the selected column in the overlay composition.'
 chb_move = 'Enable move mode. Use the \'atomic positions\'-tab for this.'
+chb_perturb_mode = 'Initiate perturbation mode. Selecting three different columns will have the following\n' \
+                       'effect: The second and third selected columns will switch positions in the neighbour\n' \
+                       'indices in the first selected column.'
 chb_graph = 'Toggle edges that are not reciprocated'
 chb_raw_image = 'Toggle the raw image in the background'
 chb_black_background = 'Toggle black background'
@@ -107,13 +107,13 @@ control_window_btn_list = [btn_show_stats,
                            btn_set_style,
                            btn_set_indices,
                            btn_set_indices_2,
-                           btn_set_perturb_mode,
                            btn_plot_variance,
                            btn_plot_angles]
 
 control_window_chb_list = [chb_precipitate_column,
                            chb_show,
                            chb_move,
+                           chb_perturb_mode,
                            chb_graph,
                            chb_raw_image,
                            chb_black_background,
