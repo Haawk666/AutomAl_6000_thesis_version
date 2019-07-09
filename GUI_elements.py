@@ -8,6 +8,7 @@ import GUI_custom_components
 import GUI_settings
 import GUI_tooltips
 import GUI
+import utils
 import csv
 
 # Instantiate logger
@@ -97,7 +98,8 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
 
     def perturb_edge(self, i, j, k):
         """Finds the edge from i to j, and makes it point from i to k."""
-
+        success = False
+        dislocation = False
         for m, edge in enumerate(self.ui_obj.project_instance.graph.edges):
             if edge.vertex_a.i == i and edge.vertex_b.i == j:
                 self.removeItem(self.edges[m].arrow[0])
@@ -116,10 +118,23 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
                     self.edges[m].arrow[0].hide()
                     self.edges[m].arrow[1].hide()
                 self.ui_obj.project_instance.graph.perturb_j_k(i, j, k)
-                self.ui_obj.project_instance.graph.redraw_edges()
+                self.ui_obj.project_instance.graph.redraw_edges()  # Change this to explicitly change specific edge!
+                success = True
                 break
         else:
             logger.error('Could not perturb edge!')
+        if success:
+            for l, other_edges in enumerate(self.ui_obj.project_instance.graph.edges):
+                found_1 = False
+                found_2 = False
+                if other_edges.vertex_a.i == j and other_edges.vertex_b.i == i:
+                    self.edges[l].set_style(False, False)
+                    found_1 = True
+                if other_edges.vertex_a.i == k and other_edges.vertex_b.i == i:
+                    self.edges[l].set_style(True, dislocation)
+                    found_2 = True
+                if found_1 and found_2:
+                    break
 
     def re_draw(self):
         """Redraw contents."""
@@ -156,15 +171,19 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
 
 class AtomicSubGraph(QtWidgets.QGraphicsScene):
 
-    def __init__(self, *args, ui_obj=None, background=None, sub_graph=None):
+    def __init__(self, *args, ui_obj=None, background=None, sub_graph=None, scale_factor=1):
         """Initialize a custom QtWidgets.QGraphicsScene object for **atomic sub-graphs**."""
 
         super().__init__(*args)
 
         self.ui_obj = ui_obj
+        self.scale_factor = scale_factor
         self.interactive_vertex_objects = []
         self.edges = []
+        self.vectors = []
+        self.labels = []
         self.background_image = background
+        self.report = ''
         if self.background_image is not None:
             self.addPixmap(self.background_image)
         if GUI_settings.theme == 'dark':
@@ -178,11 +197,15 @@ class AtomicSubGraph(QtWidgets.QGraphicsScene):
         if self.ui_obj.project_instance is not None:
             self.re_draw_vertices()
             self.re_draw_edges()
+            self.label_angles(angle_vectors=False)
+            self.relay_summary()
 
     def re_draw_vertices(self):
         """Redraws all column elements."""
         for vertex in self.sub_graph.vertices:
-            self.interactive_vertex_objects.append(GUI_custom_components.InteractiveGraphColumn(self.ui_obj, vertex.i))
+            self.interactive_vertex_objects.append(GUI_custom_components.InteractiveGraphColumn(self.ui_obj, vertex.i, vertex.r, self.scale_factor))
+            self.interactive_vertex_objects[-1].setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable, False)
+            self.interactive_vertex_objects[-1].setFlag(QtWidgets.QGraphicsItem.ItemIsPanel, True)
             self.addItem(self.interactive_vertex_objects[-1])
 
     def re_draw_edges(self):
@@ -192,9 +215,39 @@ class AtomicSubGraph(QtWidgets.QGraphicsScene):
             dislocation = not edge.is_legal_levels
             p1 = edge.vertex_a.real_coor()
             p2 = edge.vertex_b.real_coor()
-            self.edges.append(GUI_custom_components.Arrow(p1, p2, self.r, self.scale_factor, consistent, dislocation))
+            self.edges.append(GUI_custom_components.Arrow(p1, p2, self.sub_graph.vertices[0].r, self.scale_factor, consistent, dislocation))
             self.addItem(self.edges[-1].arrow[0])
             self.addItem(self.edges[-1].arrow[1])
+
+    def label_angles(self, angle_vectors=False):
+        """Label all sub-graph angles."""
+        self.report += 'Sub-graph centered on vertex {}:----------\n'.format(self.sub_graph.vertex_indices[0])
+        for m, mesh in enumerate(self.sub_graph.meshes):
+            self.report += 'Mesh {}:\n'.format(m)
+            self.report += '    Is consistent: {}\n'.format(str(mesh.test_consistency()))
+            self.report += '    Sum of angles: {}\n'.format(str(sum(mesh.angles)))
+            self.report += '    Variance of angles: {}\n'.format(utils.variance(mesh.angles))
+            self.report += '    Symmetry prob vector from central angle: {}\n'.format(str([0, 0, 0]))
+            self.report += '    corners: {}\n'.format(mesh.vertex_indices)
+            self.report += '    Angles:\n'
+            for i, corner in enumerate(mesh.vertices):
+                self.report += '        a{}{} = {}\n'.format(m, i, mesh.angles[i])
+                p1 = corner.real_coor()
+                p2 = (p1[0] + 0.5 * corner.r * mesh.angle_vectors[i][0], p1[1] + 0.5 * corner.r * mesh.angle_vectors[i][1])
+
+                if angle_vectors:
+                    self.vectors.append(GUI_custom_components.Arrow(p1, p2, corner.r, self.scale_factor, False, False))
+                    self.addItem(self.vectors[-1].arrow[0])
+
+                angle_text = QtWidgets.QGraphicsSimpleTextItem()
+                angle_text.setText('a{}{}'.format(m, i))
+                angle_text.setFont(GUI_settings.font_tiny)
+                rect = angle_text.boundingRect()
+                angle_text.setPos(self.scale_factor * p2[0] - 0.5 * rect.width(), self.scale_factor * p2[1] - 0.5 * rect.height())
+                self.addItem(angle_text)
+
+    def relay_summary(self):
+        logger.info(self.report)
 
 
 class ZoomGraphicsView(QtWidgets.QGraphicsView):

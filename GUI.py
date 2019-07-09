@@ -172,6 +172,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.update_column_positions(void=void)
         self.update_overlay(void=void)
         self.update_graph()
+        self.update_sub_graph(void=void)
         self.update_search_matrix(void=void)
         self.update_fft(void=void)
 
@@ -206,8 +207,11 @@ class MainUI(QtWidgets.QMainWindow):
         self.gs_atomic_graph.re_draw()
         self.gv_atomic_graph.setScene(self.gs_atomic_graph)
 
-    def update_sub_graph(self):
-        pass
+    def update_sub_graph(self, void=False):
+        if void:
+            graphic_ = self.no_graphic
+            self.gs_atomic_sub_graph = GUI_elements.AtomicSubGraph(ui_obj=self, background=graphic_)
+            self.gv_atomic_sub_graph.setScene(self.gs_atomic_sub_graph)
 
     def update_search_matrix(self, void=False):
         if void:
@@ -314,6 +318,7 @@ class MainUI(QtWidgets.QMainWindow):
             self.control_instance = None
             self.project_loaded = True
             self.update_display()
+            self.update_sub_graph(True)
         else:
             self.sys_message('Ready')
 
@@ -334,6 +339,7 @@ class MainUI(QtWidgets.QMainWindow):
                 self.project_loaded = True
                 self.savefile = filename[0]
                 self.update_display()
+                self.update_sub_graph(True)
             else:
                 logger.info('File was not loaded. Something must have gone wrong!')
         else:
@@ -359,6 +365,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.control_instance = None
         self.project_loaded = False
         self.update_display()
+        self.update_sub_graph(True)
 
     def menu_exit_trigger(self):
         self.close()
@@ -791,7 +798,14 @@ class MainUI(QtWidgets.QMainWindow):
         pass
 
     def btn_gen_sub_graph(self):
-        pass
+        if self.project_instance is not None:
+            if self.project_instance.num_columns > 0:
+                if len(self.project_instance.graph.vertices[0].neighbour_indices) > 0:
+                    if not self.selected_column == -1:
+                        sub_graph = self.project_instance.graph.get_atomic_configuration(self.selected_column)
+                        self.gs_atomic_sub_graph = GUI_elements.AtomicSubGraph(ui_obj=self, sub_graph=sub_graph, scale_factor=4)
+                        self.gv_atomic_sub_graph.setScene(self.gs_atomic_sub_graph)
+                        self.tabs.setCurrentIndex(4)
 
     def btn_deselect_trigger(self):
         self.column_selected(-1)
