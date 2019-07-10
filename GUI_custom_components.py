@@ -6,6 +6,11 @@ import numpy as np
 import GUI_settings
 
 
+# ----------
+# Graphic elements:
+# ----------
+
+
 class InteractiveColumn(QtWidgets.QGraphicsEllipseItem):
 
     """A general interactive graphical element that is meant to represent atomic columns in the GUI.
@@ -247,6 +252,48 @@ class Arrow:
         head_2.setZValue(-1)
 
         self.arrow = line, head_2
+
+
+class ScaleBar(QtWidgets.QGraphicsItemGroup):
+
+    def __init__(self, *args, length=2, scale=5, r=10, height=512):
+        """Initialize a positional interactive column.
+
+        Inherits GUI_custom_components.InteractiveColumn. Is used to highlight atomic positions."""
+        super().__init__(*args)
+
+        self.length = length
+        self.height = height
+        self.nano_scale = scale / 1000
+        self.r = r
+        self.color_brush = GUI_settings.brush_white
+        self.make()
+
+    def make(self):
+        p1 = 0, 0
+        p2 = self.length / self.nano_scale - GUI_settings.pen_scalebar.width(), 0
+        line = QtWidgets.QGraphicsLineItem(p1[0], p1[1], p2[0], p2[1])
+        line.setPen(GUI_settings.pen_scalebar)
+
+        text = QtWidgets.QGraphicsSimpleTextItem()
+        text.setText('{} nm'.format(self.length))
+        text.setFont(GUI_settings.font_scalebar)
+        text.setPen(GUI_settings.white_pen)
+        text.setBrush(GUI_settings.brush_white)
+        rect = text.boundingRect()
+        text.setX(p2[0] / 2 - rect.width() / 2)
+        text.setY(- rect.height())
+
+        self.addToGroup(line)
+        self.addToGroup(text)
+
+        self.moveBy(self.r * 6, self.height - self.r * 6)
+        self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, True)
+        self.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable, True)
+
+# ----------
+# Convenience re-implementations:
+# ----------
 
 
 class SmallButton(QtWidgets.QPushButton):

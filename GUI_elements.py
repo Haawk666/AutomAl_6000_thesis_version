@@ -32,6 +32,14 @@ class RawImage(QtWidgets.QGraphicsScene):
         self.background_image = background
         if self.background_image is not None:
             self.addPixmap(self.background_image)
+        self.scale_bar = None
+        if self.ui_obj.project_instance is not None:
+            self.scale_bar = GUI_custom_components.ScaleBar(length=2, scale=self.ui_obj.project_instance.scale, r=self.ui_obj.project_instance.r, height=self.ui_obj.project_instance.im_height)
+            self.addItem(self.scale_bar)
+            if self.ui_obj.control_window.chb_scalebar.isChecked():
+                self.scale_bar.show()
+            else:
+                self.scale_bar.hide()
 
 
 class AtomicPositions(QtWidgets.QGraphicsScene):
@@ -80,6 +88,15 @@ class OverlayComposition(QtWidgets.QGraphicsScene):
                 self.setBackgroundBrush(GUI_settings.background_brush)
             else:
                 self.setBackgroundBrush(GUI_settings.brush_white)
+        self.scale_bar = None
+        if self.ui_obj.project_instance is not None:
+            self.scale_bar = GUI_custom_components.ScaleBar(length=2, scale=self.ui_obj.project_instance.scale, r=self.ui_obj.project_instance.r, height=self.ui_obj.project_instance.im_height)
+            self.addItem(self.scale_bar)
+            self.scale_bar.setZValue(2)
+            if self.ui_obj.control_window.chb_scalebar.isChecked():
+                self.scale_bar.show()
+            else:
+                self.scale_bar.hide()
 
     def re_draw(self):
         """Redraw contents."""
@@ -545,7 +562,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_al_mesh.setChecked(True)
         self.chb_neighbours.setChecked(False)
         self.chb_legend.setChecked(True)
-        self.chb_scalebar.setChecked(False)
+        self.chb_scalebar.setChecked(True)
 
         self.chb_precipitate_column.toggled.connect(self.ui_obj.chb_precipitate_column_trigger)
         self.chb_show.toggled.connect(self.ui_obj.chb_show_trigger)
@@ -573,7 +590,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_al_mesh.toggled.connect(self.ui_obj.chb_matrix_trigger)
         self.chb_neighbours.toggled.connect(self.ui_obj.chb_placeholder_trigger)
         self.chb_legend.toggled.connect(self.ui_obj.chb_placeholder_trigger)
-        self.chb_scalebar.toggled.connect(self.ui_obj.chb_placeholder_trigger)
+        self.chb_scalebar.toggled.connect(self.ui_obj.chb_scale_bar_trigger)
 
         # The Set values buttons
         self.btn_set_threshold_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_threshold_trigger, label=self.lbl_detection_threshold)

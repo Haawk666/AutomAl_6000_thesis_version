@@ -25,6 +25,12 @@ dark_palette.setColor(QtGui.QPalette.HighlightedText, QtCore.Qt.black)
 font_tiny = QtGui.QFont()
 font_tiny.setPixelSize(9)
 
+font_scalebar = QtGui.QFont()
+font_scalebar.setPixelSize(28)
+
+pen_scalebar = QtGui.QPen(QtCore.Qt.white)
+pen_scalebar.setWidth(12)
+
 white_font_tiny = QtGui.QFont()
 white_font_tiny.setPixelSize(9)
 

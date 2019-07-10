@@ -27,7 +27,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.version = [0, 0, 1]
 
         # Initialize in an 'empty state'
-        self.project_instance = core.SuchSoftware('empty')
+        self.project_instance = None
         self.project_loaded = False
         self.savefile = None
         self.control_instance = None
@@ -219,16 +219,16 @@ class MainUI(QtWidgets.QMainWindow):
             graphic_ = self.no_graphic
         else:
             graphic_ = QtGui.QPixmap('Images\Outputs\Buffers\search_image.png')
-        self.gs_raw_image = GUI_elements.RawImage(ui_obj=self, background=graphic_)
-        self.gv_search_matrix.setScene(self.gs_raw_image)
+        scene = GUI_elements.RawImage(ui_obj=self, background=graphic_)
+        self.gv_search_matrix.setScene(scene)
 
     def update_fft(self, void=False):
         if void:
             graphic_ = self.no_graphic
         else:
             graphic_ = QtGui.QPixmap('Images\Outputs\Buffers\FFT.png')
-        self.gs_raw_image = GUI_elements.RawImage(ui_obj=self, background=graphic_)
-        self.gv_fft.setScene(self.gs_raw_image)
+        scene = GUI_elements.RawImage(ui_obj=self, background=graphic_)
+        self.gv_fft.setScene(scene)
 
     def update_control_window(self):
         self.control_window.update_display()
@@ -975,6 +975,15 @@ class MainUI(QtWidgets.QMainWindow):
             for graphic_item in self.gs_overlay_composition.interactive_overlay_objects:
                 graphic_item.set_style()
             self.sys_message('Ready.')
+
+    def chb_scale_bar_trigger(self, state):
+        if self.project_instance is not None:
+            if state:
+                self.gs_raw_image.scale_bar.show()
+                self.gs_overlay_composition.scale_bar.show()
+            else:
+                self.gs_raw_image.scale_bar.hide()
+                self.gs_overlay_composition.scale_bar.hide()
 
     def chb_placeholder_trigger(self):
         pass
