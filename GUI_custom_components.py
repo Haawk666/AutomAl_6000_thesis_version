@@ -282,7 +282,7 @@ class ScaleBar(QtWidgets.QGraphicsItemGroup):
         text.setBrush(GUI_settings.brush_white)
         rect = text.boundingRect()
         text.setX(p2[0] / 2 - rect.width() / 2)
-        text.setY(- rect.height())
+        text.setY(- rect.height() - GUI_settings.pen_scalebar.width())
 
         self.addToGroup(line)
         self.addToGroup(text)

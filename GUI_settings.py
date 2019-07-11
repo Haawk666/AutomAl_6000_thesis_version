@@ -25,8 +25,7 @@ dark_palette.setColor(QtGui.QPalette.HighlightedText, QtCore.Qt.black)
 font_tiny = QtGui.QFont()
 font_tiny.setPixelSize(9)
 
-font_scalebar = QtGui.QFont()
-font_scalebar.setPixelSize(28)
+font_scalebar = QtGui.QFont('Helvetica [Cronyx]', 22)
 
 pen_scalebar = QtGui.QPen(QtCore.Qt.white)
 pen_scalebar.setWidth(12)

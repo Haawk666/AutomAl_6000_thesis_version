@@ -867,7 +867,7 @@ class ControlWindow(QtWidgets.QWidget):
                 widget.setToolTip('')
 
     def mode_move(self, on):
-        if self.ui_obj.project_loaded and not self.ui_obj.selected_column == -1:
+        if self.ui_obj.project_instance is not None and not self.ui_obj.selected_column == -1:
             self.chb_move.blockSignals(True)
             self.chb_move.setChecked(on)
             self.chb_move.blockSignals(False)
