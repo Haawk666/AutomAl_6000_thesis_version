@@ -9,6 +9,8 @@ import GUI_settings
 import GUI_tooltips
 import GUI
 import utils
+import pathlib
+import os
 import csv
 
 # Instantiate logger
@@ -1244,6 +1246,7 @@ class MenuBar:
         export = self.bar_obj.addMenu('Export')
         image = export.addMenu('Image')
         debug = self.bar_obj.addMenu('Debug')
+        plugins_ = self.bar_obj.addMenu('Plugins')
         help = self.bar_obj.addMenu('Help')
 
         # Create actions for menus
@@ -1304,6 +1307,12 @@ class MenuBar:
         test_consistency_action = QtWidgets.QAction('Reset levels', self.ui_obj)
         invert_precipitate_levels_action = QtWidgets.QAction('Invert precipitate levels', self.ui_obj)
         ad_hoc_action = QtWidgets.QAction('Ad Hoc functionality', self.ui_obj)
+        # - Plugins
+        self.plugin_actions = []
+        plugin_paths = []
+        for plugin in pathlib.Path('plugins/').glob('*.py'):
+            plugin_paths.append(plugin)
+            self.plugin_actions.append(QtWidgets.QAction(os.path.splitext(plugin.name)[0], self.ui_obj))
         # - help
         self.toggle_tooltips_action = QtWidgets.QAction('Show tooltips', self.ui_obj)
         self.toggle_tooltips_action.setCheckable(True)
@@ -1354,6 +1363,9 @@ class MenuBar:
         debug.addAction(test_consistency_action)
         debug.addAction(invert_precipitate_levels_action)
         debug.addAction(ad_hoc_action)
+        # - Plugins
+        for plugin in self.plugin_actions:
+            plugins_.addAction(plugin)
         # - Help
         help.addAction(self.toggle_tooltips_action)
         help.addSeparator()
@@ -1402,7 +1414,18 @@ class MenuBar:
         test_consistency_action.triggered.connect(self.ui_obj.menu_test_consistency_trigger)
         invert_precipitate_levels_action.triggered.connect(self.ui_obj.menu_invert_precipitate_columns_trigger)
         ad_hoc_action.triggered.connect(self.ui_obj.menu_ad_hoc_trigger)
-        # - hjelp
+        # - Plugins (lol, this is so hacky... There must be a better way! - Raymond Hettinger)
+        with open('plugin_modules.py', 'w') as imp:
+            for path in plugin_paths:
+                imp.writelines('import plugins.{}\n'.format(os.path.splitext(path.name)[0]))
+        import plugin_modules
+        self.plugin_instances = []
+        for path, action in zip(plugin_paths, self.plugin_actions):
+            module_name = os.path.splitext(path.name)[0]
+            plugin_instance = eval('plugin_modules.plugins.{}.Bridge(self.ui_obj)'.format(module_name))
+            self.plugin_instances.append(plugin_instance)
+            action.triggered.connect(plugin_instance.trigger)
+        # - help
         self.toggle_tooltips_action.triggered.connect(self.ui_obj.menu_toggle_tooltips_trigger)
         set_theme_action.triggered.connect(self.ui_obj.menu_set_theme_trigger)
         there_is_no_help_action.triggered.connect(self.ui_obj.menu_there_is_no_help_trigger)

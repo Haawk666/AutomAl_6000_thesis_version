@@ -2,6 +2,11 @@
 import numpy as np
 import utils
 from copy import deepcopy
+import logging
+
+# Instantiate logger
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 def sort_neighbourhood(graph_obj):
