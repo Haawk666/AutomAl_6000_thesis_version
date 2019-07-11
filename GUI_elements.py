@@ -8,6 +8,7 @@ import GUI_custom_components
 import GUI_settings
 import GUI_tooltips
 import GUI
+import plotting_module
 import utils
 import pathlib
 import os
@@ -42,6 +43,19 @@ class RawImage(QtWidgets.QGraphicsScene):
                 self.scale_bar.show()
             else:
                 self.scale_bar.hide()
+
+
+class StaticImage(QtWidgets.QGraphicsScene):
+
+    def __init__(self, *args, ui_obj=None, background=None):
+        """Initialize a custom QtWidgets.QGraphicsScene object for **raw image**."""
+
+        super().__init__(*args)
+
+        self.ui_obj = ui_obj
+        self.background_image = background
+        if self.background_image is not None:
+            self.addPixmap(self.background_image)
 
 
 class AtomicPositions(QtWidgets.QGraphicsScene):
@@ -486,6 +500,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_move = QtWidgets.QCheckBox('Enable move')
 
         self.chb_perturb_mode = QtWidgets.QCheckBox('Enable perturb mode')
+        self.chb_enable_ruler = QtWidgets.QCheckBox('Enable ruler')
         self.chb_graph = QtWidgets.QCheckBox('Show inconsistent connections')
 
         self.chb_raw_image = QtWidgets.QCheckBox('Raw image')
@@ -543,6 +558,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_move.setChecked(False)
 
         self.chb_perturb_mode.setChecked(False)
+        self.chb_enable_ruler.setChecked(False)
         self.chb_graph.setChecked(True)
 
         self.chb_raw_image.setChecked(True)
@@ -634,7 +650,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_set_indices = GUI_custom_components.MediumButton('Set neighbours', self, trigger_func=self.ui_obj.btn_set_indices_trigger)
         self.btn_set_indices_2 = GUI_custom_components.MediumButton('Set neighbours manually', self, trigger_func=self.ui_obj.btn_set_indices_2_trigger)
         self.btn_plot = GUI_custom_components.MediumButton('Make plots', self, trigger_func=self.ui_obj.btn_make_plot_trigger)
-        self.btn_plot_angles = GUI_custom_components.MediumButton('Plot angles', self, trigger_func=self.ui_obj.btn_plot_angles_trigger)
+        self.btn_print_distances = GUI_custom_components.MediumButton('Print distances', self, trigger_func=self.ui_obj.btn_print_distances_trigger)
 
         # Button layouts
         btn_move_control_layout = QtWidgets.QHBoxLayout()
@@ -678,7 +694,7 @@ class ControlWindow(QtWidgets.QWidget):
 
         btn_graph_btns_layout = QtWidgets.QHBoxLayout()
         btn_graph_btns_layout.addWidget(self.btn_plot)
-        btn_graph_btns_layout.addWidget(self.btn_plot_angles)
+        btn_graph_btns_layout.addWidget(self.btn_print_distances)
         btn_graph_btns_layout.addStretch()
 
         # Group boxes
@@ -746,6 +762,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.graph_box_layout = QtWidgets.QVBoxLayout()
         self.graph_box_layout.addLayout(btn_graph_btns_layout)
         self.graph_box_layout.addWidget(self.chb_perturb_mode)
+        self.graph_box_layout.addWidget(self.chb_enable_ruler)
         self.graph_box_layout.addWidget(self.chb_graph)
         self.graph_box_layout.addWidget(self.lbl_chi)
         self.graph_box_layout.addWidget(self.lbl_avg_species_confidence)
@@ -815,12 +832,13 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_list.append(self.btn_set_indices)
         self.btn_list.append(self.btn_set_indices_2)
         self.btn_list.append(self.btn_plot)
-        self.btn_list.append(self.btn_plot_angles)
+        self.btn_list.append(self.btn_print_distances)
 
         self.chb_list.append(self.chb_precipitate_column)
         self.chb_list.append(self.chb_show)
         self.chb_list.append(self.chb_move)
         self.chb_list.append(self.chb_perturb_mode)
+        self.chb_list.append(self.chb_enable_ruler)
         self.chb_list.append(self.chb_graph)
         self.chb_list.append(self.chb_raw_image)
         self.chb_list.append(self.chb_black_background)
@@ -2003,6 +2021,7 @@ class PlotWizard(QtWidgets.QDialog):
 
         self.widget_frame_1 = QtWidgets.QWidget()
         self.widget_frame_2 = QtWidgets.QWidget()
+        self.widget_frame_3 = QtWidgets.QWidget()
 
         # Frame 1
         self.lbl_file = QtWidgets.QLabel('Plot data from current project or enter a list of projects')
@@ -2022,6 +2041,16 @@ class PlotWizard(QtWidgets.QDialog):
         self.btn_remove.clicked.connect(self.btn_remove_item_trigger)
         self.lbl_included_data = QtWidgets.QLabel('Generate plots:')
         self.lbl_available_data = QtWidgets.QLabel('Available plots:')
+
+        # Frame 3
+        self.lbl_filter = QtWidgets.QLabel('Set inclusion filter: (Columns with unchecked properties will not be included in the plots)')
+        self.chb_edge_columns = QtWidgets.QCheckBox('Include edge columns')
+        self.chb_matrix_columns = QtWidgets.QCheckBox('Include aluminium matrix columns')
+        self.chb_hidden_columns = QtWidgets.QCheckBox('Include columns that are set to be hidden in the overlay')
+        self.chb_flag_1 = QtWidgets.QCheckBox('Include columns where flag 1 is set to True')
+        self.chb_flag_2 = QtWidgets.QCheckBox('Include columns where flag 2 is set to True')
+        self.chb_flag_3 = QtWidgets.QCheckBox('Include columns where flag 3 is set to True')
+        self.chb_flag_4 = QtWidgets.QCheckBox('Include columns where flag 4 is set to True')
 
         self.set_layout()
         self.setMinimumWidth(800)
@@ -2096,6 +2125,35 @@ class PlotWizard(QtWidgets.QDialog):
 
         self.widget_frame_2.setLayout(top_layout)
 
+    def set_page_3_layout(self):
+        self.chb_edge_columns.setChecked(False)
+        self.chb_matrix_columns.setChecked(True)
+        self.chb_hidden_columns.setChecked(True)
+        self.chb_flag_1.setChecked(True)
+        self.chb_flag_2.setChecked(True)
+        self.chb_flag_3.setChecked(True)
+        self.chb_flag_4.setChecked(True)
+
+        h_layout = QtWidgets.QHBoxLayout()
+        v_layout = QtWidgets.QVBoxLayout()
+
+        v_layout.addStretch()
+        v_layout.addWidget(self.lbl_filter)
+        v_layout.addWidget(self.chb_edge_columns)
+        v_layout.addWidget(self.chb_matrix_columns)
+        v_layout.addWidget(self.chb_hidden_columns)
+        v_layout.addWidget(self.chb_flag_1)
+        v_layout.addWidget(self.chb_flag_2)
+        v_layout.addWidget(self.chb_flag_3)
+        v_layout.addWidget(self.chb_flag_4)
+        v_layout.addStretch()
+
+        h_layout.addStretch()
+        h_layout.addLayout(v_layout)
+        h_layout.addStretch()
+
+        self.widget_frame_3.setLayout(h_layout)
+
     def set_layout(self):
         self.btn_layout.addStretch()
         self.btn_layout.addWidget(self.btn_cancel)
@@ -2109,6 +2167,9 @@ class PlotWizard(QtWidgets.QDialog):
         self.set_page_2_layout()
         self.stack_layout.addWidget(self.widget_frame_2)
 
+        self.set_page_3_layout()
+        self.stack_layout.addWidget(self.widget_frame_3)
+
         self.top_layout.addLayout(self.stack_layout)
         self.top_layout.addLayout(self.btn_layout)
 
@@ -2116,7 +2177,28 @@ class PlotWizard(QtWidgets.QDialog):
 
     def complete(self):
         self.close()
-        print('this happened!')
+        self.ui_obj.sys_message('Working...')
+        if self.rbtn_list_of_projects.isChecked():
+            files = ''
+            for i in range(self.lst_files.count()):
+                if not i == self.lst_files.count() - 1:
+                    files += self.lst_files.item(i).text() + '\n'
+                else:
+                    files += self.lst_files.item(i).text()
+        else:
+            files = self.ui_obj.savefile
+        for j in range(self.list_1.count()):
+            if self.list_1.item(j).text() == 'Central alpha min-max scatter-plot':
+                plot = plotting_module.AlphaMinMax(files)
+                plot.accumulate_data(exclude_edges=not self.chb_edge_columns.isChecked(),
+                                     exclude_matrix=not self.chb_matrix_columns.isChecked(),
+                                     exclude_hidden=not self.chb_hidden_columns.isChecked(),
+                                     exclude_1=not self.chb_flag_1.isChecked(),
+                                     exclude_2=not self.chb_flag_2.isChecked(),
+                                     exclude_3=not self.chb_flag_3.isChecked(),
+                                     exclude_4=not self.chb_flag_4.isChecked())
+                plot.plot()
+        self.ui_obj.sys_message('Ready.')
 
     def btn_add_files_trigger(self):
         prompt = QtWidgets.QFileDialog()
@@ -2152,8 +2234,10 @@ class PlotWizard(QtWidgets.QDialog):
         next_frame = 0
         if self.stack_layout.currentIndex() == 0:
             next_frame = 1
-            self.btn_next.setText('Plot')
         elif self.stack_layout.currentIndex() == 1:
+            next_frame = 2
+            self.btn_next.setText('Plot')
+        elif self.stack_layout.currentIndex() == 2:
             next_frame = -2
         else:
             logger.error('Error!')
@@ -2167,6 +2251,8 @@ class PlotWizard(QtWidgets.QDialog):
             previous_frame = -1
         elif self.stack_layout.currentIndex() == 1:
             previous_frame = 0
+        elif self.stack_layout.currentIndex() == 2:
+            previous_frame = 1
             self.btn_next.setText('Next')
         else:
             logger.error('Error!')

@@ -213,7 +213,11 @@ class SuchSoftware:
                  '    Central angles: {}\n'.format(str(angles)) + \
                  '    Is edge column: {}\n'.format(vertex.is_edge_column) + \
                  '    Level: {}\n'.format(vertex.level) + \
-                 '    Anti-level: {}\n'.format(vertex.anti_level())
+                 '    Anti-level: {}\n'.format(vertex.anti_level()) + \
+                 '    Flag 1: {}\n'.format(vertex.flag_1) + \
+                 '    Flag 2: {}\n'.format(vertex.flag_2) + \
+                 '    Flag 3: {}\n'.format(vertex.flag_3) + \
+                 '    Flag 4: {}'.format(vertex.flag_4)
         logger.info(string)
 
     def set_alloy_mat(self):

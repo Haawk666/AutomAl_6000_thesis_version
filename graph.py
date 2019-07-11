@@ -660,6 +660,7 @@ class AtomicGraph:
             vertex.flag_6 = False
             vertex.flag_7 = False
             vertex.flag_8 = False
+        logger.info('All flags reset!')
 
     def invert_levels(self):
         for vertex in self.vertices:

@@ -85,10 +85,16 @@ def y_line(slope, b, x):
 
 def normal_dist(x, mean, std):
     dist = (x - mean)**2
-    dist = dist / (2 * std**2)
+    if not std == 0:
+        dist = dist / (2 * std**2)
+    else:
+        dist = x - x
     dist = -dist
     dist = np.exp(dist)
-    dist = (1 / np.sqrt(2 * np.pi * std**2)) * dist
+    if not std == 0:
+        dist = (1 / np.sqrt(2 * np.pi * std**2)) * dist
+    else:
+        dist = x - x
     return dist
 
 
@@ -116,8 +122,10 @@ def find_angle(a_1, a_2, b_1, b_2):
 
 
 def mean_val(data):
-
-    return sum(data) / len(data)
+    if not len(data) == 0:
+        return sum(data) / len(data)
+    else:
+        return 0
 
 
 def variance(data):
@@ -128,7 +136,10 @@ def variance(data):
     for item in data:
         sum_ += (item - mean)**2
 
-    sum_ = sum_ / (len(data))
+    if not len(data) == 0:
+        sum_ = sum_ / (len(data))
+    else:
+        sum_ = 0
 
     return sum_
 

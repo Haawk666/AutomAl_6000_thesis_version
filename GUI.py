@@ -218,8 +218,7 @@ class MainUI(QtWidgets.QMainWindow):
             graphic_ = self.no_graphic
         else:
             graphic_ = QtGui.QPixmap('Images\Outputs\Buffers\search_image.png')
-        scene = GUI_elements.RawImage(ui_obj=self, background=graphic_)
-        scene.scale_bar.hide()
+        scene = GUI_elements.StaticImage(ui_obj=self, background=graphic_)
         self.gv_search_matrix.setScene(scene)
 
     def update_fft(self, void=False):
@@ -227,8 +226,7 @@ class MainUI(QtWidgets.QMainWindow):
             graphic_ = self.no_graphic
         else:
             graphic_ = QtGui.QPixmap('Images\Outputs\Buffers\FFT.png')
-        scene = GUI_elements.RawImage(ui_obj=self, background=graphic_)
-        scene.scale_bar.hide()
+        scene = GUI_elements.StaticImage(ui_obj=self, background=graphic_)
         self.gv_fft.setScene(scene)
 
     def update_control_window(self):
@@ -255,6 +253,21 @@ class MainUI(QtWidgets.QMainWindow):
                     self.selection_history = []
                 else:
                     self.selection_history.append(self.selected_column)
+            if self.control_window.chb_enable_ruler.isChecked():
+                lattice_const = core.SuchSoftware.al_lattice_const
+                x = self.project_instance.graph.vertices[self.selected_column].real_coor_x - self.project_instance.graph.vertices[self.previous_selected_column].real_coor_x
+                x *= self.project_instance.scale
+                y = self.project_instance.graph.vertices[self.selected_column].real_coor_y - self.project_instance.graph.vertices[self.previous_selected_column].real_coor_y
+                y *= self.project_instance.scale
+                projected_distance = np.sqrt(x ** 2 + y ** 2)
+                if self.project_instance.graph.vertices[self.selected_column].level == self.project_instance.graph.vertices[self.previous_selected_column].level:
+                    spatial_distance = projected_distance
+                else:
+                    spatial_distance = np.sqrt(projected_distance ** 2 + (lattice_const / 2) ** 2)
+                string = 'Distance between vertex {} and {}\n' \
+                         '    Projected distance: {} pm\n' \
+                         '    Spatial distance: {} pm'.format(self.previous_selected_column, self.selected_column, projected_distance, spatial_distance)
+                logger.info(string)
 
     def sys_message(self, msg):
         self.statusBar().showMessage(msg)
@@ -301,6 +314,18 @@ class MainUI(QtWidgets.QMainWindow):
                     self.gs_atomic_positions.interactive_position_objects[self.selected_column].moveBy(-1.0, 0.0)
                 elif key == QtCore.Qt.Key_D and self.control_window.chb_move.isChecked():
                     self.gs_atomic_positions.interactive_position_objects[self.selected_column].moveBy(1.0, 0.0)
+                elif key == QtCore.Qt.Key_F1:
+                    self.project_instance.graph.vertices[self.selected_column].flag_1 = not self.project_instance.graph.vertices[self.selected_column].flag_1
+                    logger.info('vertex {}, flag 1 set to {}'.format(self.selected_column, self.project_instance.graph.vertices[self.selected_column].flag_1))
+                elif key == QtCore.Qt.Key_F2:
+                    self.project_instance.graph.vertices[self.selected_column].flag_2 = not self.project_instance.graph.vertices[self.selected_column].flag_2
+                    logger.info('vertex {}, flag 2 set to {}'.format(self.selected_column, self.project_instance.graph.vertices[self.selected_column].flag_2))
+                elif key == QtCore.Qt.Key_F3:
+                    self.project_instance.graph.vertices[self.selected_column].flag_3 = not self.project_instance.graph.vertices[self.selected_column].flag_3
+                    logger.info('vertex {}, flag 3 set to {}'.format(self.selected_column, self.project_instance.graph.vertices[self.selected_column].flag_3))
+                elif key == QtCore.Qt.Key_F4:
+                    self.project_instance.graph.vertices[self.selected_column].flag_4 = not self.project_instance.graph.vertices[self.selected_column].flag_4
+                    logger.info('vertex {}, flag 4 set to {}'.format(self.selected_column, self.project_instance.graph.vertices[self.selected_column].flag_4))
             if self.tabs.currentIndex() == 4:
                 pass
             if self.tabs.currentIndex() == 5:
@@ -831,8 +856,56 @@ class MainUI(QtWidgets.QMainWindow):
     def btn_make_plot_trigger(self):
         GUI_elements.PlotWizard(ui_obj=self)
 
-    def btn_plot_angles_trigger(self):
-        pass
+    def btn_print_distances_trigger(self):
+        si_radii = core.SuchSoftware.si_radii
+        cu_radii = core.SuchSoftware.cu_radii
+        zn_radii = core.SuchSoftware.zn_radii
+        al_radii = core.SuchSoftware.al_radii
+        ag_radii = core.SuchSoftware.ag_radii
+        mg_radii = core.SuchSoftware.mg_radii
+
+        si_si = 2 * si_radii
+        si_cu = si_radii + cu_radii
+        si_al = si_radii + al_radii
+        si_mg = si_radii + mg_radii
+
+        cu_cu = 2 * cu_radii
+        cu_si = cu_radii + si_radii
+        cu_al = cu_radii + al_radii
+        cu_mg = cu_radii + mg_radii
+
+        al_al = al_radii + al_radii
+        al_si = al_radii + si_radii
+        al_cu = al_radii + cu_radii
+        al_mg = al_radii + mg_radii
+
+        mg_mg = mg_radii + mg_radii
+        mg_si = mg_radii + si_radii
+        mg_cu = mg_radii + cu_radii
+        mg_al = mg_radii + al_radii
+
+        string = 'Inter-atomic hard-sphere spatial distances in pico-metres:----------\n' \
+                 '    Si <-> Si: \t{} \n' \
+                 '    Si <-> Cu: \t{} \n' \
+                 '    Si <-> Al: \t{} \n' \
+                 '    Si <-> Mg: \t{} \n\n' \
+                 '    Cu <-> Cu: \t{} \n' \
+                 '    Cu <-> Si: \t{} \n' \
+                 '    Cu <-> Al: \t{} \n' \
+                 '    Cu <-> Mg: \t{} \n\n' \
+                 '    Al <-> Al: \t{} \n' \
+                 '    Al <-> Si: \t{} \n' \
+                 '    Al <-> Cu: \t{} \n' \
+                 '    Al <-> Mg: \t{} \n\n' \
+                 '    Mg <-> Mg: \t{} \n' \
+                 '    Mg <-> Si: \t{} \n' \
+                 '    Mg <-> Cu: \t{} \n' \
+                 '    Mg <-> Al: \t{} '.format(si_si, si_cu, si_al, si_mg,
+                                               cu_cu, cu_si, cu_al, cu_mg,
+                                               al_al, al_si, al_cu, al_mg,
+                                               mg_mg, mg_si, mg_cu, mg_al)
+
+        logger.info(string)
 
     def btn_save_log_trigger(self):
         filename = QtWidgets.QFileDialog.getSaveFileName(self, 'Save file', '')

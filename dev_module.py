@@ -95,7 +95,6 @@ def accumulate_test_data(obj, cu_min_angles, si_1_min_angles, si_2_min_angles, a
                 cu_intensities.append(vertex.peak_gamma)
 
             elif vertex.species() == 'Si':
-
                 si_intensities.append(vertex.peak_gamma)
                 if vertex.flag_2:
                     si_2_min_angles.append(min_)
