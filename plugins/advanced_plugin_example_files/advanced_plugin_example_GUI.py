@@ -1,4 +1,4 @@
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore
 from .. import advanced_plugin_example as my_api
 
 
@@ -23,7 +23,11 @@ class MyGUI(QtWidgets.QDialog):
 
         self.setLayout(self.btn_layout)
 
-        self.setWindowTitle('My advanced plugin')
+        self.ui_obj.plugin_dock = QtWidgets.QDockWidget()
+        self.ui_obj.plugin_dock.setWidget(self)
+        self.ui_obj.plugin_dock.setWindowTitle('My advanced plugin')
+
+        self.ui_obj.addDockWidget(QtCore.Qt.BottomDockWidgetArea, self.ui_obj.plugin_dock)
 
     def show(self):
         super().show()

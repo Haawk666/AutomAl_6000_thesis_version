@@ -633,7 +633,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_set_style = GUI_custom_components.MediumButton('Set overlay style', self, trigger_func=self.ui_obj.btn_set_style_trigger)
         self.btn_set_indices = GUI_custom_components.MediumButton('Set neighbours', self, trigger_func=self.ui_obj.btn_set_indices_trigger)
         self.btn_set_indices_2 = GUI_custom_components.MediumButton('Set neighbours manually', self, trigger_func=self.ui_obj.btn_set_indices_2_trigger)
-        self.btn_plot_variance = GUI_custom_components.MediumButton('Plot variance', self, trigger_func=self.ui_obj.btn_plot_variance_trigger)
+        self.btn_plot = GUI_custom_components.MediumButton('Make plots', self, trigger_func=self.ui_obj.btn_make_plot_trigger)
         self.btn_plot_angles = GUI_custom_components.MediumButton('Plot angles', self, trigger_func=self.ui_obj.btn_plot_angles_trigger)
 
         # Button layouts
@@ -677,7 +677,7 @@ class ControlWindow(QtWidgets.QWidget):
         btn_overlay_btns_layout.addStretch()
 
         btn_graph_btns_layout = QtWidgets.QHBoxLayout()
-        btn_graph_btns_layout.addWidget(self.btn_plot_variance)
+        btn_graph_btns_layout.addWidget(self.btn_plot)
         btn_graph_btns_layout.addWidget(self.btn_plot_angles)
         btn_graph_btns_layout.addStretch()
 
@@ -814,7 +814,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_list.append(self.btn_set_style)
         self.btn_list.append(self.btn_set_indices)
         self.btn_list.append(self.btn_set_indices_2)
-        self.btn_list.append(self.btn_plot_variance)
+        self.btn_list.append(self.btn_plot)
         self.btn_list.append(self.btn_plot_angles)
 
         self.chb_list.append(self.chb_precipitate_column)
@@ -1293,6 +1293,7 @@ class MenuBar:
         export_column_position_image_action = QtWidgets.QAction('Export column position image', self.ui_obj)
         export_overlay_image_action = QtWidgets.QAction('Export overlay image', self.ui_obj)
         export_atomic_graph_action = QtWidgets.QAction('Export atomic graph', self.ui_obj)
+        make_plots_action = QtWidgets.QAction('Make plots', self.ui_obj)
         # - Debug
         self.advanced_debug_mode_action = QtWidgets.QAction('Advanced debug mode', self.ui_obj)
         self.advanced_debug_mode_action.setCheckable(True)
@@ -1349,6 +1350,7 @@ class MenuBar:
         column_analysis.addAction(restart_analysis_action)
         # - Export
         export.addAction(export_data_action)
+        export.addAction(make_plots_action)
         image.addAction(export_raw_image_action)
         image.addAction(export_column_position_image_action)
         image.addAction(export_overlay_image_action)
@@ -1400,6 +1402,7 @@ class MenuBar:
         restart_analysis_action.triggered.connect(self.ui_obj.menu_restart_analysis_trigger)
         # - Export
         export_data_action.triggered.connect(self.ui_obj.menu_export_data_trigger)
+        make_plots_action.triggered.connect(self.ui_obj.menu_make_plots_trigger)
         export_raw_image_action.triggered.connect(self.ui_obj.menu_export_raw_image_trigger)
         export_column_position_image_action.triggered.connect(self.ui_obj.menu_export_column_position_image_trigger)
         export_overlay_image_action.triggered.connect(self.ui_obj.menu_export_overlay_image_trigger)
@@ -1456,6 +1459,7 @@ class DataExportWizard(QtWidgets.QDialog):
         self.stack_layout = QtWidgets.QStackedLayout()
         self.top_layout = QtWidgets.QVBoxLayout()
 
+        self.widget_frame_0 = QtWidgets.QWidget()
         self.widget_frame_1 = QtWidgets.QWidget()
         self.widget_frame_2_a = QtWidgets.QWidget()
         self.widget_frame_2_b = QtWidgets.QWidget()
@@ -1463,6 +1467,13 @@ class DataExportWizard(QtWidgets.QDialog):
         self.widget_frame_3_b = QtWidgets.QWidget()
         self.widget_frame_4_a = QtWidgets.QWidget()
         self.widget_frame_4_b = QtWidgets.QWidget()
+
+        # Frame 0
+        self.lbl_file = QtWidgets.QLabel('Export data from current project or enter a list of projects')
+        self.rbtn_current_project = QtWidgets.QRadioButton('Current project')
+        self.rbtn_list_of_projects = QtWidgets.QRadioButton('Enter list of projects files')
+        self.lst_files = QtWidgets.QListWidget()
+        self.btn_add_files = QtWidgets.QPushButton('Add files')
 
         # Frame 1
         self.lbl_select_data = QtWidgets.QLabel('Select the target format for data-export.')
@@ -1526,6 +1537,34 @@ class DataExportWizard(QtWidgets.QDialog):
 
         self.set_layout()
         self.exec_()
+
+    def page_0_layout(self):
+        h_layout = QtWidgets.QHBoxLayout()
+        v_layout = QtWidgets.QVBoxLayout()
+
+        v_layout.addStretch()
+        v_layout.addWidget(self.lbl_file)
+        v_layout.addWidget(self.rbtn_current_project)
+        v_layout.addWidget(self.rbtn_list_of_projects)
+        v_layout.addWidget(self.lst_files)
+        v_layout.addWidget(self.btn_add_files)
+        v_layout.addStretch()
+
+        h_layout.addStretch()
+        h_layout.addLayout(v_layout)
+        h_layout.addStretch()
+
+        self.rbtn_current_project.setChecked(True)
+        self.rbtn_list_of_projects.setChecked(False)
+        self.lst_files.setDisabled(True)
+        self.btn_add_files.setDisabled(True)
+
+        self.lst_files.setMinimumWidth(500)
+
+        self.rbtn_current_project.toggled.connect(self.rbtn_current_project_trigger)
+        self.btn_add_files.clicked.connect(self.btn_add_files_trigger)
+
+        self.widget_frame_0.setLayout(h_layout)
 
     def page_1_layout(self):
         self.combo_1.addItem('.csv')
@@ -1701,6 +1740,9 @@ class DataExportWizard(QtWidgets.QDialog):
         self.btn_layout.addWidget(self.btn_next)
         self.btn_layout.addStretch()
 
+        self.page_0_layout()
+        self.stack_layout.addWidget(self.widget_frame_0)
+
         self.page_1_layout()
         self.stack_layout.addWidget(self.widget_frame_1)
 
@@ -1819,6 +1861,26 @@ class DataExportWizard(QtWidgets.QDialog):
             self.list_4.addItem(self.list_3.currentItem().text())
             self.list_3.takeItem(self.list_3.row(self.list_3.currentItem()))
 
+    def btn_add_files_trigger(self):
+        prompt = QtWidgets.QFileDialog()
+        prompt.setFileMode(QtWidgets.QFileDialog.ExistingFiles)
+        if prompt.exec_():
+            filenames = prompt.selectedFiles()
+        else:
+            filenames = None
+        if filenames is not None:
+            for file_ in filenames:
+                exlusive = True
+                for i in range(self.lst_files.count()):
+                    if file_ == self.lst_files.item(i).text():
+                        exlusive = False
+                if exlusive:
+                    self.lst_files.addItem(file_)
+
+    def rbtn_current_project_trigger(self, state):
+        self.lst_files.setDisabled(state)
+        self.btn_add_files.setDisabled(state)
+
     def export(self):
         filename = QtWidgets.QFileDialog.getSaveFileName(self, "Select output file", '', "Comma separated file (*.csv)")
         if filename[0]:
@@ -1839,56 +1901,294 @@ class DataExportWizard(QtWidgets.QDialog):
             GUI.logger.info('Successfully exported {}'.format(filename[0]))
         self.btn_cancel_trigger()
 
-    def btn_next_trigger(self):
-        if self.step == 0:
-            self.step = 1
+    def get_next_frame(self):
+        next_frame = 0
+        if self.stack_layout.currentIndex() == 0:
+            next_frame = 1
+        elif self.stack_layout.currentIndex() == 1:
             if self.combo_1.currentIndex() == 0:
-                self.stack_layout.setCurrentIndex(1)
+                next_frame = 2
             else:
-                self.stack_layout.setCurrentIndex(2)
-                self.btn_next.setText('Finish')
-        elif self.step == 1:
-            self.step = 2
-            if self.combo_1.currentIndex() == 1:
-                self.btn_cancel_trigger()
-            else:
-                if self.combo_2.currentIndex() == 0:
-                    self.stack_layout.setCurrentIndex(3)
-                else:
-                    self.stack_layout.setCurrentIndex(4)
-        elif self.step == 2:
-            self.step = 3
+                next_frame = 3
+                self.btn_next.setText('Abort')
+        elif self.stack_layout.currentIndex() == 2:
             if self.combo_2.currentIndex() == 0:
-                self.stack_layout.setCurrentIndex(5)
+                next_frame = 4
             else:
-                self.stack_layout.setCurrentIndex(6)
+                next_frame = 5
+        elif self.stack_layout.currentIndex() == 3:
+            next_frame = -1
+        elif self.stack_layout.currentIndex() == 4:
+            next_frame = 6
             self.btn_next.setText('Export')
-        elif self.step == 3:
-            self.export()
+        elif self.stack_layout.currentIndex() == 5:
+            next_frame = 7
+            self.btn_next.setText('Export')
+        elif self.stack_layout.currentIndex() == 6:
+            next_frame = -2
+        elif self.stack_layout.currentIndex() == 7:
+            next_frame = -2
         else:
-            print('error')
+            logger.error('Error!')
+            self.close()
+
+        return next_frame
+
+    def get_previous_frame(self):
+        previous_frame = 0
+        if self.stack_layout.currentIndex() == 0:
+            previous_frame = -1
+        elif self.stack_layout.currentIndex() == 1:
+            previous_frame = 0
+        elif self.stack_layout.currentIndex() == 2:
+            previous_frame = 1
+        elif self.stack_layout.currentIndex() == 3:
+            previous_frame = 1
+            self.btn_next.setText('Next')
+        elif self.stack_layout.currentIndex() == 4:
+            previous_frame = 2
+        elif self.stack_layout.currentIndex() == 5:
+            previous_frame = 2
+        elif self.stack_layout.currentIndex() == 6:
+            previous_frame = 4
+            self.btn_next.setText('Next')
+        elif self.stack_layout.currentIndex() == 7:
+            previous_frame = 5
+            self.btn_next.setText('Next')
+        else:
+            logger.error('Error!')
+            self.close()
+
+        return previous_frame
+
+    def btn_next_trigger(self):
+        next_frame = self.get_next_frame()
+        if next_frame == -2:
+            self.export()
+        elif next_frame == -1:
+            self.close()
+        else:
+            self.stack_layout.setCurrentIndex(next_frame)
 
     def btn_back_trigger(self):
-        if self.step == 0:
-            self.btn_cancel_trigger()
-        elif self.step == 1:
-            self.step -= 1
-            self.stack_layout.setCurrentIndex(0)
-            if self.btn_next.text() == 'Finish':
-                self.btn_next.setText('Next')
-        elif self.step == 2:
-            self.step -= 1
-            self.stack_layout.setCurrentIndex(1)
-        elif self.step == 3:
-            self.step -= 1
-            if self.combo_2.currentIndex() == 0:
-                self.stack_layout.setCurrentIndex(3)
-            else:
-                self.stack_layout.setCurrentIndex(4)
-            if self.btn_next.text() == 'Export':
-                self.btn_next.setText('Next')
+        previous_frame = self.get_previous_frame()
+        if previous_frame == -1:
+            self.close()
         else:
-            print('Error')
+            self.stack_layout.setCurrentIndex(previous_frame)
+
+    def btn_cancel_trigger(self):
+        self.close()
+
+
+class PlotWizard(QtWidgets.QDialog):
+
+    def __init__(self, *args, ui_obj=None):
+        super().__init__(*args)
+
+        self.ui_obj = ui_obj
+
+        self.setWindowTitle('Plot wizard')
+
+        self.btn_next = QtWidgets.QPushButton('Next')
+        self.btn_next.clicked.connect(self.btn_next_trigger)
+        self.btn_back = QtWidgets.QPushButton('Back')
+        self.btn_back.clicked.connect(self.btn_back_trigger)
+        self.btn_cancel = QtWidgets.QPushButton('Cancel')
+        self.btn_cancel.clicked.connect(self.btn_cancel_trigger)
+
+        self.btn_layout = QtWidgets.QHBoxLayout()
+        self.stack_layout = QtWidgets.QStackedLayout()
+        self.top_layout = QtWidgets.QVBoxLayout()
+
+        self.widget_frame_1 = QtWidgets.QWidget()
+        self.widget_frame_2 = QtWidgets.QWidget()
+
+        # Frame 1
+        self.lbl_file = QtWidgets.QLabel('Plot data from current project or enter a list of projects')
+        self.rbtn_current_project = QtWidgets.QRadioButton('Current project')
+        self.rbtn_list_of_projects = QtWidgets.QRadioButton('Enter list of projects files')
+        self.lst_files = QtWidgets.QListWidget()
+        self.btn_add_files = QtWidgets.QPushButton('Add files')
+
+        # Frame 2
+        self.lbl_choose_predifined_plots = QtWidgets.QLabel('Select predefined plots to generate:\n'
+                                                            '(For custom plots, use the data export wizard to create a csv file and plot from that with a script.)')
+        self.list_1 = QtWidgets.QListWidget()
+        self.list_2 = QtWidgets.QListWidget()
+        self.btn_add = QtWidgets.QPushButton('Add')
+        self.btn_add.clicked.connect(self.btn_add_item_trigger)
+        self.btn_remove = QtWidgets.QPushButton('Remove')
+        self.btn_remove.clicked.connect(self.btn_remove_item_trigger)
+        self.lbl_included_data = QtWidgets.QLabel('Generate plots:')
+        self.lbl_available_data = QtWidgets.QLabel('Available plots:')
+
+        self.set_layout()
+        self.setMinimumWidth(800)
+        self.exec_()
+
+    def set_page_1_layout(self):
+
+        h_layout = QtWidgets.QHBoxLayout()
+        v_layout = QtWidgets.QVBoxLayout()
+
+        v_layout.addStretch()
+        v_layout.addWidget(self.lbl_file)
+        v_layout.addWidget(self.rbtn_current_project)
+        v_layout.addWidget(self.rbtn_list_of_projects)
+        v_layout.addWidget(self.lst_files)
+        v_layout.addWidget(self.btn_add_files)
+        v_layout.addStretch()
+
+        h_layout.addStretch()
+        h_layout.addLayout(v_layout)
+        h_layout.addStretch()
+
+        self.rbtn_current_project.setChecked(True)
+        self.rbtn_list_of_projects.setChecked(False)
+        self.lst_files.setDisabled(True)
+        self.btn_add_files.setDisabled(True)
+
+        self.lst_files.setMinimumWidth(500)
+
+        self.rbtn_current_project.toggled.connect(self.rbtn_current_project_trigger)
+        self.btn_add_files.clicked.connect(self.btn_add_files_trigger)
+
+        self.widget_frame_1.setLayout(h_layout)
+
+    def set_page_2_layout(self):
+
+        self.list_2.addItem('Central alpha min-max scatter-plot')
+        self.list_2.addItem('Central theta min-max scatter-plot')
+        self.list_2.addItem('Fitted relative peak z-contrast distributions')
+        self.list_2.addItem('Fitted relative average z-contrast distributions')
+        self.list_2.addItem('Exotic plots')
+        self.list_2.addItem('Summary plot-page')
+
+        h_layout_1 = QtWidgets.QHBoxLayout()
+        h_layout_2 = QtWidgets.QHBoxLayout()
+        v_layout_1 = QtWidgets.QVBoxLayout()
+        v_layout_2 = QtWidgets.QVBoxLayout()
+        v_layout_3 = QtWidgets.QVBoxLayout()
+        top_layout = QtWidgets.QVBoxLayout()
+
+        v_layout_1.addWidget(self.lbl_included_data)
+        v_layout_1.addWidget(self.list_1)
+
+        v_layout_2.addStretch()
+        v_layout_2.addWidget(self.btn_add)
+        v_layout_2.addWidget(self.btn_remove)
+        v_layout_2.addStretch()
+
+        v_layout_3.addWidget(self.lbl_available_data)
+        v_layout_3.addWidget(self.list_2)
+
+        h_layout_1.addLayout(v_layout_1)
+        h_layout_1.addLayout(v_layout_2)
+        h_layout_1.addLayout(v_layout_3)
+
+        h_layout_2.addStretch()
+        h_layout_2.addWidget(self.lbl_choose_predifined_plots)
+        h_layout_2.addStretch()
+
+        top_layout.addLayout(h_layout_2)
+        top_layout.addLayout(h_layout_1)
+
+        self.widget_frame_2.setLayout(top_layout)
+
+    def set_layout(self):
+        self.btn_layout.addStretch()
+        self.btn_layout.addWidget(self.btn_cancel)
+        self.btn_layout.addWidget(self.btn_back)
+        self.btn_layout.addWidget(self.btn_next)
+        self.btn_layout.addStretch()
+
+        self.set_page_1_layout()
+        self.stack_layout.addWidget(self.widget_frame_1)
+
+        self.set_page_2_layout()
+        self.stack_layout.addWidget(self.widget_frame_2)
+
+        self.top_layout.addLayout(self.stack_layout)
+        self.top_layout.addLayout(self.btn_layout)
+
+        self.setLayout(self.top_layout)
+
+    def complete(self):
+        self.close()
+        print('this happened!')
+
+    def btn_add_files_trigger(self):
+        prompt = QtWidgets.QFileDialog()
+        prompt.setFileMode(QtWidgets.QFileDialog.ExistingFiles)
+        if prompt.exec_():
+            filenames = prompt.selectedFiles()
+        else:
+            filenames = None
+        if filenames is not None:
+            for file_ in filenames:
+                exlusive = True
+                for i in range(self.lst_files.count()):
+                    if file_ == self.lst_files.item(i).text():
+                        exlusive = False
+                if exlusive:
+                    self.lst_files.addItem(file_)
+
+    def rbtn_current_project_trigger(self, state):
+        self.lst_files.setDisabled(state)
+        self.btn_add_files.setDisabled(state)
+
+    def btn_add_item_trigger(self):
+        if self.list_2.currentItem() is not None:
+            self.list_1.addItem(self.list_2.currentItem().text())
+            self.list_2.takeItem(self.list_2.row(self.list_2.currentItem()))
+
+    def btn_remove_item_trigger(self):
+        if self.list_1.currentItem() is not None:
+            self.list_2.addItem(self.list_1.currentItem().text())
+            self.list_1.takeItem(self.list_1.row(self.list_1.currentItem()))
+
+    def get_next_frame(self):
+        next_frame = 0
+        if self.stack_layout.currentIndex() == 0:
+            next_frame = 1
+            self.btn_next.setText('Plot')
+        elif self.stack_layout.currentIndex() == 1:
+            next_frame = -2
+        else:
+            logger.error('Error!')
+            self.close()
+
+        return next_frame
+
+    def get_previous_frame(self):
+        previous_frame = 0
+        if self.stack_layout.currentIndex() == 0:
+            previous_frame = -1
+        elif self.stack_layout.currentIndex() == 1:
+            previous_frame = 0
+            self.btn_next.setText('Next')
+        else:
+            logger.error('Error!')
+            self.close()
+
+        return previous_frame
+
+    def btn_next_trigger(self):
+        next_frame = self.get_next_frame()
+        if next_frame == -2:
+            self.complete()
+        elif next_frame == -1:
+            self.close()
+        else:
+            self.stack_layout.setCurrentIndex(next_frame)
+
+    def btn_back_trigger(self):
+        previous_frame = self.get_previous_frame()
+        if previous_frame == -1:
+            self.close()
+        else:
+            self.stack_layout.setCurrentIndex(previous_frame)
 
     def btn_cancel_trigger(self):
         self.close()

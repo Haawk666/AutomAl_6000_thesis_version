@@ -28,7 +28,6 @@ class MainUI(QtWidgets.QMainWindow):
 
         # Initialize in an 'empty state'
         self.project_instance = None
-        self.project_loaded = False
         self.savefile = None
         self.control_instance = None
         self.selected_column = -1
@@ -130,7 +129,7 @@ class MainUI(QtWidgets.QMainWindow):
 
     def set_species(self, h):
         """Set atomic species of selected column"""
-        if self.project_loaded and not self.selected_column == -1:
+        if self.project_instance is not None and not self.selected_column == -1:
             # Update relevant graphics:
             self.project_instance.graph.vertices[self.selected_column].force_species(h)
             self.gs_overlay_composition.interactive_overlay_objects[self.selected_column].set_style()
@@ -144,7 +143,7 @@ class MainUI(QtWidgets.QMainWindow):
 
     def set_level(self, level):
         """Set level of selected column"""
-        if self.project_loaded and not self.selected_column == -1:
+        if self.project_instance is not None and not self.selected_column == -1:
             # Update relevant graphics:
             self.project_instance.graph.vertices[self.selected_column].level = level
             self.gs_overlay_composition.interactive_overlay_objects[self.selected_column].set_style()
@@ -220,6 +219,7 @@ class MainUI(QtWidgets.QMainWindow):
         else:
             graphic_ = QtGui.QPixmap('Images\Outputs\Buffers\search_image.png')
         scene = GUI_elements.RawImage(ui_obj=self, background=graphic_)
+        scene.scale_bar.hide()
         self.gv_search_matrix.setScene(scene)
 
     def update_fft(self, void=False):
@@ -228,6 +228,7 @@ class MainUI(QtWidgets.QMainWindow):
         else:
             graphic_ = QtGui.QPixmap('Images\Outputs\Buffers\FFT.png')
         scene = GUI_elements.RawImage(ui_obj=self, background=graphic_)
+        scene.scale_bar.hide()
         self.gv_fft.setScene(scene)
 
     def update_control_window(self):
@@ -278,7 +279,7 @@ class MainUI(QtWidgets.QMainWindow):
 
     def key_press_trigger(self, key):
         """Process key-press events from graphic elements"""
-        if self.project_loaded and not self.selected_column == -1:
+        if self.project_instance is not None and not self.selected_column == -1:
             if self.tabs.currentIndex() == 0:
                 pass
             if self.tabs.currentIndex() == 1 or self.tabs.currentIndex() == 2 or self.tabs.currentIndex() == 3:
@@ -317,7 +318,6 @@ class MainUI(QtWidgets.QMainWindow):
             self.sys_message('Working...')
             self.project_instance = core.SuchSoftware(filename[0])
             self.control_instance = None
-            self.project_loaded = True
             self.update_display()
             self.update_sub_graph(True)
         else:
@@ -337,7 +337,6 @@ class MainUI(QtWidgets.QMainWindow):
                     self.project_instance.debug_mode = False
                     self.terminal_window.handler.set_mode(False)
                 self.control_instance = None
-                self.project_loaded = True
                 self.savefile = filename[0]
                 self.update_display()
                 self.update_sub_graph(True)
@@ -355,6 +354,7 @@ class MainUI(QtWidgets.QMainWindow):
         if filename[0]:
             self.statusBar().showMessage('Working...')
             self.project_instance.save(filename[0])
+            self.savefile = filename[0]
             self.update_display()
         else:
             self.statusBar().showMessage('Ready')
@@ -364,7 +364,6 @@ class MainUI(QtWidgets.QMainWindow):
         self.column_selected(-1)
         self.project_instance = None
         self.control_instance = None
-        self.project_loaded = False
         self.update_display()
         self.update_sub_graph(True)
 
@@ -372,10 +371,12 @@ class MainUI(QtWidgets.QMainWindow):
         self.close()
 
     def menu_view_image_title_trigger(self):
-        logger.info(self.project_instance.filename_full)
+        if self.project_instance is not None:
+            logger.info(self.project_instance.filename_full)
 
     def menu_show_stats_trigger(self):
-        self.project_instance.stats_summary()
+        if self.project_instance is not None:
+            self.project_instance.stats_summary()
 
     def menu_update_display(self):
         self.update_display()
@@ -444,12 +445,13 @@ class MainUI(QtWidgets.QMainWindow):
         pass
 
     def menu_export_data_trigger(self):
-        if self.project_instance is not None:
-            if self.project_instance.num_columns > 0:
-                GUI_elements.DataExportWizard(ui_obj=self)
+        self.btn_export_overlay_image_trigger()
+
+    def menu_make_plots_trigger(self):
+        self.btn_make_plot_trigger()
 
     def menu_export_raw_image_trigger(self):
-        if self.project_loaded:
+        if self.project_instance is not None:
             filename = QtWidgets.QFileDialog.getSaveFileName(self, "Save image", '', "PNG (*.png);;BMP Files (*.bmp);;JPEG (*.JPEG)")
             if filename[0]:
                 self.update_raw_image()
@@ -466,7 +468,7 @@ class MainUI(QtWidgets.QMainWindow):
                     logger.error('Could not export image!')
 
     def menu_export_column_position_image_trigger(self):
-        if self.project_loaded:
+        if self.project_instance is not None:
             filename = QtWidgets.QFileDialog.getSaveFileName(self, "Save image", '', "PNG (*.png);;BMP Files (*.bmp);;JPEG (*.JPEG)")
             if filename[0]:
                 self.update_column_positions()
@@ -483,7 +485,7 @@ class MainUI(QtWidgets.QMainWindow):
                     logger.error('Could not export image!')
 
     def menu_export_overlay_image_trigger(self):
-        if self.project_loaded:
+        if self.project_instance is not None:
             filename = QtWidgets.QFileDialog.getSaveFileName(self, "Save image", '', "PNG (*.png);;BMP Files (*.bmp);;JPEG (*.JPEG)")
             if filename[0]:
                 self.update_overlay()
@@ -500,7 +502,7 @@ class MainUI(QtWidgets.QMainWindow):
                     logger.error('Could not export image!')
 
     def menu_export_atomic_graph_trigger(self):
-        if self.project_loaded:
+        if self.project_instance is not None:
             filename = QtWidgets.QFileDialog.getSaveFileName(self, "Save image", '', "PNG (*.png);;BMP Files (*.bmp);;JPEG (*.JPEG)")
             if filename[0]:
                 self.update_graph()
@@ -569,7 +571,7 @@ class MainUI(QtWidgets.QMainWindow):
         pass
 
     def menu_invert_precipitate_columns_trigger(self):
-        if self.project_loaded:
+        if self.project_instance is not None:
             self.project_instance.graph.invert_levels()
             self.update_central_widget()
             self.control_window.select_column()
@@ -670,7 +672,7 @@ class MainUI(QtWidgets.QMainWindow):
         pass
 
     def btn_find_column_trigger(self):
-        if self.project_loaded:
+        if self.project_instance is not None:
             index, ok_pressed = QtWidgets.QInputDialog.getInt(self, "Set", "Find column by index:", 0, 0, 100000, 1)
             if ok_pressed:
                 if index < self.project_instance.num_columns:
@@ -678,7 +680,7 @@ class MainUI(QtWidgets.QMainWindow):
 
     def btn_set_species_trigger(self):
         """Btn-trigger: Run 'set species' dialog."""
-        if self.project_loaded and not (self.selected_column == -1):
+        if self.project_instance is not None and not self.selected_column == -1:
             items = ('Al', 'Mg', 'Si', 'Cu', 'Un')
             item, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Species", items, 0, False)
             if ok_pressed and item:
@@ -696,7 +698,7 @@ class MainUI(QtWidgets.QMainWindow):
 
     def btn_set_level_trigger(self):
         """Btn-trigger: Run 'set level' dialog."""
-        if self.project_loaded and not (self.selected_column == -1):
+        if self.project_instance is not None and not self.selected_column == -1:
             items = ('0', '1')
             item, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "level", items, 0, False)
             if ok_pressed and item:
@@ -717,26 +719,28 @@ class MainUI(QtWidgets.QMainWindow):
         self.update_central_widget()
 
     def btn_set_position_trigger(self):
-        x = self.gs_atomic_positions.interactive_position_objects[self.selected_column].x() + self.project_instance.r
-        y = self.gs_atomic_positions.interactive_position_objects[self.selected_column].y() + self.project_instance.r
-        self.project_instance.graph.vertices[self.selected_column].real_coor_x = x
-        self.project_instance.graph.vertices[self.selected_column].real_coor_y = y
-        self.project_instance.graph.vertices[self.selected_column].im_coor_x = int(np.floor(x))
-        self.project_instance.graph.vertices[self.selected_column].im_coor_y = int(np.floor(y))
-        self.control_window.mode_move(False)
-        self.update_central_widget()
+        if self.project_instance is not None:
+            x = self.gs_atomic_positions.interactive_position_objects[self.selected_column].x() + self.project_instance.r
+            y = self.gs_atomic_positions.interactive_position_objects[self.selected_column].y() + self.project_instance.r
+            self.project_instance.graph.vertices[self.selected_column].real_coor_x = x
+            self.project_instance.graph.vertices[self.selected_column].real_coor_y = y
+            self.project_instance.graph.vertices[self.selected_column].im_coor_x = int(np.floor(x))
+            self.project_instance.graph.vertices[self.selected_column].im_coor_y = int(np.floor(y))
+            self.control_window.mode_move(False)
+            self.update_central_widget()
 
     def btn_show_stats_trigger(self):
-        self.project_instance.stats_summary()
+        if self.project_instance is not None:
+            self.project_instance.stats_summary()
 
     def btn_view_image_title_trigger(self):
         self.menu_view_image_title_trigger()
 
     def btn_export_overlay_image_trigger(self):
-        self.menu_export_overlay_image_trigger()
+        GUI_elements.DataExportWizard(ui_obj=self)
 
     def btn_continue_detection_trigger(self):
-        if self.project_loaded:
+        if self.project_instance is not None:
             items = ('s', 't', 'other')
             item, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Search type", items, 0, False)
             if ok_pressed and item:
@@ -752,7 +756,7 @@ class MainUI(QtWidgets.QMainWindow):
             self.btn_continue_detection_trigger()
 
     def btn_continue_analysis_trigger(self):
-        if self.project_loaded and not self.selected_column == -1:
+        if self.project_instance is not None and not self.selected_column == -1:
 
             strings = ['0 - Full column characterization algorithm with legacy untangling',
                        '1 - Full column characterization algorithm with experimental untangling',
@@ -824,8 +828,8 @@ class MainUI(QtWidgets.QMainWindow):
     def btn_set_indices_2_trigger(self):
         pass
 
-    def btn_plot_variance_trigger(self):
-        pass
+    def btn_make_plot_trigger(self):
+        GUI_elements.PlotWizard(ui_obj=self)
 
     def btn_plot_angles_trigger(self):
         pass

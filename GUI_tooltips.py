@@ -29,7 +29,7 @@ btn_set_move = 'Accept the new column position'
 btn_show_stats = 'Show a numerical summary of the image.'
 btn_show_source = 'Show the full path and filename of the original image this project was created from\n' \
                   '(in case you forgot;)'
-btn_export = 'Export .png of the overlay image'
+btn_export = 'Export data with the export wizard'
 btn_start_alg_1 = 'Start column detection'
 btn_reset_alg_1 = 'Restart column detection'
 btn_start_alg_2 = 'Start column characterization'
@@ -37,12 +37,12 @@ btn_reset_alg_2 = 'Restart column characterization'
 btn_invert_lvl_alg_2 = 'Invert all z-heights'
 btn_delete = 'Not implemented'
 btn_sub = 'Generate 1. order sub-graph seeded on the currently selected column'
-btn_deselect = 'Deselct any columns'
+btn_deselect = 'Deselect any columns'
 btn_new = 'Not implemented'
 btn_set_style = 'Not implemented'
-btn_set_indices = 'Manually perturb the neighbour indices of the selected column'
-btn_set_indices_2 = 'Manually set the neighbour indices of the selected column'
-btn_plot_variance = 'Plot central angle variance'
+btn_set_indices = 'DEPRECATED. Use \'perturb mode\''
+btn_set_indices_2 = 'DEPRECATED. Use \'perturb mode\''
+btn_plot = 'Open a plotting wizard to generate a range of plots'
 btn_plot_angles = 'Plot several parameters'
 
 chb_precipitate_column = 'Toggle weahter the selected column is counted to be part of the particle or matrix.'
@@ -107,7 +107,7 @@ control_window_btn_list = [btn_show_stats,
                            btn_set_style,
                            btn_set_indices,
                            btn_set_indices_2,
-                           btn_plot_variance,
+                           btn_plot,
                            btn_plot_angles]
 
 control_window_chb_list = [chb_precipitate_column,
