@@ -9,6 +9,7 @@ import GUI_settings
 import GUI_tooltips
 import GUI
 import plotting_module
+import export_module
 import utils
 import pathlib
 import os
@@ -1545,6 +1546,10 @@ class DataExportWizard(QtWidgets.QDialog):
         self.chb_edge_columns = QtWidgets.QCheckBox('Include edge columns')
         self.chb_matrix_columns = QtWidgets.QCheckBox('Include aluminium matrix columns')
         self.chb_hidden_columns = QtWidgets.QCheckBox('Include columns that are set to be hidden in the overlay')
+        self.chb_flag_1 = QtWidgets.QCheckBox('Include columns where flag 1 is set to True')
+        self.chb_flag_2 = QtWidgets.QCheckBox('Include columns where flag 2 is set to True')
+        self.chb_flag_3 = QtWidgets.QCheckBox('Include columns where flag 3 is set to True')
+        self.chb_flag_4 = QtWidgets.QCheckBox('Include columns where flag 4 is set to True')
 
         # Frame 4 b
         self.lbl_filter_2 = QtWidgets.QLabel('Set inclusion filter: (Columns with unchecked properties will not be included)')
@@ -1633,10 +1638,20 @@ class DataExportWizard(QtWidgets.QDialog):
         self.widget_frame_2_b.setLayout(h_layout)
 
     def page_3_a_layout(self):
-        self.list_2.addItem('Unique column index')
-        self.list_2.addItem('Atomic species')
-        self.list_2.addItem('z-height')
-        self.list_2.addItem('peak relative z-contrast')
+        self.list_2.addItems(['id',
+                              'index',
+                              'species',
+                              'peak gamma',
+                              'average gamma',
+                              'real x',
+                              'real y',
+                              'spatial x',
+                              'spatial y',
+                              'image x',
+                              'image y',
+                              'level',
+                              'image height',
+                              'spatial height'])
 
         h_layout = QtWidgets.QHBoxLayout()
         v_layout_1 = QtWidgets.QVBoxLayout()
@@ -1719,6 +1734,13 @@ class DataExportWizard(QtWidgets.QDialog):
         self.widget_frame_3_b.setLayout(h_layout)
 
     def page_4_a_layout(self):
+        self.chb_edge_columns.setChecked(False)
+        self.chb_matrix_columns.setChecked(True)
+        self.chb_hidden_columns.setChecked(True)
+        self.chb_flag_1.setChecked(True)
+        self.chb_flag_2.setChecked(True)
+        self.chb_flag_3.setChecked(True)
+        self.chb_flag_4.setChecked(True)
 
         h_layout = QtWidgets.QHBoxLayout()
         v_layout = QtWidgets.QVBoxLayout()
@@ -1728,6 +1750,10 @@ class DataExportWizard(QtWidgets.QDialog):
         v_layout.addWidget(self.chb_edge_columns)
         v_layout.addWidget(self.chb_matrix_columns)
         v_layout.addWidget(self.chb_hidden_columns)
+        v_layout.addWidget(self.chb_flag_1)
+        v_layout.addWidget(self.chb_flag_2)
+        v_layout.addWidget(self.chb_flag_3)
+        v_layout.addWidget(self.chb_flag_4)
         v_layout.addStretch()
 
         h_layout.addStretch()
@@ -1900,24 +1926,40 @@ class DataExportWizard(QtWidgets.QDialog):
         self.btn_add_files.setDisabled(state)
 
     def export(self):
+        self.close()
+        self.ui_obj.sys_message('Working...')
+        if self.rbtn_list_of_projects.isChecked():
+            files = ''
+            for i in range(self.lst_files.count()):
+                if not i == self.lst_files.count() - 1:
+                    files += self.lst_files.item(i).text() + '\n'
+                else:
+                    files += self.lst_files.item(i).text()
+        else:
+            files = self.ui_obj.savefile
+
         filename = QtWidgets.QFileDialog.getSaveFileName(self, "Select output file", '', "Comma separated file (*.csv)")
         if filename[0]:
-            format_ = ''
-            if self.combo_2.currentIndex() == 0:
-                column_centered = True
-                for index in range(self.list_1.count()):
-                    if not index == 0:
-                        format_ += ','
-                    format_ += self.list_1.item(index).text()
+            if self.combo_1.currentIndex() == 0:
+                if self.combo_2.currentIndex() == 0:
+
+                    keys = []
+                    for i in range(self.list_1.count()):
+                        keys.append(self.list_1.item(i).text())
+
+                    outstream = export_module.VertexExport(files, keys)
+                    outstream.accumulate_data(exclude_edges=not self.chb_edge_columns.isChecked(),
+                                              exclude_matrix=not self.chb_matrix_columns.isChecked(),
+                                              exclude_hidden=not self.chb_hidden_columns.isChecked(),
+                                              exclude_1=not self.chb_flag_1.isChecked(),
+                                              exclude_2=not self.chb_flag_2.isChecked(),
+                                              exclude_3=not self.chb_flag_3.isChecked(),
+                                              exclude_4=not self.chb_flag_4.isChecked())
+                    outstream.export(filename[0])
             else:
-                column_centered = False
-                for index in range(self.list_3.count()):
-                    if not index == 0:
-                        format_ += ','
-                    format_ += self.list_3.item(index).text()
-            self.ui_obj.project_instance.export(format_, filename[0], column_centered=column_centered)
+                logger.error('Unexpected!')
             GUI.logger.info('Successfully exported {}'.format(filename[0]))
-        self.btn_cancel_trigger()
+        self.ui_obj.sys_message('Ready.')
 
     def get_next_frame(self):
         next_frame = 0

@@ -23,7 +23,7 @@ logger.setLevel(logging.DEBUG)
 class SuchSoftware:
 
     # Version
-    version = [0, 0, 4]
+    version = [0, 0, 5]
 
     # Number of elements in the probability vectors
     num_selections = 7
@@ -307,7 +307,8 @@ class SuchSoftware:
                                   self.alloy_mat,
                                   num_selections=SuchSoftware.num_selections,
                                   species_strings=SuchSoftware.species_strings,
-                                  certainty_threshold=self.certainty_threshold)
+                                  certainty_threshold=self.certainty_threshold,
+                                  scale=self.scale)
             vertex.reset_prob_vector(bias=6)
             self.graph.add_vertex(vertex)
 

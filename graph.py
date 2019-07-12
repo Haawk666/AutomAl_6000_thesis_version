@@ -12,11 +12,13 @@ logger.setLevel(logging.DEBUG)
 class Vertex:
 
     def __init__(self, index, x, y, r, peak_gamma, avg_gamma, alloy_mat, num_selections=7, level=0, atomic_species='Un', h_index=6,
-                 species_strings=None, certainty_threshold=0.8):
+                 species_strings=None, certainty_threshold=0.8, scale=1):
 
         self.i = index
         self.real_coor_x = x
         self.real_coor_y = y
+        self.spatial_coor_x = x * scale
+        self.spatial_coor_y = y * scale
         self.im_coor_x = int(np.floor(x))
         self.im_coor_y = int(np.floor(y))
         self.r = r
