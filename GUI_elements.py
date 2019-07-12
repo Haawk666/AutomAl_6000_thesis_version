@@ -2089,8 +2089,9 @@ class PlotWizard(QtWidgets.QDialog):
 
         self.list_2.addItem('Central alpha min-max scatter-plot')
         self.list_2.addItem('Central theta min-max scatter-plot')
-        self.list_2.addItem('Fitted relative peak z-contrast distributions')
-        self.list_2.addItem('Fitted relative average z-contrast distributions')
+        self.list_2.addItem('Fitted relative z-contrast distributions')
+        self.list_2.addItem('Spatial inter-atomic distances')
+        self.list_2.addItem('Projected inter-atomic distances')
         self.list_2.addItem('Exotic plots')
         self.list_2.addItem('Summary plot-page')
 
@@ -2189,7 +2190,47 @@ class PlotWizard(QtWidgets.QDialog):
             files = self.ui_obj.savefile
         for j in range(self.list_1.count()):
             if self.list_1.item(j).text() == 'Central alpha min-max scatter-plot':
-                plot = plotting_module.AlphaMinMax(files)
+                plot = plotting_module.MinMax(files, angle_mode='alpha')
+                plot.accumulate_data(exclude_edges=not self.chb_edge_columns.isChecked(),
+                                     exclude_matrix=not self.chb_matrix_columns.isChecked(),
+                                     exclude_hidden=not self.chb_hidden_columns.isChecked(),
+                                     exclude_1=not self.chb_flag_1.isChecked(),
+                                     exclude_2=not self.chb_flag_2.isChecked(),
+                                     exclude_3=not self.chb_flag_3.isChecked(),
+                                     exclude_4=not self.chb_flag_4.isChecked())
+                plot.plot()
+            elif self.list_1.item(j).text() == 'Central theta min-max scatter-plot':
+                plot = plotting_module.MinMax(files, angle_mode='theta')
+                plot.accumulate_data(exclude_edges=not self.chb_edge_columns.isChecked(),
+                                     exclude_matrix=not self.chb_matrix_columns.isChecked(),
+                                     exclude_hidden=not self.chb_hidden_columns.isChecked(),
+                                     exclude_1=not self.chb_flag_1.isChecked(),
+                                     exclude_2=not self.chb_flag_2.isChecked(),
+                                     exclude_3=not self.chb_flag_3.isChecked(),
+                                     exclude_4=not self.chb_flag_4.isChecked())
+                plot.plot()
+            elif self.list_1.item(j).text() == 'Fitted relative z-contrast distributions':
+                plot = plotting_module.Gamma(files)
+                plot.accumulate_data(exclude_edges=not self.chb_edge_columns.isChecked(),
+                                     exclude_matrix=not self.chb_matrix_columns.isChecked(),
+                                     exclude_hidden=not self.chb_hidden_columns.isChecked(),
+                                     exclude_1=not self.chb_flag_1.isChecked(),
+                                     exclude_2=not self.chb_flag_2.isChecked(),
+                                     exclude_3=not self.chb_flag_3.isChecked(),
+                                     exclude_4=not self.chb_flag_4.isChecked())
+                plot.plot()
+            elif self.list_1.item(j).text() == 'Spatial inter-atomic distances':
+                plot = plotting_module.InterAtomicDistances(files, distance_mode='spatial')
+                plot.accumulate_data(exclude_edges=not self.chb_edge_columns.isChecked(),
+                                     exclude_matrix=not self.chb_matrix_columns.isChecked(),
+                                     exclude_hidden=not self.chb_hidden_columns.isChecked(),
+                                     exclude_1=not self.chb_flag_1.isChecked(),
+                                     exclude_2=not self.chb_flag_2.isChecked(),
+                                     exclude_3=not self.chb_flag_3.isChecked(),
+                                     exclude_4=not self.chb_flag_4.isChecked())
+                plot.plot()
+            elif self.list_1.item(j).text() == 'Projected inter-atomic distances':
+                plot = plotting_module.InterAtomicDistances(files, distance_mode='projected')
                 plot.accumulate_data(exclude_edges=not self.chb_edge_columns.isChecked(),
                                      exclude_matrix=not self.chb_matrix_columns.isChecked(),
                                      exclude_hidden=not self.chb_hidden_columns.isChecked(),
