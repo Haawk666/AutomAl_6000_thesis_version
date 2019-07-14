@@ -1,4 +1,6 @@
-# This file contains the classes of graph objects
+"""Module that contains the information extracted from HAADF-STEM images in a graph-oriented structure. The main
+structure will be a **Graph** object that holds a list of **Vertex** objects as well as a list of **Edge** objects.
+There are also some functionality for generating **SubGraph** objects, as well as **Mesh** objects."""
 
 import numpy as np
 import utils
@@ -10,9 +12,29 @@ logger.setLevel(logging.DEBUG)
 
 
 class Vertex:
+    """A Vertex is a base building-block of a graph structure"""
 
     def __init__(self, index, x, y, r, peak_gamma, avg_gamma, alloy_mat, num_selections=7, level=0, atomic_species='Un', h_index=6,
                  species_strings=None, certainty_threshold=0.8, scale=1):
+        """Initialize a vertex.
+
+        A vertex object is a relative object to other vertices in a Graph object.
+
+        :param index: A unique index which reflects its position in the vertex-list of a **Graph** object.
+        :param x: The x-position of the atomic column that the vertex represents in coordinates relative to the HAADF-STEM image.
+        :param y: The x-position of the atomic column that the vertex represents in coordinates relative to the HAADF-STEM image.
+        :param r: The approximated atomic radii in pixels relative to the original HAADF-STEM image.
+        :param peak_gamma: The peak intensity (the brightest pixel) of the atomic column.
+        :param avg_gamma: The average pixel intensity over the area defined by the circle centered at (x, y) with a radius of r.
+        :param alloy_mat: A copy of the alloy-matrix of the **SuchSoftware** instance that the graph of the vertex is a part of.
+
+        :type index: int.
+        :type x: float.
+        :type y: float.
+        :type r: int.
+        :type peak_gamma: float.
+        :type avg_gamma: float.
+        :type alloy_mat: list(<int>)."""
 
         self.i = index
         self.real_coor_x = x
@@ -59,7 +81,6 @@ class Vertex:
 
         # The following params are reserved for future use, whilst still maintaining backwards compatibility:
         self.ad_hoc_list_1 = []
-        self.ad_hoc_list_1 = []
         self.ad_hoc_value_1 = 0
         self.ad_hoc_value_2 = 0
 
@@ -82,66 +103,55 @@ class Vertex:
         self.reset_prob_vector(bias=self.num_selections - 1)
 
     def n(self):
-
+        """Return the number of closest neighbours, or its symmetry in a sense."""
         n = 3
-
         if self.h_index == 0 or self.h_index == 1:
             n = 3
         elif self.h_index == 3:
             n = 4
         elif self.h_index == 5:
             n = 5
-
         return n
 
     def real_coor(self):
-
+        """Return a tuple of the vertex image coordinates in floats."""
         real_coor = (self.real_coor_x, self.real_coor_y)
-
         return real_coor
 
+    def spatial_coor(self):
+        """Return a tuple of the vertex spatial coordinates in floats."""
+        spatial_coor = (self.spatial_coor_x, self.spatial_coor_y)
+        return spatial_coor
+
     def im_coor(self):
-
+        """Return a tuple of the vertex image coordinates in pixel-discrete ints."""
         im_coor = (self.im_coor_x, self.im_coor_y)
-
         return im_coor
 
     def increase_h_value(self):
-
         changed = False
         h = self.h_index
-
         if h == 0 or h == 1:
-
             self.reset_prob_vector(bias=3)
             changed = True
-
         elif h == 3:
-
             self.reset_prob_vector(bias=5)
             changed = True
-
         return changed
 
     def decrease_h_value(self):
-
         changed = False
         h = self.h_index
-
         if h == 5:
-
             self.reset_prob_vector(bias=3)
             changed = True
-
         elif h == 3:
-
             self.reset_prob_vector()
             self.prob_vector[0] += 0.1
             self.prob_vector[1] += 0.1
             self.renorm_prob_vector()
             self.define_species()
             changed = True
-
         return changed
 
     def reset_level_vector(self):

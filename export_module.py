@@ -32,7 +32,8 @@ class VertexExport:
         self.data = []
         self.keys = keys
 
-    def accumulate_data(self, exclude_edges=True, exclude_matrix=False, exclude_hidden=False, exclude_1=False, exclude_2=False, exclude_3=False, exclude_4=False):
+    def accumulate_data(self, exclude_edges=True, exclude_matrix=False, exclude_hidden=False, exclude_1=False,
+                        exclude_2=False, exclude_3=False, exclude_4=False):
 
         logger.info('Accumulating data...')
 

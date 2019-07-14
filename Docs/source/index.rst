@@ -25,6 +25,12 @@ mat_op module
 .. automodule:: mat_op
    :members:
 
+graph module
+==================
+
+.. automodule:: graph
+   :members:
+
 
 
 Indices and tables
