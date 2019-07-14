@@ -670,6 +670,8 @@ class AtomicGraph:
 
     def angle_sort(self, i, j, strict=False):
 
+        logger.debug('    Finding next angle from {} -> {}'.format(i, j))
+
         min_angle = 100
         next_index = -1
         p1 = self.vertices[i].real_coor()
@@ -688,15 +690,20 @@ class AtomicGraph:
                             min_angle = alpha
                             next_index = k
 
+        logger.debug('        Found next: {}'.format(next_index))
+
         return min_angle, next_index
 
     def find_mesh(self, i, j, clockwise=True, strict=False):
+
+        logger.debug('Finding mesh from {} -> {}'.format(i, j))
 
         if not clockwise:
             i, j = j, i
 
         corners = [i, j]
         counter = 0
+        backup_counter = 0
         stop = False
 
         while not stop:
@@ -717,6 +724,13 @@ class AtomicGraph:
                 corners.append(next_index)
                 counter += 1
                 i, j = j, next_index
+
+            backup_counter += 1
+
+            if backup_counter > 20:
+
+                logger.warning('Emergency stop!')
+                stop = True
 
         angles = []
         vectors = []
@@ -750,6 +764,8 @@ class AtomicGraph:
     @staticmethod
     def rebase(corners, next_, j, append=True):
 
+        logger.debug('Rebasing!')
+
         for k, corner in enumerate(corners):
             if corner == next_:
                 del corners[k + 1:]
@@ -778,19 +794,24 @@ class AtomicGraph:
                 if j not in sub_graph.vertex_indices:
                     sub_graph.add_vertex(self.vertices[j])
 
-            if corners[-1] not in self.vertices[i].partners():
-                corners, ang, vec = self.find_mesh(i, corners[len(corners) - 1], strict=strict)
-                mesh = Mesh()
-                for k, corner in enumerate(corners):
-                    mesh.add_vertex(self.vertices[corner])
-                    mesh.angles.append(ang[k])
-                    mesh.angle_vectors.append(vec[k])
-                mesh.redraw_edges()
-                sub_graph.add_mesh(mesh)
+            closed = False
+            while not closed:
 
-                for j in corners:
-                    if j not in sub_graph.vertex_indices:
-                        sub_graph.add_vertex(self.vertices[j])
+                if corners[-1] not in self.vertices[i].partners():
+                    corners, ang, vec = self.find_mesh(i, corners[len(corners) - 1], strict=strict)
+                    mesh = Mesh()
+                    for k, corner in enumerate(corners):
+                        mesh.add_vertex(self.vertices[corner])
+                        mesh.angles.append(ang[k])
+                        mesh.angle_vectors.append(vec[k])
+                    mesh.redraw_edges()
+                    sub_graph.add_mesh(mesh)
+
+                    for j in corners:
+                        if j not in sub_graph.vertex_indices:
+                            sub_graph.add_vertex(self.vertices[j])
+                else:
+                    closed = True
 
         sub_graph.finalize_init()
 
@@ -1014,14 +1035,10 @@ class SubGraph:
 
             for mesh in self.meshes:
 
-                print('{} {}'.format(new_list[-1].vertex_indices[-1], mesh.vertex_indices[1]))
-
                 if mesh.vertex_indices[1] ==\
                         new_list[-1].vertex_indices[-1]:
 
                     new_list.append(mesh)
-
-                    print('    {} {}'.format(new_list[-1].vertex_indices[-1], new_list[0].vertex_indices[1]))
 
                     if new_list[-1].vertex_indices[-1] ==\
                             new_list[0].vertex_indices[1]:
@@ -1120,6 +1137,26 @@ class Mesh:
         self.is_consistent = True
         self.num_corners = 0
         self.num_edges = 0
+
+    def __str__(self):
+
+        string = ''
+
+        for k, index in enumerate(self.vertex_indices):
+
+            if self.vertices[utils.circularize_next_index(k + 1, len(self.vertices) - 1)].partner_query(k):
+                end_left = '<'
+            else:
+                end_left = ''
+
+            if self.vertices[k].partner_query(utils.circularize_next_index(k + 1, len(self.vertices) - 1)):
+                end_right = '>'
+            else:
+                end_right = ''
+
+            string += '{} {}-{} '.format(index, end_left, end_right)
+
+        return string
 
     def test_consistency(self):
 

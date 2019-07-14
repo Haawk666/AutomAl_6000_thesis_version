@@ -2220,6 +2220,7 @@ class PlotWizard(QtWidgets.QDialog):
 
     def complete(self):
         self.close()
+        logger.info('Starting plotting sequence...')
         self.ui_obj.sys_message('Working...')
         if self.rbtn_list_of_projects.isChecked():
             files = ''
@@ -2281,6 +2282,7 @@ class PlotWizard(QtWidgets.QDialog):
                                      exclude_3=not self.chb_flag_3.isChecked(),
                                      exclude_4=not self.chb_flag_4.isChecked())
                 plot.plot()
+        logger.info('Plotting complete.')
         self.ui_obj.sys_message('Ready.')
 
     def btn_add_files_trigger(self):

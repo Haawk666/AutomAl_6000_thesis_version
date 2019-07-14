@@ -33,7 +33,6 @@ def top_contour(x, y, A, B, C, D, E, F, self_index, min_means, max_means, min_st
     return return_list
 
 
-
 def circularize_next_index(i, i_max):
     """Make an index cyclic
 
