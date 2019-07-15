@@ -30,6 +30,9 @@ font_scalebar = QtGui.QFont('Helvetica [Cronyx]', 22)
 pen_scalebar = QtGui.QPen(QtCore.Qt.white)
 pen_scalebar.setWidth(12)
 
+pen_skinny_red = QtGui.QPen(QtCore.Qt.red)
+pen_skinny_red.setWidth(2)
+
 white_font_tiny = QtGui.QFont()
 white_font_tiny.setPixelSize(9)
 

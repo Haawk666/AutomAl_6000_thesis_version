@@ -45,7 +45,10 @@ btn_set_indices_2 = 'DEPRECATED. Use \'perturb mode\''
 btn_plot = 'Open a plotting wizard to generate a range of plots'
 btn_print_distances = 'Print a convenient list of inter-atomic hard-sphere distances in the terminal window\n' \
                       'for quick reference'
+btn_build_anti_graph = 'Build the \'anti-graph\' of the graph. In an anti-graph only vertices in the same spatial\n' \
+                       'plane are connected.'
 
+chb_toggle_positions = 'Toggle the overlay of atomic positions'
 chb_precipitate_column = 'Toggle weahter the selected column is counted to be part of the particle or matrix.'
 chb_show = 'Toggle the apparence of the selected column in the overlay composition.'
 chb_move = 'Enable move mode. Use the \'atomic positions\'-tab for this.'
@@ -55,6 +58,8 @@ chb_perturb_mode = 'Initiate perturbation mode. Selecting three different column
 chb_enable_ruler = 'When enabled, the distance between successively selected columns will be displayed in the\n' \
                    'terminal window.'
 chb_graph = 'Toggle edges that are not reciprocated'
+chb_show_level_0 = 'Toggle the 0 -plane.'
+chb_show_level_1 = 'Toggle the 1/2 -plane.'
 chb_raw_image = 'Toggle the raw image in the background'
 chb_black_background = 'Toggle black background'
 chb_structures = ''
@@ -111,14 +116,18 @@ control_window_btn_list = [btn_show_stats,
                            btn_set_indices,
                            btn_set_indices_2,
                            btn_plot,
-                           btn_print_distances]
+                           btn_print_distances,
+                           btn_build_anti_graph]
 
-control_window_chb_list = [chb_precipitate_column,
+control_window_chb_list = [chb_toggle_positions,
+                           chb_precipitate_column,
                            chb_show,
                            chb_move,
                            chb_perturb_mode,
                            chb_enable_ruler,
                            chb_graph,
+                           chb_show_level_0,
+                           chb_show_level_1,
                            chb_raw_image,
                            chb_black_background,
                            chb_structures,

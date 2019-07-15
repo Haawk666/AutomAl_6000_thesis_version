@@ -79,6 +79,10 @@ class AtomicPositions(QtWidgets.QGraphicsScene):
             for vertex in self.ui_obj.project_instance.graph.vertices:
                 self.interactive_position_objects.append(GUI_custom_components.InteractivePosColumn(self.ui_obj, vertex.i, 2 * vertex.r))
                 self.addItem(self.interactive_position_objects[-1])
+                if not self.ui_obj.control_window.chb_toggle_positions.isChecked():
+                    self.interactive_position_objects[-1].hide()
+                else:
+                    self.interactive_position_objects[-1].show()
 
 
 class OverlayComposition(QtWidgets.QGraphicsScene):
@@ -300,6 +304,84 @@ class AtomicSubGraph(QtWidgets.QGraphicsScene):
         logger.info(self.report)
 
 
+class AntiGraph(QtWidgets.QGraphicsScene):
+
+    def __init__(self, *args, ui_obj=None, background=None, scale_factor=1, graph=None):
+        """Initialize a custom QtWidgets.QGraphicsScene object for **atomic graphs**."""
+
+        super().__init__(*args)
+
+        self.ui_obj = ui_obj
+        self.scale_factor = scale_factor
+        self.graph = graph
+        self.interactive_vertex_objects = []
+        self.edges = []
+        self.background_image = background
+        if self.background_image is not None:
+            self.addPixmap(self.background_image)
+        if GUI_settings.theme == 'dark':
+            self.setBackgroundBrush(GUI_settings.background_brush)
+        self.re_draw()
+
+    def re_draw(self):
+        """Redraw contents."""
+        if self.graph is not None:
+            self.re_draw_edges(self.ui_obj.project_instance.r)
+            self.re_draw_vertices()
+
+    def re_draw_vertices(self):
+        """Redraws all column elements."""
+        self.interactive_vertex_objects = []
+        for vertex in self.graph.vertices:
+            self.interactive_vertex_objects.append(GUI_custom_components.InteractiveGraphColumn(self.ui_obj, vertex.i, vertex.r, self.scale_factor))
+            self.addItem(self.interactive_vertex_objects[-1])
+
+    def re_draw_edges(self, r):
+        """Redraws all edge elements."""
+        self.graph.redraw_edges()
+        for edge_item in self.edges:
+            self.removeItem(edge_item.arrow[0])
+            self.removeItem(edge_item.arrow[1])
+        self.edges = []
+        for edge in self.graph.edges:
+            p1 = edge.vertex_a.real_coor()
+            p2 = edge.vertex_b.real_coor()
+            self.edges.append(GUI_custom_components.Arrow(p1, p2, r, self.scale_factor, True, False))
+            self.addItem(self.edges[-1].arrow[0])
+            if edge.vertex_a.level == 1 and edge.vertex_b.level == 1:
+                self.edges[-1].arrow[0].setPen(GUI_settings.pen_skinny_red)
+            else:
+                self.edges[-1].arrow[0].setZValue(-2)
+
+    def toggle_level_0(self, on):
+        for vertex in self.graph.vertices:
+            if vertex.level == 0:
+                if on:
+                    self.interactive_vertex_objects[vertex.i].show()
+                else:
+                    self.interactive_vertex_objects[vertex.i].hide()
+        for m, edge in enumerate(self.graph.edges):
+            if edge.vertex_a.level == 0 and edge.vertex_b.level == 0:
+                if on:
+                    self.edges[m].arrow[0].show()
+                else:
+                    self.edges[m].arrow[0].hide()
+
+    def toggle_level_1(self, on):
+        for vertex in self.graph.vertices:
+            if vertex.level == 1:
+                if on:
+                    self.interactive_vertex_objects[vertex.i].show()
+                else:
+                    self.interactive_vertex_objects[vertex.i].hide()
+        for m, edge in enumerate(self.graph.edges):
+            if edge.vertex_a.level == 1 and edge.vertex_b.level == 1:
+                if on:
+                    self.edges[m].arrow[0].show()
+                else:
+                    self.edges[m].arrow[0].hide()
+
+
 class ZoomGraphicsView(QtWidgets.QGraphicsView):
     """An adaptation of QtWidgets.QGraphicsView that supports zooming"""
 
@@ -496,6 +578,8 @@ class ControlWindow(QtWidgets.QWidget):
         self.lbl_avg_species_confidence = QtWidgets.QLabel('Average species confidence: ')
 
         # Checkboxes
+        self.chb_toggle_positions = QtWidgets.QCheckBox('Show column position overlay')
+
         self.chb_precipitate_column = QtWidgets.QCheckBox('Precipitate column')
         self.chb_show = QtWidgets.QCheckBox('Show in overlay')
         self.chb_move = QtWidgets.QCheckBox('Enable move')
@@ -503,6 +587,9 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_perturb_mode = QtWidgets.QCheckBox('Enable perturb mode')
         self.chb_enable_ruler = QtWidgets.QCheckBox('Enable ruler')
         self.chb_graph = QtWidgets.QCheckBox('Show inconsistent connections')
+
+        self.chb_show_level_0 = QtWidgets.QCheckBox('Show level 0 plane')
+        self.chb_show_level_1 = QtWidgets.QCheckBox('Show level 1 plane')
 
         self.chb_raw_image = QtWidgets.QCheckBox('Raw image')
         self.chb_black_background = QtWidgets.QCheckBox('Black background')
@@ -554,6 +641,8 @@ class ControlWindow(QtWidgets.QWidget):
         overlay_layout.addLayout(overlay_layout_right)
         overlay_layout.addStretch()
 
+        self.chb_toggle_positions.setChecked(True)
+
         self.chb_precipitate_column.setChecked(False)
         self.chb_show.setChecked(False)
         self.chb_move.setChecked(False)
@@ -561,6 +650,9 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_perturb_mode.setChecked(False)
         self.chb_enable_ruler.setChecked(False)
         self.chb_graph.setChecked(True)
+
+        self.chb_show_level_0.setChecked(True)
+        self.chb_show_level_1.setChecked(True)
 
         self.chb_raw_image.setChecked(True)
         self.chb_black_background.setChecked(True)
@@ -583,12 +675,17 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_legend.setChecked(True)
         self.chb_scalebar.setChecked(True)
 
+        self.chb_toggle_positions.toggled.connect(self.ui_obj.chb_toggle_positions_trigger)
+
         self.chb_precipitate_column.toggled.connect(self.ui_obj.chb_precipitate_column_trigger)
         self.chb_show.toggled.connect(self.ui_obj.chb_show_trigger)
         self.chb_move.toggled.connect(self.ui_obj.chb_enable_move_trigger)
 
         self.chb_perturb_mode.toggled.connect(self.ui_obj.chb_set_perturb_mode_trigger)
         self.chb_graph.toggled.connect(self.ui_obj.chb_graph_detail_trigger)
+
+        self.chb_show_level_0.toggled.connect(self.ui_obj.chb_show_level_0_trigger)
+        self.chb_show_level_1.toggled.connect(self.ui_obj.chb_show_level_1_trigger)
 
         self.chb_raw_image.toggled.connect(self.ui_obj.chb_raw_image_trigger)
         self.chb_black_background.toggled.connect(self.ui_obj.chb_black_background_trigger)
@@ -652,6 +749,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_set_indices_2 = GUI_custom_components.MediumButton('Set neighbours manually', self, trigger_func=self.ui_obj.btn_set_indices_2_trigger)
         self.btn_plot = GUI_custom_components.MediumButton('Make plots', self, trigger_func=self.ui_obj.btn_make_plot_trigger)
         self.btn_print_distances = GUI_custom_components.MediumButton('Print distances', self, trigger_func=self.ui_obj.btn_print_distances_trigger)
+        self.btn_build_anti_graph = GUI_custom_components.MediumButton('Build anti-graph', self, trigger_func=self.ui_obj.btn_build_anti_graph_trigger)
 
         # Button layouts
         btn_move_control_layout = QtWidgets.QHBoxLayout()
@@ -698,6 +796,10 @@ class ControlWindow(QtWidgets.QWidget):
         btn_graph_btns_layout.addWidget(self.btn_print_distances)
         btn_graph_btns_layout.addStretch()
 
+        btn_anti_graph_layout = QtWidgets.QHBoxLayout()
+        btn_anti_graph_layout.addWidget(self.btn_build_anti_graph)
+        btn_anti_graph_layout.addStretch()
+
         # Group boxes
         self.image_box_layout = QtWidgets.QVBoxLayout()
         self.image_box_layout.addLayout(btn_image_btns_layout)
@@ -728,6 +830,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.alg_1_box_layout.addLayout(self.btn_set_scale_layout)
         self.alg_1_box_layout.addLayout(self.btn_set_threshold_layout)
         self.alg_1_box_layout.addLayout(self.btn_set_search_size_layout)
+        self.alg_1_box_layout.addWidget(self.chb_toggle_positions)
         self.alg_1_box = GUI_custom_components.GroupBox('Column detection', menu_action=self.ui_obj.menu.toggle_alg_1_control_action)
         self.alg_1_box.setLayout(self.alg_1_box_layout)
 
@@ -773,6 +876,13 @@ class ControlWindow(QtWidgets.QWidget):
         self.graph_box = GUI_custom_components.GroupBox('Atomic graph', menu_action=self.ui_obj.menu.toggle_graph_control_action)
         self.graph_box.setLayout(self.graph_box_layout)
 
+        self.anti_graph_box_layout = QtWidgets.QVBoxLayout()
+        self.anti_graph_box_layout.addLayout(btn_anti_graph_layout)
+        self.anti_graph_box_layout.addWidget(self.chb_show_level_0)
+        self.anti_graph_box_layout.addWidget(self.chb_show_level_1)
+        self.anti_graph_box = GUI_custom_components.GroupBox('Anti-graph', menu_action=self.ui_obj.menu.toggle_anti_graph_control_action)
+        self.anti_graph_box.setLayout(self.anti_graph_box_layout)
+
         self.overlay_box_layout = QtWidgets.QVBoxLayout()
         self.overlay_box_layout.addLayout(btn_overlay_btns_layout)
         self.overlay_box_layout.addLayout(overlay_layout)
@@ -787,6 +897,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.info_display_layout.addWidget(self.alg_2_box)
         self.info_display_layout.addWidget(self.column_box)
         self.info_display_layout.addWidget(self.graph_box)
+        self.info_display_layout.addWidget(self.anti_graph_box)
         self.info_display_layout.addWidget(self.overlay_box)
         self.info_display_layout.addStretch()
 
@@ -834,13 +945,17 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_list.append(self.btn_set_indices_2)
         self.btn_list.append(self.btn_plot)
         self.btn_list.append(self.btn_print_distances)
+        self.btn_list.append(self.btn_build_anti_graph)
 
+        self.chb_list.append(self.chb_toggle_positions)
         self.chb_list.append(self.chb_precipitate_column)
         self.chb_list.append(self.chb_show)
         self.chb_list.append(self.chb_move)
         self.chb_list.append(self.chb_perturb_mode)
         self.chb_list.append(self.chb_enable_ruler)
         self.chb_list.append(self.chb_graph)
+        self.chb_list.append(self.chb_show_level_0)
+        self.chb_list.append(self.chb_show_level_1)
         self.chb_list.append(self.chb_raw_image)
         self.chb_list.append(self.chb_black_background)
         self.chb_list.append(self.chb_structures)
@@ -1295,6 +1410,9 @@ class MenuBar:
         self.toggle_graph_control_action = QtWidgets.QAction('Show atomic graph controls', self.ui_obj)
         self.toggle_graph_control_action.setCheckable(True)
         self.toggle_graph_control_action.setChecked(True)
+        self.toggle_anti_graph_control_action = QtWidgets.QAction('Show anti-graph controls', self.ui_obj)
+        self.toggle_anti_graph_control_action.setCheckable(True)
+        self.toggle_anti_graph_control_action.setChecked(True)
         self.toggle_overlay_control_action = QtWidgets.QAction('Show overlay controls', self.ui_obj)
         self.toggle_overlay_control_action.setCheckable(True)
         self.toggle_overlay_control_action.setChecked(True)
@@ -1358,6 +1476,7 @@ class MenuBar:
         view.addAction(self.toggle_alg_2_control_action)
         view.addAction(self.toggle_column_control_action)
         view.addAction(self.toggle_graph_control_action)
+        view.addAction(self.toggle_anti_graph_control_action)
         view.addAction(self.toggle_overlay_control_action)
         # - Process
         process.addAction(image_correction_action)
@@ -1410,6 +1529,7 @@ class MenuBar:
         self.toggle_alg_2_control_action.triggered.connect(self.ui_obj.menu_toggle_alg_2_control_trigger)
         self.toggle_column_control_action.triggered.connect(self.ui_obj.menu_toggle_column_control_trigger)
         self.toggle_graph_control_action.triggered.connect(self.ui_obj.menu_toggle_graph_control_trigger)
+        self.toggle_anti_graph_control_action.triggered.connect(self.ui_obj.menu_toggle_anti_graph_control_trigger)
         self.toggle_overlay_control_action.triggered.connect(self.ui_obj.menu_toggle_overlay_control_trigger)
         # - Process
         image_correction_action.triggered.connect(self.ui_obj.menu_image_correction_trigger)
@@ -2132,8 +2252,10 @@ class PlotWizard(QtWidgets.QDialog):
         self.list_2.addItem('Central alpha min-max scatter-plot')
         self.list_2.addItem('Central theta min-max scatter-plot')
         self.list_2.addItem('Fitted relative z-contrast distributions')
-        self.list_2.addItem('Spatial inter-atomic distances')
-        self.list_2.addItem('Projected inter-atomic distances')
+        self.list_2.addItem('Inter-atomic distances distributions')
+        self.list_2.addItem('Inter-atomic distances box-plot')
+        self.list_2.addItem('Inter-atomic distances scatter-plot')
+        self.list_2.addItem('Inter-atomic distances all plots')
         self.list_2.addItem('Exotic plots')
         self.list_2.addItem('Summary plot-page')
 
@@ -2262,8 +2384,11 @@ class PlotWizard(QtWidgets.QDialog):
                                      exclude_3=not self.chb_flag_3.isChecked(),
                                      exclude_4=not self.chb_flag_4.isChecked())
                 plot.plot()
-            elif self.list_1.item(j).text() == 'Spatial inter-atomic distances':
-                plot = plotting_module.InterAtomicDistances(files, distance_mode='spatial')
+            elif self.list_1.item(j).text() == 'Inter-atomic distances distributions' or \
+                    self.list_1.item(j).text() == 'Inter-atomic distances box-plot' or \
+                    self.list_1.item(j).text() == 'Inter-atomic distances scatter-plot' or \
+                    self.list_1.item(j).text() == 'Inter-atomic distances all plots':
+                plot = plotting_module.InterAtomicDistances(files, distance_mode='spatial', include_plane=True)
                 plot.accumulate_data(exclude_edges=not self.chb_edge_columns.isChecked(),
                                      exclude_matrix=not self.chb_matrix_columns.isChecked(),
                                      exclude_hidden=not self.chb_hidden_columns.isChecked(),
@@ -2271,17 +2396,14 @@ class PlotWizard(QtWidgets.QDialog):
                                      exclude_2=not self.chb_flag_2.isChecked(),
                                      exclude_3=not self.chb_flag_3.isChecked(),
                                      exclude_4=not self.chb_flag_4.isChecked())
-                plot.plot()
-            elif self.list_1.item(j).text() == 'Projected inter-atomic distances':
-                plot = plotting_module.InterAtomicDistances(files, distance_mode='projected')
-                plot.accumulate_data(exclude_edges=not self.chb_edge_columns.isChecked(),
-                                     exclude_matrix=not self.chb_matrix_columns.isChecked(),
-                                     exclude_hidden=not self.chb_hidden_columns.isChecked(),
-                                     exclude_1=not self.chb_flag_1.isChecked(),
-                                     exclude_2=not self.chb_flag_2.isChecked(),
-                                     exclude_3=not self.chb_flag_3.isChecked(),
-                                     exclude_4=not self.chb_flag_4.isChecked())
-                plot.plot()
+                if self.list_1.item(j).text() == 'Inter-atomic distances box-plot':
+                    plot.plot(type_='box')
+                elif self.list_1.item(j).text() == 'Inter-atomic distances scatter-plot':
+                    plot.plot(type_='scatter')
+                elif self.list_1.item(j).text() == 'Inter-atomic distances all plots':
+                    plot.plot(type_='all')
+                else:
+                    plot.plot()
         logger.info('Plotting complete.')
         self.ui_obj.sys_message('Ready.')
 

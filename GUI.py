@@ -81,6 +81,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.gs_overlay_composition = GUI_elements.OverlayComposition(ui_obj=self, background=self.no_graphic)
         self.gs_atomic_graph = GUI_elements.AtomicGraph(ui_obj=self, background=self.no_graphic)
         self.gs_atomic_sub_graph = GUI_elements.AtomicSubGraph(ui_obj=self, background=self.no_graphic)
+        self.gs_anti_graph = GUI_elements.AtomicGraph(ui_obj=self, background=self.no_graphic)
         self.gs_search_matrix = GUI_elements.RawImage(ui_obj=self, background=self.no_graphic)
         self.gs_fft = GUI_elements.RawImage(ui_obj=self, background=self.no_graphic)
 
@@ -90,6 +91,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.gv_overlay_composition = GUI_elements.ZoomGraphicsView(self.gs_overlay_composition, ui_obj=self, trigger_func=self.key_press_trigger)
         self.gv_atomic_graph = GUI_elements.ZoomGraphicsView(self.gs_atomic_graph, ui_obj=self, trigger_func=self.key_press_trigger)
         self.gv_atomic_sub_graph = GUI_elements.ZoomGraphicsView(self.gs_atomic_sub_graph, ui_obj=self, trigger_func=self.key_press_trigger)
+        self.gv_anti_graph = GUI_elements.ZoomGraphicsView(self.gs_anti_graph, ui_obj=self, trigger_func=self.key_press_trigger)
         self.gv_search_matrix = GUI_elements.ZoomGraphicsView(self.gs_search_matrix, ui_obj=self, trigger_func=self.key_press_trigger)
         self.gv_fft = GUI_elements.ZoomGraphicsView(self.gs_fft, ui_obj=self, trigger_func=self.key_press_trigger)
 
@@ -101,6 +103,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.tab_overlay_composition = self.tabs.addTab(self.gv_overlay_composition, 'Overlay composition')
         self.tab_atomic_graph = self.tabs.addTab(self.gv_atomic_graph, 'Atomic graph')
         self.tab_atomic_sub_graph = self.tabs.addTab(self.gv_atomic_sub_graph, 'Atomic sub-graph')
+        self.tab_anti_graph = self.tabs.addTab(self.gv_anti_graph, 'Anti-graph')
         self.tab_search_matrix = self.tabs.addTab(self.gv_search_matrix, 'Search matrix')
         self.tab_fft = self.tabs.addTab(self.gv_fft, 'FFT image')
 
@@ -173,6 +176,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.update_overlay(void=void)
         self.update_graph()
         self.update_sub_graph(void=void)
+        self.update_anti_graph(void=void)
         self.update_search_matrix(void=void)
         self.update_fft(void=void)
 
@@ -212,6 +216,12 @@ class MainUI(QtWidgets.QMainWindow):
             graphic_ = self.no_graphic
             self.gs_atomic_sub_graph = GUI_elements.AtomicSubGraph(ui_obj=self, background=graphic_)
             self.gv_atomic_sub_graph.setScene(self.gs_atomic_sub_graph)
+
+    def update_anti_graph(self, void=False):
+        if void:
+            graphic_ = self.no_graphic
+            self.gs_anti_graph = GUI_elements.AtomicSubGraph(ui_obj=self, background=graphic_)
+            self.gv_anti_graph.setScene(self.gs_anti_graph)
 
     def update_search_matrix(self, void=False):
         if void:
@@ -435,6 +445,12 @@ class MainUI(QtWidgets.QMainWindow):
             self.control_window.graph_box.set_visible()
         else:
             self.control_window.graph_box.set_hidden()
+
+    def menu_toggle_anti_graph_control_trigger(self, state):
+        if state:
+            self.control_window.anti_graph_box.set_visible()
+        else:
+            self.control_window.anti_graph_box.set_hidden()
 
     def menu_toggle_overlay_control_trigger(self, state):
         if state:
@@ -907,6 +923,18 @@ class MainUI(QtWidgets.QMainWindow):
 
         logger.info(string)
 
+    def btn_build_anti_graph_trigger(self):
+        if self.project_instance is not None:
+            if self.project_instance.num_columns > 0:
+                if len(self.project_instance.graph.vertices[0].neighbour_indices) > 0:
+                    self.sys_message('Working...')
+                    logger.info('Trying to build anti-graph...')
+                    anti_graph = self.project_instance.graph.get_anti_graph()
+                    self.gs_anti_graph = GUI_elements.AntiGraph(ui_obj=self, scale_factor=2, graph=anti_graph)
+                    self.gv_anti_graph.setScene(self.gs_anti_graph)
+                    logger.info('Built anti-graph!')
+                    self.sys_message('Ready')
+
     def btn_save_log_trigger(self):
         filename = QtWidgets.QFileDialog.getSaveFileName(self, 'Save file', '')
         if filename[0]:
@@ -926,6 +954,15 @@ class MainUI(QtWidgets.QMainWindow):
     # ----------
     # Checkbox triggers:
     # ----------
+
+    def chb_toggle_positions_trigger(self, state):
+        if self.project_instance is not None:
+            if self.project_instance.num_columns > 0:
+                for position_graphic in self.gs_atomic_positions.interactive_position_objects:
+                    if state:
+                        position_graphic.show()
+                    else:
+                        position_graphic.hide()
 
     def chb_precipitate_column_trigger(self, state):
         if self.project_instance is not None and not self.selected_column == -1:
@@ -955,6 +992,16 @@ class MainUI(QtWidgets.QMainWindow):
             self.sys_message('Working...')
             self.gs_atomic_graph.re_draw_edges(self.project_instance.r)
             self.sys_message('Ready.')
+
+    def chb_show_level_0_trigger(self, state):
+        if self.project_instance is not None:
+            if self.gs_anti_graph.graph is not None:
+                self.gs_anti_graph.toggle_level_0(state)
+
+    def chb_show_level_1_trigger(self, state):
+        if self.project_instance is not None:
+            if self.gs_anti_graph.graph is not None:
+                self.gs_anti_graph.toggle_level_1(state)
 
     def chb_raw_image_trigger(self, state):
         if self.project_instance is not None:

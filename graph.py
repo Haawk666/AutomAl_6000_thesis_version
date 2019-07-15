@@ -5,6 +5,7 @@ There are also some functionality for generating **SubGraph** objects, as well a
 import numpy as np
 import utils
 import logging
+import copy
 
 # Instantiate logger
 logger = logging.getLogger(__name__)
@@ -331,6 +332,27 @@ class Vertex:
             if i == j:
                 found = True
         return found
+
+    def perturb_j_k(self, j, k):
+        pos_j = -1
+        pos_k = -1
+        for m, neighbour in enumerate(self.neighbour_indices):
+            if neighbour == j:
+                pos_j = m
+            if neighbour == k:
+                pos_k = m
+        if not pos_j == -1 and not pos_k == -1:
+            self.neighbour_indices[pos_j], self.neighbour_indices[pos_k] =\
+                self.neighbour_indices[pos_k], self.neighbour_indices[pos_j]
+        elif pos_j == -1 and pos_k == -1:
+            self.neighbour_indices[-1] = k
+        else:
+            if pos_j == -1:
+                logger.warning('Was not able to perturb! index j not present!')
+            elif pos_k == -1:
+                self.neighbour_indices[-1] = k
+                self.neighbour_indices[pos_j], self.neighbour_indices[-1] = \
+                    self.neighbour_indices[-1], self.neighbour_indices[pos_j]
 
     def species(self):
         return self.species_strings[self.h_index]
@@ -827,6 +849,9 @@ class AtomicGraph:
 
         return sub_graph
 
+    def get_anti_graph(self):
+        return AntiGraph(self).graph
+
     def find_intersects(self):
 
         intersecting_segments = []
@@ -958,6 +983,30 @@ class AtomicGraph:
         self.avg_central_variance = variance
 
         return variance
+
+
+class AntiGraph:
+
+    def __init__(self, graph):
+
+        self.graph = graph
+        self.vertices = copy.deepcopy(graph.vertices)
+        self.vertex_indices = copy.deepcopy(graph.vertex_indices)
+
+        self.build()
+
+    def build(self):
+        for i, vertex in enumerate(self.graph.vertices):
+            if not vertex.is_edge_column:
+                sub_graph = self.graph.get_atomic_configuration(vertex.i)
+                for mesh in sub_graph.meshes:
+                    self.vertices[i].perturb_j_k(mesh.vertex_indices[1], mesh.vertex_indices[2])
+                self.vertices[i].partners()
+        self.graph = AtomicGraph()
+        for vertex in self.vertices:
+            self.graph.add_vertex(vertex)
+        self.graph.redraw_edges()
+        self.graph.summarize_stats()
 
 
 class SubGraph:

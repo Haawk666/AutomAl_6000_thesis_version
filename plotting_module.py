@@ -4,6 +4,7 @@ import graph_op
 import numpy as np
 import utils
 from matplotlib.gridspec import GridSpec
+from matplotlib import ticker as tick
 import logging
 
 # Instantiate logger
@@ -13,10 +14,11 @@ logger.setLevel(logging.DEBUG)
 
 class InterAtomicDistances:
 
-    def __init__(self, files, distance_mode='spatial'):
+    def __init__(self, files, distance_mode='spatial', include_plane=False):
 
         self.files = files
         self.distance_mode = distance_mode
+        self.include_plane = include_plane
         self.number_of_edges = 0
         self.number_of_files = 0
 
@@ -112,6 +114,61 @@ class InterAtomicDistances:
                                                 elif vertex_a.h_index == 5 and vertex_b.h_index == 5:
                                                     self.mg_mg.append(spatial_distance)
 
+            if self.include_plane:
+                try:
+                    anti_graph = instance.graph.get_anti_graph()
+                except:
+                    logger.error('Could not generate anti-graph!')
+                else:
+                    for vertex_a in anti_graph.vertices:
+                        for partner_index in vertex_a.partners():
+
+                            vertex_b = anti_graph.vertices[partner_index]
+
+                            if not (exclude_edges and (vertex_a.is_edge_column or vertex_b.is_edge_column)):
+                                if not(exclude_matrix and not (vertex_a.is_in_precipitate or vertex_b.is_in_precipitate)):
+                                    if not (exclude_hidden and not (vertex_a.show_in_overlay or vertex_b.show_in_overlay)):
+                                        if not (exclude_1 and (vertex_a.flag_1 or vertex_b.flag_1)):
+                                            if not (exclude_2 and (vertex_a.flag_2 or vertex_b.flag_2)):
+                                                if not (exclude_3 and (vertex_a.flag_3 or vertex_b.flag_3)):
+                                                    if not (exclude_4 and (vertex_a.flag_4 or vertex_b.flag_4)):
+
+                                                        x = vertex_a.real_coor_x - vertex_b.real_coor_x
+                                                        x *= instance.scale
+                                                        y = vertex_a.real_coor_y - vertex_b.real_coor_y
+                                                        y *= instance.scale
+                                                        projected_distance = np.sqrt(x ** 2 + y ** 2)
+                                                        if vertex_a.level == vertex_b.level:
+                                                            spatial_distance = projected_distance
+                                                        else:
+                                                            spatial_distance = np.sqrt(projected_distance ** 2 + (lattice_const / 2) ** 2)
+
+                                                        if self.distance_mode == 'spatial':
+                                                            pass
+                                                        elif self.distance_mode == 'projected':
+                                                            spatial_distance = projected_distance
+
+                                                        if vertex_a.h_index == 0 and vertex_b.h_index == 0:
+                                                            self.si_si.append(spatial_distance)
+                                                        elif (vertex_a.h_index == 0 and vertex_b.h_index == 1) or (vertex_b.h_index == 0 and vertex_a.h_index == 1):
+                                                            self.si_cu.append(spatial_distance)
+                                                        elif (vertex_a.h_index == 0 and vertex_b.h_index == 3) or (vertex_b.h_index == 0 and vertex_a.h_index == 3):
+                                                            self.si_al.append(spatial_distance)
+                                                        elif (vertex_a.h_index == 0 and vertex_b.h_index == 5) or (vertex_b.h_index == 0 and vertex_a.h_index == 5):
+                                                            self.si_mg.append(spatial_distance)
+                                                        elif vertex_a.h_index == 1 and vertex_b.h_index == 1:
+                                                            self.cu_cu.append(spatial_distance)
+                                                        elif (vertex_a.h_index == 1 and vertex_b.h_index == 3) or (vertex_b.h_index == 1 and vertex_a.h_index == 3):
+                                                            self.cu_al.append(spatial_distance)
+                                                        elif (vertex_a.h_index == 1 and vertex_b.h_index == 5) or (vertex_b.h_index == 1 and vertex_a.h_index == 5):
+                                                            self.cu_mg.append(spatial_distance)
+                                                        elif vertex_a.h_index == 3 and vertex_b.h_index == 3:
+                                                            self.al_al.append(spatial_distance)
+                                                        elif (vertex_a.h_index == 3 and vertex_b.h_index == 5) or (vertex_b.h_index == 3 and vertex_a.h_index == 5):
+                                                            self.al_mg.append(spatial_distance)
+                                                        elif vertex_a.h_index == 5 and vertex_b.h_index == 5:
+                                                            self.mg_mg.append(spatial_distance)
+
         self.si_si_mean = utils.mean_val(self.si_si)
         self.si_cu_mean = utils.mean_val(self.si_cu)
         self.si_al_mean = utils.mean_val(self.si_al)
@@ -134,53 +191,287 @@ class InterAtomicDistances:
         self.al_mg_std = np.sqrt(utils.variance(self.al_mg))
         self.mg_mg_std = np.sqrt(utils.variance(self.mg_mg))
 
-    def plot(self):
+    def plot(self, type_='distribution'):
 
         logger.info('Generating plots...')
 
-        distance = np.linspace(200, 400, 1000)
+        if type_ == 'distribution':
 
-        fig = plt.figure(constrained_layout=True)
-        gs = GridSpec(2, 1, figure=fig)
-        ax_same = fig.add_subplot(gs[0, 0])
-        ax_pairs_1 = fig.add_subplot(gs[1, 0])
+            distance = np.linspace(200, 400, 1000)
 
-        ax_same.plot(distance, utils.normal_dist(distance, self.si_si_mean, self.si_si_std), 'r', label='Si <-> Si')
-        ax_same.plot(distance, utils.normal_dist(distance, self.cu_cu_mean, self.cu_cu_std), 'y', label='Cu <-> Cu')
-        ax_same.plot(distance, utils.normal_dist(distance, self.al_al_mean, self.al_al_std), 'g', label='Al <-> Al')
-        ax_same.plot(distance, utils.normal_dist(distance, self.mg_mg_mean, self.mg_mg_std), 'm', label='Mg <-> Mg')
+            fig = plt.figure(constrained_layout=True)
+            gs = GridSpec(2, 1, figure=fig)
+            ax_same = fig.add_subplot(gs[0, 0])
+            ax_pairs_1 = fig.add_subplot(gs[1, 0])
 
-        ax_same.axvline(x=2 * core.SuchSoftware.si_radii, c='r')
-        ax_same.axvline(x=2 * core.SuchSoftware.cu_radii, c='y')
-        ax_same.axvline(x=2 * core.SuchSoftware.al_radii, c='g')
-        ax_same.axvline(x=2 * core.SuchSoftware.mg_radii, c='m')
+            ax_same.plot(distance, utils.normal_dist(distance, self.si_si_mean, self.si_si_std), 'r', label='Si <-> Si')
+            ax_same.plot(distance, utils.normal_dist(distance, self.cu_cu_mean, self.cu_cu_std), 'y', label='Cu <-> Cu')
+            ax_same.plot(distance, utils.normal_dist(distance, self.al_al_mean, self.al_al_std), 'g', label='Al <-> Al')
+            ax_same.plot(distance, utils.normal_dist(distance, self.mg_mg_mean, self.mg_mg_std), 'm', label='Mg <-> Mg')
 
-        ax_same.set_title('Similar species pairs')
-        ax_same.set_xlabel('Inter-atomic distance (pm)')
-        ax_same.legend()
+            ax_same.axvline(x=2 * core.SuchSoftware.si_radii, c='r')
+            ax_same.axvline(x=2 * core.SuchSoftware.cu_radii, c='y')
+            ax_same.axvline(x=2 * core.SuchSoftware.al_radii, c='g')
+            ax_same.axvline(x=2 * core.SuchSoftware.mg_radii, c='m')
 
-        ax_pairs_1.plot(distance, utils.normal_dist(distance, self.si_cu_mean, self.si_cu_std), 'r', label='Si <-> Cu')
-        ax_pairs_1.plot(distance, utils.normal_dist(distance, self.si_al_mean, self.si_al_std), 'k', label='Si <-> Al')
-        ax_pairs_1.plot(distance, utils.normal_dist(distance, self.si_mg_mean, self.si_mg_std), 'c', label='Si <-> Mg')
-        ax_pairs_1.plot(distance, utils.normal_dist(distance, self.cu_al_mean, self.cu_al_std), 'y', label='Cu <-> Al')
-        ax_pairs_1.plot(distance, utils.normal_dist(distance, self.cu_al_mean, self.cu_al_std), 'b', label='Cu <-> Mg')
-        ax_pairs_1.plot(distance, utils.normal_dist(distance, self.al_mg_mean, self.al_mg_std), 'g', label='Al <-> Mg')
+            ax_same.set_title('Similar species pairs')
+            ax_same.set_xlabel('Inter-atomic distance (pm)')
+            ax_same.legend()
 
-        ax_pairs_1.axvline(x=core.SuchSoftware.si_radii + core.SuchSoftware.cu_radii, c='r')
-        ax_pairs_1.axvline(x=core.SuchSoftware.si_radii + core.SuchSoftware.al_radii, c='k')
-        ax_pairs_1.axvline(x=core.SuchSoftware.si_radii + core.SuchSoftware.mg_radii, c='c')
-        ax_pairs_1.axvline(x=core.SuchSoftware.cu_radii + core.SuchSoftware.al_radii, c='y')
-        ax_pairs_1.axvline(x=core.SuchSoftware.cu_radii + core.SuchSoftware.mg_radii, c='b')
-        ax_pairs_1.axvline(x=core.SuchSoftware.al_radii + core.SuchSoftware.mg_radii, c='g')
+            ax_pairs_1.plot(distance, utils.normal_dist(distance, self.si_cu_mean, self.si_cu_std), 'r', label='Si <-> Cu')
+            ax_pairs_1.plot(distance, utils.normal_dist(distance, self.si_al_mean, self.si_al_std), 'k', label='Si <-> Al')
+            ax_pairs_1.plot(distance, utils.normal_dist(distance, self.si_mg_mean, self.si_mg_std), 'c', label='Si <-> Mg')
+            ax_pairs_1.plot(distance, utils.normal_dist(distance, self.cu_al_mean, self.cu_al_std), 'y', label='Cu <-> Al')
+            ax_pairs_1.plot(distance, utils.normal_dist(distance, self.cu_al_mean, self.cu_al_std), 'b', label='Cu <-> Mg')
+            ax_pairs_1.plot(distance, utils.normal_dist(distance, self.al_mg_mean, self.al_mg_std), 'g', label='Al <-> Mg')
 
-        ax_pairs_1.set_title('Un-similar species pairs')
-        ax_pairs_1.set_xlabel('Inter-atomic distance (pm)')
-        ax_pairs_1.legend()
+            ax_pairs_1.axvline(x=core.SuchSoftware.si_radii + core.SuchSoftware.cu_radii, c='r')
+            ax_pairs_1.axvline(x=core.SuchSoftware.si_radii + core.SuchSoftware.al_radii, c='k')
+            ax_pairs_1.axvline(x=core.SuchSoftware.si_radii + core.SuchSoftware.mg_radii, c='c')
+            ax_pairs_1.axvline(x=core.SuchSoftware.cu_radii + core.SuchSoftware.al_radii, c='y')
+            ax_pairs_1.axvline(x=core.SuchSoftware.cu_radii + core.SuchSoftware.mg_radii, c='b')
+            ax_pairs_1.axvline(x=core.SuchSoftware.al_radii + core.SuchSoftware.mg_radii, c='g')
 
-        fig.suptitle('Fitted distributions of inter-atomic distances\n'
-                     '(Vertical lines represent hard sphere model values)')
+            ax_pairs_1.set_title('Un-similar species pairs')
+            ax_pairs_1.set_xlabel('Inter-atomic distance (pm)')
+            ax_pairs_1.legend()
 
-        plt.show()
+            fig.suptitle('Fitted distributions of inter-atomic distances\n'
+                         '(Vertical lines represent hard sphere model values)')
+
+            plt.show()
+
+        elif type_ == 'box':
+
+            fig, ax = plt.subplots()
+
+            tick_labels = ['Si <-> Si', 'Cu <-> Cu', 'Al <-> Al', 'Mg <-> Mg', 'Si <-> Cu', 'Si <-> Al', 'Si <-> Mg',
+                           'Cu <-> Al', 'Cu <-> Mg', 'Al <-> Mg']
+
+            ax.boxplot([self.si_si, self.cu_cu, self.al_al, self.mg_mg, self.si_cu, self.si_al, self.si_mg, self.cu_al, self.cu_mg, self.al_mg])
+
+            ax.set_xticklabels(tick_labels, rotation=45, fontsize=12, fontdict={'horizontalalignment': 'right'})
+
+            ax.plot(1, 2 * core.SuchSoftware.si_radii, color='r', marker='*', markeredgecolor='k', markersize=12,
+                    linestyle='', label='Hard-sphere model values')
+            ax.plot(2, 2 * core.SuchSoftware.cu_radii, color='r', marker='*', markeredgecolor='k', markersize=12)
+            ax.plot(3, 2 * core.SuchSoftware.al_radii, color='r', marker='*', markeredgecolor='k', markersize=12)
+            ax.plot(4, 2 * core.SuchSoftware.mg_radii, color='r', marker='*', markeredgecolor='k', markersize=12)
+            ax.plot(5, core.SuchSoftware.si_radii + core.SuchSoftware.cu_radii, color='r', marker='*',
+                    markeredgecolor='k', markersize=12)
+            ax.plot(6, core.SuchSoftware.si_radii + core.SuchSoftware.al_radii, color='r', marker='*',
+                    markeredgecolor='k', markersize=12)
+            ax.plot(7, core.SuchSoftware.si_radii + core.SuchSoftware.mg_radii, color='r', marker='*',
+                    markeredgecolor='k', markersize=12)
+            ax.plot(8, core.SuchSoftware.cu_radii + core.SuchSoftware.al_radii, color='r', marker='*',
+                    markeredgecolor='k', markersize=12)
+            ax.plot(9, core.SuchSoftware.cu_radii + core.SuchSoftware.mg_radii, color='r', marker='*',
+                    markeredgecolor='k', markersize=12)
+            ax.plot(10, core.SuchSoftware.al_radii + core.SuchSoftware.mg_radii, color='r', marker='*',
+                    markeredgecolor='k', markersize=12)
+
+            ax.yaxis.grid(True, linestyle='-', which='major', color='lightgrey', alpha=0.5)
+            ax.set_axisbelow(True)
+
+            ax.set_ylabel('Inter-atomic distance (pm)')
+            ax.legend(loc='upper left')
+
+            fig.subplots_adjust(bottom=0.20)
+            fig.suptitle('Box plot of inter-atomic distance data')
+
+            plt.show()
+
+        elif type_ == 'scatter':
+
+            fig, ax = plt.subplots()
+
+            tick_labels = ['', 'Si <-> Si', 'Cu <-> Cu', 'Al <-> Al', 'Mg <-> Mg', 'Si <-> Cu', 'Si <-> Al', 'Si <-> Mg',
+                           'Cu <-> Al', 'Cu <-> Mg', 'Al <-> Mg']
+
+            ax.plot([0] * len(self.si_si), self.si_si, marker='o', markeredgecolor='k', markersize=4, linestyle='', fillstyle='none')
+            ax.plot([1] * len(self.cu_cu), self.cu_cu, marker='o', markeredgecolor='k', markersize=4, linestyle='', fillstyle='none')
+            ax.plot([2] * len(self.al_al), self.al_al, marker='o', markeredgecolor='k', markersize=4, linestyle='', fillstyle='none')
+            ax.plot([3] * len(self.mg_mg), self.mg_mg, marker='o', markeredgecolor='k', markersize=4, linestyle='', fillstyle='none')
+            ax.plot([4] * len(self.si_cu), self.si_cu, marker='o', markeredgecolor='k', markersize=4, linestyle='', fillstyle='none')
+            ax.plot([5] * len(self.si_al), self.si_al, marker='o', markeredgecolor='k', markersize=4, linestyle='', fillstyle='none')
+            ax.plot([6] * len(self.si_mg), self.si_mg, marker='o', markeredgecolor='k', markersize=4, linestyle='', fillstyle='none')
+            ax.plot([7] * len(self.cu_al), self.cu_al, marker='o', markeredgecolor='k', markersize=4, linestyle='', fillstyle='none')
+            ax.plot([8] * len(self.cu_mg), self.cu_mg, marker='o', markeredgecolor='k', markersize=4, linestyle='', fillstyle='none')
+            ax.plot([9] * len(self.al_mg), self.al_mg, marker='o', markeredgecolor='k', markersize=4, linestyle='', fillstyle='none')
+
+            ax.plot(0, 2 * core.SuchSoftware.si_radii, color='r', marker='*', markeredgecolor='k', markersize=12,
+                    linestyle='', label='Hard-sphere model values')
+            ax.plot(1, 2 * core.SuchSoftware.cu_radii, color='r', marker='*', markeredgecolor='k', markersize=12)
+            ax.plot(2, 2 * core.SuchSoftware.al_radii, color='r', marker='*', markeredgecolor='k', markersize=12)
+            ax.plot(3, 2 * core.SuchSoftware.mg_radii, color='r', marker='*', markeredgecolor='k', markersize=12)
+            ax.plot(4, core.SuchSoftware.si_radii + core.SuchSoftware.cu_radii, color='r', marker='*',
+                    markeredgecolor='k', markersize=12)
+            ax.plot(5, core.SuchSoftware.si_radii + core.SuchSoftware.al_radii, color='r', marker='*',
+                    markeredgecolor='k', markersize=12)
+            ax.plot(6, core.SuchSoftware.si_radii + core.SuchSoftware.mg_radii, color='r', marker='*',
+                    markeredgecolor='k', markersize=12)
+            ax.plot(7, core.SuchSoftware.cu_radii + core.SuchSoftware.al_radii, color='r', marker='*',
+                    markeredgecolor='k', markersize=12)
+            ax.plot(8, core.SuchSoftware.cu_radii + core.SuchSoftware.mg_radii, color='r', marker='*',
+                    markeredgecolor='k', markersize=12)
+            ax.plot(9, core.SuchSoftware.al_radii + core.SuchSoftware.mg_radii, color='r', marker='*',
+                    markeredgecolor='k', markersize=12)
+
+            ax.xaxis.set_major_locator(tick.MultipleLocator(1))
+            ax.set_xticklabels(tick_labels, rotation=45, fontsize=12, fontdict={'horizontalalignment': 'right'})
+
+            ax.yaxis.grid(True, linestyle='-', which='major', color='lightgrey', alpha=0.5)
+            ax.set_axisbelow(True)
+
+            ax.set_ylabel('Inter-atomic distance (pm)')
+            ax.legend(loc='upper left')
+
+            fig.subplots_adjust(bottom=0.20)
+            fig.suptitle('Scatter-plot of inter-atomic distance data')
+
+            plt.show()
+
+        elif type_ == 'all':
+
+            distance = np.linspace(200, 400, 1000)
+
+            fig = plt.figure(constrained_layout=True)
+            gs = GridSpec(2, 2, figure=fig)
+            ax_same = fig.add_subplot(gs[0, 0])
+            ax_pairs_1 = fig.add_subplot(gs[1, 0])
+            ax_box = fig.add_subplot(gs[0, 1])
+            ax_scatter = fig.add_subplot(gs[1, 1])
+
+            ax_same.plot(distance, utils.normal_dist(distance, self.si_si_mean, self.si_si_std), 'r', label='Si <-> Si')
+            ax_same.plot(distance, utils.normal_dist(distance, self.cu_cu_mean, self.cu_cu_std), 'y', label='Cu <-> Cu')
+            ax_same.plot(distance, utils.normal_dist(distance, self.al_al_mean, self.al_al_std), 'g', label='Al <-> Al')
+            ax_same.plot(distance, utils.normal_dist(distance, self.mg_mg_mean, self.mg_mg_std), 'm', label='Mg <-> Mg')
+
+            ax_same.axvline(x=2 * core.SuchSoftware.si_radii, c='r')
+            ax_same.axvline(x=2 * core.SuchSoftware.cu_radii, c='y')
+            ax_same.axvline(x=2 * core.SuchSoftware.al_radii, c='g')
+            ax_same.axvline(x=2 * core.SuchSoftware.mg_radii, c='m')
+
+            ax_same.set_title('Similar species pairs')
+            ax_same.set_xlabel('Inter-atomic distance (pm)')
+            ax_same.legend()
+
+            ax_pairs_1.plot(distance, utils.normal_dist(distance, self.si_cu_mean, self.si_cu_std), 'r',
+                            label='Si <-> Cu')
+            ax_pairs_1.plot(distance, utils.normal_dist(distance, self.si_al_mean, self.si_al_std), 'k',
+                            label='Si <-> Al')
+            ax_pairs_1.plot(distance, utils.normal_dist(distance, self.si_mg_mean, self.si_mg_std), 'c',
+                            label='Si <-> Mg')
+            ax_pairs_1.plot(distance, utils.normal_dist(distance, self.cu_al_mean, self.cu_al_std), 'y',
+                            label='Cu <-> Al')
+            ax_pairs_1.plot(distance, utils.normal_dist(distance, self.cu_al_mean, self.cu_al_std), 'b',
+                            label='Cu <-> Mg')
+            ax_pairs_1.plot(distance, utils.normal_dist(distance, self.al_mg_mean, self.al_mg_std), 'g',
+                            label='Al <-> Mg')
+
+            ax_pairs_1.axvline(x=core.SuchSoftware.si_radii + core.SuchSoftware.cu_radii, c='r')
+            ax_pairs_1.axvline(x=core.SuchSoftware.si_radii + core.SuchSoftware.al_radii, c='k')
+            ax_pairs_1.axvline(x=core.SuchSoftware.si_radii + core.SuchSoftware.mg_radii, c='c')
+            ax_pairs_1.axvline(x=core.SuchSoftware.cu_radii + core.SuchSoftware.al_radii, c='y')
+            ax_pairs_1.axvline(x=core.SuchSoftware.cu_radii + core.SuchSoftware.mg_radii, c='b')
+            ax_pairs_1.axvline(x=core.SuchSoftware.al_radii + core.SuchSoftware.mg_radii, c='g')
+
+            ax_pairs_1.set_title('Un-similar species pairs')
+            ax_pairs_1.set_xlabel('Inter-atomic distance (pm)')
+            ax_pairs_1.legend()
+
+            tick_labels = ['Si <-> Si', 'Cu <-> Cu', 'Al <-> Al', 'Mg <-> Mg', 'Si <-> Cu', 'Si <-> Al', 'Si <-> Mg',
+                           'Cu <-> Al', 'Cu <-> Mg', 'Al <-> Mg']
+
+            ax_box.boxplot([self.si_si, self.cu_cu, self.al_al, self.mg_mg, self.si_cu, self.si_al, self.si_mg, self.cu_al,
+                        self.cu_mg, self.al_mg])
+
+            ax_box.set_xticklabels(tick_labels, rotation=45, fontsize=10, fontdict={'horizontalalignment': 'right'})
+
+            ax_box.plot(1, 2 * core.SuchSoftware.si_radii, color='r', marker='*', markeredgecolor='k', markersize=12,
+                    linestyle='', label='Hard-sphere model values')
+            ax_box.plot(2, 2 * core.SuchSoftware.cu_radii, color='r', marker='*', markeredgecolor='k', markersize=12)
+            ax_box.plot(3, 2 * core.SuchSoftware.al_radii, color='r', marker='*', markeredgecolor='k', markersize=12)
+            ax_box.plot(4, 2 * core.SuchSoftware.mg_radii, color='r', marker='*', markeredgecolor='k', markersize=12)
+            ax_box.plot(5, core.SuchSoftware.si_radii + core.SuchSoftware.cu_radii, color='r', marker='*',
+                    markeredgecolor='k', markersize=12)
+            ax_box.plot(6, core.SuchSoftware.si_radii + core.SuchSoftware.al_radii, color='r', marker='*',
+                    markeredgecolor='k', markersize=12)
+            ax_box.plot(7, core.SuchSoftware.si_radii + core.SuchSoftware.mg_radii, color='r', marker='*',
+                    markeredgecolor='k', markersize=12)
+            ax_box.plot(8, core.SuchSoftware.cu_radii + core.SuchSoftware.al_radii, color='r', marker='*',
+                    markeredgecolor='k', markersize=12)
+            ax_box.plot(9, core.SuchSoftware.cu_radii + core.SuchSoftware.mg_radii, color='r', marker='*',
+                    markeredgecolor='k', markersize=12)
+            ax_box.plot(10, core.SuchSoftware.al_radii + core.SuchSoftware.mg_radii, color='r', marker='*',
+                    markeredgecolor='k', markersize=12)
+
+            ax_box.yaxis.grid(True, linestyle='-', which='major', color='lightgrey', alpha=0.5)
+            ax_box.set_axisbelow(True)
+
+            ax_box.set_ylabel('Inter-atomic distance (pm)')
+            ax_box.legend(loc='upper left')
+            ax_box.set_title('Box-plot of inter-atomic distance data')
+
+            tick_labels = ['', 'Si <-> Si', 'Cu <-> Cu', 'Al <-> Al', 'Mg <-> Mg', 'Si <-> Cu', 'Si <-> Al', 'Si <-> Mg',
+                           'Cu <-> Al', 'Cu <-> Mg', 'Al <-> Mg']
+
+            ax_scatter.plot([1] * len(self.si_si), self.si_si, marker='o', markeredgecolor='k', markersize=4, linestyle='',
+                    fillstyle='none')
+            ax_scatter.plot([2] * len(self.cu_cu), self.cu_cu, marker='o', markeredgecolor='k', markersize=4, linestyle='',
+                    fillstyle='none')
+            ax_scatter.plot([3] * len(self.al_al), self.al_al, marker='o', markeredgecolor='k', markersize=4, linestyle='',
+                    fillstyle='none')
+            ax_scatter.plot([4] * len(self.mg_mg), self.mg_mg, marker='o', markeredgecolor='k', markersize=4, linestyle='',
+                    fillstyle='none')
+            ax_scatter.plot([5] * len(self.si_cu), self.si_cu, marker='o', markeredgecolor='k', markersize=4, linestyle='',
+                    fillstyle='none')
+            ax_scatter.plot([6] * len(self.si_al), self.si_al, marker='o', markeredgecolor='k', markersize=4, linestyle='',
+                    fillstyle='none')
+            ax_scatter.plot([7] * len(self.si_mg), self.si_mg, marker='o', markeredgecolor='k', markersize=4, linestyle='',
+                    fillstyle='none')
+            ax_scatter.plot([8] * len(self.cu_al), self.cu_al, marker='o', markeredgecolor='k', markersize=4, linestyle='',
+                    fillstyle='none')
+            ax_scatter.plot([9] * len(self.cu_mg), self.cu_mg, marker='o', markeredgecolor='k', markersize=4, linestyle='',
+                    fillstyle='none')
+            ax_scatter.plot([10] * len(self.al_mg), self.al_mg, marker='o', markeredgecolor='k', markersize=4, linestyle='',
+                    fillstyle='none')
+
+            ax_scatter.plot(1, 2 * core.SuchSoftware.si_radii, color='r', marker='*', markeredgecolor='k', markersize=12,
+                    linestyle='', label='Hard-sphere model values')
+            ax_scatter.plot(2, 2 * core.SuchSoftware.cu_radii, color='r', marker='*', markeredgecolor='k', markersize=12)
+            ax_scatter.plot(3, 2 * core.SuchSoftware.al_radii, color='r', marker='*', markeredgecolor='k', markersize=12)
+            ax_scatter.plot(4, 2 * core.SuchSoftware.mg_radii, color='r', marker='*', markeredgecolor='k', markersize=12)
+            ax_scatter.plot(5, core.SuchSoftware.si_radii + core.SuchSoftware.cu_radii, color='r', marker='*',
+                    markeredgecolor='k', markersize=12)
+            ax_scatter.plot(6, core.SuchSoftware.si_radii + core.SuchSoftware.al_radii, color='r', marker='*',
+                    markeredgecolor='k', markersize=12)
+            ax_scatter.plot(7, core.SuchSoftware.si_radii + core.SuchSoftware.mg_radii, color='r', marker='*',
+                    markeredgecolor='k', markersize=12)
+            ax_scatter.plot(8, core.SuchSoftware.cu_radii + core.SuchSoftware.al_radii, color='r', marker='*',
+                    markeredgecolor='k', markersize=12)
+            ax_scatter.plot(9, core.SuchSoftware.cu_radii + core.SuchSoftware.mg_radii, color='r', marker='*',
+                    markeredgecolor='k', markersize=12)
+            ax_scatter.plot(10, core.SuchSoftware.al_radii + core.SuchSoftware.mg_radii, color='r', marker='*',
+                    markeredgecolor='k', markersize=12)
+
+            ax_scatter.xaxis.set_major_locator(tick.MultipleLocator(1))
+            ax_scatter.set_xticklabels(tick_labels, rotation=45, fontsize=10, fontdict={'horizontalalignment': 'right'})
+
+            ax_scatter.yaxis.grid(True, linestyle='-', which='major', color='lightgrey', alpha=0.5)
+            ax_scatter.set_axisbelow(True)
+
+            ax_scatter.set_title('Scatter-plot of inter-atomic distance data')
+            ax_scatter.set_ylabel('Inter-atomic distance (pm)')
+            ax_scatter.legend(loc='upper left')
+
+            fig.suptitle('All inter-atomic distance plots')
+
+            plt.show()
+
+        else:
+
+            logger.error('Unkonwn plot-type!')
 
 
 class Gamma:
