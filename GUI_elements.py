@@ -2388,7 +2388,7 @@ class PlotWizard(QtWidgets.QDialog):
                     self.list_1.item(j).text() == 'Inter-atomic distances box-plot' or \
                     self.list_1.item(j).text() == 'Inter-atomic distances scatter-plot' or \
                     self.list_1.item(j).text() == 'Inter-atomic distances all plots':
-                plot = plotting_module.InterAtomicDistances(files, distance_mode='spatial', include_plane=True)
+                plot = plotting_module.InterAtomicDistances(files, distance_mode='spatial', include_plane=True, include_close=True)
                 plot.accumulate_data(exclude_edges=not self.chb_edge_columns.isChecked(),
                                      exclude_matrix=not self.chb_matrix_columns.isChecked(),
                                      exclude_hidden=not self.chb_hidden_columns.isChecked(),

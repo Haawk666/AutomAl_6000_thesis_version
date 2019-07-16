@@ -14,11 +14,12 @@ logger.setLevel(logging.DEBUG)
 
 class InterAtomicDistances:
 
-    def __init__(self, files, distance_mode='spatial', include_plane=False):
+    def __init__(self, files, distance_mode='spatial', include_plane=False, include_close=True):
 
         self.files = files
         self.distance_mode = distance_mode
         self.include_plane = include_plane
+        self.include_close = include_close
         self.number_of_edges = 0
         self.number_of_files = 0
 
@@ -65,54 +66,56 @@ class InterAtomicDistances:
 
             lattice_const = core.SuchSoftware.al_lattice_const
 
-            for vertex_a in instance.graph.vertices:
-                for partner_index in vertex_a.partner_indices:
+            if self.include_close:
 
-                    vertex_b = instance.graph.vertices[partner_index]
+                for vertex_a in instance.graph.vertices:
+                    for partner_index in vertex_a.partner_indices:
 
-                    if not (exclude_edges and (vertex_a.is_edge_column or vertex_b.is_edge_column)):
-                        if not(exclude_matrix and not (vertex_a.is_in_precipitate or vertex_b.is_in_precipitate)):
-                            if not (exclude_hidden and not (vertex_a.show_in_overlay or vertex_b.show_in_overlay)):
-                                if not (exclude_1 and (vertex_a.flag_1 or vertex_b.flag_1)):
-                                    if not (exclude_2 and (vertex_a.flag_2 or vertex_b.flag_2)):
-                                        if not (exclude_3 and (vertex_a.flag_3 or vertex_b.flag_3)):
-                                            if not (exclude_4 and (vertex_a.flag_4 or vertex_b.flag_4)):
+                        vertex_b = instance.graph.vertices[partner_index]
 
-                                                x = vertex_a.real_coor_x - vertex_b.real_coor_x
-                                                x *= instance.scale
-                                                y = vertex_a.real_coor_y - vertex_b.real_coor_y
-                                                y *= instance.scale
-                                                projected_distance = np.sqrt(x ** 2 + y ** 2)
-                                                if vertex_a.level == vertex_b.level:
-                                                    spatial_distance = projected_distance
-                                                else:
-                                                    spatial_distance = np.sqrt(projected_distance ** 2 + (lattice_const / 2) ** 2)
+                        if not (exclude_edges and (vertex_a.is_edge_column or vertex_b.is_edge_column)):
+                            if not(exclude_matrix and not (vertex_a.is_in_precipitate or vertex_b.is_in_precipitate)):
+                                if not (exclude_hidden and not (vertex_a.show_in_overlay or vertex_b.show_in_overlay)):
+                                    if not (exclude_1 and (vertex_a.flag_1 or vertex_b.flag_1)):
+                                        if not (exclude_2 and (vertex_a.flag_2 or vertex_b.flag_2)):
+                                            if not (exclude_3 and (vertex_a.flag_3 or vertex_b.flag_3)):
+                                                if not (exclude_4 and (vertex_a.flag_4 or vertex_b.flag_4)):
 
-                                                if self.distance_mode == 'spatial':
-                                                    pass
-                                                elif self.distance_mode == 'projected':
-                                                    spatial_distance = projected_distance
+                                                    x = vertex_a.real_coor_x - vertex_b.real_coor_x
+                                                    x *= instance.scale
+                                                    y = vertex_a.real_coor_y - vertex_b.real_coor_y
+                                                    y *= instance.scale
+                                                    projected_distance = np.sqrt(x ** 2 + y ** 2)
+                                                    if vertex_a.level == vertex_b.level:
+                                                        spatial_distance = projected_distance
+                                                    else:
+                                                        spatial_distance = np.sqrt(projected_distance ** 2 + (lattice_const / 2) ** 2)
 
-                                                if vertex_a.h_index == 0 and vertex_b.h_index == 0:
-                                                    self.si_si.append(spatial_distance)
-                                                elif (vertex_a.h_index == 0 and vertex_b.h_index == 1) or (vertex_b.h_index == 0 and vertex_a.h_index == 1):
-                                                    self.si_cu.append(spatial_distance)
-                                                elif (vertex_a.h_index == 0 and vertex_b.h_index == 3) or (vertex_b.h_index == 0 and vertex_a.h_index == 3):
-                                                    self.si_al.append(spatial_distance)
-                                                elif (vertex_a.h_index == 0 and vertex_b.h_index == 5) or (vertex_b.h_index == 0 and vertex_a.h_index == 5):
-                                                    self.si_mg.append(spatial_distance)
-                                                elif vertex_a.h_index == 1 and vertex_b.h_index == 1:
-                                                    self.cu_cu.append(spatial_distance)
-                                                elif (vertex_a.h_index == 1 and vertex_b.h_index == 3) or (vertex_b.h_index == 1 and vertex_a.h_index == 3):
-                                                    self.cu_al.append(spatial_distance)
-                                                elif (vertex_a.h_index == 1 and vertex_b.h_index == 5) or (vertex_b.h_index == 1 and vertex_a.h_index == 5):
-                                                    self.cu_mg.append(spatial_distance)
-                                                elif vertex_a.h_index == 3 and vertex_b.h_index == 3:
-                                                    self.al_al.append(spatial_distance)
-                                                elif (vertex_a.h_index == 3 and vertex_b.h_index == 5) or (vertex_b.h_index == 3 and vertex_a.h_index == 5):
-                                                    self.al_mg.append(spatial_distance)
-                                                elif vertex_a.h_index == 5 and vertex_b.h_index == 5:
-                                                    self.mg_mg.append(spatial_distance)
+                                                    if self.distance_mode == 'spatial':
+                                                        pass
+                                                    elif self.distance_mode == 'projected':
+                                                        spatial_distance = projected_distance
+
+                                                    if vertex_a.h_index == 0 and vertex_b.h_index == 0:
+                                                        self.si_si.append(spatial_distance)
+                                                    elif (vertex_a.h_index == 0 and vertex_b.h_index == 1) or (vertex_b.h_index == 0 and vertex_a.h_index == 1):
+                                                        self.si_cu.append(spatial_distance)
+                                                    elif (vertex_a.h_index == 0 and vertex_b.h_index == 3) or (vertex_b.h_index == 0 and vertex_a.h_index == 3):
+                                                        self.si_al.append(spatial_distance)
+                                                    elif (vertex_a.h_index == 0 and vertex_b.h_index == 5) or (vertex_b.h_index == 0 and vertex_a.h_index == 5):
+                                                        self.si_mg.append(spatial_distance)
+                                                    elif vertex_a.h_index == 1 and vertex_b.h_index == 1:
+                                                        self.cu_cu.append(spatial_distance)
+                                                    elif (vertex_a.h_index == 1 and vertex_b.h_index == 3) or (vertex_b.h_index == 1 and vertex_a.h_index == 3):
+                                                        self.cu_al.append(spatial_distance)
+                                                    elif (vertex_a.h_index == 1 and vertex_b.h_index == 5) or (vertex_b.h_index == 1 and vertex_a.h_index == 5):
+                                                        self.cu_mg.append(spatial_distance)
+                                                    elif vertex_a.h_index == 3 and vertex_b.h_index == 3:
+                                                        self.al_al.append(spatial_distance)
+                                                    elif (vertex_a.h_index == 3 and vertex_b.h_index == 5) or (vertex_b.h_index == 3 and vertex_a.h_index == 5):
+                                                        self.al_mg.append(spatial_distance)
+                                                    elif vertex_a.h_index == 5 and vertex_b.h_index == 5:
+                                                        self.mg_mg.append(spatial_distance)
 
             if self.include_plane:
                 try:

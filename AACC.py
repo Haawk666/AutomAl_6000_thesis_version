@@ -15,12 +15,14 @@ import GUI_settings
 from PyQt5 import QtWidgets
 import sys
 
-app = QtWidgets.QApplication(sys.argv)
-app.setStyle("Fusion")
-if GUI_settings.theme == 'dark':
-    app.setPalette(GUI_settings.dark_palette)
-else:
-    pass
-program = GUI.MainUI()
-sys.exit(app.exec_())
+if __name__ == '__main__':
+
+    app = QtWidgets.QApplication(sys.argv)
+    app.setStyle("Fusion")
+    if GUI_settings.theme == 'dark':
+        app.setPalette(GUI_settings.dark_palette)
+    else:
+        pass
+    program = GUI.MainUI()
+    sys.exit(app.exec_())
 

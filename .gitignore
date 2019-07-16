@@ -16,3 +16,5 @@ Docs/build/
 log_test.log
 Images/Outputs/Buffers/
 aacc.exe
+build/
+dist/

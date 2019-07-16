@@ -11,8 +11,6 @@ import compatibility
 import legacy_items
 from matplotlib import pyplot as plt
 import weak_untangling
-import strong_untangling
-import dev_module
 import logging
 
 # Instantiate logger
