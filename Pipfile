@@ -12,6 +12,7 @@ scipy = "*"
 pyinstaller = "*"
 matplotlib = "*"
 sphinx-pdj-theme = "*"
+sphinx-rtd-theme = "*"
 
 [requires]
 python_version = "3.7"

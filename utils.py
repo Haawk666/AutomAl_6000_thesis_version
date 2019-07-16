@@ -34,7 +34,7 @@ def top_contour(x, y, A, B, C, D, E, F, self_index, min_means, max_means, min_st
 
 
 def circularize_next_index(i, i_max):
-    """Make an index cyclic
+    """Make an index cyclic.
 
     parameters
     ----------
@@ -46,21 +46,34 @@ def circularize_next_index(i, i_max):
     returns
     ----------
     i: int
-        returns cyclic index
+        If input i is equal to i_max + 1, return 0, otherwise return the input i.
 
-    note:
+    note
     ----------
-    Python will automatically give you list[-1] = list[len(list) - 1], so checking for i == -1 might be redundant."""
+    In python, list[-1] will automatically give you the last element of a list, so checking for i == -1 is redundant.
+    """
 
     if i == i_max + 1:
         return 0
-    elif i == -1:
-        return i_max
     else:
         return i
 
 
 def gen_gauss(amp, x_0, y_0, x_size, y_size, a, b, c, offset):
+    """Make an array with values that are distributed as a 2-d gaussian.
+
+        :param amp: The amplitude
+        :param x_0: x-coordinate of the peak center.
+        :param y_0: y-coordinate of the peak center.
+
+        :type amp: float
+        :type x_0: float
+        :type y_0: float
+
+        :returns array of floats:
+        :rtype numpy.ndarray:
+
+    """
     mat = np.zeros((y_size, x_size))
     for x in range(0, x_size - 1):
         for y in range(0, y_size - 1):

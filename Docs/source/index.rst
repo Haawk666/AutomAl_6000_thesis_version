@@ -10,7 +10,7 @@ Welcome to the AutoAtom 6000 home-page!
 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :numbered:
    :caption: Contents:
 
