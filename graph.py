@@ -13,29 +13,42 @@ logger.setLevel(logging.DEBUG)
 
 
 class Vertex:
-    """A Vertex is a base building-block of a graph structure"""
+    """A Vertex is a base building-block of a graph structure.
+
+    :param index: A unique index which reflects its position in the vertex-list of a **Graph** object.
+    :param x: The x-position of the atomic column that the vertex represents in coordinates relative to the HAADF-STEM image.
+    :param y: The x-position of the atomic column that the vertex represents in coordinates relative to the HAADF-STEM image.
+    :param r: The approximated atomic radii in pixels relative to the original HAADF-STEM image.
+    :param peak_gamma: The peak intensity (the brightest pixel) of the atomic column.
+    :param avg_gamma: The average pixel intensity over the area defined by the circle centered at (x, y) with a radius of r.
+    :param alloy_mat: A copy of the alloy-matrix of the **SuchSoftware** instance that the graph of the vertex is a part of.
+
+    :type index: int.
+    :type x: float.
+    :type y: float.
+    :type r: int.
+    :type peak_gamma: float.
+    :type avg_gamma: float.
+    :type alloy_mat: list(<int>).
+
+    .. code-block:: python
+        :caption: Example
+
+        >>> import graph
+        >>> my_vertex = graph.Vertex(3, 20.3, 39.0004, 5, 0.9, 0.87, [1, 1, 0, 1, 0, 1, 0])
+        >>> print(my_vertex)
+        Vertex 3:
+            real image position (x, y) = (20.3, 39.0004)
+            pixel image position (x, y) = (20, 39)
+            spatial relative position in pm (x, y) = (20.3, 39.0004)
+            peak gamma = 0.9
+            average gamma = 0.87
+            species: Mg
+
+    """
 
     def __init__(self, index, x, y, r, peak_gamma, avg_gamma, alloy_mat, num_selections=7, level=0, atomic_species='Un', h_index=6,
                  species_strings=None, certainty_threshold=0.8, scale=1):
-        """Initialize a vertex.
-
-        A vertex object is a relative object to other vertices in a Graph object.
-
-        :param index: A unique index which reflects its position in the vertex-list of a **Graph** object.
-        :param x: The x-position of the atomic column that the vertex represents in coordinates relative to the HAADF-STEM image.
-        :param y: The x-position of the atomic column that the vertex represents in coordinates relative to the HAADF-STEM image.
-        :param r: The approximated atomic radii in pixels relative to the original HAADF-STEM image.
-        :param peak_gamma: The peak intensity (the brightest pixel) of the atomic column.
-        :param avg_gamma: The average pixel intensity over the area defined by the circle centered at (x, y) with a radius of r.
-        :param alloy_mat: A copy of the alloy-matrix of the **SuchSoftware** instance that the graph of the vertex is a part of.
-
-        :type index: int.
-        :type x: float.
-        :type y: float.
-        :type r: int.
-        :type peak_gamma: float.
-        :type avg_gamma: float.
-        :type alloy_mat: list(<int>)."""
 
         self.i = index
         self.real_coor_x = x
@@ -102,6 +115,16 @@ class Vertex:
             self.species_strings = species_strings
 
         self.reset_prob_vector(bias=self.num_selections - 1)
+
+    def __str__(self):
+        string = 'Vertex {}:\n'.format(self.i)
+        string += '    real image position (x, y) = ({}, {})\n'.format(self.real_coor_x, self.real_coor_y)
+        string += '    pixel image position (x, y) = ({}, {})\n'.format(self.im_coor_x, self.im_coor_y)
+        string += '    spatial relative position in pm (x, y) = ({}, {})\n'.format(self.spatial_coor_x, self.spatial_coor_y)
+        string += '    peak gamma = {}\n'.format(self.peak_gamma)
+        string += '    average gamma = {}\n'.format(self.avg_gamma)
+        string += '    species: {}'.format(self.species())
+        return string
 
     def n(self):
         """Return the number of closest neighbours, or its symmetry in a sense."""

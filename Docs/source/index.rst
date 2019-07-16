@@ -4,24 +4,22 @@
    contain the root `toctree` directive.
 
 ========================================================================
-Welcome to Automatic Atomic Column Characterizer (AACC)'s documentation!
+Welcome to the AutoAtom 6000 home-page!
 ========================================================================
 
-contents:
+
 
 .. toctree::
    :maxdepth: 2
    :numbered:
    :caption: Contents:
 
-.. automodule:: utils
-   :members:
+   downloads
+   installation
+   guides
+   doc
 
-.. automodule:: mat_op
-   :members:
 
-.. automodule:: graph
-   :members:
 
 * :ref:`genindex`
 * :ref:`modindex`
