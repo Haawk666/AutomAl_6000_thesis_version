@@ -21,10 +21,11 @@ logger.name = 'GUI'
 class MainUI(QtWidgets.QMainWindow):
     """Main GUI. Inherits PyQt5.QtWidgets.QMainWindow."""
 
-    def __init__(self, *args):
+    def __init__(self, *args, settings_file=None):
         super().__init__(*args)
 
         self.version = [0, 0, 1]
+        self.config = settings_file
 
         # Initialize in an 'empty state'
         self.project_instance = None
@@ -624,13 +625,17 @@ class MainUI(QtWidgets.QMainWindow):
     def menu_toggle_tooltips_trigger(self, state):
         self.control_window.mode_tooltip(state)
         self.terminal_window.mode_tooltip(state)
-        utils.replace_line('config.cfg', 1, 'tooltips = {}\n'.format(state))
+        self.config.set('tooltips', 'tooltips', str(state))
+        with open('config.ini', 'w') as configfile:
+            self.config.write(configfile)
 
     def menu_set_theme_trigger(self):
         items = ('dark', 'classic')
         item, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Select theme", "Theme:", items, 0, False)
         if ok_pressed and item:
-            utils.replace_line('config.cfg', 2, 'theme = \'{}\'\n'.format(item))
+            self.config.set('theme', 'theme', item)
+            with open('config.ini', 'w') as configfile:
+                self.config.write(configfile)
             message = QtWidgets.QMessageBox()
             message.setText('Save your work and restart the program for the changes to take effect!')
             message.exec_()
@@ -817,7 +822,8 @@ class MainUI(QtWidgets.QMainWindow):
                        '15 - Experimental',
                        '16 - Experimental angle score',
                        '17 - Experimental levels',
-                       '18 - Find edge columns']
+                       '18 - Find edge columns',
+                       '19 - Calculate globally normalized gamma levels']
 
             string, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Search step", strings, 0, False)
             if ok_pressed and strings:

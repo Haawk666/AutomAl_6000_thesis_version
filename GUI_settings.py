@@ -1,7 +1,7 @@
 # By Haakon Tvedt @ NTNU
 """Module container for style settings of the GUI"""
 
-import os
+
 from PyQt5 import QtGui, QtCore
 
 theme = 'dark'
@@ -102,28 +102,9 @@ pen_inconsistent_edge.setWidth(3)
 pen_dislocation_edge = QtGui.QPen(QtCore.Qt.blue)
 pen_dislocation_edge.setWidth(3)
 
-
-def read_config():
-
-    if os.path.isfile('config.cfg'):
-        global theme
-        global tooltips
-        with open('config.cfg', 'r') as f:
-            for k, line in enumerate(f.readlines()):
-                if not line[0] == '#':
-                    if k == 2:
-                        tooltips = eval(line.replace('\n', ''))
-                    if k == 4:
-                        theme = line.replace('\n', '')
-    else:
-        write_config()
-
-
-def write_config():
-
-    with open('config.cfg', 'w') as f:
-        f.writelines('# GUI configuration file--------\n' +
-                     '# tooltips:\n{}\n'.format(tooltips) +
-                     '# theme: \n{}\n'.format(theme))
-
+default_config_string = '[theme]\n' \
+                        'theme: dark\n\n' \
+                        '[tooltips]\n' \
+                        'tooltips: True\n\n' \
+                        '[colors]\n'
 

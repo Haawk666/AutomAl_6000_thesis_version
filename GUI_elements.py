@@ -2211,6 +2211,7 @@ class PlotWizard(QtWidgets.QDialog):
         # Frame 3
         self.lbl_filter = QtWidgets.QLabel('Set inclusion filter: (Columns with unchecked properties will not be included in the plots)')
         self.chb_edge_columns = QtWidgets.QCheckBox('Include edge columns')
+        self.chb_particle_columns = QtWidgets.QCheckBox('Include particle columns')
         self.chb_matrix_columns = QtWidgets.QCheckBox('Include aluminium matrix columns')
         self.chb_hidden_columns = QtWidgets.QCheckBox('Include columns that are set to be hidden in the overlay')
         self.chb_flag_1 = QtWidgets.QCheckBox('Include columns where flag 1 is set to True')
@@ -2255,7 +2256,8 @@ class PlotWizard(QtWidgets.QDialog):
 
         self.list_2.addItem('Central alpha min-max scatter-plot')
         self.list_2.addItem('Central theta min-max scatter-plot')
-        self.list_2.addItem('Fitted relative z-contrast distributions')
+        self.list_2.addItem('Fitted relative z-intensity distributions')
+        self.list_2.addItem('Fitted normalized z-intensity distributions')
         self.list_2.addItem('Inter-atomic distances distributions')
         self.list_2.addItem('Inter-atomic distances box-plot')
         self.list_2.addItem('Inter-atomic distances scatter-plot')
@@ -2297,6 +2299,7 @@ class PlotWizard(QtWidgets.QDialog):
     def set_page_3_layout(self):
         self.chb_edge_columns.setChecked(False)
         self.chb_matrix_columns.setChecked(True)
+        self.chb_particle_columns.setChecked(True)
         self.chb_hidden_columns.setChecked(True)
         self.chb_flag_1.setChecked(True)
         self.chb_flag_2.setChecked(True)
@@ -2310,6 +2313,7 @@ class PlotWizard(QtWidgets.QDialog):
         v_layout.addWidget(self.lbl_filter)
         v_layout.addWidget(self.chb_edge_columns)
         v_layout.addWidget(self.chb_matrix_columns)
+        v_layout.addWidget(self.chb_particle_columns)
         v_layout.addWidget(self.chb_hidden_columns)
         v_layout.addWidget(self.chb_flag_1)
         v_layout.addWidget(self.chb_flag_2)
@@ -2362,6 +2366,7 @@ class PlotWizard(QtWidgets.QDialog):
                 plot = plotting_module.MinMax(files, angle_mode='alpha')
                 plot.accumulate_data(exclude_edges=not self.chb_edge_columns.isChecked(),
                                      exclude_matrix=not self.chb_matrix_columns.isChecked(),
+                                     exclude_particle=not self.chb_particle_columns.isChecked(),
                                      exclude_hidden=not self.chb_hidden_columns.isChecked(),
                                      exclude_1=not self.chb_flag_1.isChecked(),
                                      exclude_2=not self.chb_flag_2.isChecked(),
@@ -2372,16 +2377,29 @@ class PlotWizard(QtWidgets.QDialog):
                 plot = plotting_module.MinMax(files, angle_mode='theta')
                 plot.accumulate_data(exclude_edges=not self.chb_edge_columns.isChecked(),
                                      exclude_matrix=not self.chb_matrix_columns.isChecked(),
+                                     exclude_particle=not self.chb_particle_columns.isChecked(),
                                      exclude_hidden=not self.chb_hidden_columns.isChecked(),
                                      exclude_1=not self.chb_flag_1.isChecked(),
                                      exclude_2=not self.chb_flag_2.isChecked(),
                                      exclude_3=not self.chb_flag_3.isChecked(),
                                      exclude_4=not self.chb_flag_4.isChecked())
                 plot.plot()
-            elif self.list_1.item(j).text() == 'Fitted relative z-contrast distributions':
+            elif self.list_1.item(j).text() == 'Fitted relative z-intensity distributions':
                 plot = plotting_module.Gamma(files)
                 plot.accumulate_data(exclude_edges=not self.chb_edge_columns.isChecked(),
                                      exclude_matrix=not self.chb_matrix_columns.isChecked(),
+                                     exclude_particle=not self.chb_particle_columns.isChecked(),
+                                     exclude_hidden=not self.chb_hidden_columns.isChecked(),
+                                     exclude_1=not self.chb_flag_1.isChecked(),
+                                     exclude_2=not self.chb_flag_2.isChecked(),
+                                     exclude_3=not self.chb_flag_3.isChecked(),
+                                     exclude_4=not self.chb_flag_4.isChecked())
+                plot.plot()
+            elif self.list_1.item(j).text() == 'Fitted normalized z-intensity distributions':
+                plot = plotting_module.Gamma(files, normalized_mode=True)
+                plot.accumulate_data(exclude_edges=not self.chb_edge_columns.isChecked(),
+                                     exclude_matrix=not self.chb_matrix_columns.isChecked(),
+                                     exclude_particle=not self.chb_particle_columns.isChecked(),
                                      exclude_hidden=not self.chb_hidden_columns.isChecked(),
                                      exclude_1=not self.chb_flag_1.isChecked(),
                                      exclude_2=not self.chb_flag_2.isChecked(),
@@ -2395,6 +2413,7 @@ class PlotWizard(QtWidgets.QDialog):
                 plot = plotting_module.InterAtomicDistances(files, distance_mode='spatial', include_plane=True, include_close=True)
                 plot.accumulate_data(exclude_edges=not self.chb_edge_columns.isChecked(),
                                      exclude_matrix=not self.chb_matrix_columns.isChecked(),
+                                     exclude_particle=not self.chb_particle_columns.isChecked(),
                                      exclude_hidden=not self.chb_hidden_columns.isChecked(),
                                      exclude_1=not self.chb_flag_1.isChecked(),
                                      exclude_2=not self.chb_flag_2.isChecked(),

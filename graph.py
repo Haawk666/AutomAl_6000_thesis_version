@@ -59,7 +59,9 @@ class Vertex:
         self.im_coor_y = int(np.floor(y))
         self.r = r
         self.peak_gamma = peak_gamma
+        self.normalized_peak_gamma = peak_gamma
         self.avg_gamma = avg_gamma
+        self.normalized_avg_gamma = avg_gamma
         self.num_selections = num_selections
         self.level = level
         self.atomic_species = atomic_species

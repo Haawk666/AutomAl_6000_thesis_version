@@ -21,7 +21,7 @@ logger.setLevel(logging.DEBUG)
 class SuchSoftware:
 
     # Version
-    version = [0, 0, 5]
+    version = [0, 0, 6]
 
     # Number of elements in the probability vectors
     num_selections = 7
@@ -408,6 +408,21 @@ class SuchSoftware:
             else:
 
                 self.graph.vertices[y].is_edge_column = False
+
+    def normalize_gamma(self):
+        peak_gammas = []
+        avg_gammas = []
+        for vertex in self.graph.vertices:
+            if not vertex.is_in_precipitate and vertex.h_index == 3:
+                peak_gammas.append(vertex.peak_gamma)
+                avg_gammas.append(vertex.avg_gamma)
+        peak_mean = utils.mean_val(peak_gammas)
+        avg_mean = utils.mean_val(avg_gammas)
+        peak_mean_diff = peak_mean - 0.3
+        avg_mean_diff = avg_mean - 0.3
+        for vertex in self.graph.vertices:
+            vertex.normalized_peak_gamma = vertex.peak_gamma - peak_mean_diff
+            vertex.normalized_avg_gamma = vertex.avg_gamma - avg_mean_diff
 
     def column_characterization(self, starting_index, search_type=0):
 
@@ -879,6 +894,12 @@ class SuchSoftware:
                     vertex.reset_prob_vector(bias=3)
                     vertex.reset_symmetry_vector(bias=-1)
             logger.info('Found edge columns.')
+
+        elif search_type == 19:
+
+            logger.info('Finding normalized intensities...')
+            self.normalize_gamma()
+            logger.info('Found intensities.')
 
         else:
 

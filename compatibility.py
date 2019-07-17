@@ -33,6 +33,8 @@ def convert(obj, old_version, version):
             vertex.central_angle_variance = 0.0
             vertex.spatial_coor_x = obj.scale * vertex.real_coor_x
             vertex.spatial_coor_y = obj.scale * vertex.real_coor_y
+            vertex.normalized_peak_gamma = vertex.peak_gamma
+            vertex.normalized_avg_gamma = vertex.avg_gamma
         obj.graph.avg_central_variance = 0.0
         fresh_obj = obj
 
@@ -57,6 +59,8 @@ def convert(obj, old_version, version):
             vertex.central_angle_variance = 0.0
             vertex.spatial_coor_x = obj.scale * vertex.real_coor_x
             vertex.spatial_coor_y = obj.scale * vertex.real_coor_y
+            vertex.normalized_peak_gamma = vertex.peak_gamma
+            vertex.normalized_avg_gamma = vertex.avg_gamma
         obj.graph.avg_central_variance = 0.0
         fresh_obj = obj
 
@@ -71,6 +75,8 @@ def convert(obj, old_version, version):
             vertex.central_angle_variance = 0.0
             vertex.spatial_coor_x = obj.scale * vertex.real_coor_x
             vertex.spatial_coor_y = obj.scale * vertex.real_coor_y
+            vertex.normalized_peak_gamma = vertex.peak_gamma
+            vertex.normalized_avg_gamma = vertex.avg_gamma
         obj.graph.avg_central_variance = 0.0
         fresh_obj = obj
 
@@ -79,6 +85,8 @@ def convert(obj, old_version, version):
             vertex.central_angle_variance = 0.0
             vertex.spatial_coor_x = obj.scale * vertex.real_coor_x
             vertex.spatial_coor_y = obj.scale * vertex.real_coor_y
+            vertex.normalized_peak_gamma = vertex.peak_gamma
+            vertex.normalized_avg_gamma = vertex.avg_gamma
         obj.graph.avg_central_variance = 0.0
         fresh_obj = obj
 
@@ -86,6 +94,14 @@ def convert(obj, old_version, version):
         for vertex in obj.graph.vertices:
             vertex.spatial_coor_x = obj.scale * vertex.real_coor_x
             vertex.spatial_coor_y = obj.scale * vertex.real_coor_y
+            vertex.normalized_peak_gamma = vertex.peak_gamma
+            vertex.normalized_avg_gamma = vertex.avg_gamma
+        fresh_obj = obj
+
+    elif old_version == [0, 0, 5]:
+        for vertex in obj.graph.vertices:
+            vertex.normalized_peak_gamma = vertex.peak_gamma
+            vertex.normalized_avg_gamma = vertex.avg_gamma
         fresh_obj = obj
 
     else:
