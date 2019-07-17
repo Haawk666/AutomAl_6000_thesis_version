@@ -91,7 +91,7 @@ class VertexNumericData:
 
         logger.info('Generating plot...')
 
-        alpha = np.linspace(1, 4, 1000)
+        alpha = np.linspace(-10, 10, 1000)
 
         fig = plt.figure(constrained_layout=True)
         gs = GridSpec(2, 2, figure=fig)
@@ -158,26 +158,27 @@ class VertexNumericData:
             self.pca_data = np.concatenate((self.data[:, :2], self.pca_data), axis=1)
 
             for row in range(self.pca_data.shape[0]):
-                if self.pca_data[row, 1] == 0:
+                entry = np.reshape(self.pca_data[row, :], (1, self.pca_data.shape[1]))
+                if self.pca_data[row, 1] == 0.0:
                     if self.si_pca_data is None:
-                        self.si_pca_data = self.pca_data[row, 1]
+                        self.si_pca_data = entry
                     else:
-                        self.si_pca_data = np.concatenate((self.si_pca_data, self.pca_data[row, 1]), axis=0)
-                elif self.pca_data[row, 1] == 1:
+                        self.si_pca_data = np.concatenate((self.si_pca_data, entry), axis=0)
+                elif self.pca_data[row, 1] == 1.0:
                     if self.cu_pca_data is None:
-                        self.cu_pca_data = self.pca_data[row, 1]
+                        self.cu_pca_data = entry
                     else:
-                        self.cu_pca_data = np.concatenate((self.cu_pca_data, self.pca_data[row, 1]), axis=0)
-                elif self.pca_data[row, 1] == 3:
+                        self.cu_pca_data = np.concatenate((self.cu_pca_data, entry), axis=0)
+                elif self.pca_data[row, 1] == 3.0:
                     if self.al_pca_data is None:
-                        self.al_pca_data = self.pca_data[row, 1]
+                        self.al_pca_data = entry
                     else:
-                        self.al_pca_data = np.concatenate((self.al_pca_data, self.pca_data[row, 1]), axis=0)
-                elif self.pca_data[row, 1] == 5:
+                        self.al_pca_data = np.concatenate((self.al_pca_data, entry), axis=0)
+                elif self.pca_data[row, 1] == 5.0:
                     if self.mg_pca_data is None:
-                        self.mg_pca_data = self.pca_data[row, 1]
+                        self.mg_pca_data = entry
                     else:
-                        self.mg_pca_data = np.concatenate((self.mg_pca_data, self.pca_data[row, 1]), axis=0)
+                        self.mg_pca_data = np.concatenate((self.mg_pca_data, entry), axis=0)
 
     def normalize_attribute_data(self):
 
@@ -304,7 +305,7 @@ class VertexNumericData:
             num_non_numeric += 1
             self.attribute_keys.remove('h_index')
 
-        self.attribute_data = copy.deepcopy(self.data[:, num_non_numeric - 1:])
+        self.attribute_data = copy.deepcopy(self.data[:, num_non_numeric:])
 
 
 class VertexDictData:
