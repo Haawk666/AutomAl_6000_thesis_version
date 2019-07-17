@@ -47,6 +47,7 @@ btn_print_distances = 'Print a convenient list of inter-atomic hard-sphere dista
                       'for quick reference'
 btn_build_anti_graph = 'Build the \'anti-graph\' of the graph. In an anti-graph only vertices in the same spatial\n' \
                        'plane are connected.'
+btn_pca = 'Launch a principle component analysis (PCA) from a wizard'
 
 chb_toggle_positions = 'Toggle the overlay of atomic positions'
 chb_precipitate_column = 'Toggle weahter the selected column is counted to be part of the particle or matrix.'
@@ -117,7 +118,8 @@ control_window_btn_list = [btn_show_stats,
                            btn_set_indices_2,
                            btn_plot,
                            btn_print_distances,
-                           btn_build_anti_graph]
+                           btn_build_anti_graph,
+                           btn_pca]
 
 control_window_chb_list = [chb_toggle_positions,
                            chb_precipitate_column,

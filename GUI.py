@@ -935,6 +935,9 @@ class MainUI(QtWidgets.QMainWindow):
                     logger.info('Built anti-graph!')
                     self.sys_message('Ready')
 
+    def btn_pca_trigger(self):
+        GUI_elements.PcaWizard(ui_obj=self)
+
     def btn_save_log_trigger(self):
         filename = QtWidgets.QFileDialog.getSaveFileName(self, 'Save file', '')
         if filename[0]:
