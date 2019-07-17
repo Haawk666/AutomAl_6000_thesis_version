@@ -19,6 +19,10 @@ if __name__ == '__main__':
 
     app = QtWidgets.QApplication(sys.argv)
     app.setStyle("Fusion")
+
+    # Import configugaritons from config file
+    GUI_settings.read_config()
+
     if GUI_settings.theme == 'dark':
         app.setPalette(GUI_settings.dark_palette)
     else:

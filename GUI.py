@@ -624,13 +624,13 @@ class MainUI(QtWidgets.QMainWindow):
     def menu_toggle_tooltips_trigger(self, state):
         self.control_window.mode_tooltip(state)
         self.terminal_window.mode_tooltip(state)
-        utils.replace_line('GUI_settings.py', 7, 'tooltips = {}\n'.format(state))
+        utils.replace_line('config.cfg', 1, 'tooltips = {}\n'.format(state))
 
     def menu_set_theme_trigger(self):
         items = ('dark', 'classic')
         item, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Select theme", "Theme:", items, 0, False)
         if ok_pressed and item:
-            utils.replace_line('GUI_settings.py', 6, 'theme = \'{}\'\n'.format(item))
+            utils.replace_line('config.cfg', 2, 'theme = \'{}\'\n'.format(item))
             message = QtWidgets.QMessageBox()
             message.setText('Save your work and restart the program for the changes to take effect!')
             message.exec_()
