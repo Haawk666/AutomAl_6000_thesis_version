@@ -43,7 +43,7 @@ class VertexExport:
 
             for vertex in instance.graph.vertices:
                 if not (exclude_edges and vertex.is_edge_column):
-                    if not(exclude_matrix and not vertex.is_in_precipitate):
+                    if not (exclude_matrix and not vertex.is_in_precipitate):
                         if not (exclude_hidden and not vertex.show_in_overlay):
                             if not (exclude_1 and vertex.flag_1):
                                 if not (exclude_2 and vertex.flag_2):
