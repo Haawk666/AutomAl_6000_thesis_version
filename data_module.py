@@ -22,6 +22,9 @@ class VertexNumericData:
         algebra. This wikipedia article gives a good outline for the mathematical basis:
         https://en.wikipedia.org/wiki/Principal_component_analysis
 
+        This class has several similarities with the VertexDictData, but is designed to only work with nominal data
+        for pca.
+
         :param files: List of file-paths in string format.
         :param keys: List of keys in string format, instructing the data accumulation on what parameters of the
             data to include.
@@ -267,6 +270,10 @@ class VertexNumericData:
                             value = vertex.peak_gamma
                         elif key == 'average_gamma':
                             value = vertex.avg_gamma
+                        elif key == 'normalized_peak_gamma':
+                            value = vertex.normalized_peak_gamma
+                        elif key == 'normalized_average_gamma':
+                            value = vertex.normalized_avg_gamma
                         elif key == 'theta_variance':
                             value = theta_variance
                         elif key == 'theta_min':

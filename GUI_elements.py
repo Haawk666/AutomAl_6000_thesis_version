@@ -599,7 +599,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_si_columns = QtWidgets.QCheckBox('Si columns')
         self.chb_si_network = QtWidgets.QCheckBox('Si network')
         self.chb_mg_columns = QtWidgets.QCheckBox('Mg columns')
-        self.chb_mg_network = QtWidgets.QCheckBox('Mg network')
+        self.chb_particle = QtWidgets.QCheckBox('Particle')
         self.chb_al_columns = QtWidgets.QCheckBox('Al columns')
         self.chb_al_network = QtWidgets.QCheckBox('Al network')
         self.chb_cu_columns = QtWidgets.QCheckBox('Cu columns')
@@ -622,7 +622,7 @@ class ControlWindow(QtWidgets.QWidget):
         overlay_layout_left.addWidget(self.chb_ag_columns)
         overlay_layout_left.addWidget(self.chb_mg_columns)
         overlay_layout_left.addWidget(self.chb_un_columns)
-        overlay_layout_left.addWidget(self.chb_al_mesh)
+        overlay_layout_left.addWidget(self.chb_ag_network)
         overlay_layout_left.addWidget(self.chb_legend)
 
         overlay_layout_right = QtWidgets.QVBoxLayout()
@@ -631,8 +631,8 @@ class ControlWindow(QtWidgets.QWidget):
         overlay_layout_right.addWidget(self.chb_si_network)
         overlay_layout_right.addWidget(self.chb_cu_network)
         overlay_layout_right.addWidget(self.chb_al_network)
-        overlay_layout_right.addWidget(self.chb_ag_network)
-        overlay_layout_right.addWidget(self.chb_mg_network)
+        overlay_layout_right.addWidget(self.chb_al_mesh)
+        overlay_layout_right.addWidget(self.chb_particle)
         overlay_layout_right.addWidget(self.chb_columns)
         overlay_layout_right.addWidget(self.chb_neighbours)
         overlay_layout_right.addWidget(self.chb_scalebar)
@@ -668,7 +668,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_ag_columns.setChecked(True)
         self.chb_ag_network.setChecked(False)
         self.chb_mg_columns.setChecked(True)
-        self.chb_mg_network.setChecked(False)
+        self.chb_particle.setChecked(True)
         self.chb_un_columns.setChecked(True)
         self.chb_columns.setChecked(True)
         self.chb_al_mesh.setChecked(True)
@@ -701,7 +701,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_ag_columns.toggled.connect(self.ui_obj.chb_toggle_ag_trigger)
         self.chb_ag_network.toggled.connect(self.ui_obj.chb_placeholder_trigger)
         self.chb_mg_columns.toggled.connect(self.ui_obj.chb_toggle_mg_trigger)
-        self.chb_mg_network.toggled.connect(self.ui_obj.chb_placeholder_trigger)
+        self.chb_particle.toggled.connect(self.ui_obj.chb_particle_trigger)
         self.chb_un_columns.toggled.connect(self.ui_obj.chb_toggle_un_trigger)
         self.chb_columns.toggled.connect(self.ui_obj.chb_toggle_all_trigger)
         self.chb_al_mesh.toggled.connect(self.ui_obj.chb_matrix_trigger)
@@ -735,14 +735,14 @@ class ControlWindow(QtWidgets.QWidget):
         # other buttons
         self.btn_show_stats = GUI_custom_components.SmallButton('Stats', self, trigger_func=self.ui_obj.btn_show_stats_trigger)
         self.btn_show_source = GUI_custom_components.SmallButton('Source', self, trigger_func=self.ui_obj.btn_view_image_title_trigger)
-        self.btn_export = GUI_custom_components.SmallButton('Export', self, trigger_func=self.ui_obj.btn_export_overlay_image_trigger)
+        self.btn_export = GUI_custom_components.MediumButton('Export data', self, trigger_func=self.ui_obj.btn_export_overlay_image_trigger)
         self.btn_start_alg_1 = GUI_custom_components.SmallButton('Start', self, trigger_func=self.ui_obj.btn_continue_detection_trigger)
         self.btn_reset_alg_1 = GUI_custom_components.SmallButton('Reset', self, trigger_func=self.ui_obj.btn_restart_detection_trigger)
         self.btn_start_alg_2 = GUI_custom_components.SmallButton('Start', self, trigger_func=self.ui_obj.btn_continue_analysis_trigger)
         self.btn_reset_alg_2 = GUI_custom_components.SmallButton('Reset', self, trigger_func=self.ui_obj.btn_restart_analysis_trigger)
         self.btn_invert_lvl_alg_2 = GUI_custom_components.SmallButton('Invert lvl', self, trigger_func=self.ui_obj.btn_invert_levels_trigger)
         self.btn_delete = GUI_custom_components.SmallButton('Delete', self, trigger_func=self.ui_obj.btn_delete_trigger)
-        self.btn_sub = GUI_custom_components.SmallButton('Sub-graph', self, trigger_func=self.ui_obj.btn_gen_sub_graph)
+        self.btn_sub = GUI_custom_components.MediumButton('Sub-graph', self, trigger_func=self.ui_obj.btn_gen_sub_graph)
         self.btn_deselect = GUI_custom_components.SmallButton('Deselect', self, trigger_func=self.ui_obj.btn_deselect_trigger)
         self.btn_new = GUI_custom_components.SmallButton('New', self, trigger_func=self.ui_obj.btn_new_column_trigger)
         self.btn_set_style = GUI_custom_components.MediumButton('Set overlay style', self, trigger_func=self.ui_obj.btn_set_style_trigger)
@@ -768,7 +768,6 @@ class ControlWindow(QtWidgets.QWidget):
         btn_image_btns_layout = QtWidgets.QHBoxLayout()
         btn_image_btns_layout.addWidget(self.btn_show_stats)
         btn_image_btns_layout.addWidget(self.btn_show_source)
-        btn_image_btns_layout.addWidget(self.btn_export)
         btn_image_btns_layout.addStretch()
 
         btn_alg_1_btns_layout = QtWidgets.QHBoxLayout()
@@ -793,15 +792,19 @@ class ControlWindow(QtWidgets.QWidget):
         btn_overlay_btns_layout.addStretch()
 
         btn_graph_btns_layout = QtWidgets.QHBoxLayout()
-        btn_graph_btns_layout.addWidget(self.btn_plot)
         btn_graph_btns_layout.addWidget(self.btn_print_distances)
         btn_graph_btns_layout.addWidget(self.btn_sub)
-        btn_graph_btns_layout.addWidget(self.btn_pca)
         btn_graph_btns_layout.addStretch()
 
         btn_anti_graph_layout = QtWidgets.QHBoxLayout()
         btn_anti_graph_layout.addWidget(self.btn_build_anti_graph)
         btn_anti_graph_layout.addStretch()
+
+        btn_analysis_layout = QtWidgets.QHBoxLayout()
+        btn_analysis_layout.addWidget(self.btn_plot)
+        btn_analysis_layout.addWidget(self.btn_pca)
+        btn_analysis_layout.addWidget(self.btn_export)
+        btn_analysis_layout.addStretch()
 
         # Group boxes
         self.image_box_layout = QtWidgets.QVBoxLayout()
@@ -886,6 +889,11 @@ class ControlWindow(QtWidgets.QWidget):
         self.anti_graph_box = GUI_custom_components.GroupBox('Anti-graph', menu_action=self.ui_obj.menu.toggle_anti_graph_control_action)
         self.anti_graph_box.setLayout(self.anti_graph_box_layout)
 
+        self.analysis_box_layout = QtWidgets.QVBoxLayout()
+        self.analysis_box_layout.addLayout(btn_analysis_layout)
+        self.analysis_box = GUI_custom_components.GroupBox('Data-analysis', menu_action=self.ui_obj.menu.toggle_analysis_control_action)
+        self.analysis_box.setLayout(self.analysis_box_layout)
+
         self.overlay_box_layout = QtWidgets.QVBoxLayout()
         self.overlay_box_layout.addLayout(btn_overlay_btns_layout)
         self.overlay_box_layout.addLayout(overlay_layout)
@@ -901,6 +909,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.info_display_layout.addWidget(self.column_box)
         self.info_display_layout.addWidget(self.graph_box)
         self.info_display_layout.addWidget(self.anti_graph_box)
+        self.info_display_layout.addWidget(self.analysis_box)
         self.info_display_layout.addWidget(self.overlay_box)
         self.info_display_layout.addStretch()
 
@@ -967,7 +976,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_list.append(self.chb_si_columns)
         self.chb_list.append(self.chb_si_network)
         self.chb_list.append(self.chb_mg_columns)
-        self.chb_list.append(self.chb_mg_network)
+        self.chb_list.append(self.chb_particle)
         self.chb_list.append(self.chb_al_columns)
         self.chb_list.append(self.chb_al_network)
         self.chb_list.append(self.chb_cu_columns)
@@ -1420,6 +1429,9 @@ class MenuBar:
         self.toggle_overlay_control_action = QtWidgets.QAction('Show overlay controls', self.ui_obj)
         self.toggle_overlay_control_action.setCheckable(True)
         self.toggle_overlay_control_action.setChecked(True)
+        self.toggle_analysis_control_action = QtWidgets.QAction('Show analysis controls', self.ui_obj)
+        self.toggle_analysis_control_action.setCheckable(True)
+        self.toggle_analysis_control_action.setChecked(True)
         # - Process
         image_correction_action = QtWidgets.QAction('Image corrections', self.ui_obj)
         image_filter_action = QtWidgets.QAction('Image filters', self.ui_obj)
@@ -1482,6 +1494,7 @@ class MenuBar:
         view.addAction(self.toggle_graph_control_action)
         view.addAction(self.toggle_anti_graph_control_action)
         view.addAction(self.toggle_overlay_control_action)
+        view.addAction(self.toggle_analysis_control_action)
         # - Process
         process.addAction(image_correction_action)
         process.addAction(image_filter_action)
@@ -1535,6 +1548,7 @@ class MenuBar:
         self.toggle_graph_control_action.triggered.connect(self.ui_obj.menu_toggle_graph_control_trigger)
         self.toggle_anti_graph_control_action.triggered.connect(self.ui_obj.menu_toggle_anti_graph_control_trigger)
         self.toggle_overlay_control_action.triggered.connect(self.ui_obj.menu_toggle_overlay_control_trigger)
+        self.toggle_analysis_control_action.triggered.connect(self.ui_obj.menu_toggle_analysis_control_trigger)
         # - Process
         image_correction_action.triggered.connect(self.ui_obj.menu_image_correction_trigger)
         image_filter_action.triggered.connect(self.ui_obj.menu_image_filter_trigger)
@@ -2601,6 +2615,8 @@ class PcaWizard(QtWidgets.QDialog):
                               'h index',
                               'peak gamma',
                               'average gamma',
+                              'normalized peak gamma',
+                              'normalized average gamma',
                               'theta variance',
                               'theta min',
                               'theta max',

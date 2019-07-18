@@ -1,4 +1,6 @@
-# This file contains the SuchSoftware class that is the algorithms.
+"""Module for the 'SuchSoftware' class that handles a *project instance*."""
+
+
 import numpy as np
 import dm3_lib as dm3
 import mat_op
@@ -178,6 +180,9 @@ class SuchSoftware:
         self.dist_5_std = 0
         self.dist_8_std = 0
 
+    def __str__(self):
+        return self.stats_summary(supress_log=True)
+
     def alloy_string(self):
         if self.alloy == 0:
             return 'Alloy: Al-Mg-Si-(Cu)'
@@ -186,12 +191,15 @@ class SuchSoftware:
         else:
             return 'Alloy: Unknown'
 
-    def stats_summary(self):
+    def stats_summary(self, supress_log=False):
         self.summarize_stats()
         string = 'Image summary: ----------\n'
         for line in iter(self.stats_string.splitlines()):
             string += '    ' + line + '\n'
-        logger.info(string)
+        if supress_log:
+            return string
+        else:
+            logger.info(string)
 
     def vertex_report(self, i):
         vertex = self.graph.vertices[i]
@@ -241,16 +249,6 @@ class SuchSoftware:
             pickle.dump(self, f, pickle.HIGHEST_PROTOCOL)
         logger.info('Saved {}'.format(filename_full))
 
-    def export(self, format_, filename, column_centered=True):
-        """Export data to csv file."""
-        if column_centered:
-            print(format_)
-            print(filename)
-        else:
-            print(format_)
-            print(filename)
-
-
     @staticmethod
     def load(filename_full):
         with open(filename_full, 'rb') as f:
@@ -271,7 +269,7 @@ class SuchSoftware:
                         logger.info('Loaded {}'.format(filename_full))
                 else:
                     logger.info('Loaded {}'.format(filename_full))
-            return obj
+        return obj
 
     def column_detection(self, search_type='s'):
         if self.num_columns == 0:

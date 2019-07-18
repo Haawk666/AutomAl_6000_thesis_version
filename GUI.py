@@ -453,6 +453,12 @@ class MainUI(QtWidgets.QMainWindow):
         else:
             self.control_window.anti_graph_box.set_hidden()
 
+    def menu_toggle_analysis_control_trigger(self, state):
+        if state:
+            self.control_window.analysis_box.set_visible()
+        else:
+            self.control_window.analysis_box.set_hidden()
+
     def menu_toggle_overlay_control_trigger(self, state):
         if state:
             self.control_window.overlay_box.set_visible()
@@ -1085,6 +1091,16 @@ class MainUI(QtWidgets.QMainWindow):
             self.sys_message('Working...')
             for vertex in self.project_instance.graph.vertices:
                 if vertex.h_index == 6:
+                    vertex.show_in_overlay = state
+            for graphic_item in self.gs_overlay_composition.interactive_overlay_objects:
+                graphic_item.set_style()
+            self.sys_message('Ready.')
+
+    def chb_particle_trigger(self, state):
+        if self.project_instance is not None and self.project_instance.num_columns > 0:
+            self.sys_message('Working...')
+            for vertex in self.project_instance.graph.vertices:
+                if vertex.is_in_precipitate:
                     vertex.show_in_overlay = state
             for graphic_item in self.gs_overlay_composition.interactive_overlay_objects:
                 graphic_item.set_style()

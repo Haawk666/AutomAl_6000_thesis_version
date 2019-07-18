@@ -1,3 +1,5 @@
+"""Entry module for the GUI. Reads 'config.ini' and launches the PyQt5 application loop."""
+
 #
 # Automatic Atomic Column Characterizer (AACC).
 # ----------------------------------------

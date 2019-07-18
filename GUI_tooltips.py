@@ -68,7 +68,7 @@ chb_boarders = 'Toggle particle boarders'
 chb_si_columns = 'Toggle all Si-columns'
 chb_si_network = ''
 chb_mg_columns = 'Toggle al Mg-columns'
-chb_mg_network = ''
+chb_particle = 'Toggle particle columns'
 chb_al_columns = 'Toggle Al-columns'
 chb_al_network = ''
 chb_cu_columns = 'Toggle Cu-columns'
@@ -137,7 +137,7 @@ control_window_chb_list = [chb_toggle_positions,
                            chb_si_columns,
                            chb_si_network,
                            chb_mg_columns,
-                           chb_mg_network,
+                           chb_particle,
                            chb_al_columns,
                            chb_al_network,
                            chb_cu_columns,
