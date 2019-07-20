@@ -1,26 +1,100 @@
 """Module for the 'SuchSoftware' class that handles a *project instance*."""
 
-
-import numpy as np
-import dm3_lib as dm3
+# Program imports:
 import mat_op
 import graph
 import utils
 import graph_op
-import sys
-import pickle
 import compatibility
 import legacy_items
-from matplotlib import pyplot as plt
 import weak_untangling
+# External imports:
+import numpy as np
+import dm3_lib as dm3
+import sys
+import pickle
+from matplotlib import pyplot as plt
 import logging
-
 # Instantiate logger
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
 class SuchSoftware:
+    """The main API through which to build and accsess the data extracted from HAADF-STEM images.
+
+    :param filename_full: The full path and/or relative path and filename of the .dm3 image to import. A project can
+        be instantiated with filename_full='empty', but this is only used as a placeholder.
+    :param debug_obj: DEPRECATED
+    :type filename_full: string
+
+    .. code-block:: python
+        :caption: Example
+
+        >>> import core
+        >>> my_project_instance = core.SuchSoftware('Saves/sample.dm3')
+        >>> print(my_project_instance)
+        Image summary: ----------
+            Number of detected columns: 0
+            Number of detected precipitate columns: 0
+
+            Number of inconsistencies: 0
+            Number of popular: 0
+            Number of unpopular: 0
+            Chi: 0
+
+            Average peak intensity: 0
+            Average average intensity: 0
+
+            Average Si peak intensity: 0.0
+            Average Cu peak intensity: 0.0
+            Average Zn peak intensity: 0.0
+            Average Al peak intensity: 0.0
+            Average Ag peak intensity: 0.0
+            Average Mg peak intensity: 0.0
+            Average Un peak intensity: 0.0
+
+            Average Si average intensity: 0.0
+            Average Cu average intensity: 0.0
+            Average Zn average intensity: 0.0
+            Average Al average intensity: 0.0
+            Average Ag average intensity: 0.0
+            Average Mg average intensity: 0.0
+            Average Un average intensity: 0.0
+
+            Number of Si-columns: 0
+            Number of Cu-columns: 0
+            Number of Zn-columns: 0
+            Number of Al-columns: 0
+            Number of Ag-columns: 0
+            Number of Mg-columns: 0
+            Number of Un-columns: 0
+
+            Number procentage of Si: 0.0
+            Number procentage of Cu: 0.0
+            Number procentage of Zn: 0.0
+            Number procentage of Al: 0.0
+            Number procentage of Ag: 0.0
+            Number procentage of Mg: 0.0
+            Number procentage of Un: 0.0
+
+            Number of precipitate Si-columns: 0
+            Number of precipitate Cu-columns: 0
+            Number of precipitate Zn-columns: 0
+            Number of precipitate Al-columns: 0
+            Number of precipitate Ag-columns: 0
+            Number of precipitate Mg-columns: 0
+            Number of precipitate Un-columns: 0
+
+            Number procentage of precipitate Si: 0.0
+            Number procentage of precipitate Cu: 0.0
+            Number procentage of precipitate Zn: 0.0
+            Number procentage of precipitate Al: 0.0
+            Number procentage of precipitate Ag: 0.0
+            Number procentage of precipitate Mg: 0.0
+            Number procentage of precipitate Un: 0.0
+
+    """
 
     # Version
     version = [0, 0, 6]
@@ -184,6 +258,11 @@ class SuchSoftware:
         return self.stats_summary(supress_log=True)
 
     def alloy_string(self):
+        """Get a string representation of the currently active alloy matrix.
+
+        :returns string representation of the currently active alloy:
+        :rtype string:
+        """
         if self.alloy == 0:
             return 'Alloy: Al-Mg-Si-(Cu)'
         elif self.alloy == 1:
@@ -192,6 +271,16 @@ class SuchSoftware:
             return 'Alloy: Unknown'
 
     def stats_summary(self, supress_log=False):
+        """Summarize some stats about the image-level data.
+
+        :param supress_log: (optional, default=False) If False, will send its result to the module-level logger, if
+            True, will return the result as string.
+        :type supress_log: Bool
+
+        :returns a summary string or None:
+        :rtype string or None:
+
+        """
         self.summarize_stats()
         string = 'Image summary: ----------\n'
         for line in iter(self.stats_string.splitlines()):
@@ -200,6 +289,7 @@ class SuchSoftware:
             return string
         else:
             logger.info(string)
+            return None
 
     def vertex_report(self, i):
         vertex = self.graph.vertices[i]

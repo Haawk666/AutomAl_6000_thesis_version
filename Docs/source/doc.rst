@@ -3,6 +3,7 @@ Documentation
 
 .. toctree::
 
+    core
     graph
     utils
     mat_op
