@@ -105,7 +105,7 @@ class SuchSoftware:
     # Number of closest neighbours that are included in local search-spaces
     map_size = 8
 
-    # Al lattice constant in picometers
+    # Al lattice constant in pico-meters
     al_lattice_const = 404.95
 
     # Atomic "hard sphere" radii in pm:
