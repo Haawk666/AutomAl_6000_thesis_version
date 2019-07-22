@@ -1,8 +1,7 @@
 # By Haakon Tvedt @ NTNU
 """Module container for high-level custom GUI-elements"""
 
-from PyQt5 import QtWidgets, QtGui, QtCore
-import logging
+# Program imports:
 import graph_op
 import GUI_custom_components
 import GUI_settings
@@ -12,10 +11,11 @@ import plotting_module
 import export_module
 import data_module
 import utils
+# External imports:
+from PyQt5 import QtWidgets, QtGui, QtCore
 import pathlib
 import os
-import csv
-
+import logging
 # Instantiate logger
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)

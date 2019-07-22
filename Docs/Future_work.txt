@@ -12,8 +12,6 @@ Planned features (Loosley ordered by priority):
 
 - Add support for importing images in the TIF format.
 
-- Add support for exporting data-files with a data-format wizard.
-
 - Integrate lambs. -> Crystal relaxation model (Possible major change to the data-structure)
 
 - Continued effort to improve and clean the code
@@ -28,8 +26,6 @@ Planned features (Loosley ordered by priority):
 - Implement auto-updating????
 
 - Make overlay graphical elements customizable through a wizard.
-
-- Write tooltips for the GUI
 
 - Start looking at image correction methods
 

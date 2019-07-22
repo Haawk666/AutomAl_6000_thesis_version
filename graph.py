@@ -2,12 +2,13 @@
 structure will be a **Graph** object that holds a list of **Vertex** objects as well as a list of **Edge** objects.
 There are also some functionality for generating **SubGraph** objects, as well as **Mesh** objects."""
 
-import numpy as np
+# Program imports:
 import utils
-import logging
+# External imports:
+import numpy as np
 import copy
-
-# Instantiate logger
+import logging
+# Instantiate logger:
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
@@ -131,7 +132,9 @@ class Vertex:
     def n(self):
         """Return the number of closest neighbours, or its symmetry in a sense.
 
-        :returns The number of closest neighbours n:
+        :return: The number of closest neighbours *n*.
+        :rtype: int
+
         """
         n = 3
         if self.h_index == 0 or self.h_index == 1:
@@ -145,21 +148,52 @@ class Vertex:
     def real_coor(self):
         """Return a tuple of the vertex image coordinates in floats.
 
-        :return tuple of floats (x, y) that is the vertex' image position:"""
+        :return: tuple of floats (x, y) that is the vertex' image position.
+        :rtype: tuple(<float>, <float>)
+
+        """
         real_coor = (self.real_coor_x, self.real_coor_y)
         return real_coor
 
     def spatial_coor(self):
-        """Return a tuple of the vertex spatial coordinates in floats."""
+        """Return a tuple of the vertex spatial coordinates in floats.
+
+        :return: tuple of floats (x, y) that is the vertex' real spatial relative position.
+        :rtype: tuple(<float>, <float>)
+
+        """
         spatial_coor = (self.spatial_coor_x, self.spatial_coor_y)
         return spatial_coor
 
     def im_coor(self):
-        """Return a tuple of the vertex image coordinates in pixel-discrete ints."""
+        """Return a tuple of the vertex image coordinates in pixel-discrete ints.
+
+        :return: tuple of ints (x, y) that is the vertex' image pixel position.
+        :rtype: tuple(<int>, <int>)
+
+        """
         im_coor = (self.im_coor_x, self.im_coor_y)
         return im_coor
 
     def increase_h_value(self):
+        """Increase the :code:`self.h_index` value to the next valid value, if any.
+
+        This method will forcefully try to change the atomic species by incrementing the h_index. If the current species
+        is Si, it will set the species to Cu etc:
+
+        ======================= ===============
+        current species         New species
+        ======================= ===============
+        Si                      Cu
+        Cu                      Al
+        Al                      Mg
+        Mg                      No change
+        ======================= ===============
+
+        :return: A boolean to indicate whether the species was successfully changed or not.
+        :rtype: bool
+
+        """
         changed = False
         h = self.h_index
         if h == 0 or h == 1:
@@ -171,6 +205,24 @@ class Vertex:
         return changed
 
     def decrease_h_value(self):
+        """Decrease the :code:`self.h_index` value to the next valid value, if any.
+
+        This method will forcefully try to change the atomic species by decrementing the h_index. If the current species
+        is Cu, it will set the species to Si etc:
+
+        ======================= ===============
+        current species         New species
+        ======================= ===============
+        Si                      No change
+        Cu                      Si
+        Al                      Cu
+        Mg                      Al
+        ======================= ===============
+
+        :return: A boolean to indicate whether the species was successfully changed or not.
+        :rtype: bool
+
+        """
         changed = False
         h = self.h_index
         if h == 5:
@@ -186,6 +238,11 @@ class Vertex:
         return changed
 
     def reset_level_vector(self):
+        """Reset :code:`self.level_vector`.
+
+        Will reset the *probability vector* :code:`self.level_vector` to a uniform vector: [0.5, 0.5].
+
+        """
         self.level_vector = [1/2, 1/2]
 
     def reset_symmetry_vector(self, bias=-1):
@@ -248,6 +305,9 @@ class Vertex:
             self.prob_vector = correction_factor * self.prob_vector
 
     def define_species(self):
+        """Determine :code:`self.h_index` by analysing :code:`self.prob_vector`.
+
+        """
 
         h_prob = 0.0
         h_index = 0
@@ -338,6 +398,12 @@ class Vertex:
         self.collapse_prob_vector()
 
     def anti_level(self):
+        """Get the opposite level of :code:`self.level`.
+
+        :return: If :code:`self.level` is 0, return 1. If :code:`self.level` is 1, return 0
+        :rtype: int
+
+        """
         if self.level == 0:
             anti_level = 1
         elif self.level == 1:
@@ -385,6 +451,12 @@ class Vertex:
                     self.neighbour_indices[-1], self.neighbour_indices[pos_j]
 
     def species(self):
+        """Get a string representation of the vertex´ atomic species.
+
+        :return: Atomic species.
+        :rtype: string
+
+        """
         return self.species_strings[self.h_index]
 
 

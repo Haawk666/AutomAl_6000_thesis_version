@@ -2,16 +2,16 @@
 """Module containing the Main Window class. This is the top-level GUI and contains the *business logic* of the
 interface."""
 
-from PyQt5 import QtWidgets, QtGui, QtCore
-import logging
-import sys
-import numpy as np
+# Program imports:
 import core
 import GUI_elements
 import GUI_settings
-import utils
 import mat_op
-
+# External imports:
+from PyQt5 import QtWidgets, QtGui, QtCore
+import sys
+import numpy as np
+import logging
 # Instantiate logger
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)

@@ -7,13 +7,12 @@
 # ----------------------------------------
 # Master project in technical physics at NTNU. Supervised by Prof. Randi Holmestad. Co-supervisors Calin Maroiara and
 # Jesper Friis at SINTEF.
-# ----------------------------------------
-# This file is the entry point of the software.
-# ----------------------------------------
 #
 
+# Program imports:
 import GUI
 import GUI_settings
+# External imports:
 from PyQt5 import QtWidgets
 import sys
 import os
@@ -29,16 +28,19 @@ if __name__ == '__main__':
         with open('config.ini', 'w') as f:
             f.write(GUI_settings.default_config_string)
 
-    # Import configugaritons from config file
+    # Import configurations from config file
     config = configparser.ConfigParser()
     config.read('config.ini')
     GUI_settings.theme = config.get('theme', 'theme')
     GUI_settings.tooltips = config.getboolean('tooltips', 'tooltips')
 
+    # Set theme
     if GUI_settings.theme == 'dark':
         app.setPalette(GUI_settings.dark_palette)
     else:
         pass
+
+    # Start app
     program = GUI.MainUI(settings_file=config)
     sys.exit(app.exec_())
 

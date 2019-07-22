@@ -78,22 +78,31 @@ Column stage
 
 We now wish to locate the positions of columns in the image.
 
+Spatial map stage
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
+We now want to gather information about spatial locality.
 
+Result stage
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-Exporting data
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
+Control stage
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 Generating plots
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
 Performing built-in principle component analysis (PCA)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Exporting data
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Testing the accuracy/effectiveness of the algorithms using the validation data-set
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Using core.SuchSoftware as an API without the GUI
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Writing plugins for AutoAtom6000
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

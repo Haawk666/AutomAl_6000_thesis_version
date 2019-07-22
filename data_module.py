@@ -1,14 +1,16 @@
+"""Module for recieving the results of a pca wizard!"""
+
+# Program imports:
 import core
-from matplotlib import pyplot as plt
 import graph_op
+import utils
+# External imports:
 import numpy as np
 import csv
 import copy
-import utils
+from matplotlib import pyplot as plt
 from matplotlib.gridspec import GridSpec
-from matplotlib import ticker as tick
 import logging
-
 # Instantiate logger
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)

@@ -21,10 +21,10 @@ logger.setLevel(logging.DEBUG)
 
 
 class SuchSoftware:
-    """The main API through which to build and accsess the data extracted from HAADF-STEM images.
+    """The main API through which to build and access the data extracted from HAADF-STEM images.
 
     :param filename_full: The full path and/or relative path and filename of the .dm3 image to import. A project can
-        be instantiated with filename_full='empty', but this is only used as a placeholder.
+        be instantiated with filename_full='empty', but this is only meant to be used as a placeholder.
     :param debug_obj: DEPRECATED
     :type filename_full: string
 
@@ -130,7 +130,6 @@ class SuchSoftware:
     # Indexable species strings
     species_strings = ['Si', 'Cu', 'Zn', 'Al', 'Ag', 'Mg', 'Un']
 
-    # Constructor
     def __init__(self, filename_full, debug_obj=None):
 
         self.filename_full = filename_full
@@ -260,8 +259,9 @@ class SuchSoftware:
     def alloy_string(self):
         """Get a string representation of the currently active alloy matrix.
 
-        :returns string representation of the currently active alloy:
-        :rtype string:
+        :return: string representation of the currently active alloy
+        :rtype: string
+
         """
         if self.alloy == 0:
             return 'Alloy: Al-Mg-Si-(Cu)'
@@ -273,12 +273,12 @@ class SuchSoftware:
     def stats_summary(self, supress_log=False):
         """Summarize some stats about the image-level data.
 
-        :param supress_log: (optional, default=False) If False, will send its result to the module-level logger, if
-            True, will return the result as string.
+        :param supress_log: (optional, default=False) If False, will send its result to the module-level logger and
+            return None, if True, will return the result as string.
         :type supress_log: Bool
 
-        :returns a summary string or None:
-        :rtype string or None:
+        :return: a summary string or None
+        :rtype: string or None
 
         """
         self.summarize_stats()
@@ -291,7 +291,18 @@ class SuchSoftware:
             logger.info(string)
             return None
 
-    def vertex_report(self, i):
+    def vertex_report(self, i, supress_log=False):
+        """Summarize some properties of a particular vertex *i*.
+
+        :param i: Index of the vertex in interest.
+        :param supress_log: (Optional, default=False) If False, will send its result to the module-level logger and
+            return None, if True, will return the result as string.
+        :type i: int
+        :type supress_log: bool
+        :return: Summary string or None
+        :rtype: string or None
+
+        """
         vertex = self.graph.vertices[i]
         alpha_max, alpha_min = graph_op.base_angle_score(self.graph, i, apply=False)
         rotation_map, angles, variance = self.graph.calc_central_angle_variance(i)
@@ -314,9 +325,29 @@ class SuchSoftware:
                  '    Flag 2: {}\n'.format(vertex.flag_2) + \
                  '    Flag 3: {}\n'.format(vertex.flag_3) + \
                  '    Flag 4: {}'.format(vertex.flag_4)
-        logger.info(string)
+        if supress_log:
+            return string
+        else:
+            logger.info(string)
+            return None
 
     def set_alloy_mat(self):
+        """Set the alloy vector field of the project, :code:`self.alloy_mat`, based on the value of :code:`self.alloy`.
+
+        This function will set the alloy vector based on the field :code:`self.alloy`. The interpretation of the alloy vector is
+        that each element is 0 or 1 depending on weather the corresponding element is present in the image. The
+        corresponding elements are [Si, Cu, Zn, Al, Ag, Mg, Un], where Un is a placeholder for an *Unknown* element. As
+        an example, the alloy vector for Al-Mg-Si would be [1, 0, 0, 1, 0, 1, 0]. The currently implemented alloys are:
+
+        ===================     ==================================  ===============
+        :code:`self.alloy`      :code:`self.alloy_mat`              Alloy
+        ===================     ==================================  ===============
+        0                       [1, 1, 0, 1, 0, 1, 0]               Al-Mg-Si-(Cu)
+        1                       [1, 0, 0, 1, 0, 1, 0]               Al-Mg-Si
+        ===================     ==================================  ===============
+
+        """
+
         if self.alloy == 0:
             for x in range(0, SuchSoftware.num_selections):
                 if x == 2 or x == 4:
@@ -333,6 +364,14 @@ class SuchSoftware:
             logger.error('Could not set alloy vector. Unknown alloy')
 
     def save(self, filename_full):
+        """Save the current project as a pickle file.
+
+        :param filename_full: Path and name of save-file. The project will be pickled as *filename_full* without any
+            file-extension identifier.
+        :type filename_full: string
+
+        """
+
         with open(filename_full, 'wb') as f:
             self.debug_obj = None
             self.version_saved = self.version
@@ -341,6 +380,18 @@ class SuchSoftware:
 
     @staticmethod
     def load(filename_full):
+        """Load an instance from a pickle-file.
+
+        Will use the compatibility module if the saved version is different from the current version. Returns None if
+        loading failed.
+
+        :param filename_full: Path-name of the file to be loaded.
+        :type filename_full: string
+
+        :return: project instance.
+        :rtype: core.SuchSoftware
+
+        """
         with open(filename_full, 'rb') as f:
             try:
                 obj = pickle.load(f)
@@ -362,6 +413,24 @@ class SuchSoftware:
         return obj
 
     def column_detection(self, search_type='s'):
+        """Column detection algorithm.
+
+        The column detection algorithm will attempt to locate the columns in a HAADF-STEM image. When a SuchSoftware
+        object is instantiated, the image data is stored in self.im_mat, which is a numpy array with values normalized
+        to the range (0, 1). In broad terms the algorithm works by identifying the brightest pixel in self.im_mat. It
+        then does a centre-of-mass calculation using pixel values from a circular area around the max pixel, with radius
+        self.r (Which is determined at init based on the scale information in the .dm3 metadata). It then sets all
+        pixels in an area slightly larger than this to 0 in self.search_mat. The next max pixel will then be identified
+        from the search_mat, while the CM-calculation will still be made from the im_mat.
+
+        It will continue searching until an end condition is met, which depends on the search mode. If search mode is
+        \'s\', it will search until it finds self.search_size number of columns. If search mode is \'t\', it will search
+        until the brightest pixel is below self.threshold. For more details, see [link].
+
+        :param search_type: (Optional, default=\'s\') The search mode for the algorithm.
+        :type search_type: string
+
+        """
         if self.num_columns == 0:
             logger.info('Starting column detection. Search mode is \'{}\''.format(search_type))
         else:
@@ -427,6 +496,22 @@ class SuchSoftware:
         logger.info('Column detection complete! Found {} columns.'.format(self.num_columns))
 
     def find_nearest(self, i, n, weight=4):
+        """Use the image to determine the closest neighbours of vertex *i*.
+
+        :param i: Index of the vertex for which closest neighbours are to be determined.
+        :param n: How many neighbours to map.
+        :param weight: (Optional, default=4) Used for internal recursion. If n neighbours was not found by searching a
+            pre-set search area, then it will call itself with an increased weight, effectively increasing the search
+            area.
+        :type i: int
+        :type n: int
+        :type weight: int
+
+        :return: returns tuple of a python list with the indices of the *n* closest neighbours of vertex *i* and a
+            python list with the (projected) distance to each neighbour.
+        :rtype: tuple(list(<int>), list(<float>)).
+
+        """
 
         x_0 = self.graph.vertices[i].im_coor_x
         y_0 = self.graph.vertices[i].im_coor_y
@@ -481,6 +566,13 @@ class SuchSoftware:
         return list(indices), list(distances)
 
     def find_edge_columns(self):
+        """Locate vertices that are close to the edge of the image.
+
+        These vertices get special treatment throughout the program because information about their surroundings will
+        be incomplete. This method will find all vertices that are within a distance 6 * self.r from the edge, and set
+        the field self.graph.vertices[i].is_edge_column = True.
+
+        """
 
         for y in range(0, self.num_columns):
 
@@ -498,6 +590,13 @@ class SuchSoftware:
                 self.graph.vertices[y].is_edge_column = False
 
     def normalize_gamma(self):
+        """Find the mean of the intensity of the Al-matrix, and scale all intensities.
+
+        Scale all intensities such that the mean of the Al-matrix is a fixed point. Store the result in each vertex *i*
+        :code:`self.graph.vertices[i].normalized_peak_gamma` and
+        :code:`self.graph.vertices[i].normalized_avg_gamma` fields.
+
+        """
         peak_gammas = []
         avg_gammas = []
         for vertex in self.graph.vertices:
@@ -513,6 +612,9 @@ class SuchSoftware:
             vertex.normalized_avg_gamma = vertex.avg_gamma - avg_mean_diff
 
     def column_characterization(self, starting_index, search_type=0):
+        """Column characterization algorithm.
+
+        """
 
         sys.setrecursionlimit(10000)
 
@@ -588,7 +690,7 @@ class SuchSoftware:
             logger.info('Column characterization complete.')
 
         elif search_type == 2:
-
+            # Run spatial mapping
             logger.info('Mapping spatial locality...')
             self.redraw_centre_mat()
             self.redraw_circumference_mat()
@@ -598,7 +700,7 @@ class SuchSoftware:
             logger.info('Spatial mapping complete.')
 
         elif search_type == 3:
-
+            # Legacy angle analysis (To be deprecated....)
             logger.info('Analysing angles...')
             for i, vertex in enumerate(self.graph.vertices):
                 if not vertex.set_by_user and not vertex.is_edge_column:
@@ -609,7 +711,7 @@ class SuchSoftware:
             logger.info('Angle analysis complete.')
 
         elif search_type == 4:
-
+            # Legacy intensity analysis (To be deprecated...)
             logger.info('Analyzing intensities...')
             for i in range(0, self.num_columns):
                 if not self.graph.vertices[i].set_by_user and not self.graph.vertices[i].is_edge_column:
@@ -619,26 +721,26 @@ class SuchSoftware:
             logger.info('Intensity analysis complete.')
 
         elif search_type == 5:
-
+            # Legacy particle detection
             logger.info('Finding particle with legacy method....')
             legacy_items.precipitate_controller(self.graph, starting_index)
             # graph_op.precipitate_controller(self.graph, starting_index)
             logger.info('Found particle.')
 
         elif search_type == 6:
-
+            # Legacy level determination
             logger.info('Running legacy level definition algorithm....')
             legacy_items.define_levels(self.graph, starting_index, self.graph.vertices[starting_index].level)
             logger.info('    Levels set.')
 
         elif search_type == 7:
-
+            # redra edges
             logger.info('Adding edges to graph...')
             self.graph.redraw_edges()
             logger.info('Edges added.')
 
         elif search_type == 8:
-
+            # Legacy weak untangling (To be deprecated....)
             logger.info('Starting legacy weak untangling...')
             for i in range(0, self.num_columns):
                 legacy_items.find_consistent_perturbations_simple(self.graph, i, sub=True)
@@ -728,12 +830,12 @@ class SuchSoftware:
             logger.info('Legacy weak untangling complete!')
 
         elif search_type == 9:
-
+            # Legacy strong untangling
             logger.info('Starting strong untangling...')
             logger.info('Could not start strong untangling because it is not implemented yet!')
 
         elif search_type == 10:
-
+            # Weak untangling
             logger.info('Starting experimental weak untangling...')
 
             static = False
@@ -797,7 +899,7 @@ class SuchSoftware:
             logger.info('Weak untangling complete')
 
         elif search_type == 11:
-
+            # Strong untangling
             logger.info('Starting experimental strong untangling...')
 
             static = False
@@ -851,7 +953,7 @@ class SuchSoftware:
             logger.info('Strong untangling complete')
 
         elif search_type == 12:
-
+            # reset probs
             logger.info('Resetting probability vectors with zero bias...')
             for i in range(0, self.num_columns):
                 if not self.graph.vertices[i].set_by_user and not self.graph.vertices[i].is_edge_column:
@@ -859,7 +961,7 @@ class SuchSoftware:
             logger.info('Probability vectors reset.')
 
         elif search_type == 13:
-
+            # Reset user-input
             logger.info('Resetting user-set columns...')
             for i in range(0, self.num_columns):
                 if self.graph.vertices[i].set_by_user:
@@ -867,7 +969,7 @@ class SuchSoftware:
             logger.info('User-set columns was re-set.')
 
         elif search_type == 14:
-
+            # Locate and remove edge intersections
             logger.info('Looking for intersections')
             intersections = self.graph.find_intersects()
             num_intersections = len(intersections)
@@ -948,9 +1050,8 @@ class SuchSoftware:
             logger.info('Column characterization complete.')
 
         elif search_type == 16:
-
+            # Alpha angle analysis
             logger.info('Running experimental angle analysis')
-
             for i in range(0, self.num_columns):
                 if not self.graph.vertices[i].set_by_user and not self.graph.vertices[i].is_edge_column:
                     self.graph.vertices[i].reset_symmetry_vector()
@@ -961,20 +1062,21 @@ class SuchSoftware:
                         graph_op.base_angle_score(self.graph, i)
                     self.graph.vertices[i].prob_vector = np.array(self.graph.vertices[i].prob_vector)
                     self.graph.vertices[i].define_species()
-
             logger.info('Angle analysis complete!')
 
         elif search_type == 17:
-
+            # Level analysis
+            logger.info('Analysing levels...')
             for vertex in self.graph.vertices:
                 vertex.reset_level_vector()
             runs, measures = graph_op.statistical_level_bleed(self.graph, starting_index, self.graph.vertices[starting_index].level)
             plt.plot(runs, measures)
             plt.show()
             graph_op.sort_neighbourhood(self.graph)
+            logger.info('Analysis complete.')
 
         elif search_type == 18:
-
+            # Find edge columns
             logger.info('Finding edge columns....')
             self.find_edge_columns()
             for vertex in self.graph.vertices:
@@ -984,7 +1086,7 @@ class SuchSoftware:
             logger.info('Found edge columns.')
 
         elif search_type == 19:
-
+            # Determine normalized intensities
             logger.info('Finding normalized intensities...')
             self.normalize_gamma()
             logger.info('Found intensities.')
@@ -994,6 +1096,9 @@ class SuchSoftware:
             logger.error('No such search type!')
 
     def calc_avg_gamma(self):
+        """Calculate average intensity for every vertex based on image information.
+
+        """
         if self.num_columns > 0:
             temp_mat = mat_op.gen_framed_mat(self.im_mat, self.r)
             for vertex in self.graph.vertices:
@@ -1001,6 +1106,9 @@ class SuchSoftware:
                                                                      vertex.im_coor_y + self.r, self.r)
 
     def summarize_stats(self):
+        """Summarize current stats about the project file.
+
+        """
 
         self.graph.summarize_stats()
 
@@ -1200,6 +1308,9 @@ class SuchSoftware:
         self.build_stat_string()
 
     def build_stat_string(self):
+        """Build a string representation of current statistical summary and store it in self.stats_string.
+
+        """
 
         self.stats_string = ('Number of detected columns: ' + str(self.num_columns) + '\n'
             'Number of detected precipitate columns: ' + str(self.num_precipitate_columns) + '\n\n'
@@ -1253,6 +1364,9 @@ class SuchSoftware:
             'Number procentage of precipitate Un: ' + str(self.precipitate_number_percentage_un))
 
     def redraw_search_mat(self):
+        """Redraw the search matrix.
+
+        """
 
         self.search_mat = self.im_mat
         if self.num_columns > 0:
@@ -1265,6 +1379,7 @@ class SuchSoftware:
             self.search_mat = mat_op.gen_de_framed_mat(self.search_mat, self.r + self.overhead)
 
     def redraw_circumference_mat(self):
+        """Redraw the circumference matrix. DEPRECATED"""
 
         self.column_circumference_mat = np.zeros((self.im_height, self.im_width), dtype=type(self.im_mat))
         if self.num_columns > 0:
@@ -1279,6 +1394,7 @@ class SuchSoftware:
                                                                      self.overhead)
 
     def redraw_centre_mat(self):
+        """Redraw the centre matrix."""
 
         self.column_centre_mat = np.zeros((self.im_height, self.im_width, 2), dtype=type(self.im_mat))
         if self.num_columns > 0:
@@ -1287,6 +1403,9 @@ class SuchSoftware:
                 self.column_centre_mat[self.graph.vertices[x].im_coor_y, self.graph.vertices[x].im_coor_x, 1] = x
 
     def reset_graph(self):
+        """Reset the graph.
+
+        """
         self.graph = graph.AtomicGraph()
         self.num_columns = 0
         self.redraw_centre_mat()
@@ -1295,6 +1414,9 @@ class SuchSoftware:
         self.summarize_stats()
 
     def reset_vertex_properties(self):
+        """Reset all vertex properties.
+
+        """
         self.graph.reset_vertex_properties()
         self.summarize_stats()
 

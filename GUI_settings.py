@@ -1,7 +1,7 @@
 # By Haakon Tvedt @ NTNU
 """Module container for style settings of the GUI"""
 
-
+# External imports:
 from PyQt5 import QtGui, QtCore
 
 theme = 'dark'

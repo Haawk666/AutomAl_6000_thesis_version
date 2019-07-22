@@ -1,10 +1,11 @@
 # By Haakon Tvedt @ NTNU
 """Module container for low-level custom GUI-elements"""
 
+# Program imports:
+import GUI_settings
+# External imports:
 from PyQt5 import QtWidgets, QtGui, QtCore
 import numpy as np
-import GUI_settings
-
 
 # ----------
 # Graphic elements:
@@ -290,6 +291,12 @@ class ScaleBar(QtWidgets.QGraphicsItemGroup):
         self.moveBy(self.r * 6, self.height - self.r * 6)
         self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, True)
         self.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable, True)
+
+
+class Legend(QtWidgets.QGraphicsItemGroup):
+
+    def __init__(self, *args):
+        super().__init__(*args)
 
 
 class Overlay(QtWidgets.QWidget):

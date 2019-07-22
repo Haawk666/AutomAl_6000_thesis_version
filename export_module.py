@@ -1,10 +1,10 @@
-import core
-import csv
-import graph_op
-import numpy as np
-import utils
-import logging
+"""Module for recieving the results of an export wizard!"""
 
+# Program imports:
+import core
+# External imports:
+import csv
+import logging
 # Instantiate logger
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
