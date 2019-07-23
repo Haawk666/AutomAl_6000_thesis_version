@@ -734,7 +734,7 @@ class SuchSoftware:
             logger.info('    Levels set.')
 
         elif search_type == 7:
-            # redra edges
+            # redraw edges
             logger.info('Adding edges to graph...')
             self.graph.redraw_edges()
             logger.info('Edges added.')
