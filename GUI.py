@@ -137,6 +137,7 @@ class MainUI(QtWidgets.QMainWindow):
             # Update relevant graphics:
             self.project_instance.graph.vertices[self.selected_column].force_species(h)
             self.gs_overlay_composition.interactive_overlay_objects[self.selected_column].set_style()
+            self.gs_atomic_graph.redraw_neighbourhood(self.selected_column)
             # Update control window info:
             self.control_window.lbl_column_species.setText(
                 'Atomic species: ' + self.project_instance.graph.vertices[self.selected_column].atomic_species)
@@ -152,6 +153,7 @@ class MainUI(QtWidgets.QMainWindow):
             self.project_instance.graph.vertices[self.selected_column].level = level
             self.gs_overlay_composition.interactive_overlay_objects[self.selected_column].set_style()
             self.gs_atomic_graph.interactive_vertex_objects[self.selected_column].set_style()
+            self.gs_atomic_graph.redraw_neighbourhood(self.selected_column)
             # Update control window info:
             self.control_window.lbl_column_level.setText('Level: {}'.format(level))
 
@@ -376,8 +378,10 @@ class MainUI(QtWidgets.QMainWindow):
                 self.savefile = filename[0]
                 self.update_display()
                 self.update_sub_graph(True)
+                self.sys_message('Ready')
             else:
                 logger.info('File was not loaded. Something must have gone wrong!')
+                self.sys_message('Ready')
         else:
             self.sys_message('Ready')
 
@@ -388,20 +392,23 @@ class MainUI(QtWidgets.QMainWindow):
             filename = QtWidgets.QFileDialog.getSaveFileName(self, 'Save file', self.savefile)
 
         if filename[0]:
-            self.statusBar().showMessage('Working...')
+            self.sys_message('Working...')
             self.project_instance.save(filename[0])
             self.savefile = filename[0]
             self.update_display()
+            self.sys_message('Ready.')
         else:
-            self.statusBar().showMessage('Ready')
+            self.sys_message('Ready.')
 
     def menu_close_trigger(self):
+        self.sys_message('Working...')
         self.btn_cancel_move_trigger()
         self.column_selected(-1)
         self.project_instance = None
         self.control_instance = None
         self.update_display()
         self.update_sub_graph(True)
+        self.sys_message('Ready.')
 
     def menu_exit_trigger(self):
         self.close()
@@ -412,10 +419,14 @@ class MainUI(QtWidgets.QMainWindow):
 
     def menu_show_stats_trigger(self):
         if self.project_instance is not None:
+            self.sys_message('Working...')
             self.project_instance.stats_summary()
+            self.sys_message('Ready.')
 
     def menu_update_display(self):
+        self.sys_message('Working...')
         self.update_display()
+        self.sys_message('Ready.')
 
     def menu_toggle_image_control_trigger(self, state):
         if state:
@@ -999,13 +1010,12 @@ class MainUI(QtWidgets.QMainWindow):
         if not self.perturb_mode:
             self.sys_message('Working...')
             self.selection_history = []
-            self.update_graph()
             self.sys_message('Ready.')
 
     def chb_graph_detail_trigger(self):
         if self.project_instance is not None:
             self.sys_message('Working...')
-            self.gs_atomic_graph.re_draw_edges(self.project_instance.r)
+            self.gs_atomic_graph.re_draw_edges()
             self.sys_message('Ready.')
 
     def chb_show_level_0_trigger(self, state):

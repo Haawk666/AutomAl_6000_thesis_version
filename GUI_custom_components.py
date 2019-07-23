@@ -181,7 +181,7 @@ class InteractiveGraphColumn(InteractiveColumn):
 
 class Arrow:
 
-    def __init__(self, p1, p2, r, scale_factor, consistent, dislocation):
+    def __init__(self, i, j, p1, p2, r, scale_factor, consistent, dislocation):
 
         self.inconsistent_pen = GUI_settings.pen_inconsistent_edge
         self.dislocation_pen = GUI_settings.pen_dislocation_edge
@@ -189,6 +189,8 @@ class Arrow:
         self.arrow = None, None
         self.make_arrow_obj(p1, p2, r, scale_factor)
         self.set_style(consistent, dislocation)
+        self.i = i
+        self.j = j
 
     def set_style(self, consistent, dislocation):
 

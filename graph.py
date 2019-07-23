@@ -954,6 +954,48 @@ class AtomicGraph:
     def get_anti_graph(self):
         return AntiGraph(self).graph
 
+    def get_neighbours(self, i):
+        """Get the actual neighbour vertices of vertex *i* as instances.
+
+        The indices of the neighbours of a vertex are easily obtained from their internal list of indices, but sometimes
+        it is more convenient to retrieve the actual vertex instances for certain loops etc, which is what this method
+        does.
+
+        :param i: Index of vertex to fetch the neighbours of.
+        :type i: int
+
+        :return: A list of vertex instances that are neighbours of vertex *i*.
+        :rtype: list(<graph.Vertex>)
+
+        """
+
+        neighbours = []
+        for index in self.vertices[i].neighbour_indices:
+            neighbours.append(self.vertices[index])
+
+        return neighbours
+
+    def get_partners(self, i):
+        """Get the actual partner vertices of vertex *i* as instances.
+
+        The indices of the partners of a vertex are easily obtained from their internal list of indices, but sometimes
+        it is more convenient to retrieve the actual vertex instances for certain loops etc, which is what this method
+        does.
+
+        :param i: Index of vertex to fetch the partners of.
+        :type i: int
+
+        :return: A list of vertex instances that are partners of vertex *i*.
+        :rtype: list(<graph.Vertex>)
+
+        """
+
+        partners = []
+        for index in self.vertices[i].partners():
+            partners.append(self.vertices[index])
+
+        return partners
+
     def find_intersects(self):
 
         intersecting_segments = []
