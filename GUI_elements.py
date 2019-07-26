@@ -154,39 +154,35 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
     def perturb_edge(self, i, j, k):
         """Finds the edge from i to j, and makes it point from i to k."""
         self.ui_obj.project_instance.graph.vertices[i].perturb_j_k(j, k)
-        involved_vertices = [self.ui_obj.project_instance.graph.vertices[i], self.ui_obj.project_instance.graph.vertices[j], self.ui_obj.project_instance.graph.vertices[k]]
-        for edge_item in self.edges[i]:
-            self.removeItem(edge_item.arrow[0])
-            self.removeItem(edge_item.arrow[1])
-        self.edges[i] = []
-        for edge_item in self.edges[j]:
-            self.removeItem(edge_item.arrow[0])
-            self.removeItem(edge_item.arrow[1])
-        self.edges[j] = []
-        for edge_item in self.edges[k]:
-            self.removeItem(edge_item.arrow[0])
-            self.removeItem(edge_item.arrow[1])
-        self.edges[k] = []
-        for vertex_a in involved_vertices:
-            inner_edges = []
-            for n, vertex_b in enumerate(self.ui_obj.project_instance.graph.get_neighbours(vertex_a.i)):
-                p1 = vertex_a.real_coor()
-                p2 = vertex_b.real_coor()
-                consistent = vertex_b.partner_query(vertex_a.i)
-                if vertex_a.level == vertex_b.level:
-                    dislocation = True
+        self.redraw_star(i)
+        for n, edge in enumerate(self.edges[j]):
+            if edge.j == i:
+                self.edges[j][n].consistent, self.edges[j][n].dislocation, partner = self.eval_style(j, n)
+                if partner:
+                    self.edges[j][n].set_style()
                 else:
-                    dislocation = False
-                inner_edges.append(GUI_custom_components.Arrow(vertex_a.i, vertex_b.i, p1, p2, self.ui_obj.project_instance.r, self.scale_factor, consistent, dislocation))
-                self.addItem(inner_edges[-1].arrow[0])
-                self.addItem(inner_edges[-1].arrow[1])
-                if n >= vertex_a.n():
-                    inner_edges[-1].arrow[0].hide()
-                    inner_edges[-1].arrow[1].hide()
-                if not consistent and not self.ui_obj.control_window.chb_graph.isChecked():
-                    inner_edges[-1].arrow[0].hide()
-                    inner_edges[-1].arrow[1].hide()
-            self.edges[vertex_a.i] = inner_edges
+                    self.edges[j][n].hide()
+        for n, edge in enumerate(self.edges[k]):
+            if edge.j == i:
+                self.edges[k][n].consistent, self.edges[k][n].dislocation, partner = self.eval_style(k, n)
+                if partner:
+                    self.edges[k][n].set_style()
+                else:
+                    self.edges[k][n].hide()
+
+    def eval_style(self, i, m):
+        vertex_a = self.ui_obj.project_instance.graph.vertices[i]
+        vertex_b = self.ui_obj.project_instance.graph.vertices[self.edges[i][m].j]
+        consistent = vertex_b.partner_query(vertex_a.i)
+        if vertex_a.level == vertex_b.level:
+            dislocation = True
+        else:
+            dislocation = False
+        if m >= vertex_a.n():
+            partner = False
+        else:
+            partner = True
+        return consistent, dislocation, partner
 
     def re_draw(self):
         """Redraw contents."""
@@ -203,12 +199,11 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
 
     def re_draw_edges(self):
         """Redraws all edge elements."""
-        self.ui_obj.project_instance.graph.redraw_edges()
         for inner_edges in self.edges:
             for edge_item in inner_edges:
-                self.removeItem(edge_item.arrow[0])
-                self.removeItem(edge_item.arrow[1])
-        self.edges = [[]]
+                self.removeItem(edge_item)
+        self.edges = []
+
         for vertex_a in self.ui_obj.project_instance.graph.vertices:
             inner_edges = []
             for n, vertex_b in enumerate(self.ui_obj.project_instance.graph.get_neighbours(vertex_a.i)):
@@ -219,44 +214,42 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
                     dislocation = True
                 else:
                     dislocation = False
-                inner_edges.append(GUI_custom_components.Arrow(vertex_a.i, vertex_b.i, p1, p2, self.ui_obj.project_instance.r, self.scale_factor, consistent, dislocation))
-                self.addItem(inner_edges[-1].arrow[0])
-                self.addItem(inner_edges[-1].arrow[1])
+                inner_edges.append(GUI_custom_components.Arrow(i=vertex_a.i, j=vertex_b.i, p1=p1, p2=p2,
+                                                               r=self.ui_obj.project_instance.r,
+                                                               scale_factor=self.scale_factor, consistent=consistent,
+                                                               dislocation=dislocation,
+                                                               chb=self.ui_obj.control_window.chb_graph))
+                self.addItem(inner_edges[-1])
                 if n >= vertex_a.n():
-                    inner_edges[-1].arrow[0].hide()
-                    inner_edges[-1].arrow[1].hide()
-                if not consistent and not self.ui_obj.control_window.chb_graph.isChecked():
-                    inner_edges[-1].arrow[0].hide()
-                    inner_edges[-1].arrow[1].hide()
+                    inner_edges[-1].hide()
             self.edges.append(inner_edges)
 
+    def redraw_star(self, i):
+        for edge_item in self.edges[i]:
+            self.removeItem(edge_item)
+        self.edges[i] = []
+        vertex_a = self.ui_obj.project_instance.graph.vertices[i]
+        for n, vertex_b in enumerate(self.ui_obj.project_instance.graph.get_neighbours(vertex_a.i)):
+            p1 = vertex_a.real_coor()
+            p2 = vertex_b.real_coor()
+            consistent = vertex_b.partner_query(vertex_a.i)
+            if vertex_a.level == vertex_b.level:
+                dislocation = True
+            else:
+                dislocation = False
+            self.edges[i].append(GUI_custom_components.Arrow(i=vertex_a.i, j=vertex_b.i, p1=p1, p2=p2,
+                                                             r=self.ui_obj.project_instance.r,
+                                                             scale_factor=self.scale_factor, consistent=consistent,
+                                                             dislocation=dislocation,
+                                                             chb=self.ui_obj.control_window.chb_graph))
+            self.addItem(self.edges[i][-1])
+            if n >= vertex_a.n():
+                self.edges[i][-1].hide()
+
     def redraw_neighbourhood(self, i):
-        involved_vertices = []
-        involved_vertices.append(self.ui_obj.project_instance.graph.vertices[i])
-        print('Added {}'.format(i))
-        for vertex in self.ui_obj.project_instance.graph.get_neighbours(i):
-            involved_vertices.append(vertex)
-            print('Added {}'.format(vertex.i))
-        for vertex_a in involved_vertices:
-            print('Redoing vertex {}'.format(vertex_a.i))
-            for n, vertex_b in enumerate(self.ui_obj.project_instance.graph.get_neighbours(vertex_a.i)):
-                print(n)
-                consistent = vertex_b.partner_query(vertex_a.i)
-                if vertex_a.level == vertex_b.level:
-                    dislocation = True
-                else:
-                    dislocation = False
-                self.edges[vertex_a.i + 1][n].set_style(consistent, dislocation)
-                if n >= vertex_a.n():
-                    self.edges[vertex_a.i + 1][n].arrow[0].hide()
-                    self.edges[vertex_a.i + 1][n].arrow[1].hide()
-                else:
-                    self.edges[vertex_a.i + 1][n].arrow[0].show()
-                    if not consistent or dislocation:
-                        self.edges[vertex_a.i + 1][n].arrow[1].show()
-                if not consistent and not self.ui_obj.control_window.chb_graph.isChecked():
-                    self.edges[vertex_a.i + 1][n].arrow[0].hide()
-                    self.edges[vertex_a.i + 1][n].arrow[1].hide()
+        self.redraw_star(i)
+        for neighbours in self.ui_obj.project_instance.graph.vertices[i].neighbour_indices:
+            self.redraw_star(neighbours)
 
 
 class AtomicSubGraph(QtWidgets.QGraphicsScene):
@@ -305,9 +298,8 @@ class AtomicSubGraph(QtWidgets.QGraphicsScene):
             dislocation = not edge.is_legal_levels
             p1 = edge.vertex_a.real_coor()
             p2 = edge.vertex_b.real_coor()
-            self.edges.append(GUI_custom_components.Arrow(p1, p2, self.sub_graph.vertices[0].r, self.scale_factor, consistent, dislocation))
-            self.addItem(self.edges[-1].arrow[0])
-            self.addItem(self.edges[-1].arrow[1])
+            self.edges.append(GUI_custom_components.Arrow(i=edge.vertex_a.i, j=edge.vertex_b.i, p1=p1, p2=p2, r=self.ui_obj.project_instance.r, scale_factor=self.scale_factor, consistent=consistent, dislocation=dislocation))
+            self.addItem(self.edges[-1])
 
     def label_angles(self, angle_vectors=False):
         """Label all sub-graph angles."""
@@ -376,18 +368,17 @@ class AntiGraph(QtWidgets.QGraphicsScene):
         """Redraws all edge elements."""
         self.graph.redraw_edges()
         for edge_item in self.edges:
-            self.removeItem(edge_item.arrow[0])
-            self.removeItem(edge_item.arrow[1])
+            self.removeItem(edge_item)
         self.edges = []
         for edge in self.graph.edges:
             p1 = edge.vertex_a.real_coor()
             p2 = edge.vertex_b.real_coor()
-            self.edges.append(GUI_custom_components.Arrow(p1, p2, r, self.scale_factor, True, False))
-            self.addItem(self.edges[-1].arrow[0])
+            self.edges.append(GUI_custom_components.Arrow(i=edge.vertex_a.i, j=edge.vertex_b.i, p1=p1, p2=p2, r=self.ui_obj.project_instance.r, scale_factor=self.scale_factor, consistent=True, dislocation=False))
+            self.addItem(self.edges[-1])
             if edge.vertex_a.level == 1 and edge.vertex_b.level == 1:
-                self.edges[-1].arrow[0].setPen(GUI_settings.pen_skinny_red)
+                self.edges[-1].childItems()[0].setPen(GUI_settings.pen_skinny_red)
             else:
-                self.edges[-1].arrow[0].setZValue(-2)
+                self.edges[-1].setZValue(-2)
 
     def toggle_level_0(self, on):
         for vertex in self.graph.vertices:
@@ -399,9 +390,9 @@ class AntiGraph(QtWidgets.QGraphicsScene):
         for m, edge in enumerate(self.graph.edges):
             if edge.vertex_a.level == 0 and edge.vertex_b.level == 0:
                 if on:
-                    self.edges[m].arrow[0].show()
+                    self.edges[m].show()
                 else:
-                    self.edges[m].arrow[0].hide()
+                    self.edges[m].hide()
 
     def toggle_level_1(self, on):
         for vertex in self.graph.vertices:
@@ -413,9 +404,9 @@ class AntiGraph(QtWidgets.QGraphicsScene):
         for m, edge in enumerate(self.graph.edges):
             if edge.vertex_a.level == 1 and edge.vertex_b.level == 1:
                 if on:
-                    self.edges[m].arrow[0].show()
+                    self.edges[m].show()
                 else:
-                    self.edges[m].arrow[0].hide()
+                    self.edges[m].hide()
 
 
 class ZoomGraphicsView(QtWidgets.QGraphicsView):

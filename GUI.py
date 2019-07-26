@@ -951,11 +951,10 @@ class MainUI(QtWidgets.QMainWindow):
             if self.project_instance.num_columns > 0:
                 if len(self.project_instance.graph.vertices[0].neighbour_indices) > 0:
                     self.sys_message('Working...')
-                    logger.info('Trying to build anti-graph...')
                     anti_graph = self.project_instance.graph.get_anti_graph()
                     self.gs_anti_graph = GUI_elements.AntiGraph(ui_obj=self, scale_factor=2, graph=anti_graph)
                     self.gv_anti_graph.setScene(self.gs_anti_graph)
-                    logger.info('Built anti-graph!')
+                    logger.info('Got anti-graph!')
                     self.sys_message('Ready')
 
     def btn_pca_trigger(self):

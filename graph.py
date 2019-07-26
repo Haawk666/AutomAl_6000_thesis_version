@@ -952,6 +952,7 @@ class AtomicGraph:
         return sub_graph
 
     def get_anti_graph(self):
+        logger.info('Trying to build anti-graph...')
         return AntiGraph(self).graph
 
     def get_neighbours(self, i):

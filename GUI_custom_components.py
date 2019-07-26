@@ -179,82 +179,85 @@ class InteractiveGraphColumn(InteractiveColumn):
             self.setBrush(self.level_1_brush)
 
 
-class Arrow:
+class Arrow(QtWidgets.QGraphicsItemGroup):
 
-    def __init__(self, i, j, p1, p2, r, scale_factor, consistent, dislocation):
+    def __init__(self, *args, i=0, j=1, p1=(0, 0), p2=(1, 1), r=1, scale_factor=1, consistent=False, dislocation=False, chb=None):
+        super().__init__(*args)
 
         self.inconsistent_pen = GUI_settings.pen_inconsistent_edge
         self.dislocation_pen = GUI_settings.pen_dislocation_edge
         self.normal_pen = GUI_settings.pen_edge
+
+        self.chb = chb
+
+        self.consistent = consistent
+        self.dislocation = dislocation
+        self.scale_factor = scale_factor
+        self.r = r
+        self.p1 = p1
+        self.p2 = p2
         self.arrow = None, None
-        self.make_arrow_obj(p1, p2, r, scale_factor)
-        self.set_style(consistent, dislocation)
         self.i = i
         self.j = j
 
-    def set_style(self, consistent, dislocation):
+        self.make_arrow_obj()
+        self.set_style()
 
-        if not consistent:
-            self.arrow[0].setPen(self.inconsistent_pen)
-            self.arrow[1].setPen(self.inconsistent_pen)
-            self.arrow[1].show()
-        elif dislocation:
-            self.arrow[0].setPen(self.dislocation_pen)
-            self.arrow[1].setPen(self.dislocation_pen)
-            self.arrow[1].show()
+    def set_style(self):
+        if self.consistent and not self.dislocation:
+            self.childItems()[0].setPen(self.normal_pen)
+            self.childItems()[0].show()
+            self.childItems()[1].hide()
+        elif self.dislocation and self.consistent:
+            self.childItems()[0].setPen(self.dislocation_pen)
+            self.childItems()[0].show()
+            self.childItems()[1].setPen(self.dislocation_pen)
+            self.childItems()[1].show()
         else:
-            self.arrow[0].setPen(self.normal_pen)
-            self.arrow[1].setPen(self.normal_pen)
-            self.arrow[1].hide()
+            self.childItems()[0].setPen(self.inconsistent_pen)
+            self.childItems()[0].show()
+            self.childItems()[1].setPen(self.inconsistent_pen)
+            self.childItems()[1].show()
 
-    def make_arrow_obj(self, p1, p2, r, scale_factor):
+        if self.chb is not None:
+            if not self.chb.isChecked() and not self.consistent:
+                self.hide()
+            else:
+                self.show()
+        else:
+            self.show()
 
-        r_2 = QtCore.QPointF(scale_factor * p2[0], scale_factor * p2[1])
-        r_1 = QtCore.QPointF(scale_factor * p1[0], scale_factor * p1[1])
+    def make_arrow_obj(self):
+
+        r_2 = QtCore.QPointF(self.scale_factor * self.p2[0], self.scale_factor * self.p2[1])
+        r_1 = QtCore.QPointF(self.scale_factor * self.p1[0], self.scale_factor * self.p1[1])
 
         r_vec = r_2 - r_1
         r_mag = np.sqrt((r_2.x() - r_1.x()) ** 2 + (r_2.y() - r_1.y()) ** 2)
-        factor = r / (r_mag * 2)
+        factor = self.r / (r_mag * 2)
 
-        k_1 = r_1 + factor * r_vec
         k_2 = r_1 + (1 - factor) * r_vec
 
         theta = np.pi / 4
 
-        l_1 = factor * QtCore.QPointF(r_vec.x() * np.cos(theta) + r_vec.y() * np.sin(theta),
-                                      - r_vec.x() * np.sin(theta) + r_vec.y() * np.cos(theta))
-        l_1 = k_1 + l_1
-
-        l_2 = factor * QtCore.QPointF(r_vec.x() * np.cos(-theta) + r_vec.y() * np.sin(-theta),
-                                      - r_vec.x() * np.sin(-theta) + r_vec.y() * np.cos(-theta))
-        l_2 = k_1 + l_2
-
-        l_3 = - factor * QtCore.QPointF(r_vec.x() * np.cos(theta) + r_vec.y() * np.sin(theta),
-                                        - r_vec.x() * np.sin(theta) + r_vec.y() * np.cos(theta))
+        l_3 = - factor * QtCore.QPointF(r_vec.x() * np.cos(theta) + r_vec.y() * np.sin(theta), - r_vec.x() * np.sin(theta) + r_vec.y() * np.cos(theta))
         l_3 = k_2 + l_3
-
-        l_4 = - factor * QtCore.QPointF(r_vec.x() * np.cos(-theta) + r_vec.y() * np.sin(-theta),
-                                        - r_vec.x() * np.sin(-theta) + r_vec.y() * np.cos(-theta))
+        l_4 = - factor * QtCore.QPointF(r_vec.x() * np.cos(-theta) + r_vec.y() * np.sin(-theta), - r_vec.x() * np.sin(-theta) + r_vec.y() * np.cos(-theta))
         l_4 = k_2 + l_4
 
-        tri_1 = (k_1, l_1, l_2)
         tri_2 = (k_2, l_3, l_4)
 
-        poly_1 = QtGui.QPolygonF(tri_1)
         poly_2 = QtGui.QPolygonF(tri_2)
 
-        line = QtWidgets.QGraphicsLineItem(scale_factor * p1[0],
-                                           scale_factor * p1[1],
-                                           scale_factor * p2[0],
-                                           scale_factor * p2[1])
-        head_1 = QtWidgets.QGraphicsPolygonItem(poly_1)
+        line = QtWidgets.QGraphicsLineItem(self.scale_factor * self.p1[0],
+                                           self.scale_factor * self.p1[1],
+                                           self.scale_factor * self.p2[0],
+                                           self.scale_factor * self.p2[1])
         head_2 = QtWidgets.QGraphicsPolygonItem(poly_2)
 
-        line.setZValue(-1)
-        head_1.setZValue(-1)
-        head_2.setZValue(-1)
-
-        self.arrow = line, head_2
+        self.addToGroup(line)
+        self.addToGroup(head_2)
+        self.setZValue(-1)
 
 
 class ScaleBar(QtWidgets.QGraphicsItemGroup):
