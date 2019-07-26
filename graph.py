@@ -598,9 +598,13 @@ class AtomicGraph:
         :caption: Example
 
         >>> import graph
-        >>> my_vertex = graph.Vertex(3, 20.3, 39.0004, 5, 0.9, 0.87, [1, 1, 0, 1, 0, 1, 0])
+        >>> my_vertex = graph.Vertex(0, 20.3, 39.0004, 5, 0.9, 0.87, [1, 1, 0, 1, 0, 1, 0])
         >>> my_graph = graph.AtomicGraph()
-        >>>
+        >>> my_graph.add_vertex(my_vertex)
+        >>> print(my_graph)
+        Graph summary:----------
+            Number of vertices: 1
+            Chi: 0
 
     """
 
@@ -625,6 +629,16 @@ class AtomicGraph:
         self.avg_symmetry_confidence = 0.0
         self.avg_level_confidence = 0.0
         self.avg_central_variance = 0.0
+
+    def __str__(self):
+        self.summarize_stats()
+        string = 'Graph summary:----------\n'
+        string += '    Number of vertices: {}\n'.format(self.num_vertices)
+        string += '    Chi: {}'.format(self.chi)
+        return string
+
+    def __len__(self):
+        return len(self.vertices)
 
     def calc_avg_species_confidence(self):
         sum_ = 0

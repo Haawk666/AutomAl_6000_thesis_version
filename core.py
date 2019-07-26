@@ -543,11 +543,11 @@ class SuchSoftware:
         if num_found < n:
 
             indices, distances = self.find_nearest(i, n, weight=2 * weight)
-            logger.debug('        Did not find enough neighbours for vertex {}. increasing search area.'.format(i))
+            logger.debug('Did not find enough neighbours for vertex {}. increasing search area.'.format(i))
 
         else:
 
-            logger.debug('        Found {} total neighbours for vertex {}'.format(total_num, i))
+            logger.debug('Found {} total neighbours for vertex {}'.format(total_num, i))
 
             # Use built-in sort instead of this home-made shit:
             temp_indices = np.ndarray([n], dtype=np.int)
@@ -1110,6 +1110,8 @@ class SuchSoftware:
 
         """
 
+        logger.info('Summarizing stats...')
+
         self.graph.summarize_stats()
 
         self.avg_peak_gamma = 0
@@ -1209,7 +1211,7 @@ class SuchSoftware:
                     self.avg_zn_avg_gamma += self.graph.vertices[x].avg_gamma
                     if self.graph.vertices[x].is_in_precipitate:
                         self.num_precipitate_columns += 1
-                        self.num_precipitate_zn +=1
+                        self.num_precipitate_zn += 1
                         self.precipitate_number_percentage_zn += 1
                 elif self.graph.vertices[x].h_index == 3:
                     self.num_al += 1
@@ -1306,6 +1308,8 @@ class SuchSoftware:
                     self.precipitate_number_percentage_un / self.num_precipitate_columns
 
         self.build_stat_string()
+
+        logger.info('Collected stats.')
 
     def build_stat_string(self):
         """Build a string representation of current statistical summary and store it in self.stats_string.

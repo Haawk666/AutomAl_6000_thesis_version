@@ -25,9 +25,13 @@ the modular structure, but instead functions abstracted away for convenience and
 .. toctree::
     :caption: Modules
 
-    core
     graph
+    core
+    data_module
+    plotting_module
+    export_module
     utils
     mat_op
-    data_module
+    GUI
+
 
