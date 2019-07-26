@@ -16,6 +16,9 @@ logger.setLevel(logging.DEBUG)
 class Vertex:
     """A Vertex is a base building-block of a graph structure.
 
+        In addition to the initialization-parameters listed here, it also has a wide range of fields that are
+        manipulated by various other methods and algorithms. They can also be set manually, see the source code.
+
         :param index: A unique index which reflects its position in the vertex-list of a **Graph** object.
         :param x: The x-position of the atomic column that the vertex represents in coordinates relative to the HAADF-STEM image.
         :param y: The x-position of the atomic column that the vertex represents in coordinates relative to the HAADF-STEM image.
@@ -246,6 +249,14 @@ class Vertex:
         self.level_vector = [1/2, 1/2]
 
     def reset_symmetry_vector(self, bias=-1):
+        """Reset :code:`self.symmetry_vector`.
+
+        Will reset the *probability vector* :code:`self.symmetry_vector` to a uniform vector: [0.33, 0.33, 033]
+
+        :param bias: (Optional, default=-1) Introduce a slight bias for a certain symmetry, bias=-1 equals no bias.
+        :type bias: int
+
+        """
         self.symmetry_vector = [1.0, 1.0, 1.0]
 
         if not bias == -1:
@@ -390,6 +401,26 @@ class Vertex:
         return self.level
 
     def force_species(self, h_index):
+        """Force the species of the vertex by h_index -value.
+
+        Force the species of the vertex by h_index. The h-index relates to atomic species as:
+
+        ========    ================
+        h-index     Atomic species
+        ========    ================
+        0           Si
+        1           Cu
+        2           Zn
+        3           Al
+        4           Ag
+        5           Mg
+        6           Un
+        ========    ================
+
+        :param h_index: Species index
+        :type h_index: int
+
+        """
         self.h_index = h_index
         self.atomic_species = self.species_strings[h_index]
         self.confidence = 1.0
@@ -415,14 +446,32 @@ class Vertex:
         return anti_level
 
     def partners(self):
+        """Update and return a list of indices of the partners of the vertex.
+
+        :return: List of partner indices
+        :rtype: list(<int>)
+
+        """
         if not len(self.neighbour_indices) == 0:
             self.partner_indices = self.neighbour_indices[0:self.n()]
             return self.partner_indices
 
     def anti_partners(self):
+        """Return a list of indices, that are neighbours, but not partners to vertex.
+
+        :return: List of anti-partner indices
+        :rtype: list(<int>)
+
+        """
         return self.neighbour_indices[self.n():]
 
     def partner_query(self, j):
+        """Test if index j is among the partners of the vertex.
+
+        :return: True if j is a partner to :code:`self`, False otherwise.
+        :rtype: bool
+
+        """
         found = False
         for i in self.partners():
             if i == j:
@@ -461,6 +510,8 @@ class Vertex:
 
 
 class Edge:
+    """Edge objets where intended to represent connections, but in the end, it was better to just use the internal
+    mapping by the vertices. To be DEPRECATED"""
 
     def __init__(self, vertex_a, vertex_b, index):
 
@@ -535,6 +586,23 @@ class Edge:
 
 
 class AtomicGraph:
+    """An atomic graph is the central concept for the data-structure for AutoAtom.
+
+    An *AtomicGraph* holds a list of references to every vertex, and has mutator-functions to operate on their
+    relations.
+
+    :param map_size: (Optional, default=8). The number of possible atomic species to be considered. For now, only 8 specific species are supported.
+    :type map_size: int
+
+    .. code-block:: python
+        :caption: Example
+
+        >>> import graph
+        >>> my_vertex = graph.Vertex(3, 20.3, 39.0004, 5, 0.9, 0.87, [1, 1, 0, 1, 0, 1, 0])
+        >>> my_graph = graph.AtomicGraph()
+        >>>
+
+    """
 
     def __init__(self, map_size=8):
 
@@ -799,6 +867,9 @@ class AtomicGraph:
         logger.info('All flags reset!')
 
     def invert_levels(self):
+        """Switch the z-position of all vertices.
+
+        """
         for vertex in self.vertices:
             vertex.level = vertex.anti_level()
 
@@ -1089,9 +1160,21 @@ class AtomicGraph:
         return found
 
     def set_level(self, i, level):
+        """Set the z-height level of vertex *i* to *level*.
+
+        """
         self.vertices[i].level = level
 
     def calc_central_angle_variance(self, i):
+        """Calculate the variance of the central *theta*-angles of vertex *i*.
+
+        :param i: index of vertex
+        :type i: int
+
+        :return: 3-tuple consisting of list of partners sorted by rotation, list of angles and the variance, or tuple of None, None, None if graph is in a pre-spatial-map state.
+        :rtype: tuple(list(<int>), list(<float>), float)
+
+        """
 
         # Generator?
         partners = self.vertices[i].partners()
@@ -1113,20 +1196,22 @@ class AtomicGraph:
             return None, None, None
 
     def calc_avg_central_angle_variance(self):
+        """Calculate the average central *theta*-angle variance of the entire graph, exluding edge-columns.
 
+        :return: Average variance of *theta*-angles.
+        :rtype: float
+
+        """
         sum_ = 0
-
         for vertex in self.vertices:
             *_, var = self.calc_central_angle_variance(vertex.i)
-            if var is not None:
+            if var is not None and not vertex.is_edge_column:
                 sum_ += var
-
         if self.num_vertices == 0:
             variance = 0
         else:
             variance = sum_ / self.num_vertices
         self.avg_central_variance = variance
-
         return variance
 
 
