@@ -265,6 +265,12 @@ class Vertex:
         self.renorm_symmetry_vector()
 
     def reset_prob_vector(self, bias=-1):
+        """Reset the atomic species probabillity vector to a uniform distribution.
+
+        :param bias: (Optional, default=-1) Introduce a slight bias for a certain symmetry, bias=-1 equals no bias.
+        :type bias: int
+
+        """
         self.prob_vector = np.ones([self.num_selections], dtype=np.float64)
 
         if not bias == -1:
