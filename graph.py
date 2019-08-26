@@ -290,6 +290,9 @@ class Vertex:
         self.define_species()
 
     def collapse_prob_vector(self):
+        """Collapse the probability vector.
+
+        """
         self.define_species()
         self.prob_vector = self.collapsed_prob_vector
 
