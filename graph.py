@@ -292,11 +292,23 @@ class Vertex:
     def collapse_prob_vector(self):
         """Collapse the probability vector.
 
+        .. code-block:: python
+            :caption: Example
+
+            >>> import numpy as np
+            >>> my_vertex.prob_vector = np.array([0.2, 0.3, 0.0, 0.1, 0.0, 0.4, 0.0])
+            >>> my_vertex.collapse_prob_vector()
+            >>> my_vertex.prob_vector
+            array([0, 0, 0, 0, 0, 1, 0])
+
         """
         self.define_species()
         self.prob_vector = self.collapsed_prob_vector
 
     def multiply_symmetry(self):
+        """Temporary function.
+
+        """
         self.reset_prob_vector()
         self.prob_vector[0] *= self.symmetry_vector[0]
         self.prob_vector[1] *= self.symmetry_vector[0]
@@ -309,12 +321,21 @@ class Vertex:
         self.define_species()
 
     def renorm_level_vector(self):
+        """Re-normalize the level vector to sum to 1.
+
+        """
         self.level_vector = utils.normalize_list(self.level_vector)
 
     def renorm_symmetry_vector(self):
+        """Re-normalize the symmetry vector to sum to 1.
+
+        """
         self.symmetry_vector = utils.normalize_list(self.symmetry_vector)
 
     def renorm_prob_vector(self):
+        """Re-normalize the probability vector to sum to 1.
+
+        """
         for k in range(0, self.num_selections):
             self.prob_vector[k] *= self.alloy_mat[k]
         vector_sum = np.sum(self.prob_vector)
@@ -351,6 +372,10 @@ class Vertex:
         self.analyse_prob_vector_confidence()
 
     def analyse_prob_vector_confidence(self):
+        """Determine the confidence from the probability vector. The *confidence* is here defined as the difference
+        between the highest and next-highest probabilities.
+
+        """
 
         h_value = self.prob_vector.max()
         nh_value = 0.0
@@ -488,6 +513,20 @@ class Vertex:
         return found
 
     def perturb_j_k(self, j, k):
+        """Perturb the neighbour positions.
+
+        The neighbour with index *j*, will switch positions with the neighbour with index *k*. This change will also be
+        reflected in the partner indices. If neither *j* or *k* is found, the last position of the neighbour_indices
+        will be overwritten by *k*. If *j* is found, but not *k*, the last position of the neighbour_indices will be
+        overwritten by *k*, and then perturbed with *j*. If *k* is found, but not *j*, nothing will be done. In essence,
+        this is used to downgrade the importance of *j*, and upgrade *k*. It is not a symmetric function!
+
+        :param j: Index of neighbour to downgrade
+        :type j: int
+        :param k: Index of neighbour to upgrade
+        :type k: int
+
+        """
         pos_j = -1
         pos_k = -1
         for m, neighbour in enumerate(self.neighbour_indices):
