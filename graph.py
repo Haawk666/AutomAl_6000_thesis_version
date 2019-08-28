@@ -689,6 +689,12 @@ class AtomicGraph:
         return len(self.vertices)
 
     def calc_avg_species_confidence(self):
+        """Calculate the average species confidence of the graph.
+
+        :return: Average species confidence
+        :rtype: float
+
+        """
         sum_ = 0
         for vertex in self.vertices:
             vertex.analyse_prob_vector_confidence()
@@ -701,6 +707,12 @@ class AtomicGraph:
         return result
 
     def calc_avg_symmetry_confidence(self):
+        """Calculate average confidence based on symmetry vectors.
+
+        :return: Average symmetry confidence
+        :rtype: float
+
+        """
         sum_ = 0
         for vertex in self.vertices:
             vertex.analyse_symmetry_vector_confidence()
@@ -713,6 +725,12 @@ class AtomicGraph:
         return result
 
     def calc_avg_level_confidence(self):
+        """Calculate level confidence based on level vectors.
+
+        :return: Average level confidence
+        :rtype: float
+
+        """
         sum_ = 0
         for vertex in self.vertices:
             vertex.analyse_level_vector_confidence()
@@ -725,6 +743,9 @@ class AtomicGraph:
         return result
 
     def summarize_stats(self):
+        """Summarize some graph stats.
+
+        """
 
         self.num_vertices = len(self.vertices)
         self.num_popular = 0
@@ -741,6 +762,9 @@ class AtomicGraph:
         self.calc_avg_central_angle_variance()
 
     def add_vertex(self, vertex):
+        """Add a new vertex to the graph.
+
+        """
 
         self.vertices.append(vertex)
         self.vertex_indices.append(vertex.i)
@@ -752,6 +776,12 @@ class AtomicGraph:
         logger.debug('Added vertex with index {}'.format(vertex.i))
 
     def reset_vertex(self, i):
+        """Reset the properties of vertex *i*.
+
+        :param i: index of vertex to effect.
+        :type i: int
+
+        """
         self.vertices[i].level = 0
         self.vertices[i].reset_prob_vector(bias=self.vertices[i].num_selections - 1)
         self.vertices[i].is_in_precipitate = False
@@ -764,14 +794,23 @@ class AtomicGraph:
         raise NotImplemented
 
     def increase_h(self, i):
+        """Increase the species index by symmetry.
+
+        """
         changed = self.vertices[i].increase_h_value()
         return changed
 
     def decrease_h(self, i):
+        """Decrease the species index by symmetry.
+
+        """
         changed = self.vertices[i].decrease_h_value()
         return changed
 
     def add_edge(self, vertex_a, vertex_b, index):
+        """Add new edge to the graph.
+
+        """
         self.edges.append(Edge(vertex_a, vertex_b, index))
         self.num_edges += 1
 
