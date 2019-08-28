@@ -76,12 +76,39 @@ project instance that the GUI creates, is now in the 'initial' state, and can no
 Column stage
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-We now wish to locate the positions of columns in the image.
+We now wish to locate the positions of columns in the image. To do this, using built-in centre of mass approach, set the
+threshold value under **column detection** to something like 0,3 and hit *start*. This will produce a pop-up; select *t*
+from the drop-down menu and press okay. Column detection will now run for some time (1-10 mins depending on the size
+of the image). When it's complete, one should evaluate the result from the *atomic positions* tab. If there are too many
+columns detected, then the process should be reset with a higher threshold value. If however not all columns where
+detected, one should lower the threshold value, and press *start* again. This will continue from the current state, but
+will pick up progressively darker columns based on the threshold value. Continue this approach until the number of
+undetected columns are approachable by manual intervention. In the current version, you must select columns that are on
+the very edge, and press *enable move* and use those to cover columns in the precipitate.
+
+.. Note::
+
+    Columns on the very edge of the image will not be considered by the algorithms, so are in effect superfluous. Columns
+    to be removed can also be just be moved to the very edge.
+
+.. Note::
+
+    Some manual fiddling is almost always necessary. For a typical image one would expect to have to manually set 5-10
+    columns depending on properties of the image and precipitate. Additionally one might want to slightly adjust some
+    positions, especially columns surrounding Cu or other
+    bright columns. All this is due to the crudeness of the column detection. In the future other methods that are
+    available, like AtomMap might get integrated as an option for column detection.
+
+.. Note::
+
+    It is important to get a good result at this stage before proceeding to column characterization, since moving
+    columns after column characterization has been run, is not supported.
 
 Spatial map stage
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-We now want to gather information about spatial locality.
+We now want to gather information about spatial locality. Under the *column characterization* control group, select
+*start*. This produces a drop-down menu. Select *run spatial mapping* and press *ok*. This process take a few mins.
 
 Result stage
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
