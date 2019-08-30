@@ -108,13 +108,46 @@ Spatial map stage
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 We now want to gather information about spatial locality. Under the *column characterization* control group, select
-*start*. This produces a drop-down menu. Select *run spatial mapping* and press *ok*. This process take a few mins.
+*start*. This produces a drop-down menu. Select *run spatial mapping* and press *ok*. This process takes a few mins.
 
 Result stage
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
+To produce an atomic overlay, first set the correct alloy type under *Column characterization* -> *Alloy*. Next, select
+a column that is inside the Al-matrix, and manually set its species to Al. This will act as a kind of \'seed\' column.
+Then, while said column is still selected,
+hit *start* and select *full column characterization*. The algorithm might take anywhere between 1-15 mins, depending on
+several factors.
+
+.. Note::
+
+    If no pop-up dialog appears when hitting *start*, it is because no column is selected, or because no project is open.
+
+One can also selectively do the individual steps of the algorithm by selecting the appropriate step in the pop-up menu.
+This allows you to review the results at different stages, if for whatever reason. The appropriate succession is
+
+    #. Apply angle statistics.
+
+    #. Apply intensity statistics.
+
+    #. Run particle detection.
+
+    #. Set levels
+
+    #. Run experimental weak untangling
+
+    #. Run experimental strong untangling
+
+    #. Calculate globally normalized gamma levels
+
+These and other available sub-steps can also be useful in the manual sub-processing, see next section.
+
 Control stage
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+After the column characterization has run, manual consideration of the result is needed. There are several built-in
+tools to aid in this, of which the *atomic graph*, is the central component. See [Master thesis] for details on atomic
+graphs and how to interpret them, but here is the TL;DR:
 
 Generating plots
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
