@@ -614,6 +614,29 @@ class SuchSoftware:
     def column_characterization(self, starting_index, search_type=0):
         """Column characterization algorithm.
 
+        Assumes a *starting_index*, that is taken to be an Al column in the matrix. The *search_type* enables access to
+        the different sub-proccesses of the algorithm. These are
+
+        ===================     ==================================
+        :code:`search_type`     Process
+        ===================     ==================================
+        0
+        1
+        2
+        3
+        4
+        5
+        6
+        7
+        8
+        9
+        10
+        11
+        12
+        13
+        14
+        ===================     ==================================
+
         """
 
         sys.setrecursionlimit(10000)
