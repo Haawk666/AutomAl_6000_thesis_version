@@ -9,6 +9,7 @@ import compatibility
 import legacy_items
 import weak_untangling
 import strong_untangling
+import untangling
 # External imports:
 import numpy as np
 import dm3_lib as dm3
@@ -798,19 +799,9 @@ class SuchSoftware:
                         self.column_characterization(starting_index, search_type=14)
                         logger.info('Looking for type {}:'.format(type_num))
                         logger.info('Chi: {}'.format(chi_before))
-                        if type_num == 1:
-                            num_types, changes = weak_untangling.process_type_1(self.graph)
-                        elif type_num == 2:
-                            num_types, changes = weak_untangling.process_type_2(self.graph)
-                        elif type_num == 3:
-                            num_types, changes = weak_untangling.process_type_3(self.graph)
-                        elif type_num == 4:
-                            num_types, changes = weak_untangling.process_type_4(self.graph)
-                        elif type_num == 5:
-                            num_types, changes = weak_untangling.process_type_5(self.graph)
-                        else:
-                            changes = 0
-                            num_types = 0
+
+                        num_types, changes = untangling.untangle(self.graph, search_type, strong=False)
+
                         total_changes += changes
                         self.graph.redraw_edges()
                         chi_after = self.graph.chi
@@ -852,29 +843,26 @@ class SuchSoftware:
 
             while not static:
 
-                for type_num in range(1, 2):
+                for type_num in range(1, 6):
 
                     cont = True
                     counter = 0
                     while cont:
                         self.graph.redraw_edges()
                         chi_before = self.graph.chi
+                        self.column_characterization(starting_index, search_type=14)
                         logger.info('Looking for type {}:'.format(type_num))
                         logger.info('Chi: {}'.format(chi_before))
-                        if type_num == 1:
-                            num_types, changes = strong_untangling.process_type_1(self.graph)
-                        elif type_num == 2:
-                            num_types, changes = strong_untangling.process_type_2(self.graph)
-                        else:
-                            changes = 0
-                            num_types = 0
+
+                        num_types, changes = untangling.untangle(self.graph, search_type, strong=True)
+
                         total_changes += changes
                         self.graph.redraw_edges()
                         chi_after = self.graph.chi
-                        logger.info('Made {} changes'.format(type_num, changes))
+                        logger.info('Found {} type {}\'s, made {} changes'.format(num_types, type_num, changes))
                         logger.info('Chi: {}'.format(chi_before))
 
-                        if chi_after <= chi_before and counter > 0:
+                        if chi_after <= chi_before:
                             logger.info('repeating...')
                             counter += 1
                         else:

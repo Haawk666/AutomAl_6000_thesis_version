@@ -514,10 +514,13 @@ def find_type(graph_obj, search_type):
 
 
 def untangle(graph_obj, search_type, strong=False):
-    configs, classes = find_type(graph_obj, search_type)
-    if strong:
-        num_found, changes = strong_resolve(graph_obj, configs, classes, search_type)
+    if search_type in [1, 2, 3, 4, 5]:
+        configs, classes = find_type(graph_obj, search_type)
+        if strong:
+            num_found, changes = strong_resolve(graph_obj, configs, classes, search_type)
+        else:
+            num_found, changes = weak_resolve(graph_obj, configs, classes, search_type)
+        return num_found, changes
     else:
-        num_found, changes = weak_resolve(graph_obj, configs, classes, search_type)
-    return changes
+        return 0, 0
 
