@@ -527,25 +527,28 @@ class Vertex:
         :type k: int
 
         """
-        pos_j = -1
-        pos_k = -1
-        for m, neighbour in enumerate(self.neighbour_indices):
-            if neighbour == j:
-                pos_j = m
-            if neighbour == k:
-                pos_k = m
-        if not pos_j == -1 and not pos_k == -1:
-            self.neighbour_indices[pos_j], self.neighbour_indices[pos_k] =\
-                self.neighbour_indices[pos_k], self.neighbour_indices[pos_j]
-        elif pos_j == -1 and pos_k == -1:
-            self.neighbour_indices[-1] = k
+        if j == k:
+            pass
         else:
-            if pos_j == -1:
-                logger.warning('Was not able to perturb! index j not present!')
-            elif pos_k == -1:
+            pos_j = -1
+            pos_k = -1
+            for m, neighbour in enumerate(self.neighbour_indices):
+                if neighbour == j:
+                    pos_j = m
+                if neighbour == k:
+                    pos_k = m
+            if not pos_j == -1 and not pos_k == -1:
+                self.neighbour_indices[pos_j], self.neighbour_indices[pos_k] =\
+                    self.neighbour_indices[pos_k], self.neighbour_indices[pos_j]
+            elif pos_j == -1 and pos_k == -1:
                 self.neighbour_indices[-1] = k
-                self.neighbour_indices[pos_j], self.neighbour_indices[-1] = \
-                    self.neighbour_indices[-1], self.neighbour_indices[pos_j]
+            else:
+                if pos_j == -1:
+                    logger.warning('Was not able to perturb! index j not present!')
+                elif pos_k == -1:
+                    self.neighbour_indices[-1] = k
+                    self.neighbour_indices[pos_j], self.neighbour_indices[-1] = \
+                        self.neighbour_indices[-1], self.neighbour_indices[pos_j]
 
     def species(self):
         """Get a string representation of the vertex´ atomic species.
@@ -864,6 +867,15 @@ class AtomicGraph:
                 return False
         else:
             return True
+
+    def strong_enforce_edge(self, i, j):
+
+        k = self.vertices[j].anti_partners()[0]
+        self.vertices[j].perturb_j_k(k, i)
+        if self.increase_h(j):
+            return True
+        else:
+            return False
 
     def perturb_j_k(self, i, j, k):
 

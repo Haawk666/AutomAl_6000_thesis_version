@@ -33,54 +33,30 @@ def strong_resolve(graph_obj, configs, classes, search_type):
                 if graph_obj.strong_remove_edge(i, j):
                     changes += 1
             elif class_ == 'B_1':
-                if graph_obj.vertices[j].partner_query(b):
-                    graph_obj.perturb_j_k(j, b, i)
-                    changes += 1
-            elif class_ == 'B_2':
-                if graph_obj.vertices[j].partner_query(a):
-                    graph_obj.perturb_j_k(j, a, i)
-                    changes += 1
-            elif class_ == 'C_1':
-                if graph_obj.vertices[i].partner_query(j):
-                    graph_obj.perturb_j_k(i, j, a)
-                    changes += 1
-            elif class_ == 'C_2':
-                if graph_obj.vertices[i].partner_query(j):
-                    graph_obj.perturb_j_k(i, j, b)
-                    changes += 1
-            elif class_ == 'D_1':
-                if graph_obj.vertices[i].partner_query(j):
-                    graph_obj.perturb_j_k(i, j, a)
-                    changes += 1
-            elif class_ == 'D_2':
-                if graph_obj.vertices[i].partner_query(j):
-                    graph_obj.perturb_j_k(i, j, b)
-                    changes += 1
-            elif class_ == 'E_1' or class_ == 'E_2':
-                if graph_obj.vertices[i].partner_query(j):
-                    for partner in graph_obj.vertices[j].partners():
-                        if partner not in [i, j, a, b] and not graph_obj.vertices[partner].partner_query(j):
-                            graph_obj.perturb_j_k(j, partner, i)
-                            changes += 1
-                            break
-            elif class_ == 'F_1' or class_ == 'F_2':
                 pass
+            elif class_ == 'B_2':
+                pass
+            elif class_ == 'C_1':
+                pass
+            elif class_ == 'C_2':
+                pass
+            elif class_ == 'D_1':
+                pass
+            elif class_ == 'D_2':
+                pass
+            elif class_ == 'E_1' or class_ == 'E_2':
+                pass
+            elif class_ == 'F_1' or class_ == 'F_2':
+                if graph_obj.strong_remove_edge(i, j):
+                    changes += 1
             elif class_ == 'G_1':
-                if graph_obj.vertices[i].partner_query(j):
-                    graph_obj.perturb_j_k(j, b, i)
-                    changes += 1
+                pass
             elif class_ == 'G_2':
-                if graph_obj.vertices[i].partner_query(j):
-                    graph_obj.perturb_j_k(j, a, i)
-                    changes += 1
+                pass
             elif class_ == 'H_1':
-                if graph_obj.vertices[i].partner_query(j):
-                    graph_obj.perturb_j_k(i, j, a)
-                    changes += 1
+                pass
             elif class_ == 'H_2':
-                if graph_obj.vertices[i].partner_query(j):
-                    graph_obj.perturb_j_k(i, j, b)
-                    changes += 1
+                pass
 
         return len(classes), changes
 
@@ -141,6 +117,17 @@ def strong_resolve(graph_obj, configs, classes, search_type):
                 if graph_obj.vertices[i].partner_query(j):
                     graph_obj.perturb_j_k(i, j, a)
                     changes += 1
+
+        return len(classes), changes
+
+    elif search_type == 6:
+        for class_, config in zip(classes, configs):
+            i = config[0].vertex_indices[0]
+            j = config[0].vertex_indices[1]
+
+            if class_ == 'A_1' or class_ == 'B_1' or class_ == 'B_2' or class_ == 'C_1':
+                graph_obj.strong_enforce_edge(i, j)
+                changes += 1
 
         return len(classes), changes
 
@@ -430,6 +417,36 @@ def find_class(graph_obj, type_, config):
         else:
             return 'I'
 
+    elif type_ == 6:
+        i = config[0].vertex_indices[0]
+        j = config[0].vertex_indices[1]
+        a = config[0].vertex_indices[2]
+        b = config[0].vertex_indices[3]
+        c = config[1].vertex_indices[2]
+        d = config[1].vertex_indices[3]
+        s = [(j, a), (a, b), (b, i), (i, c), (c, d), (d, j)]
+        s_types = []
+
+        for f in range(0, 6):
+            if graph_obj.vertices[s[f][0]].partner_query(s[f][1]):
+                if graph_obj.vertices[s[f][1]].partner_query(s[f][0]):
+                    s_types.append(0)
+                else:
+                    s_types.append(1)
+            else:
+                s_types.append(2)
+
+        if s_types == [0, 0, 0, 0, 0, 0]:
+            return 'A_1'
+        elif s_types == [0, 0, 0, 0, 0, 1]:
+            return 'B_1'
+        elif s_types == [2, 0, 0, 0, 0, 0]:
+            return 'B_2'
+        elif s_types == [2, 0, 0, 0, 0, 1]:
+            return 'C_1'
+        else:
+            return 'I'
+
     else:
         return 'I'
 
@@ -507,6 +524,15 @@ def find_type(graph_obj, search_type):
                     else:
                         print('Class I encountered: {} {}'.format(vertex.i, partner))
 
+                elif search_type == 6 and mesh_1.num_corners == 4 and mesh_2.num_corners == 4:
+                    config = mesh_1, mesh_2
+                    class_ = find_class(graph_obj, 6, config)
+                    if not class_ == 'I':
+                        configs.append(config)
+                        classes.append(class_)
+                    else:
+                        print('Class I encountered: {} {}'.format(vertex.i, partner))
+
                 else:
                     print('Hitler!')
 
@@ -514,7 +540,7 @@ def find_type(graph_obj, search_type):
 
 
 def untangle(graph_obj, search_type, strong=False):
-    if search_type in [1, 2, 3, 4, 5]:
+    if search_type in [1, 2, 3, 4, 5, 6]:
         configs, classes = find_type(graph_obj, search_type)
         if strong:
             num_found, changes = strong_resolve(graph_obj, configs, classes, search_type)

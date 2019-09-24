@@ -800,7 +800,7 @@ class SuchSoftware:
                         logger.info('Looking for type {}:'.format(type_num))
                         logger.info('Chi: {}'.format(chi_before))
 
-                        num_types, changes = untangling.untangle(self.graph, search_type, strong=False)
+                        num_types, changes = untangling.untangle(self.graph, type_num, strong=False)
 
                         total_changes += changes
                         self.graph.redraw_edges()
@@ -843,7 +843,7 @@ class SuchSoftware:
 
             while not static:
 
-                for type_num in range(1, 6):
+                for type_num in range(1, 7):
 
                     cont = True
                     counter = 0
@@ -854,7 +854,7 @@ class SuchSoftware:
                         logger.info('Looking for type {}:'.format(type_num))
                         logger.info('Chi: {}'.format(chi_before))
 
-                        num_types, changes = untangling.untangle(self.graph, search_type, strong=True)
+                        num_types, changes = untangling.untangle(self.graph, type_num, strong=True)
 
                         total_changes += changes
                         self.graph.redraw_edges()
