@@ -1,10 +1,19 @@
-# Utilities script
-# -------------------------------------------
+
 """General utility/convenience functions"""
 
 import numpy as np
 import scipy.optimize as opt
 from copy import deepcopy
+
+
+def is_circularly_identical(list_1, list_2):
+    """Returns a boolean indicating whether list_1 and list_2 are the same in any cyclic perturbation of each other.
+
+    """
+    if not len(list_1) == len(list_2):
+        return False
+    else:
+        return ' '.join(map(str, list_2)) in ' '.join(map(str, list_1 * 2))
 
 
 def calc_surface_heigth(x, y, mean_min, mean_max, std_min, std_max):

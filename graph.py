@@ -665,6 +665,8 @@ class AtomicGraph:
         self.vertex_indices = []
         self.edges = []
         self.particle_boarder = []
+        self.meshes = []
+        self.mesh_indices = []
 
         self.map_size = map_size
 
@@ -690,6 +692,39 @@ class AtomicGraph:
 
     def __len__(self):
         return len(self.vertices)
+
+    def map_meshes(self, i):
+        """Automatically generate a connected relational map of all meshes in graph.
+
+        """
+
+        sub_graph_0 = self.get_atomic_configuration(i)
+        mesh_0 = sub_graph_0.meshes[0]
+        mesh_0.mesh_index = 0
+        self.meshes.append(mesh_0)
+        self.mesh_indices.append(0)
+
+        counter = 1
+
+
+    def find_mesh_neighbours(self, mesh):
+
+        for k, corners in enumerate(a.i for a in mesh.vertices):
+            neighbour_corners, *_ = self.find_mesh(corners, mesh.vertices[k - 1].i)
+
+
+
+    def mesh_is_counted(self, corners):
+
+        pass
+
+
+
+
+
+
+
+
 
     def calc_avg_species_confidence(self):
         """Calculate the average species confidence of the graph.
@@ -1527,13 +1562,15 @@ class SubGraph:
 
 class Mesh:
 
-    def __init__(self):
+    def __init__(self, mesh_index=0):
 
+        self.mesh_index = mesh_index
         self.vertices = []
         self.vertex_indices = []
         self.edges = []
         self.angles = []
         self.angle_vectors = []
+        self.surrounding_meshes = []
 
         self.is_enclosed = True
         self.is_consistent = True
@@ -1559,6 +1596,9 @@ class Mesh:
             string += '{} {}-{} '.format(index, end_left, end_right)
 
         return string
+
+    def __eq__(self, other):
+        return utils.is_circularly_identical(self.vertex_indices, other.vertex_indices)
 
     def test_consistency(self):
 

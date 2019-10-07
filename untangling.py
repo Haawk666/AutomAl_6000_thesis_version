@@ -550,3 +550,45 @@ def untangle(graph_obj, search_type, strong=False):
     else:
         return 0, 0
 
+
+def find_column_config(sub_graph, search_type):
+
+    s = []
+
+    for mesh in sub_graph.meshes:
+        if mesh.num_corners == 3:
+            s.append(1)
+        elif mesh.num_corners == 4:
+            s.append(2)
+        elif mesh.num_corners == 5:
+            s.append(3)
+        elif mesh.num_corners == 6:
+            s.append(4)
+        else:
+            s.append(5)
+
+    for mesh_id, mesh_type in enumerate(s):
+
+        if mesh_type == 1 and s[mesh_id - 1] == 1:
+            type_ = 1
+        elif mesh_type == 1 and s[mesh_id - 1] == 3:
+            type_ = 2
+        else:
+            type_ = 0
+
+    return type_
+
+
+def resolve_column_config(graph_obj, search_type):
+
+    pass
+
+
+def column_centered_untangling(graph_obj, search_type):
+
+    for i in graph_obj.vertex_indices:
+
+        sub_graph = graph_obj.get_atomic_configuration(i)
+
+        type_ = find_column_config(sub_graph, search_type)
+
