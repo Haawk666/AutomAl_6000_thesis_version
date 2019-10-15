@@ -665,6 +665,7 @@ class AtomicGraph:
         self.vertex_indices = []
         self.edges = []
         self.particle_boarder = []
+
         self.meshes = []
         self.mesh_indices = []
 
@@ -696,35 +697,48 @@ class AtomicGraph:
     def map_meshes(self, i):
         """Automatically generate a connected relational map of all meshes in graph.
 
+        The index of a mesh is temporarily indexed during the mapping by the following algorithm: Take the indices of
+        its corners, and circularly pertub them such that the lowest index comes first. After the mapping is complete,
+        these indices are replaced by the integers 0 to the number of meshes.
+
+        :param i: Index of starting vertex.
+        :type i: int
+
         """
 
         sub_graph_0 = self.get_atomic_configuration(i)
         mesh_0 = sub_graph_0.meshes[0]
-        mesh_0.mesh_index = 0
+        mesh_0.mesh_index = self.determine_temp_index(mesh_0)
+
         self.meshes.append(mesh_0)
-        self.mesh_indices.append(0)
+        self.mesh_indices.append(mesh_0.mesh_index)
 
-        counter = 1
+        self.walk_mesh_edges(mesh_0)
 
+        new_indices = [i for i in range(0, len(self.mesh_indices))]
 
-    def find_mesh_neighbours(self, mesh):
+        for k, mesh in enumerate(self.meshes):
+            for j, neighbour in enumerate(mesh.surrounding_meshes):
+                mesh.surrounding_meshes[j] = self.mesh_indices.index(neighbour)
+            mesh.mesh_index = self.mesh_indices.index(mesh.mesh_index)
 
-        for k, corners in enumerate(a.i for a in mesh.vertices):
-            neighbour_corners, *_ = self.find_mesh(corners, mesh.vertices[k - 1].i)
+        self.mesh_indices = new_indices
 
+    def walk_mesh_edges(self, mesh):
 
+        for k, corner in enumerate(vertex.i for vertex in mesh.vertices):
+            new_mesh = self.find_mesh(corner, mesh.vertices[k - 1].i, return_mesh=True)
+            tmp_index = self.determine_temp_index(new_mesh)
+            mesh.surrounding_meshes.append(tmp_index)
+            if tmp_index not in self.mesh_indices:
+                new_mesh.mesh_index = tmp_index
+                self.meshes.append(new_mesh)
+                self.mesh_indices.append(tmp_index)
+                self.walk_mesh_edges(new_mesh)
 
-    def mesh_is_counted(self, corners):
-
-        pass
-
-
-
-
-
-
-
-
+    @staticmethod
+    def determine_temp_index(mesh):
+        return utils.make_int_from_list(utils.cyclic_sort(mesh.vertex_indices))
 
     def calc_avg_species_confidence(self):
         """Calculate the average species confidence of the graph.
@@ -1047,7 +1061,7 @@ class AtomicGraph:
 
         return min_angle, next_index
 
-    def find_mesh(self, i, j, clockwise=True, strict=False):
+    def find_mesh(self, i, j, clockwise=True, strict=False, return_mesh=False):
 
         logger.debug('Finding mesh from {} -> {}'.format(i, j))
 
@@ -1112,7 +1126,16 @@ class AtomicGraph:
             angles.append(angle)
             vectors.append(vector)
 
-        return corners, angles, vectors
+        if return_mesh:
+            mesh = Mesh()
+            for k, corner in enumerate(corners):
+                mesh.add_vertex(self.vertices[corner])
+                mesh.angles.append(angles[k])
+                mesh.angle_vectors.append(vectors[k])
+            mesh.redraw_edges()
+            return mesh
+        else:
+            return corners, angles, vectors
 
     @staticmethod
     def rebase(corners, next_, j, append=True):

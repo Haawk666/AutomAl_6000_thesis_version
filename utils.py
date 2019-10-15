@@ -6,6 +6,39 @@ import scipy.optimize as opt
 from copy import deepcopy
 
 
+def make_int_from_list(list_):
+    """Concatenate the menbers of a list of integers into a integer."""
+    return int('0'.join([str(i) for i in list_]))
+
+
+def cyclic_sort(list_):
+    """Find the lowest member of list and perform cyclic permuting so that the lowest member is first.
+
+    Assumes unique members.
+
+    """
+
+    min_ = min(list_)
+    min_index = -1
+    for k, item in enumerate(list_):
+        if item == min_:
+            min_index = k
+            break
+
+    if min_index == -1:
+        print('Error')
+        return list_
+    elif min_index == 0:
+        return list_
+    else:
+        tmp_lst = []
+        for j in range(min_index, len(list_)):
+            tmp_lst.append(list_(j))
+        for j in range(0, min_index):
+            tmp_lst.append(list_(j))
+        return tmp_lst
+
+
 def is_circularly_identical(list_1, list_2):
     """Returns a boolean indicating whether list_1 and list_2 are the same in any cyclic perturbation of each other.
 
