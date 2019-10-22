@@ -531,7 +531,7 @@ class SuchSoftware:
 
                     if self.column_centre_mat[y, x, 0] == 1:
                         j = self.column_centre_mat[y, x, 1]
-                        dist = self.graph.spatial_distance(i, j)
+                        dist = self.graph.projected_distance(i, j)
                         if num_found >= n:
                             if dist < distances.max():
                                 ind = distances.argmax()

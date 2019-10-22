@@ -125,7 +125,8 @@ def strong_resolve(graph_obj, configs, classes, search_type):
             i = config[0].vertex_indices[0]
             j = config[0].vertex_indices[1]
 
-            if class_ == 'A_1' or class_ == 'B_1' or class_ == 'B_2' or class_ == 'C_1':
+            if class_ == 'A_1' or class_ == 'B_1' or class_ == 'B_2' or class_ == 'C_1' or class_ == 'D_1' or \
+                    class_ == 'D_2' or class_ == 'E_1':
                 graph_obj.strong_enforce_edge(i, j)
                 changes += 1
 
@@ -199,6 +200,9 @@ def weak_resolve(graph_obj, configs, classes, search_type):
                 if graph_obj.vertices[i].partner_query(j):
                     graph_obj.perturb_j_k(i, j, b)
                     changes += 1
+            elif class_ == 'I_1':
+                graph_obj.perturb_j_k(i, j, b)
+                changes += 1
 
         return len(classes), changes
 
@@ -316,8 +320,10 @@ def find_class(graph_obj, type_, config):
             return 'H_1'
         elif s_types == [0, 0, 2, 1]:
             return 'H_2'
+        elif s_types == [0, 1, 2, 0]:
+            return 'I_1'
         else:
-            return 'I'
+            return 'J'
 
     elif type_ == 2:
         i = config[0].vertex_indices[0]
@@ -342,7 +348,7 @@ def find_class(graph_obj, type_, config):
         elif s_types == [0, 1, 0, 0, 0]:
             return 'B_1'
         else:
-            return 'I'
+            return 'J'
 
     elif type_ == 3:
         i = config[0].vertex_indices[0]
@@ -367,7 +373,7 @@ def find_class(graph_obj, type_, config):
         elif s_types == [0, 0, 0, 2, 0]:
             return 'B_1'
         else:
-            return 'I'
+            return 'J'
 
     elif type_ == 4:
         i = config[0].vertex_indices[0]
@@ -391,7 +397,7 @@ def find_class(graph_obj, type_, config):
         if s_types == [0, 0, 0, 0, 0, 0]:
             return 'A_1'
         else:
-            return 'I'
+            return 'J'
 
     elif type_ == 5:
         i = config[0].vertex_indices[0]
@@ -415,7 +421,7 @@ def find_class(graph_obj, type_, config):
         if s_types == [0, 0, 0, 0, 0, 0]:
             return 'A_1'
         else:
-            return 'I'
+            return 'J'
 
     elif type_ == 6:
         i = config[0].vertex_indices[0]
@@ -444,11 +450,17 @@ def find_class(graph_obj, type_, config):
             return 'B_2'
         elif s_types == [2, 0, 0, 0, 0, 1]:
             return 'C_1'
+        elif s_types == [0, 0, 0, 2, 0, 0]:
+            return 'D_1'
+        elif s_types == [0, 0, 1, 0, 0, 0]:
+            return 'D_2'
+        elif s_types == [0, 0, 1, 2, 0, 0]:
+            return 'E_1'
         else:
-            return 'I'
+            return 'J'
 
     else:
-        return 'I'
+        return 'J'
 
 
 def find_type(graph_obj, search_type):
@@ -482,59 +494,56 @@ def find_type(graph_obj, search_type):
                 if search_type == 1 and mesh_1.num_corners == 3 and mesh_2.num_corners == 3:
                     config = mesh_1, mesh_2
                     class_ = find_class(graph_obj, 1, config)
-                    if not class_ == 'I':
+                    if not class_ == 'J':
                         configs.append(config)
                         classes.append(class_)
                     else:
-                        print('Class I encountered: {} {}'.format(vertex.i, partner))
+                        print('Class J encountered: {} {}'.format(vertex.i, partner))
 
                 elif search_type == 2 and mesh_1.num_corners == 4 and mesh_2.num_corners == 3:
                     config = mesh_1, mesh_2
                     class_ = find_class(graph_obj, 2, config)
-                    if not class_ == 'I':
+                    if not class_ == 'J':
                         configs.append(config)
                         classes.append(class_)
                     else:
-                        print('Class I encountered: {} {}'.format(vertex.i, partner))
+                        print('Class J encountered: {} {}'.format(vertex.i, partner))
 
                 elif search_type == 3 and mesh_1.num_corners == 3 and mesh_2.num_corners == 4:
                     config = mesh_1, mesh_2
                     class_ = find_class(graph_obj, 3, config)
-                    if not class_ == 'I':
+                    if not class_ == 'J':
                         configs.append(config)
                         classes.append(class_)
                     else:
-                        print('Class I encountered: {} {}'.format(vertex.i, partner))
+                        print('Class J encountered: {} {}'.format(vertex.i, partner))
 
                 elif search_type == 4 and mesh_1.num_corners == 3 and mesh_2.num_corners == 5:
                     config = mesh_1, mesh_2
                     class_ = find_class(graph_obj, 4, config)
-                    if not class_ == 'I':
+                    if not class_ == 'J':
                         configs.append(config)
                         classes.append(class_)
                     else:
-                        print('Class I encountered: {} {}'.format(vertex.i, partner))
+                        print('Class J encountered: {} {}'.format(vertex.i, partner))
 
                 elif search_type == 5 and mesh_1.num_corners == 5 and mesh_2.num_corners == 3:
                     config = mesh_1, mesh_2
                     class_ = find_class(graph_obj, 5, config)
-                    if not class_ == 'I':
+                    if not class_ == 'J':
                         configs.append(config)
                         classes.append(class_)
                     else:
-                        print('Class I encountered: {} {}'.format(vertex.i, partner))
+                        print('Class J encountered: {} {}'.format(vertex.i, partner))
 
                 elif search_type == 6 and mesh_1.num_corners == 4 and mesh_2.num_corners == 4:
                     config = mesh_1, mesh_2
                     class_ = find_class(graph_obj, 6, config)
-                    if not class_ == 'I':
+                    if not class_ == 'J':
                         configs.append(config)
                         classes.append(class_)
                     else:
-                        print('Class I encountered: {} {}'.format(vertex.i, partner))
-
-                else:
-                    print('Hitler!')
+                        print('Class J encountered: {} {}'.format(vertex.i, partner))
 
     return configs, classes
 

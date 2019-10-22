@@ -51,7 +51,7 @@ def sort_boarder(graph):
 
         for x in range(0, graph.particle_boarder.shape[0]):
 
-            current_distance = graph.spatial_distance(graph.particle_boarder[x], temp_boarder[index])
+            current_distance = graph.projected_distance(graph.particle_boarder[x], temp_boarder[index])
 
             if current_distance < distance and not temp_boarder[index] == graph.particle_boarder[x] and not selected[x]:
                 distance = current_distance
