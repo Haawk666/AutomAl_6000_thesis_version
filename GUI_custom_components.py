@@ -304,6 +304,30 @@ class Legend(QtWidgets.QGraphicsItemGroup):
         super().__init__(*args)
 
 
+class MeshDetail(QtWidgets.QGraphicsItemGroup):
+
+    def __init__(self, *args, mesh=None):
+        super().__init__(*args)
+        self.mesh = mesh
+        if self.mesh is not None:
+            self.make()
+
+    def make(self):
+        text = QtWidgets.QGraphicsSimpleTextItem()
+        text.setText('{}'.format(self.mesh.num_corners))
+        text.setFont(GUI_settings.font_mesh_details)
+        text.setPen(GUI_settings.pen_boarder)
+        text.setBrush(GUI_settings.brush_black)
+        rect = text.boundingRect()
+        text.setX(2 * self.mesh.cm[0] - rect.width() / 2)
+        text.setY(2 * self.mesh.cm[1] - rect.height() / 2)
+
+        self.addToGroup(text)
+
+        self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, False)
+        self.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable, False)
+
+
 class Overlay(QtWidgets.QWidget):
 
     def __init__(self, parent=None):

@@ -26,6 +26,7 @@ font_tiny = QtGui.QFont()
 font_tiny.setPixelSize(9)
 
 font_scalebar = QtGui.QFont('Helvetica [Cronyx]', 22)
+font_mesh_details = QtGui.QFont('Helvetica [Cronyx]', 12)
 
 pen_scalebar = QtGui.QPen(QtCore.Qt.white)
 pen_scalebar.setWidth(12)

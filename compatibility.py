@@ -58,6 +58,8 @@ def convert(obj, old_version, version):
             vertex.normalized_peak_gamma = vertex.peak_gamma
             vertex.normalized_avg_gamma = vertex.avg_gamma
         obj.graph.avg_central_variance = 0.0
+        obj.graph.meshes = []
+        obj.graph.mesh_indices = []
         fresh_obj = obj
 
     elif old_version == [0, 0, 1]:
@@ -84,6 +86,8 @@ def convert(obj, old_version, version):
             vertex.normalized_peak_gamma = vertex.peak_gamma
             vertex.normalized_avg_gamma = vertex.avg_gamma
         obj.graph.avg_central_variance = 0.0
+        obj.graph.meshes = []
+        obj.graph.mesh_indices = []
         fresh_obj = obj
 
     elif old_version == [0, 0, 2]:
@@ -100,6 +104,8 @@ def convert(obj, old_version, version):
             vertex.normalized_peak_gamma = vertex.peak_gamma
             vertex.normalized_avg_gamma = vertex.avg_gamma
         obj.graph.avg_central_variance = 0.0
+        obj.graph.meshes = []
+        obj.graph.mesh_indices = []
         fresh_obj = obj
 
     elif old_version == [0, 0, 3]:
@@ -110,6 +116,8 @@ def convert(obj, old_version, version):
             vertex.normalized_peak_gamma = vertex.peak_gamma
             vertex.normalized_avg_gamma = vertex.avg_gamma
         obj.graph.avg_central_variance = 0.0
+        obj.graph.meshes = []
+        obj.graph.mesh_indices = []
         fresh_obj = obj
 
     elif old_version == [0, 0, 4]:
@@ -118,12 +126,21 @@ def convert(obj, old_version, version):
             vertex.spatial_coor_y = obj.scale * vertex.real_coor_y
             vertex.normalized_peak_gamma = vertex.peak_gamma
             vertex.normalized_avg_gamma = vertex.avg_gamma
+        obj.graph.meshes = []
+        obj.graph.mesh_indices = []
         fresh_obj = obj
 
     elif old_version == [0, 0, 5]:
         for vertex in obj.graph.vertices:
             vertex.normalized_peak_gamma = vertex.peak_gamma
             vertex.normalized_avg_gamma = vertex.avg_gamma
+        obj.graph.meshes = []
+        obj.graph.mesh_indices = []
+        fresh_obj = obj
+
+    elif old_version == [0, 0, 6]:
+        obj.graph.meshes = []
+        obj.graph.mesh_indices = []
         fresh_obj = obj
 
     else:

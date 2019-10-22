@@ -877,6 +877,22 @@ class MainUI(QtWidgets.QMainWindow):
                         self.gv_atomic_sub_graph.setScene(self.gs_atomic_sub_graph)
                         self.tabs.setCurrentIndex(4)
 
+    def btn_refresh_mesh_trigger(self):
+        if self.project_instance is not None and \
+                self.project_instance.num_columns > 0 and \
+                len(self.project_instance.graph.vertices[0].neighbour_indices) > 0:
+            logger.info('Mapping meshes...')
+            self.sys_message('Working...')
+            if self.project_instance.starting_index is not None:
+                self.project_instance.graph.map_meshes(self.project_instance.starting_index)
+            elif not self.selected_column == -1:
+                self.project_instance.graph.map_meshes(self.selected_column)
+            else:
+                self.project_instance.graph.map_meshes(np.floor(self.project_instance.num_columns / 2))
+            logger.info('Mehses mapped. Updating graphics')
+            self.gs_atomic_graph.re_draw_mesh_details()
+            self.sys_message('Ready.')
+
     def btn_deselect_trigger(self):
         self.column_selected(-1)
 
@@ -1015,6 +1031,12 @@ class MainUI(QtWidgets.QMainWindow):
         if self.project_instance is not None:
             self.sys_message('Working...')
             self.gs_atomic_graph.re_draw_edges()
+            self.sys_message('Ready.')
+
+    def chb_toggle_mesh_trigger(self):
+        if self.project_instance is not None:
+            self.sys_message('Working...')
+            self.gs_atomic_graph.re_draw_mesh_details()
             self.sys_message('Ready.')
 
     def chb_show_level_0_trigger(self, state):

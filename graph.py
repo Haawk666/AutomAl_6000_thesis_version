@@ -8,6 +8,7 @@ import utils
 import numpy as np
 import copy
 import logging
+import sys
 # Instantiate logger:
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -709,10 +710,12 @@ class AtomicGraph:
         sub_graph_0 = self.get_atomic_configuration(i)
         mesh_0 = sub_graph_0.meshes[0]
         mesh_0.mesh_index = self.determine_temp_index(mesh_0)
+        mesh_0.calc_cm()
 
         self.meshes.append(mesh_0)
         self.mesh_indices.append(mesh_0.mesh_index)
 
+        sys.setrecursionlimit(5000)
         self.walk_mesh_edges(mesh_0)
 
         new_indices = [i for i in range(0, len(self.mesh_indices))]
@@ -728,13 +731,19 @@ class AtomicGraph:
 
         for k, corner in enumerate(vertex.i for vertex in mesh.vertices):
             new_mesh = self.find_mesh(corner, mesh.vertices[k - 1].i, return_mesh=True)
-            tmp_index = self.determine_temp_index(new_mesh)
-            mesh.surrounding_meshes.append(tmp_index)
-            if tmp_index not in self.mesh_indices:
-                new_mesh.mesh_index = tmp_index
-                self.meshes.append(new_mesh)
-                self.mesh_indices.append(tmp_index)
-                self.walk_mesh_edges(new_mesh)
+            has_edge_columns = False
+            for vertex in new_mesh.vertices:
+                if vertex.is_edge_column:
+                    has_edge_columns = True
+            if not has_edge_columns:
+                tmp_index = self.determine_temp_index(new_mesh)
+                mesh.surrounding_meshes.append(tmp_index)
+                if tmp_index not in self.mesh_indices:
+                    new_mesh.mesh_index = tmp_index
+                    new_mesh.calc_cm()
+                    self.meshes.append(new_mesh)
+                    self.mesh_indices.append(tmp_index)
+                    self.walk_mesh_edges(new_mesh)
 
     @staticmethod
     def determine_temp_index(mesh):
@@ -1599,6 +1608,7 @@ class Mesh:
         self.is_consistent = True
         self.num_corners = 0
         self.num_edges = 0
+        self.cm = (0, 0)
 
     def __str__(self):
 
@@ -1622,6 +1632,17 @@ class Mesh:
 
     def __eq__(self, other):
         return utils.is_circularly_identical(self.vertex_indices, other.vertex_indices)
+
+    def calc_cm(self):
+        x_fit = 0
+        y_fit = 0
+        mass = len(self.vertices)
+        for corner in self.vertices:
+            x_fit += corner.real_coor_x
+            y_fit += corner.real_coor_y
+        x_fit = x_fit / mass
+        y_fit = y_fit / mass
+        self.cm = (x_fit, y_fit)
 
     def test_consistency(self):
 

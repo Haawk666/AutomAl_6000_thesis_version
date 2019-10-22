@@ -99,7 +99,7 @@ class SuchSoftware:
     """
 
     # Version
-    version = [0, 0, 6]
+    version = [0, 0, 7]
 
     # Number of elements in the probability vectors
     num_selections = 7

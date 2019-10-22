@@ -33,9 +33,9 @@ def cyclic_sort(list_):
     else:
         tmp_lst = []
         for j in range(min_index, len(list_)):
-            tmp_lst.append(list_(j))
+            tmp_lst.append(list_[j])
         for j in range(0, min_index):
-            tmp_lst.append(list_(j))
+            tmp_lst.append(list_[j])
         return tmp_lst
 
 

@@ -144,6 +144,7 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
         self.scale_factor = scale_factor
         self.interactive_vertex_objects = []
         self.edges = []
+        self.mesh_details = []
         self.background_image = background
         if self.background_image is not None:
             self.addPixmap(self.background_image)
@@ -189,6 +190,7 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
         if self.ui_obj.project_instance is not None:
             self.re_draw_edges()
             self.re_draw_vertices()
+            self.re_draw_mesh_details()
 
     def re_draw_vertices(self):
         """Redraws all column elements."""
@@ -223,6 +225,21 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
                 if n >= vertex_a.n():
                     inner_edges[-1].hide()
             self.edges.append(inner_edges)
+
+    def re_draw_mesh_details(self):
+        """Redraws all mesh details"""
+        for mesh_detail in self.mesh_details:
+            self.removeItem(mesh_detail)
+        self.mesh_details = []
+
+        for mesh in self.ui_obj.project_instance.graph.meshes:
+            detail = GUI_custom_components.MeshDetail(mesh=mesh)
+            self.addItem(detail)
+            self.mesh_details.append(detail)
+            if self.ui_obj.control_window.chb_toggle_mesh.isChecked():
+                detail.show()
+            else:
+                detail.hide()
 
     def redraw_star(self, i):
         for edge_item in self.edges[i]:
@@ -614,6 +631,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_perturb_mode = QtWidgets.QCheckBox('Enable perturb mode')
         self.chb_enable_ruler = QtWidgets.QCheckBox('Enable ruler')
         self.chb_graph = QtWidgets.QCheckBox('Show inconsistent connections')
+        self.chb_toggle_mesh = QtWidgets.QCheckBox('Show mesh details')
 
         self.chb_show_level_0 = QtWidgets.QCheckBox('Show level 0 plane')
         self.chb_show_level_1 = QtWidgets.QCheckBox('Show level 1 plane')
@@ -677,6 +695,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_perturb_mode.setChecked(False)
         self.chb_enable_ruler.setChecked(False)
         self.chb_graph.setChecked(True)
+        self.chb_toggle_mesh.setChecked(False)
 
         self.chb_show_level_0.setChecked(True)
         self.chb_show_level_1.setChecked(True)
@@ -710,6 +729,7 @@ class ControlWindow(QtWidgets.QWidget):
 
         self.chb_perturb_mode.toggled.connect(self.ui_obj.chb_set_perturb_mode_trigger)
         self.chb_graph.toggled.connect(self.ui_obj.chb_graph_detail_trigger)
+        self.chb_toggle_mesh.toggled.connect(self.ui_obj.chb_toggle_mesh_trigger)
 
         self.chb_show_level_0.toggled.connect(self.ui_obj.chb_show_level_0_trigger)
         self.chb_show_level_1.toggled.connect(self.ui_obj.chb_show_level_1_trigger)
@@ -769,6 +789,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_invert_lvl_alg_2 = GUI_custom_components.SmallButton('Invert lvl', self, trigger_func=self.ui_obj.btn_invert_levels_trigger)
         self.btn_delete = GUI_custom_components.SmallButton('Delete', self, trigger_func=self.ui_obj.btn_delete_trigger)
         self.btn_sub = GUI_custom_components.MediumButton('Sub-graph', self, trigger_func=self.ui_obj.btn_gen_sub_graph)
+        self.btn_refresh_mesh = GUI_custom_components.MediumButton('Refresh mesh', self, trigger_func=self.ui_obj.btn_refresh_mesh_trigger)
         self.btn_deselect = GUI_custom_components.SmallButton('Deselect', self, trigger_func=self.ui_obj.btn_deselect_trigger)
         self.btn_new = GUI_custom_components.SmallButton('New', self, trigger_func=self.ui_obj.btn_new_column_trigger)
         self.btn_set_style = GUI_custom_components.MediumButton('Set overlay style', self, trigger_func=self.ui_obj.btn_set_style_trigger)
@@ -820,6 +841,7 @@ class ControlWindow(QtWidgets.QWidget):
         btn_graph_btns_layout = QtWidgets.QHBoxLayout()
         btn_graph_btns_layout.addWidget(self.btn_print_distances)
         btn_graph_btns_layout.addWidget(self.btn_sub)
+        btn_graph_btns_layout.addWidget(self.btn_refresh_mesh)
         btn_graph_btns_layout.addStretch()
 
         btn_anti_graph_layout = QtWidgets.QHBoxLayout()
@@ -900,6 +922,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.graph_box_layout.addWidget(self.chb_perturb_mode)
         self.graph_box_layout.addWidget(self.chb_enable_ruler)
         self.graph_box_layout.addWidget(self.chb_graph)
+        self.graph_box_layout.addWidget(self.chb_toggle_mesh)
         self.graph_box_layout.addWidget(self.lbl_chi)
         self.graph_box_layout.addWidget(self.lbl_avg_species_confidence)
         self.graph_box_layout.addWidget(self.lbl_avg_symmetry_confidence)
@@ -976,6 +999,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_list.append(self.btn_invert_lvl_alg_2)
         self.btn_list.append(self.btn_delete)
         self.btn_list.append(self.btn_sub)
+        self.btn_list.append(self.btn_refresh_mesh)
         self.btn_list.append(self.btn_deselect)
         self.btn_list.append(self.btn_new)
         self.btn_list.append(self.btn_set_style)
@@ -993,6 +1017,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_list.append(self.chb_perturb_mode)
         self.chb_list.append(self.chb_enable_ruler)
         self.chb_list.append(self.chb_graph)
+        self.chb_list.append(self.chb_toggle_mesh)
         self.chb_list.append(self.chb_show_level_0)
         self.chb_list.append(self.chb_show_level_1)
         self.chb_list.append(self.chb_raw_image)

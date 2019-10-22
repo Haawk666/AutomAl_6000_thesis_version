@@ -37,6 +37,7 @@ btn_reset_alg_2 = 'Restart column characterization'
 btn_invert_lvl_alg_2 = 'Invert all z-heights'
 btn_delete = 'Not implemented'
 btn_sub = 'Generate 1. order sub-graph seeded on the currently selected column'
+btn_refresh_mesh = 'Update internal mesh information and graphical representations'
 btn_deselect = 'Deselect any columns'
 btn_new = 'Not implemented'
 btn_set_style = 'Not implemented'
@@ -59,6 +60,7 @@ chb_perturb_mode = 'Initiate perturbation mode. Selecting three different column
 chb_enable_ruler = 'When enabled, the distance between successively selected columns will be displayed in the\n' \
                    'terminal window.'
 chb_graph = 'Toggle edges that are not reciprocated'
+chb_toggle_mesh = 'Toggle mesh details'
 chb_show_level_0 = 'Toggle the 0 -plane.'
 chb_show_level_1 = 'Toggle the 1/2 -plane.'
 chb_raw_image = 'Toggle the raw image in the background'
@@ -128,6 +130,7 @@ control_window_chb_list = [chb_toggle_positions,
                            chb_perturb_mode,
                            chb_enable_ruler,
                            chb_graph,
+                           chb_toggle_mesh,
                            chb_show_level_0,
                            chb_show_level_1,
                            chb_raw_image,
