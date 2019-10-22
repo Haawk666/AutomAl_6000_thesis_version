@@ -325,7 +325,11 @@ class MeshDetail(QtWidgets.QGraphicsItemGroup):
         self.addToGroup(text)
 
         self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, False)
-        self.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable, False)
+        self.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable, True)
+
+    def mouseReleaseEvent(self, event: 'QtWidgets.QGraphicsItemGroup.mouseReleaseEvent'):
+        print('{}'.format(self.mesh.mesh_index))
+        # super().__init__()
 
 
 class Overlay(QtWidgets.QWidget):

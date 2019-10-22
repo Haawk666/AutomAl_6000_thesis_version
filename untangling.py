@@ -592,3 +592,125 @@ def column_centered_untangling(graph_obj, search_type):
 
         type_ = find_column_config(sub_graph, search_type)
 
+
+def mesh_analysis(graph_obj):
+
+    interesting_meshes = []
+    mesh_categories = []
+
+    for mesh in graph_obj.meshes:
+        s = []
+        s.append(mesh.num_corners)
+        for neighbour_index in mesh.surrounding_meshes:
+            s.append(graph_obj.meshes[neighbour_index].num_corners)
+        if s == [4, 3, 4, 3, 4] or s == [4, 4, 3, 4, 3]:
+            interesting_meshes.append(mesh)
+            mesh_categories.append(1)
+        elif s == [5, 4, 4, 4, 4, 3] or \
+                s == [5, 4, 4, 4, 3, 4] or \
+                s == [5, 4, 4, 3, 4, 4] or \
+                s == [5, 4, 3, 4, 4, 4] or \
+                s == [5, 3, 4, 4, 4, 4]:
+            interesting_meshes.append(mesh)
+            mesh_categories.append(2)
+
+    num_changes = resolve_mesh_configs(graph_obj, interesting_meshes, mesh_categories)
+    return num_changes
+
+
+def resolve_mesh_configs(graph_obj, interesting_meshes, mesh_categories):
+
+    changes_made = 0
+
+    for mesh, mesh_category in zip(interesting_meshes, mesh_categories):
+        if mesh_category == 1:
+            distance_1 = graph_obj.projected_distance(mesh.vertex_indices[0], mesh.vertex_indices[2])
+            distance_2 = graph_obj.projected_distance(mesh.vertex_indices[1], mesh.vertex_indices[3])
+            if distance_1 < distance_2:
+                if graph_obj.meshes[mesh.surrounding_meshes[0]].num_corners == 4:
+                    a = mesh.vertex_indices[0]
+                    b = mesh.vertex_indices[1]
+                    c = mesh.vertex_indices[2]
+                    d = mesh.vertex_indices[3]
+                else:
+                    a = mesh.vertex_indices[0]
+                    b = mesh.vertex_indices[3]
+                    c = mesh.vertex_indices[2]
+                    d = mesh.vertex_indices[1]
+            else:
+                if graph_obj.meshes[mesh.surrounding_meshes[0]].num_corners == 4:
+                    a = mesh.vertex_indices[3]
+                    b = mesh.vertex_indices[2]
+                    c = mesh.vertex_indices[1]
+                    d = mesh.vertex_indices[0]
+                else:
+                    a = mesh.vertex_indices[3]
+                    b = mesh.vertex_indices[0]
+                    c = mesh.vertex_indices[1]
+                    d = mesh.vertex_indices[2]
+            if a in graph_obj.vertices[b].partners():
+                graph_obj.perturb_j_to_last_partner(b, a)
+                graph_obj.decrease_h(b)
+            if b in graph_obj.vertices[a].partners():
+                graph_obj.perturb_j_k(a, b, c)
+            else:
+                graph_obj.perturb_j_to_first_antipartner(a, c)
+                graph_obj.increase_h(a)
+            if d in graph_obj.vertices[c].partners():
+                graph_obj.perturb_j_k(c, d, a)
+            else:
+                graph_obj.perturb_j_to_first_antipartner(c, a)
+                graph_obj.increase_h(c)
+            if c in graph_obj.vertices[d].partners():
+                graph_obj.perturb_j_to_last_partner(d, c)
+                graph_obj.decrease_h(d)
+            changes_made += 1
+        elif mesh_category == 2:
+            for k, neighbour_geometry in enumerate(graph_obj.meshes[neighbour_mesh_index].num_corners for neighbour_mesh_index in mesh.surrounding_meshes):
+                if neighbour_geometry == 3:
+                    if k == 0:
+                        a = mesh.vertex_indices[0]
+                        b = mesh.vertex_indices[1]
+                        c = mesh.vertex_indices[2]
+                        d = mesh.vertex_indices[3]
+                        e = mesh.vertex_indices[4]
+                    elif k == 1:
+                        a = mesh.vertex_indices[1]
+                        b = mesh.vertex_indices[2]
+                        c = mesh.vertex_indices[3]
+                        d = mesh.vertex_indices[4]
+                        e = mesh.vertex_indices[0]
+                    elif k == 2:
+                        a = mesh.vertex_indices[2]
+                        b = mesh.vertex_indices[3]
+                        c = mesh.vertex_indices[4]
+                        d = mesh.vertex_indices[0]
+                        e = mesh.vertex_indices[1]
+                    elif k == 3:
+                        a = mesh.vertex_indices[3]
+                        b = mesh.vertex_indices[4]
+                        c = mesh.vertex_indices[0]
+                        d = mesh.vertex_indices[1]
+                        e = mesh.vertex_indices[2]
+                    else:
+                        a = mesh.vertex_indices[4]
+                        b = mesh.vertex_indices[0]
+                        c = mesh.vertex_indices[1]
+                        d = mesh.vertex_indices[2]
+                        e = mesh.vertex_indices[3]
+                    if e in graph_obj.vertices[a].partners():
+                        graph_obj.perturb_j_k(a, e, d)
+                    else:
+                        graph_obj.perturb_j_to_first_antipartner(a, d)
+                        graph_obj.increase_h(a)
+                    if a in graph_obj.vertices[e].partners():
+                        graph_obj.perturb_j_to_last_partner(e, a)
+                        graph_obj.decrease_h(e)
+                    graph_obj.perturb_j_to_first_antipartner(d, a)
+                    graph_obj.increase_h(d)
+                    changes_made += 1
+                    break
+
+    return changes_made
+
+

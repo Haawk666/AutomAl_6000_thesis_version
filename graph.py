@@ -99,6 +99,7 @@ class Vertex:
         self.collapsed_prob_vector[self.num_selections - 1] = 1
         self.neighbour_indices = []
         self.partner_indices = []
+        self.friendly_indices = []
 
         # The following params are reserved for future use, whilst still maintaining backwards compatibility:
         self.ad_hoc_list_1 = []
@@ -695,6 +696,16 @@ class AtomicGraph:
     def __len__(self):
         return len(self.vertices)
 
+    def map_friends(self):
+        logger.info('Mapping friends..')
+        for vertex in self.vertices:
+            vertex.friendly_indices = []
+        for vertex in self.vertices:
+            for partner in vertex.partners():
+                if vertex.i not in self.vertices[partner].friendly_indices:
+                    self.vertices[partner].friendly_indices.append(vertex.i)
+        logger.info('friends mapped!')
+
     def map_meshes(self, i):
         """Automatically generate a connected relational map of all meshes in graph.
 
@@ -707,6 +718,10 @@ class AtomicGraph:
 
         """
 
+        logger.info('Mapping meshes..')
+        self.meshes = []
+        self.mesh_indices = []
+        self.map_friends()
         sub_graph_0 = self.get_atomic_configuration(i)
         mesh_0 = sub_graph_0.meshes[0]
         mesh_0.mesh_index = self.determine_temp_index(mesh_0)
@@ -726,11 +741,12 @@ class AtomicGraph:
             mesh.mesh_index = self.mesh_indices.index(mesh.mesh_index)
 
         self.mesh_indices = new_indices
+        logger.info('Meshes mapped!')
 
     def walk_mesh_edges(self, mesh):
 
         for k, corner in enumerate(vertex.i for vertex in mesh.vertices):
-            new_mesh = self.find_mesh(corner, mesh.vertices[k - 1].i, return_mesh=True)
+            new_mesh = self.find_mesh(corner, mesh.vertices[k - 1].i, return_mesh=True, use_friends=True)
             has_edge_columns = False
             for vertex in new_mesh.vertices:
                 if vertex.is_edge_column:
@@ -937,21 +953,23 @@ class AtomicGraph:
 
     def perturb_j_k(self, i, j, k):
 
-        pos_j = -1
-        pos_k = -1
+        if not j == k:
 
-        for m, neighbour in enumerate(self.vertices[i].neighbour_indices):
-            if neighbour == j:
-                pos_j = m
-            if neighbour == k:
-                pos_k = m
+            pos_j = -1
+            pos_k = -1
 
-        if pos_k == -1:
-            last_index = self.vertices[i].neighbour_indices[self.map_size - 1]
-            self.substitute_neighbour(i, last_index, k)
-            pos_k = self.map_size - 1
+            for m, neighbour in enumerate(self.vertices[i].neighbour_indices):
+                if neighbour == j:
+                    pos_j = m
+                if neighbour == k:
+                    pos_k = m
 
-        self.perturb_pos_j_pos_k(i, pos_j, pos_k)
+            if pos_k == -1:
+                last_index = self.vertices[i].neighbour_indices[self.map_size - 1]
+                self.substitute_neighbour(i, last_index, k)
+                pos_k = self.map_size - 1
+
+            self.perturb_pos_j_pos_k(i, pos_j, pos_k)
 
     def perturb_pos_j_pos_k(self, i, pos_j, pos_k):
 
@@ -981,6 +999,14 @@ class AtomicGraph:
         else:
             return False
         return True
+
+    def perturb_j_to_first_antipartner(self, i, j):
+        if j in self.vertices[i].neighbour_indices:
+            pass
+        else:
+            self.vertices[i].neighbour_indices[-1] = j
+        k = self.vertices[i].anti_partners()[0]
+        self.perturb_j_k(i, j, k)
 
     def redraw_edges(self):
         self.edges = []
@@ -1044,16 +1070,22 @@ class AtomicGraph:
         for vertex in self.vertices:
             vertex.level = vertex.anti_level()
 
-    def angle_sort(self, i, j, strict=False):
+    def angle_sort(self, i, j, strict=False, use_friends=False):
 
-        logger.debug('    Finding next angle from {} -> {}'.format(i, j))
+        logger.debug('Finding next angle from {} -> {}'.format(i, j))
 
         min_angle = 100
         next_index = -1
         p1 = self.vertices[i].real_coor()
         pivot = self.vertices[j].real_coor()
 
-        for k in self.vertices[j].partners():
+        search_list = self.vertices[j].partners()
+        if use_friends:
+            for l in self.vertices[j].friendly_indices:
+                if l not in search_list:
+                    search_list.append(l)
+
+        for k in search_list:
             if not k == i:
                 p2 = self.vertices[k].real_coor()
                 alpha = utils.find_angle_from_points(p1, p2, pivot)
@@ -1066,11 +1098,11 @@ class AtomicGraph:
                             min_angle = alpha
                             next_index = k
 
-        logger.debug('        Found next: {}'.format(next_index))
+        logger.debug('Found next: {}'.format(next_index))
 
         return min_angle, next_index
 
-    def find_mesh(self, i, j, clockwise=True, strict=False, return_mesh=False):
+    def find_mesh(self, i, j, clockwise=True, strict=False, return_mesh=False, use_friends=False):
 
         logger.debug('Finding mesh from {} -> {}'.format(i, j))
 
@@ -1084,10 +1116,10 @@ class AtomicGraph:
 
         while not stop:
 
-            angle, next_index = self.angle_sort(i, j, strict)
+            angle, next_index = self.angle_sort(i, j, strict=strict, use_friends=use_friends)
 
-            if next_index == corners[0] or counter > 8:
-                _, nextnext = self.angle_sort(j, next_index, strict)
+            if next_index == corners[0] or counter > 14:
+                _, nextnext = self.angle_sort(j, next_index, strict=strict, use_friends=use_friends)
                 if not nextnext == corners[1]:
                     corners, i, j = self.rebase(corners, nextnext, next_index, append=False)
                 stop = True
@@ -1103,7 +1135,7 @@ class AtomicGraph:
 
             backup_counter += 1
 
-            if backup_counter > 20:
+            if backup_counter > 25:
 
                 logger.warning('Emergency stop!')
                 stop = True
@@ -1159,14 +1191,14 @@ class AtomicGraph:
                 break
         return corners, next_, j
 
-    def get_atomic_configuration(self, i, strict=False):
+    def get_atomic_configuration(self, i, strict=False, use_friends=False):
 
         sub_graph = SubGraph(self.map_size)
         sub_graph.add_vertex(self.vertices[i])
 
         for partner in self.vertices[i].partners():
             sub_graph.add_vertex(self.vertices[partner])
-            corners, ang, vec = self.find_mesh(i, partner, strict=strict)
+            corners, ang, vec = self.find_mesh(i, partner, strict=strict, use_friends=use_friends)
             mesh = Mesh()
             for k, corner in enumerate(corners):
                 mesh.add_vertex(self.vertices[corner])
@@ -1183,7 +1215,7 @@ class AtomicGraph:
             while not closed:
 
                 if corners[-1] not in self.vertices[i].partners():
-                    corners, ang, vec = self.find_mesh(i, corners[len(corners) - 1], strict=strict)
+                    corners, ang, vec = self.find_mesh(i, corners[len(corners) - 1], strict=strict, use_friends=use_friends)
                     mesh = Mesh()
                     for k, corner in enumerate(corners):
                         mesh.add_vertex(self.vertices[corner])
@@ -1289,7 +1321,7 @@ class AtomicGraph:
                 if i == j:
                     all_distances.append(100000)
                 else:
-                    all_distances.append(self.spatial_distance(i, j))
+                    all_distances.append(self.projected_distance(i, j))
 
             all_indices = np.array(all_distances)
 
@@ -1315,7 +1347,7 @@ class AtomicGraph:
             if i == j:
                 all_distances.append(100000)
             else:
-                all_distances.append(self.spatial_distance(i, j))
+                all_distances.append(self.projected_distance(i, j))
 
         all_indices = np.array(all_distances)
 
@@ -1328,7 +1360,7 @@ class AtomicGraph:
 
         return sorted_indices, sorted_distances, n
 
-    def spatial_distance(self, i, j):
+    def projected_distance(self, i, j):
         delta_x = self.vertices[j].real_coor_x - self.vertices[i].real_coor_x
         delta_y = self.vertices[j].real_coor_y - self.vertices[i].real_coor_y
         arg = delta_x ** 2 + delta_y ** 2

@@ -99,7 +99,7 @@ class SuchSoftware:
     """
 
     # Version
-    version = [0, 0, 7]
+    version = [0, 0, 8]
 
     # Number of elements in the probability vectors
     num_selections = 7
@@ -315,6 +315,7 @@ class SuchSoftware:
                  '    Atomic Species: {}\n'.format(vertex.species()) + \
                  '    Probability vector: {}\n'.format(vertex.prob_vector).replace('\n', '') + \
                  '    Partner vector: {}\n'.format(vertex.partners()) + \
+                 '    Friendly vector: {}\n'.format(vertex.friendly_indices) + \
                  '    Alpha max: {}\n'.format(alpha_max) + \
                  '    Alpha min: {}\n'.format(alpha_min) + \
                  '    Central angle variance = {}\n'.format(variance) + \
@@ -1025,6 +1026,14 @@ class SuchSoftware:
             logger.info('Finding normalized intensities...')
             self.normalize_gamma()
             logger.info('Found intensities.')
+
+        elif search_type == 20:
+            # Mesh analysis with strong resolve
+            logger.info('Running mesh analysis...')
+            self.graph.map_meshes(starting_index)
+            changes = untangling.mesh_analysis(self.graph)
+            self.graph.map_meshes(starting_index)
+            logger.info('Mesh analysis complete. Made {} changes'.format(changes))
 
         else:
 

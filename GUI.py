@@ -637,7 +637,7 @@ class MainUI(QtWidgets.QMainWindow):
 
     def menu_ad_hoc_trigger(self):
         if self.project_instance is not None and not self.selected_column == -1:
-            self.project_instance.vertex_report(self.selected_column)
+            pass
 
     def menu_toggle_tooltips_trigger(self, state):
         self.control_window.mode_tooltip(state)
@@ -840,7 +840,8 @@ class MainUI(QtWidgets.QMainWindow):
                        '16 - Experimental angle score',
                        '17 - Experimental levels',
                        '18 - Find edge columns',
-                       '19 - Calculate globally normalized gamma levels']
+                       '19 - Calculate globally normalized gamma levels',
+                       '20 - Run experimental mesh analysis']
 
             string, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Search step", strings, 0, False)
             if ok_pressed and strings:
@@ -867,12 +868,17 @@ class MainUI(QtWidgets.QMainWindow):
     def btn_delete_trigger(self):
         pass
 
+    def btn_print_details_trigger(self):
+        if self.project_instance is not None and not self.selected_column == -1:
+            self.project_instance.vertex_report(self.selected_column)
+
     def btn_gen_sub_graph(self):
         if self.project_instance is not None:
             if self.project_instance.num_columns > 0:
                 if len(self.project_instance.graph.vertices[0].neighbour_indices) > 0:
                     if not self.selected_column == -1:
-                        sub_graph = self.project_instance.graph.get_atomic_configuration(self.selected_column)
+                        self.project_instance.graph.map_friends()
+                        sub_graph = self.project_instance.graph.get_atomic_configuration(self.selected_column, use_friends=True)
                         self.gs_atomic_sub_graph = GUI_elements.AtomicSubGraph(ui_obj=self, sub_graph=sub_graph, scale_factor=4)
                         self.gv_atomic_sub_graph.setScene(self.gs_atomic_sub_graph)
                         self.tabs.setCurrentIndex(4)
@@ -907,6 +913,9 @@ class MainUI(QtWidgets.QMainWindow):
 
     def btn_set_indices_2_trigger(self):
         pass
+
+    def btn_test_trigger(self):
+        self.project_instance.graph.map_friends()
 
     def btn_make_plot_trigger(self):
         GUI_elements.PlotWizard(ui_obj=self)
