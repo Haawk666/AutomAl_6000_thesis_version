@@ -821,8 +821,8 @@ class MainUI(QtWidgets.QMainWindow):
     def btn_continue_analysis_trigger(self):
         if self.project_instance is not None and not self.selected_column == -1:
 
-            strings = ['0 - Full column characterization algorithm with legacy untangling',
-                       '1 - Full column characterization algorithm with experimental untangling',
+            strings = ['0 - Full column characterization algorithm',
+                       '1 - Not in use',
                        '2 - Run spatial mapping',
                        '3 - Apply angle statistics',
                        '4 - Apply intensity statistics',
@@ -841,7 +841,8 @@ class MainUI(QtWidgets.QMainWindow):
                        '17 - Experimental levels',
                        '18 - Find edge columns',
                        '19 - Calculate globally normalized gamma levels',
-                       '20 - Run experimental mesh analysis']
+                       '20 - Run experimental mesh analysis',
+                       '21 - Sort neighbours by mesh, distance']
 
             string, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Search step", strings, 0, False)
             if ok_pressed and strings:

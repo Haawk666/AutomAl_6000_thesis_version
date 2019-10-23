@@ -97,9 +97,23 @@ class Vertex:
         self.prob_vector = np.ndarray([self.num_selections], dtype=np.float64)
         self.collapsed_prob_vector = np.zeros([self.num_selections], dtype=int)
         self.collapsed_prob_vector[self.num_selections - 1] = 1
+
+        # Relational sets
         self.neighbour_indices = []
+
         self.partner_indices = []
+        self.anti_partner_indices = []
+
+        self.true_partner_indices = []
+        self.unfriendly_partner_indices = []
+        self.true_anti_partner_indices = []
+        self.friendly_anti_partner_indices = []
+
+        self.anti_friend_indices = []
+        self.friend_indices = []
+
         self.friendly_indices = []
+        self.outsider_indices = []
 
         # The following params are reserved for future use, whilst still maintaining backwards compatibility:
         self.ad_hoc_list_1 = []
@@ -499,7 +513,10 @@ class Vertex:
         :rtype: list(<int>)
 
         """
-        return self.neighbour_indices[self.n():]
+
+        if not len(self.neighbour_indices) == 0:
+            self.anti_partner_indices = self.neighbour_indices[self.n():]
+            return self.anti_partner_indices
 
     def partner_query(self, j):
         """Test if index j is among the partners of the vertex.
@@ -696,6 +713,38 @@ class AtomicGraph:
     def __len__(self):
         return len(self.vertices)
 
+    def sort_subsets_by_distance(self):
+        self.map_all_subsets()
+        for vertex in self.vertices:
+
+            true_partner_distances = []
+            unfriendly_partner_distances = []
+            true_anti_partner_distnaces = []
+            friendly_anti_partner_distances = []
+            outsider_distances = []
+
+            for tp in vertex.true_partner_indices:
+                true_partner_distances.append(self.projected_distance(vertex.i, tp))
+            for up in vertex.unfriendly_partner_indices:
+                unfriendly_partner_distances.append(self.projected_distance(vertex.i, up))
+            for ta in vertex.true_anti_partner_indices:
+                true_anti_partner_distnaces.append(self.projected_distance(vertex.i, ta))
+            for fa in vertex.friendly_anti_partner_indices:
+                friendly_anti_partner_distances.append(self.projected_distance(vertex.i, fa))
+            for out in vertex.outsider_indices:
+                outsider_distances.append(self.projected_distance(vertex.i, out))
+
+            vertex.true_partner_indices = [y for x, y in sorted(zip(true_partner_distances, vertex.true_partner_indices))]
+            vertex.unfriendly_partner_indices = [y for x, y in sorted(zip(unfriendly_partner_distances, vertex.unfriendly_partner_indices))]
+            vertex.true_anti_partner_indices = [y for x, y in sorted(zip(true_partner_distances, vertex.true_anti_partner_indices))]
+            vertex.friendly_anti_partner_indices = [y for x, y in sorted(zip(friendly_anti_partner_distances, vertex.friendly_anti_partner_indices))]
+            vertex.outsider_indices = [y for x, y in sorted(zip(outsider_distances, vertex.outsider_indices))]
+
+            vertex.partners = vertex.true_partner_indices + vertex.unfriendly_partner_indices
+            vertex.anti_partner_indices = vertex.true_anti_partner_indices + vertex.friendly_anti_partner_indices
+
+            vertex.neighbour_indices = vertex.partner_indices + vertex.anti_partner_indices
+
     def map_friends(self):
         logger.info('Mapping friends..')
         for vertex in self.vertices:
@@ -705,6 +754,47 @@ class AtomicGraph:
                 if vertex.i not in self.vertices[partner].friendly_indices:
                     self.vertices[partner].friendly_indices.append(vertex.i)
         logger.info('friends mapped!')
+
+    def produce_vertex_objects_from_indices(self, indices):
+        vertices = []
+        for i in indices:
+            vertices.append(self.vertices[i])
+        return vertices
+
+    def map_all_subsets(self):
+        self.map_friends()
+        for i in self.vertex_indices:
+            self.determine_subsets(i)
+
+    def determine_subsets(self, i):
+        partner_indices = self.vertices[i].partners()
+        anti_partner_indices = self.vertices[i].anti_partners()
+
+        self.vertices[i].true_partner_indices = []
+        self.vertices[i].unfriendly_partner_indices = []
+        self.vertices[i].true_anti_partner_indices = []
+        self.vertices[i].friendly_anti_partner_indices = []
+
+        for j in partner_indices:
+            if i in self.vertices[j].partners():
+                self.vertices[i].true_partner_indices.append(j)
+            else:
+                self.vertices[i].unfriendly_partner_indices.append(j)
+        for k in anti_partner_indices:
+            if i in self.vertices[k].partners():
+                self.vertices[i].friendly_anti_partner_indices.append(k)
+            else:
+                self.vertices[i].true_anti_partner_indices.append(k)
+
+        self.vertices[i].anti_friend_indices = self.vertices[i].unfriendly_partner_indices + \
+                                               self.vertices[i].true_anti_partner_indices
+        self.vertices[i].friend_indices = self.vertices[i].true_partner_indices + \
+                                          self.vertices[i].friendly_anti_partner_indices
+
+        self.vertices[i].outsider_indices = []
+        for friendly in self.vertices[i].friendly_indices:
+            if friendly not in self.vertices[i].friend_indices:
+                self.vertices[i].outsider_indices.append(friendly)
 
     def map_meshes(self, i):
         """Automatically generate a connected relational map of all meshes in graph.

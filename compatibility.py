@@ -58,6 +58,13 @@ def convert(obj, old_version, version):
             vertex.normalized_peak_gamma = vertex.peak_gamma
             vertex.normalized_avg_gamma = vertex.avg_gamma
             vertex.friendly_indices = []
+            vertex.anti_partner_indices = []
+            vertex.true_partner_indices = []
+            vertex.unfriendly_partner_indices = []
+            vertex.true_anti_partner_indices = []
+            vertex.anti_friend_indices = []
+            vertex.friend_indices = []
+            vertex.outsider_indices = []
         obj.graph.avg_central_variance = 0.0
         obj.graph.meshes = []
         obj.graph.mesh_indices = []
@@ -87,6 +94,13 @@ def convert(obj, old_version, version):
             vertex.normalized_peak_gamma = vertex.peak_gamma
             vertex.normalized_avg_gamma = vertex.avg_gamma
             vertex.friendly_indices = []
+            vertex.anti_partner_indices = []
+            vertex.true_partner_indices = []
+            vertex.unfriendly_partner_indices = []
+            vertex.true_anti_partner_indices = []
+            vertex.anti_friend_indices = []
+            vertex.friend_indices = []
+            vertex.outsider_indices = []
         obj.graph.avg_central_variance = 0.0
         obj.graph.meshes = []
         obj.graph.mesh_indices = []
@@ -106,6 +120,13 @@ def convert(obj, old_version, version):
             vertex.normalized_peak_gamma = vertex.peak_gamma
             vertex.normalized_avg_gamma = vertex.avg_gamma
             vertex.friendly_indices = []
+            vertex.anti_partner_indices = []
+            vertex.true_partner_indices = []
+            vertex.unfriendly_partner_indices = []
+            vertex.true_anti_partner_indices = []
+            vertex.anti_friend_indices = []
+            vertex.friend_indices = []
+            vertex.outsider_indices = []
         obj.graph.avg_central_variance = 0.0
         obj.graph.meshes = []
         obj.graph.mesh_indices = []
@@ -119,6 +140,13 @@ def convert(obj, old_version, version):
             vertex.normalized_peak_gamma = vertex.peak_gamma
             vertex.normalized_avg_gamma = vertex.avg_gamma
             vertex.friendly_indices = []
+            vertex.anti_partner_indices = []
+            vertex.true_partner_indices = []
+            vertex.unfriendly_partner_indices = []
+            vertex.true_anti_partner_indices = []
+            vertex.anti_friend_indices = []
+            vertex.friend_indices = []
+            vertex.outsider_indices = []
         obj.graph.avg_central_variance = 0.0
         obj.graph.meshes = []
         obj.graph.mesh_indices = []
@@ -131,6 +159,13 @@ def convert(obj, old_version, version):
             vertex.normalized_peak_gamma = vertex.peak_gamma
             vertex.normalized_avg_gamma = vertex.avg_gamma
             vertex.friendly_indices = []
+            vertex.anti_partner_indices = []
+            vertex.true_partner_indices = []
+            vertex.unfriendly_partner_indices = []
+            vertex.true_anti_partner_indices = []
+            vertex.anti_friend_indices = []
+            vertex.friend_indices = []
+            vertex.outsider_indices = []
         obj.graph.meshes = []
         obj.graph.mesh_indices = []
         fresh_obj = obj
@@ -140,6 +175,13 @@ def convert(obj, old_version, version):
             vertex.normalized_peak_gamma = vertex.peak_gamma
             vertex.normalized_avg_gamma = vertex.avg_gamma
             vertex.friendly_indices = []
+            vertex.anti_partner_indices = []
+            vertex.true_partner_indices = []
+            vertex.unfriendly_partner_indices = []
+            vertex.true_anti_partner_indices = []
+            vertex.anti_friend_indices = []
+            vertex.friend_indices = []
+            vertex.outsider_indices = []
         obj.graph.meshes = []
         obj.graph.mesh_indices = []
         fresh_obj = obj
@@ -147,6 +189,13 @@ def convert(obj, old_version, version):
     elif old_version == [0, 0, 6]:
         for vertex in obj.graph.vertices:
             vertex.friendly_indices = []
+            vertex.anti_partner_indices = []
+            vertex.true_partner_indices = []
+            vertex.unfriendly_partner_indices = []
+            vertex.true_anti_partner_indices = []
+            vertex.anti_friend_indices = []
+            vertex.friend_indices = []
+            vertex.outsider_indices = []
         obj.graph.meshes = []
         obj.graph.mesh_indices = []
         fresh_obj = obj
@@ -154,6 +203,25 @@ def convert(obj, old_version, version):
     elif old_version == [0, 0, 7]:
         for vertex in obj.graph.vertices:
             vertex.friendly_indices = []
+            vertex.anti_partner_indices = []
+            vertex.true_partner_indices = []
+            vertex.unfriendly_partner_indices = []
+            vertex.true_anti_partner_indices = []
+            vertex.anti_friend_indices = []
+            vertex.friend_indices = []
+            vertex.outsider_indices = []
+        fresh_obj = obj
+
+    elif old_version == [0, 0, 8]:
+        for vertex in obj.graph.vertices:
+            vertex.anti_partner_indices = []
+            vertex.true_partner_indices = []
+            vertex.unfriendly_partner_indices = []
+            vertex.true_anti_partner_indices = []
+            vertex.anti_friend_indices = []
+            vertex.friend_indices = []
+            vertex.outsider_indices = []
+        fresh_obj = obj
 
     else:
         fresh_obj = None

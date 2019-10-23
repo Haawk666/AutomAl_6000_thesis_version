@@ -474,8 +474,8 @@ def find_type(graph_obj, search_type):
             if not graph_obj.vertices[partner].partner_query(vertex.i) and \
                     not vertex.is_edge_column and not graph_obj.vertices[partner].is_edge_column:
 
-                corners_1, angles_1, vectors_1 = graph_obj.find_mesh(vertex.i, partner)
-                corners_2, angles_2, vectors_2 = graph_obj.find_mesh(partner, vertex.i)
+                corners_1, angles_1, vectors_1 = graph_obj.find_mesh(vertex.i, partner, use_friends=True)
+                corners_2, angles_2, vectors_2 = graph_obj.find_mesh(partner, vertex.i, use_friends=True)
 
                 mesh_1 = graph.Mesh()
                 for k, corner in enumerate(corners_1):

@@ -99,7 +99,7 @@ class SuchSoftware:
     """
 
     # Version
-    version = [0, 0, 8]
+    version = [0, 0, 9]
 
     # Number of elements in the probability vectors
     num_selections = 7
@@ -666,59 +666,45 @@ class SuchSoftware:
             # Spatial mapping:
             self.column_characterization(starting_index, search_type=2)
             # Angle analysis:
-            self.column_characterization(starting_index, search_type=3)
-            # Intensity analysis
-            self.column_characterization(starting_index, search_type=4)
+            self.column_characterization(starting_index, search_type=16)
             # Find particle:
             self.column_characterization(starting_index, search_type=5)
             # Set levels:
             self.column_characterization(starting_index, search_type=6)
             # Add edges:
             self.column_characterization(starting_index, search_type=7)
+            # Calc normalized gamma:
+            self.column_characterization(starting_index, search_type=19)
             # Summarize:
             logger.info('Summarizing stats.')
             self.summarize_stats()
-            # Legacy weak untanglng
-            self.column_characterization(starting_index, search_type=8)
-            # Legacy strong untangling
-            self.column_characterization(starting_index, search_type=9)
+            # Experimental weak untanglng
+            self.column_characterization(starting_index, search_type=10)
+            # Sort neighbours
+            self.column_characterization(starting_index, search_type=21)
+            # Angle analysis:
+            self.column_characterization(starting_index, search_type=16)
+            # Find particle:
+            self.column_characterization(starting_index, search_type=5)
+            # Set levels:
+            self.column_characterization(starting_index, search_type=6)
+            # Add edges:
+            self.column_characterization(starting_index, search_type=7)
+            # Experimental weak untanglng
+            self.column_characterization(starting_index, search_type=10)
+            # Experimental strong untangling
+            self.column_characterization(starting_index, search_type=11)
+            # Map meshes
+            self.column_characterization(starting_index, search_type=20)
             # Summarize:
             logger.info('Summarizing stats.')
             self.summarize_stats()
             # Complete:
             logger.info('Column characterization complete.')
-            logger.info(' ')
 
         elif search_type == 1:
 
-            logger.info('Starting column characterization from vertex {}...'.format(starting_index))
-            logger.info('Setting alloy')
-            self.set_alloy_mat()
-            logger.info('Alloy set.')
-
-            self.column_characterization(starting_index, search_type=2)
-
-            self.column_characterization(starting_index, search_type=3)
-
-            self.column_characterization(starting_index, search_type=4)
-
-            self.column_characterization(starting_index, search_type=5)
-
-            self.column_characterization(starting_index, search_type=6)
-
-            self.column_characterization(starting_index, search_type=7)
-
-            logger.info('Summarizing stats.')
-            self.summarize_stats()
-
-            self.column_characterization(starting_index, search_type=10)
-
-            self.column_characterization(starting_index, search_type=11)
-
-            logger.info('Summarizing stats.')
-            self.summarize_stats()
-
-            logger.info('Column characterization complete.')
+            pass
 
         elif search_type == 2:
             # Run spatial mapping
@@ -800,6 +786,7 @@ class SuchSoftware:
                         self.column_characterization(starting_index, search_type=14)
                         logger.info('Looking for type {}:'.format(type_num))
                         logger.info('Chi: {}'.format(chi_before))
+                        self.graph.map_friends()
 
                         num_types, changes = untangling.untangle(self.graph, type_num, strong=False)
 
@@ -854,6 +841,7 @@ class SuchSoftware:
                         self.column_characterization(starting_index, search_type=14)
                         logger.info('Looking for type {}:'.format(type_num))
                         logger.info('Chi: {}'.format(chi_before))
+                        self.graph.map_friends()
 
                         num_types, changes = untangling.untangle(self.graph, type_num, strong=True)
 
@@ -1034,6 +1022,12 @@ class SuchSoftware:
             changes = untangling.mesh_analysis(self.graph)
             self.graph.map_meshes(starting_index)
             logger.info('Mesh analysis complete. Made {} changes'.format(changes))
+
+        elif search_type == 21:
+            # Sort neighbours
+            logger.info('Sorting neighbours...')
+            self.graph.sort_neighbours_by_mesh_consistency_and_distance()
+            logger.info('Neighbours sorted')
 
         else:
 
