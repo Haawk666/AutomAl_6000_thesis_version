@@ -980,8 +980,6 @@ class SuchSoftware:
                 if not self.graph.vertices[i].set_by_user and not self.graph.vertices[i].is_edge_column:
                     self.graph.vertices[i].reset_symmetry_vector()
                     self.graph.vertices[i].reset_prob_vector()
-                    print('vertex {}: --------------------'.format(i))
-                    print('    Reset to: {}'.format(self.graph.vertices[i].prob_vector))
                     self.graph.vertices[i].prob_vector =\
                         graph_op.base_angle_score(self.graph, i)
                     self.graph.vertices[i].prob_vector = np.array(self.graph.vertices[i].prob_vector)
@@ -1026,7 +1024,7 @@ class SuchSoftware:
         elif search_type == 21:
             # Sort neighbours
             logger.info('Sorting neighbours...')
-            self.graph.sort_neighbours_by_mesh_consistency_and_distance()
+            self.graph.sort_subsets_by_distance()
             logger.info('Neighbours sorted')
 
         else:

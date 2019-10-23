@@ -176,22 +176,19 @@ def remove_intersections(graph_obj):
     return not_removed, strong_intersections, weak_weak_intersections, strong_stong_intersections
 
 
+def base_pca_score(graph_obj, i, apply=True):
+
+    alpha = graph_obj.produce_alpha_angles(i)
+
+    if apply:
+        return alpha
+    else:
+        return max(alpha), min(alpha)
+
+
 def base_angle_score(graph_obj, i, apply=True):
 
-    pivot = graph_obj.vertices[i].real_coor()
-    neighbours = graph_obj.vertices[i].neighbour_indices
-    j_1 = graph_obj.vertices[neighbours[0]].real_coor()
-    j_2 = graph_obj.vertices[neighbours[1]].real_coor()
-    j_3 = graph_obj.vertices[neighbours[2]].real_coor()
-    j = [j_1, j_2, j_3, j_1]
-
-    alpha = []
-    for i in range(0, 3):
-        alpha.append(utils.find_angle_from_points(j[i], j[i + 1], pivot))
-
-    if sum(alpha) > 6.5:
-        for i in range(0, 3):
-            alpha[i] = 2 * np.pi - alpha[i]
+    alpha = graph_obj.produce_alpha_angles(i)
 
     # cu_min_mean = 1.92
     # si_min_mean = 1.69

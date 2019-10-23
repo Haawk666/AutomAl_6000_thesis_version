@@ -505,6 +505,8 @@ class Vertex:
         if not len(self.neighbour_indices) == 0:
             self.partner_indices = self.neighbour_indices[0:self.n()]
             return self.partner_indices
+        else:
+            return []
 
     def anti_partners(self):
         """Return a list of indices, that are neighbours, but not partners to vertex.
@@ -517,6 +519,8 @@ class Vertex:
         if not len(self.neighbour_indices) == 0:
             self.anti_partner_indices = self.neighbour_indices[self.n():]
             return self.anti_partner_indices
+        else:
+            return []
 
     def partner_query(self, j):
         """Test if index j is among the partners of the vertex.
@@ -529,6 +533,7 @@ class Vertex:
         for i in self.partners():
             if i == j:
                 found = True
+                break
         return found
 
     def perturb_j_k(self, j, k):
@@ -740,7 +745,7 @@ class AtomicGraph:
             vertex.friendly_anti_partner_indices = [y for x, y in sorted(zip(friendly_anti_partner_distances, vertex.friendly_anti_partner_indices))]
             vertex.outsider_indices = [y for x, y in sorted(zip(outsider_distances, vertex.outsider_indices))]
 
-            vertex.partners = vertex.true_partner_indices + vertex.unfriendly_partner_indices
+            vertex.partner_indices = vertex.true_partner_indices + vertex.unfriendly_partner_indices
             vertex.anti_partner_indices = vertex.true_anti_partner_indices + vertex.friendly_anti_partner_indices
 
             vertex.neighbour_indices = vertex.partner_indices + vertex.anti_partner_indices
@@ -754,12 +759,6 @@ class AtomicGraph:
                 if vertex.i not in self.vertices[partner].friendly_indices:
                     self.vertices[partner].friendly_indices.append(vertex.i)
         logger.info('friends mapped!')
-
-    def produce_vertex_objects_from_indices(self, indices):
-        vertices = []
-        for i in indices:
-            vertices.append(self.vertices[i])
-        return vertices
 
     def map_all_subsets(self):
         self.map_friends()
@@ -854,6 +853,30 @@ class AtomicGraph:
     @staticmethod
     def determine_temp_index(mesh):
         return utils.make_int_from_list(utils.cyclic_sort(mesh.vertex_indices))
+
+    def produce_vertex_objects_from_indices(self, indices):
+        vertices = []
+        for i in indices:
+            vertices.append(self.vertices[i])
+        return vertices
+
+    def produce_alpha_angles(self, i):
+        pivot = self.vertices[i].real_coor()
+        neighbours = self.vertices[i].neighbour_indices
+        j_1 = self.vertices[neighbours[0]].real_coor()
+        j_2 = self.vertices[neighbours[1]].real_coor()
+        j_3 = self.vertices[neighbours[2]].real_coor()
+        j = [j_1, j_2, j_3, j_1]
+
+        alpha = []
+        for i in range(0, 3):
+            alpha.append(utils.find_angle_from_points(j[i], j[i + 1], pivot))
+
+        if sum(alpha) > 6.5:
+            for i in range(0, 3):
+                alpha[i] = 2 * np.pi - alpha[i]
+
+        return alpha
 
     def calc_avg_species_confidence(self):
         """Calculate the average species confidence of the graph.
