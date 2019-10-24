@@ -7,8 +7,6 @@ import utils
 import graph_op
 import compatibility
 import legacy_items
-import weak_untangling
-import strong_untangling
 import untangling
 # External imports:
 import numpy as np
