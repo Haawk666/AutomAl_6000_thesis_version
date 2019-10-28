@@ -878,6 +878,23 @@ class AtomicGraph:
 
         return alpha
 
+    def produce_theta_angles(self, i, exclude_angles_from_inconsistent_meshes=False):
+        sub_graph = self.get_atomic_configuration(i, use_friends=True)
+        theta = []
+        for mesh in sub_graph.meshes:
+            if exclude_angles_from_inconsistent_meshes:
+                if mesh.num_corners == 4:
+                    theta.append(mesh.angles[0])
+            else:
+                theta.append(mesh.angles[0])
+        return theta
+
+    def produce_theta_mean(self, i, exclude_angles_from_inconsistent_meshes=False):
+        return utils.mean_val(self.produce_theta_angles(i, exclude_angles_from_inconsistent_meshes=exclude_angles_from_inconsistent_meshes))
+
+    def produce_theta_variance(self, i, exclude_angles_from_inconsistent_meshes=False):
+        return utils.variance(self.produce_theta_angles(i, exclude_angles_from_inconsistent_meshes=exclude_angles_from_inconsistent_meshes))
+
     def calc_avg_species_confidence(self):
         """Calculate the average species confidence of the graph.
 

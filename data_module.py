@@ -220,7 +220,7 @@ class VertexNumericData:
             if key in filter_:
                 filter_[key] = value
 
-        if any(special_item in self.keys for special_item in ['theta_variance', 'theta_min', 'theta_max']):
+        if any(special_item in self.keys for special_item in ['theta_variance', 'theta_min', 'theta_max', 'reduced_theta_mean']):
             theta = True
         else:
             theta = False
@@ -249,10 +249,12 @@ class VertexNumericData:
                         theta_variance = sub_graph.central_mesh_angle_variance
                         theta_min = min(angles)
                         theta_max = max(angles)
+                        reduced_theta_mean = instance.graph.produce_theta_mean(vertex.i, exclude_angles_from_inconsistent_meshes=True)
                     else:
                         theta_variance = None
                         theta_min = None
                         theta_max = None
+                        reduced_theta_mean = None
 
                     if alpha:
                         alpha_max, alpha_min = graph_op.base_angle_score(instance.graph, vertex.i, apply=False)
@@ -282,6 +284,9 @@ class VertexNumericData:
                             value = theta_min
                         elif key == 'theta_max':
                             value = theta_max
+                        elif key == 'reduced_theta_mean':
+                            value = reduced_theta_mean
+                            print(value)
                         elif key == 'alpha_min':
                             value = alpha_min
                         elif key == 'alpha_max':

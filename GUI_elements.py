@@ -2677,6 +2677,7 @@ class PcaWizard(QtWidgets.QDialog):
                               'theta variance',
                               'theta min',
                               'theta max',
+                              'reduced theta mean',
                               'alpha min',
                               'alpha max'])
 

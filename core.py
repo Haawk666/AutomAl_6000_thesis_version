@@ -1358,3 +1358,4 @@ class SuchSoftware:
         self.graph.reset_vertex_properties()
         self.summarize_stats()
 
+
