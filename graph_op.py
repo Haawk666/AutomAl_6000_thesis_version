@@ -2,6 +2,7 @@
 import numpy as np
 import utils
 import params
+import graph
 from copy import deepcopy
 import logging
 
@@ -194,15 +195,20 @@ def base_stat_score(graph_obj, i):
     alpha_max = max(alpha)
 
     theta = graph_obj.produce_theta_angles(i, exclude_angles_from_inconsistent_meshes=True)
-    theta_min = min(theta)
-    theta_max = max(theta)
+    if theta:
+        theta_min = min(theta)
+        theta_max = max(theta)
+        theta_avg = sum(theta) / len(theta)
+    else:
+        theta_min = 0
+        theta_max = 0
+        theta_avg = 0
 
-    theta_avg = graph_obj.produce_theta_mean(i, exclude_angles_from_inconsistent_meshes=True)
     normalized_peak_gamma = graph_obj.vertices[i].normalized_peak_gamma
     normalized_avg_gamma = graph_obj.vertices[i].normalized_avg_gamma
 
     values = [alpha_min, alpha_max, theta_min, theta_max, theta_avg, normalized_peak_gamma, normalized_avg_gamma]
-    parameters = params.produce_params()
+    parameters = graph.params
     coefficients = []
 
     for i, v in enumerate(values):
@@ -210,6 +216,7 @@ def base_stat_score(graph_obj, i):
         for mu, sigma in parameters[i]:
             value_coefficients.append(utils.normal_dist(v, mu, sigma))
         coefficients.append(value_coefficients)
+
     probs = []
 
     for value_coefficients in coefficients:
@@ -218,7 +225,13 @@ def base_stat_score(graph_obj, i):
             probability *= coefficient
         probs.append(probability)
 
+    probs = utils.normalize_list(probs, 1)
+
     reduced_probability = [probs[0], probs[1] + probs[2], 0, probs[3] + probs[4], 0, probs[5] + probs[6], 0]
+
+    print('Values:\n{}\n'.format(values))
+    print('Coefficients:\n{}\n'.format(coefficients))
+    print('Probs:\n{}\n'.format(probs))
 
     return reduced_probability
 

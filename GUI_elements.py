@@ -2327,6 +2327,7 @@ class PlotWizard(QtWidgets.QDialog):
 
         self.list_2.addItem('Central alpha min-max scatter-plot')
         self.list_2.addItem('Central theta min-max scatter-plot')
+        self.list_2.addItem('Mean central theta, exclusive')
         self.list_2.addItem('Fitted relative z-intensity distributions')
         self.list_2.addItem('Fitted normalized z-intensity distributions')
         self.list_2.addItem('Inter-atomic distances distributions')
@@ -2446,6 +2447,17 @@ class PlotWizard(QtWidgets.QDialog):
                 plot.plot()
             elif self.list_1.item(j).text() == 'Central theta min-max scatter-plot':
                 plot = plotting_module.MinMax(files, angle_mode='theta')
+                plot.accumulate_data(exclude_edges=not self.chb_edge_columns.isChecked(),
+                                     exclude_matrix=not self.chb_matrix_columns.isChecked(),
+                                     exclude_particle=not self.chb_particle_columns.isChecked(),
+                                     exclude_hidden=not self.chb_hidden_columns.isChecked(),
+                                     exclude_1=not self.chb_flag_1.isChecked(),
+                                     exclude_2=not self.chb_flag_2.isChecked(),
+                                     exclude_3=not self.chb_flag_3.isChecked(),
+                                     exclude_4=not self.chb_flag_4.isChecked())
+                plot.plot()
+            elif self.list_1.item(j).text() == 'Mean central theta, exclusive':
+                plot = plotting_module.ThetaMean(files)
                 plot.accumulate_data(exclude_edges=not self.chb_edge_columns.isChecked(),
                                      exclude_matrix=not self.chb_matrix_columns.isChecked(),
                                      exclude_particle=not self.chb_particle_columns.isChecked(),

@@ -7,6 +7,7 @@ import core
 import GUI_elements
 import GUI_settings
 import mat_op
+import params
 # External imports:
 from PyQt5 import QtWidgets, QtGui, QtCore
 import sys
@@ -842,7 +843,8 @@ class MainUI(QtWidgets.QMainWindow):
                        '18 - Find edge columns',
                        '19 - Calculate globally normalized gamma levels',
                        '20 - Run experimental mesh analysis',
-                       '21 - Sort neighbours by mesh, distance']
+                       '21 - Sort neighbours by mesh, distance',
+                       '22 - Experimental stat analysis']
 
             string, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Search step", strings, 0, False)
             if ok_pressed and strings:
@@ -916,7 +918,7 @@ class MainUI(QtWidgets.QMainWindow):
         pass
 
     def btn_test_trigger(self):
-        self.project_instance.graph.map_friends()
+        params_ = params.calculate_params(self.savefile, plot=True)
 
     def btn_make_plot_trigger(self):
         GUI_elements.PlotWizard(ui_obj=self)

@@ -492,34 +492,22 @@ class Gamma:
         self.number_of_files = 0
 
         self.cu_avg_intensities = []
-        self.si_avg_intensities = []
-        self.al_avg_intensities = []
-        self.mg_avg_intensities = []
-
-        self.cu_avg_gamma_std = 0
-        self.si_avg_gamma_std = 0
-        self.al_avg_gamma_std = 0
-        self.mg_avg_gamma_std = 0
-
-        self.cu_avg_gamma_mean = 0
-        self.si_avg_gamma_mean = 0
-        self.al_avg_gamma_mean = 0
-        self.mg_avg_gamma_mean = 0
+        self.si_1_avg_intensities = []
+        self.si_2_avg_intensities = []
+        self.al_1_avg_intensities = []
+        self.al_2_avg_intensities = []
+        self.mg_1_avg_intensities = []
+        self.mg_2_avg_intensities = []
 
         self.cu_peak_intensities = []
-        self.si_peak_intensities = []
-        self.al_peak_intensities = []
-        self.mg_peak_intensities = []
+        self.si_1_peak_intensities = []
+        self.si_2_peak_intensities = []
+        self.al_1_peak_intensities = []
+        self.al_2_peak_intensities = []
+        self.mg_1_peak_intensities = []
+        self.mg_2_peak_intensities = []
 
-        self.cu_peak_gamma_std = 0
-        self.si_peak_gamma_std = 0
-        self.al_peak_gamma_std = 0
-        self.mg_peak_gamma_std = 0
-
-        self.cu_peak_gamma_mean = 0
-        self.si_peak_gamma_mean = 0
-        self.al_peak_gamma_mean = 0
-        self.mg_peak_gamma_mean = 0
+        self.params = []
 
     def accumulate_data(self, exclude_edges=True, exclude_matrix=False, exclude_particle=False, exclude_hidden=False, exclude_1=False, exclude_2=False, exclude_3=False, exclude_4=False):
 
@@ -528,6 +516,8 @@ class Gamma:
         for file_ in iter(self.files.splitlines()):
             instance = core.SuchSoftware.load(file_)
             self.number_of_files += 1
+
+            instance.calc_avg_gamma()
 
             for vertex in instance.graph.vertices:
                 if not (exclude_edges and vertex.is_edge_column):
@@ -649,18 +639,18 @@ class MinMax:
         self.cu_min_angles = []
         self.si_1_min_angles = []
         self.si_2_min_angles = []
-        self.al_min_angles = []
+        self.al_1_min_angles = []
+        self.al_2_min_angles = []
         self.mg_1_min_angles = []
         self.mg_2_min_angles = []
-        self.mg_3_min_angles = []
 
         self.cu_max_angles = []
         self.si_1_max_angles = []
         self.si_2_max_angles = []
-        self.al_max_angles = []
+        self.al_1_max_angles = []
+        self.al_2_max_angles = []
         self.mg_1_max_angles = []
         self.mg_2_max_angles = []
-        self.mg_3_max_angles = []
 
         self.cu_min_std = 0
         self.cu_max_std = 0
@@ -668,14 +658,14 @@ class MinMax:
         self.si_1_max_std = 0
         self.si_2_min_std = 0
         self.si_2_max_std = 0
-        self.al_min_std = 0
-        self.al_max_std = 0
+        self.al_1_min_std = 0
+        self.al_1_max_std = 0
+        self.al_2_min_std = 0
+        self.al_2_max_std = 0
         self.mg_1_min_std = 0
         self.mg_1_max_std = 0
         self.mg_2_min_std = 0
         self.mg_2_max_std = 0
-        self.mg_3_min_std = 0
-        self.mg_3_max_std = 0
 
         self.std_min = []
         self.std_max = []
@@ -686,14 +676,14 @@ class MinMax:
         self.si_1_max_mean = 0
         self.si_2_min_mean = 0
         self.si_2_max_mean = 0
-        self.al_min_mean = 0
-        self.al_max_mean = 0
+        self.al_1_min_mean = 0
+        self.al_1_max_mean = 0
+        self.al_2_min_mean = 0
+        self.al_2_max_mean = 0
         self.mg_1_min_mean = 0
         self.mg_1_max_mean = 0
         self.mg_2_min_mean = 0
         self.mg_2_max_mean = 0
-        self.mg_3_min_mean = 0
-        self.mg_3_max_mean = 0
 
         self.mean_min = []
         self.mean_max = []
@@ -705,6 +695,8 @@ class MinMax:
         for file_ in iter(self.files.splitlines()):
             instance = core.SuchSoftware.load(file_)
             self.number_of_files += 1
+
+            instance.graph.map_friends()
 
             for vertex in instance.graph.vertices:
                 if not (exclude_edges and vertex.is_edge_column):
@@ -734,28 +726,26 @@ class MinMax:
                                                             self.si_1_max_angles.append(max_)
 
                                                     elif vertex.species() == 'Al':
-                                                        self.al_min_angles.append(min_)
-                                                        self.al_max_angles.append(max_)
+                                                        if vertex.is_in_precipitate:
+                                                            self.al_2_min_angles.append(min_)
+                                                            self.al_2_max_angles.append(max_)
+                                                        else:
+                                                            self.al_1_min_angles.append(min_)
+                                                            self.al_1_max_angles.append(max_)
 
                                                     elif vertex.species() == 'Mg':
-                                                        if not vertex.flag_3:
-                                                            if max_ > 3.15:
-                                                                self.mg_2_min_angles.append(min_)
-                                                                self.mg_2_max_angles.append(max_)
-                                                            else:
-                                                                self.mg_1_min_angles.append(min_)
-                                                                self.mg_1_max_angles.append(max_)
+                                                        if max_ > 3.15:
+                                                            self.mg_2_min_angles.append(min_)
+                                                            self.mg_2_max_angles.append(max_)
                                                         else:
-                                                            self.mg_3_min_angles.append(min_)
-                                                            self.mg_3_max_angles.append(max_)
+                                                            self.mg_1_min_angles.append(min_)
+                                                            self.mg_1_max_angles.append(max_)
 
                                                 elif self.angle_mode == 'theta':
-                                                    sub_graph = instance.graph.get_atomic_configuration(vertex.i)
-                                                    theta_angles = []
-                                                    for mesh in sub_graph.meshes:
-                                                        theta_angles.append(mesh.angles[0])
+                                                    theta_angles = instance.graph.produce_theta_angles(vertex.i, exclude_angles_from_inconsistent_meshes=True)
                                                     max_ = max(theta_angles)
                                                     min_ = min(theta_angles)
+                                                    alpha_max = max(instance.graph.produce_alpha_angles(vertex.i))
 
                                                     if vertex.species() == 'Cu':
                                                         self.cu_min_angles.append(min_)
@@ -770,16 +760,20 @@ class MinMax:
                                                             self.si_1_max_angles.append(max_)
 
                                                     elif vertex.species() == 'Al':
-                                                        self.al_min_angles.append(min_)
-                                                        self.al_max_angles.append(max_)
+                                                        if vertex.is_in_precipitate:
+                                                            self.al_2_min_angles.append(min_)
+                                                            self.al_2_max_angles.append(max_)
+                                                        else:
+                                                            self.al_1_min_angles.append(min_)
+                                                            self.al_1_max_angles.append(max_)
 
                                                     elif vertex.species() == 'Mg':
-                                                        if not vertex.flag_3:
+                                                        if alpha_max > 3.15:
+                                                            self.mg_2_min_angles.append(min_)
+                                                            self.mg_2_max_angles.append(max_)
+                                                        else:
                                                             self.mg_1_min_angles.append(min_)
                                                             self.mg_1_max_angles.append(max_)
-                                                        else:
-                                                            self.mg_3_min_angles.append(min_)
-                                                            self.mg_3_max_angles.append(max_)
 
         self.cu_min_std = np.sqrt(utils.variance(self.cu_min_angles))
         self.cu_max_std = np.sqrt(utils.variance(self.cu_max_angles))
@@ -787,29 +781,29 @@ class MinMax:
         self.si_1_max_std = np.sqrt(utils.variance(self.si_1_max_angles))
         self.si_2_min_std = np.sqrt(utils.variance(self.si_2_min_angles))
         self.si_2_max_std = np.sqrt(utils.variance(self.si_2_max_angles))
-        self.al_min_std = np.sqrt(utils.variance(self.al_min_angles))
-        self.al_max_std = np.sqrt(utils.variance(self.al_max_angles))
+        self.al_1_min_std = np.sqrt(utils.variance(self.al_1_min_angles))
+        self.al_1_max_std = np.sqrt(utils.variance(self.al_1_max_angles))
+        self.al_2_min_std = np.sqrt(utils.variance(self.al_2_min_angles))
+        self.al_2_max_std = np.sqrt(utils.variance(self.al_2_max_angles))
         self.mg_1_min_std = np.sqrt(utils.variance(self.mg_1_min_angles))
         self.mg_1_max_std = np.sqrt(utils.variance(self.mg_1_max_angles))
         self.mg_2_min_std = np.sqrt(utils.variance(self.mg_2_min_angles))
         self.mg_2_max_std = np.sqrt(utils.variance(self.mg_2_max_angles))
-        self.mg_3_min_std = np.sqrt(utils.variance(self.mg_3_min_angles))
-        self.mg_3_max_std = np.sqrt(utils.variance(self.mg_3_max_angles))
 
         self.std_min = [self.cu_min_std,
                         self.si_1_min_std,
                         self.si_2_min_std,
-                        self.al_min_std,
+                        self.al_1_min_std,
+                        self.al_2_min_std,
                         self.mg_1_min_std,
-                        self.mg_2_min_std,
-                        self.mg_3_min_std]
+                        self.mg_2_min_std]
         self.std_max = [self.cu_max_std,
                         self.si_1_max_std,
                         self.si_2_max_std,
-                        self.al_max_std,
+                        self.al_1_max_std,
+                        self.al_2_max_std,
                         self.mg_1_max_std,
-                        self.mg_2_max_std,
-                        self.mg_3_max_std]
+                        self.mg_2_max_std]
 
         self.cu_min_mean = utils.mean_val(self.cu_min_angles)
         self.cu_max_mean = utils.mean_val(self.cu_max_angles)
@@ -817,29 +811,29 @@ class MinMax:
         self.si_1_max_mean = utils.mean_val(self.si_1_max_angles)
         self.si_2_min_mean = utils.mean_val(self.si_2_min_angles)
         self.si_2_max_mean = utils.mean_val(self.si_2_max_angles)
-        self.al_min_mean = utils.mean_val(self.al_min_angles)
-        self.al_max_mean = utils.mean_val(self.al_max_angles)
+        self.al_1_min_mean = utils.mean_val(self.al_1_min_angles)
+        self.al_1_max_mean = utils.mean_val(self.al_1_max_angles)
+        self.al_2_min_mean = utils.mean_val(self.al_2_min_angles)
+        self.al_2_max_mean = utils.mean_val(self.al_2_max_angles)
         self.mg_1_min_mean = utils.mean_val(self.mg_1_min_angles)
         self.mg_1_max_mean = utils.mean_val(self.mg_1_max_angles)
         self.mg_2_min_mean = utils.mean_val(self.mg_2_min_angles)
         self.mg_2_max_mean = utils.mean_val(self.mg_2_max_angles)
-        self.mg_3_min_mean = utils.mean_val(self.mg_3_min_angles)
-        self.mg_3_max_mean = utils.mean_val(self.mg_3_max_angles)
 
         self.mean_min = [self.cu_min_mean,
                          self.si_1_min_mean,
                          self.si_2_min_mean,
-                         self.al_min_mean,
+                         self.al_1_min_mean,
+                         self.al_2_min_mean,
                          self.mg_1_min_mean,
-                         self.mg_2_min_mean,
-                         self.mg_3_min_mean]
+                         self.mg_2_min_mean]
         self.mean_max = [self.cu_max_mean,
                          self.si_1_max_mean,
                          self.si_2_max_mean,
-                         self.al_max_mean,
+                         self.al_1_max_mean,
+                         self.al_2_max_mean,
                          self.mg_1_max_mean,
-                         self.mg_2_max_mean,
-                         self.mg_3_max_mean]
+                         self.mg_2_max_mean]
 
     def plot(self):
 
@@ -859,15 +853,14 @@ class MinMax:
                     label='Si$_1$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.si_1_min_mean, self.si_1_min_std))
         ax_min.plot(alpha, utils.normal_dist(alpha, self.si_2_min_mean, self.si_2_min_std), 'k',
                     label='Si$_2$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.si_2_min_mean, self.si_2_min_std))
-        ax_min.plot(alpha, utils.normal_dist(alpha, self.al_min_mean, self.al_min_std), 'g',
-                    label='Al ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.al_min_mean, self.al_min_std))
+        ax_min.plot(alpha, utils.normal_dist(alpha, self.al_1_min_mean, self.al_1_min_std), 'g',
+                    label='Al$_1$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.al_1_min_mean, self.al_1_min_std))
+        ax_min.plot(alpha, utils.normal_dist(alpha, self.al_2_min_mean, self.al_2_min_std), 'g',
+                    label='Al$_2$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.al_2_min_mean, self.al_2_min_std))
         ax_min.plot(alpha, utils.normal_dist(alpha, self.mg_1_min_mean, self.mg_1_min_std), 'm',
                     label='Mg$_1$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.mg_1_min_mean, self.mg_1_min_std))
         ax_min.plot(alpha, utils.normal_dist(alpha, self.mg_2_min_mean, self.mg_2_min_std), 'c',
                     label='Mg$_2$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.mg_2_min_mean, self.mg_2_min_std))
-        ax_min.plot(alpha, utils.normal_dist(alpha, self.mg_3_min_mean, self.mg_3_min_std), 'b',
-                    label='Mg$_3$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.mg_3_min_mean,
-                                                                                   self.mg_3_min_std))
 
         ax_min.set_title('Minimum central angles fitted density')
         ax_min.set_xlabel('Min angle (radians)')
@@ -879,15 +872,14 @@ class MinMax:
                     label='Si$_1$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.si_1_max_mean, self.si_1_max_std))
         ax_max.plot(alpha, utils.normal_dist(alpha, self.si_2_max_mean, self.si_2_max_std), 'k',
                     label='Si$_2$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.si_2_max_mean, self.si_2_max_std))
-        ax_max.plot(alpha, utils.normal_dist(alpha, self.al_max_mean, self.al_max_std), 'g',
-                    label='Al ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.al_max_mean, self.al_max_std))
+        ax_max.plot(alpha, utils.normal_dist(alpha, self.al_1_max_mean, self.al_1_max_std), 'g',
+                    label='Al$_1$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.al_1_max_mean, self.al_1_max_std))
+        ax_max.plot(alpha, utils.normal_dist(alpha, self.al_2_max_mean, self.al_2_max_std), 'g',
+                    label='Al$_2$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.al_2_max_mean, self.al_2_max_std))
         ax_max.plot(alpha, utils.normal_dist(alpha, self.mg_1_max_mean, self.mg_1_max_std), 'm',
                     label='Mg$_1$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.mg_1_max_mean, self.mg_1_max_std))
         ax_max.plot(alpha, utils.normal_dist(alpha, self.mg_2_max_mean, self.mg_2_max_std), 'c',
                     label='Mg$_2$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.mg_2_max_mean, self.mg_2_max_std))
-        ax_max.plot(alpha, utils.normal_dist(alpha, self.mg_3_max_mean, self.mg_3_max_std), 'b',
-                    label='Mg$_3$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.mg_3_max_mean,
-                                                                                   self.mg_3_max_std))
 
         ax_max.set_title('Maximum central angles fitted density')
         ax_max.set_xlabel('max angle (radians)')
@@ -896,19 +888,22 @@ class MinMax:
         ax_scatter.scatter(self.cu_min_angles, self.cu_max_angles, c='y', label='Cu', s=8)
         ax_scatter.scatter(self.si_1_min_angles, self.si_1_max_angles, c='r', label='Si$_1$', s=8)
         ax_scatter.scatter(self.si_2_min_angles, self.si_2_max_angles, c='k', label='Si$_2$', s=8)
-        ax_scatter.scatter(self.al_min_angles, self.al_max_angles, c='g', label='Al', s=8)
+        ax_scatter.scatter(self.al_1_min_angles, self.al_1_max_angles, c='g', label='Al', s=8)
+        ax_scatter.scatter(self.al_2_min_angles, self.al_2_max_angles, c='g', label='Al', s=8)
         ax_scatter.scatter(self.mg_1_min_angles, self.mg_1_max_angles, c='m', label='Mg$_1$', s=8)
         ax_scatter.scatter(self.mg_2_min_angles, self.mg_2_max_angles, c='c', label='Mg$_2$', s=8)
-        ax_scatter.scatter(self.mg_3_min_angles, self.mg_3_max_angles, c='b', label='Mg$_3$', s=8)
 
         ax_scatter.set_title('Scatter-plot of min-max angles')
         ax_scatter.set_xlabel('Min angle (radians)')
         ax_scatter.set_ylabel('max angle (radians)')
         ax_scatter.legend()
 
-        fig.suptitle('Alpha min/max summary')
+        if self.angle_mode == 'alpha':
+            fig.suptitle('Alpha min/max summary')
+        else:
+            fig.suptitle('Theta min/max summary')
 
-        logger.info('Plotted min/max alpha over {} files and {} vertices!'.format(self.number_of_files, self.number_of_vertices))
+        logger.info('Plotted min/max over {} files and {} vertices!'.format(self.number_of_files, self.number_of_vertices))
 
         plt.show()
 
@@ -995,65 +990,37 @@ class ThetaMean:
                                                     else:
                                                         self.mg_1_param.append(theta_mean)
 
-        self.cu_min_std = np.sqrt(utils.variance(self.cu_min_angles))
-        self.cu_max_std = np.sqrt(utils.variance(self.cu_max_angles))
-        self.si_1_min_std = np.sqrt(utils.variance(self.si_1_min_angles))
-        self.si_1_max_std = np.sqrt(utils.variance(self.si_1_max_angles))
-        self.si_2_min_std = np.sqrt(utils.variance(self.si_2_min_angles))
-        self.si_2_max_std = np.sqrt(utils.variance(self.si_2_max_angles))
-        self.al_min_std = np.sqrt(utils.variance(self.al_min_angles))
-        self.al_max_std = np.sqrt(utils.variance(self.al_max_angles))
-        self.mg_1_min_std = np.sqrt(utils.variance(self.mg_1_min_angles))
-        self.mg_1_max_std = np.sqrt(utils.variance(self.mg_1_max_angles))
-        self.mg_2_min_std = np.sqrt(utils.variance(self.mg_2_min_angles))
-        self.mg_2_max_std = np.sqrt(utils.variance(self.mg_2_max_angles))
-        self.mg_3_min_std = np.sqrt(utils.variance(self.mg_3_min_angles))
-        self.mg_3_max_std = np.sqrt(utils.variance(self.mg_3_max_angles))
+        self.cu_std = np.sqrt(utils.variance(self.cu_param))
+        self.si_1_std = np.sqrt(utils.variance(self.si_1_param))
+        self.si_2_std = np.sqrt(utils.variance(self.si_2_param))
+        self.al_1_std = np.sqrt(utils.variance(self.al_1_param))
+        self.al_2_std = np.sqrt(utils.variance(self.al_2_param))
+        self.mg_1_std = np.sqrt(utils.variance(self.mg_1_param))
+        self.mg_2_std = np.sqrt(utils.variance(self.mg_2_param))
 
-        self.std_min = [self.cu_min_std,
-                        self.si_1_min_std,
-                        self.si_2_min_std,
-                        self.al_min_std,
-                        self.mg_1_min_std,
-                        self.mg_2_min_std,
-                        self.mg_3_min_std]
-        self.std_max = [self.cu_max_std,
-                        self.si_1_max_std,
-                        self.si_2_max_std,
-                        self.al_max_std,
-                        self.mg_1_max_std,
-                        self.mg_2_max_std,
-                        self.mg_3_max_std]
+        self.std = [self.cu_std,
+                    self.si_1_std,
+                    self.si_2_std,
+                    self.al_1_std,
+                    self.al_2_std,
+                    self.mg_1_std,
+                    self.mg_2_std]
 
-        self.cu_min_mean = utils.mean_val(self.cu_min_angles)
-        self.cu_max_mean = utils.mean_val(self.cu_max_angles)
-        self.si_1_min_mean = utils.mean_val(self.si_1_min_angles)
-        self.si_1_max_mean = utils.mean_val(self.si_1_max_angles)
-        self.si_2_min_mean = utils.mean_val(self.si_2_min_angles)
-        self.si_2_max_mean = utils.mean_val(self.si_2_max_angles)
-        self.al_min_mean = utils.mean_val(self.al_min_angles)
-        self.al_max_mean = utils.mean_val(self.al_max_angles)
-        self.mg_1_min_mean = utils.mean_val(self.mg_1_min_angles)
-        self.mg_1_max_mean = utils.mean_val(self.mg_1_max_angles)
-        self.mg_2_min_mean = utils.mean_val(self.mg_2_min_angles)
-        self.mg_2_max_mean = utils.mean_val(self.mg_2_max_angles)
-        self.mg_3_min_mean = utils.mean_val(self.mg_3_min_angles)
-        self.mg_3_max_mean = utils.mean_val(self.mg_3_max_angles)
+        self.cu_mean = utils.mean_val(self.cu_param)
+        self.si_1_mean = utils.mean_val(self.si_1_param)
+        self.si_2_mean = utils.mean_val(self.si_2_param)
+        self.al_1_mean = utils.mean_val(self.al_1_param)
+        self.al_2_mean = utils.mean_val(self.al_2_param)
+        self.mg_1_mean = utils.mean_val(self.mg_1_param)
+        self.mg_2_mean = utils.mean_val(self.mg_2_param)
 
-        self.mean_min = [self.cu_min_mean,
-                         self.si_1_min_mean,
-                         self.si_2_min_mean,
-                         self.al_min_mean,
-                         self.mg_1_min_mean,
-                         self.mg_2_min_mean,
-                         self.mg_3_min_mean]
-        self.mean_max = [self.cu_max_mean,
-                         self.si_1_max_mean,
-                         self.si_2_max_mean,
-                         self.al_max_mean,
-                         self.mg_1_max_mean,
-                         self.mg_2_max_mean,
-                         self.mg_3_max_mean]
+        self.mean = [self.cu_mean,
+                     self.si_1_mean,
+                     self.si_2_mean,
+                     self.al_1_mean,
+                     self.al_2_mean,
+                     self.mg_1_mean,
+                     self.mg_2_mean]
 
     def plot(self):
 
@@ -1062,67 +1029,29 @@ class ThetaMean:
         alpha = np.linspace(1, 4, 1000)
 
         fig = plt.figure(constrained_layout=True)
-        gs = GridSpec(2, 2, figure=fig)
-        ax_min = fig.add_subplot(gs[0, 0])
-        ax_max = fig.add_subplot(gs[1, 0])
-        ax_scatter = fig.add_subplot(gs[:, 1])
+        gs = GridSpec(1, 1, figure=fig)
+        ax = fig.add_subplot(gs[0, 0])
 
-        ax_min.plot(alpha, utils.normal_dist(alpha, self.cu_min_mean, self.cu_min_std), 'y',
-                    label='Cu ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.cu_min_mean, self.cu_min_std))
-        ax_min.plot(alpha, utils.normal_dist(alpha, self.si_1_min_mean, self.si_1_min_std), 'r',
-                    label='Si$_1$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.si_1_min_mean, self.si_1_min_std))
-        ax_min.plot(alpha, utils.normal_dist(alpha, self.si_2_min_mean, self.si_2_min_std), 'k',
-                    label='Si$_2$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.si_2_min_mean, self.si_2_min_std))
-        ax_min.plot(alpha, utils.normal_dist(alpha, self.al_min_mean, self.al_min_std), 'g',
-                    label='Al ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.al_min_mean, self.al_min_std))
-        ax_min.plot(alpha, utils.normal_dist(alpha, self.mg_1_min_mean, self.mg_1_min_std), 'm',
-                    label='Mg$_1$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.mg_1_min_mean, self.mg_1_min_std))
-        ax_min.plot(alpha, utils.normal_dist(alpha, self.mg_2_min_mean, self.mg_2_min_std), 'c',
-                    label='Mg$_2$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.mg_2_min_mean, self.mg_2_min_std))
-        ax_min.plot(alpha, utils.normal_dist(alpha, self.mg_3_min_mean, self.mg_3_min_std), 'b',
-                    label='Mg$_3$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.mg_3_min_mean,
-                                                                                   self.mg_3_min_std))
+        ax.plot(alpha, utils.normal_dist(alpha, self.cu_mean, self.cu_std), 'y',
+                    label='Cu ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.cu_mean, self.cu_std))
+        ax.plot(alpha, utils.normal_dist(alpha, self.si_1_mean, self.si_1_std), 'r',
+                    label='Si$_1$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.si_1_mean, self.si_1_std))
+        ax.plot(alpha, utils.normal_dist(alpha, self.si_2_mean, self.si_2_std), 'k',
+                    label='Si$_2$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.si_2_mean, self.si_2_std))
+        ax.plot(alpha, utils.normal_dist(alpha, self.al_1_mean, self.al_1_std), 'g',
+                    label='Al$_1$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.al_1_mean, self.al_1_std))
+        ax.plot(alpha, utils.normal_dist(alpha, self.al_2_mean, self.al_2_std), 'g',
+                    label='Al$_2$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.al_2_mean, self.al_2_std))
+        ax.plot(alpha, utils.normal_dist(alpha, self.mg_1_mean, self.mg_1_std), 'm',
+                    label='Mg$_1$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.mg_1_mean, self.mg_1_std))
+        ax.plot(alpha, utils.normal_dist(alpha, self.mg_2_mean, self.mg_2_std), 'c',
+                    label='Mg$_2$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.mg_2_mean, self.mg_2_std))
 
-        ax_min.set_title('Minimum central angles fitted density')
-        ax_min.set_xlabel('Min angle (radians)')
-        ax_min.legend()
+        ax.set_title('Mean consistent theta angles')
+        ax.set_xlabel('theta (radians)')
+        ax.legend()
 
-        ax_max.plot(alpha, utils.normal_dist(alpha, self.cu_max_mean, self.cu_max_std), 'y',
-                    label='Cu ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.cu_max_mean, self.cu_max_std))
-        ax_max.plot(alpha, utils.normal_dist(alpha, self.si_1_max_mean, self.si_1_max_std), 'r',
-                    label='Si$_1$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.si_1_max_mean, self.si_1_max_std))
-        ax_max.plot(alpha, utils.normal_dist(alpha, self.si_2_max_mean, self.si_2_max_std), 'k',
-                    label='Si$_2$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.si_2_max_mean, self.si_2_max_std))
-        ax_max.plot(alpha, utils.normal_dist(alpha, self.al_max_mean, self.al_max_std), 'g',
-                    label='Al ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.al_max_mean, self.al_max_std))
-        ax_max.plot(alpha, utils.normal_dist(alpha, self.mg_1_max_mean, self.mg_1_max_std), 'm',
-                    label='Mg$_1$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.mg_1_max_mean, self.mg_1_max_std))
-        ax_max.plot(alpha, utils.normal_dist(alpha, self.mg_2_max_mean, self.mg_2_max_std), 'c',
-                    label='Mg$_2$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.mg_2_max_mean, self.mg_2_max_std))
-        ax_max.plot(alpha, utils.normal_dist(alpha, self.mg_3_max_mean, self.mg_3_max_std), 'b',
-                    label='Mg$_3$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.mg_3_max_mean,
-                                                                                   self.mg_3_max_std))
-
-        ax_max.set_title('Maximum central angles fitted density')
-        ax_max.set_xlabel('max angle (radians)')
-        ax_max.legend()
-
-        ax_scatter.scatter(self.cu_min_angles, self.cu_max_angles, c='y', label='Cu', s=8)
-        ax_scatter.scatter(self.si_1_min_angles, self.si_1_max_angles, c='r', label='Si$_1$', s=8)
-        ax_scatter.scatter(self.si_2_min_angles, self.si_2_max_angles, c='k', label='Si$_2$', s=8)
-        ax_scatter.scatter(self.al_min_angles, self.al_max_angles, c='g', label='Al', s=8)
-        ax_scatter.scatter(self.mg_1_min_angles, self.mg_1_max_angles, c='m', label='Mg$_1$', s=8)
-        ax_scatter.scatter(self.mg_2_min_angles, self.mg_2_max_angles, c='c', label='Mg$_2$', s=8)
-        ax_scatter.scatter(self.mg_3_min_angles, self.mg_3_max_angles, c='b', label='Mg$_3$', s=8)
-
-        ax_scatter.set_title('Scatter-plot of min-max angles')
-        ax_scatter.set_xlabel('Min angle (radians)')
-        ax_scatter.set_ylabel('max angle (radians)')
-        ax_scatter.legend()
-
-        fig.suptitle('Alpha min/max summary')
-
-        logger.info('Plotted min/max alpha over {} files and {} vertices!'.format(self.number_of_files, self.number_of_vertices))
+        logger.info('Plotted mean theta over {} files and {} vertices!'.format(self.number_of_files, self.number_of_vertices))
 
         plt.show()
 
