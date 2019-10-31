@@ -103,3 +103,5 @@ def im_out_static(im_mat, filename_full):
     im_mat = np.uint8(np.round(im_mat * 255))
     im_dsp = Image.fromarray(im_mat)
     im_dsp.save(os.path.join(filename_full))
+
+

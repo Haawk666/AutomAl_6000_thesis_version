@@ -189,11 +189,9 @@ def base_pca_score(graph_obj, i, apply=True):
 
 
 def base_stat_score(graph_obj, i):
-
     alpha = graph_obj.produce_alpha_angles(i)
     alpha_min = min(alpha)
     alpha_max = max(alpha)
-
     theta = graph_obj.produce_theta_angles(i, exclude_angles_from_inconsistent_meshes=True)
     if theta:
         theta_min = min(theta)
@@ -208,32 +206,29 @@ def base_stat_score(graph_obj, i):
     normalized_avg_gamma = graph_obj.vertices[i].normalized_avg_gamma
 
     values = [alpha_min, alpha_max, theta_min, theta_max, theta_avg, normalized_peak_gamma, normalized_avg_gamma]
-    parameters = graph.params
-    coefficients = []
-
-    for i, v in enumerate(values):
-        value_coefficients = []
-        for mu, sigma in parameters[i]:
-            value_coefficients.append(utils.normal_dist(v, mu, sigma))
-        coefficients.append(value_coefficients)
+    parameters, covar_matrices, reduced_model_covar_matrices, covar_determinants, reduced_model_covar_determinants,\
+        inverse_covar_matrices, inverse_reduced_model_covar_matrices = params.produce_params(calc=False)
 
     probs = []
 
-    for value_coefficients in coefficients:
-        probability = 1
-        for coefficient in value_coefficients:
-            probability *= coefficient
-        probs.append(probability)
+    for i, element in enumerate(['Cu', 'Si_1', 'Si_2', 'Al_1', 'Al_2', 'Mg_1', 'Mg_2']):
+
+        if theta:
+            means = [a[0] for a in parameters[i]]
+            probs.append(utils.multivariate_normal_dist(values, means, covar_determinants[i], inverse_covar_matrices[i]))
+
+        else:
+            means = []
+            reduced_values = []
+            for j in [0, 1, 5, 6]:
+                means.append(parameters[i][j][0])
+                reduced_values.append(values[j])
+            probs.append(utils.multivariate_normal_dist(reduced_values, means, reduced_model_covar_determinants[i], inverse_reduced_model_covar_matrices[i]))
 
     probs = utils.normalize_list(probs, 1)
+    sum_probs = [probs[1] + probs[2], probs[0], 0, probs[3] + probs[4], 0, probs[5] + probs[6], 0]
 
-    reduced_probability = [probs[0], probs[1] + probs[2], 0, probs[3] + probs[4], 0, probs[5] + probs[6], 0]
-
-    print('Values:\n{}\n'.format(values))
-    print('Coefficients:\n{}\n'.format(coefficients))
-    print('Probs:\n{}\n'.format(probs))
-
-    return reduced_probability
+    return sum_probs
 
 
 def base_angle_score(graph_obj, i, apply=True):

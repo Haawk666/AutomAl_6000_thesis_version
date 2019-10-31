@@ -11,6 +11,7 @@ import plotting_module
 import export_module
 import data_module
 import utils
+import params
 # External imports:
 from PyQt5 import QtWidgets, QtGui, QtCore
 import pathlib
@@ -2510,6 +2511,9 @@ class PlotWizard(QtWidgets.QDialog):
                     plot.plot(type_='all')
                 else:
                     plot.plot()
+            elif self.list_1.item(j).text() == 'Summary plot-page':
+                params.calculate_params(files, exclude_edges=True, exclude_matrix=False, exclude_particle=False, exclude_hidden=False,
+                     exclude_1=False, exclude_2=False, exclude_3=False, exclude_4=False, plot=True)
         logger.info('Plotting complete.')
         self.ui_obj.sys_message('Ready.')
 

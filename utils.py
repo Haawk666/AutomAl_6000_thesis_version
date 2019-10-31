@@ -152,6 +152,19 @@ def normal_dist(x, mean, std):
     return dist
 
 
+def multivariate_normal_dist(x, means, covar_determinant, inverse_covar_matrix):
+    """All arguments assumed to be python lists"""
+    k = len(x)
+
+    deviance_vector = np.array([a - b for a, b in zip(x, means)])
+
+    result = np.matmul(np.matmul(deviance_vector.T, np.array(inverse_covar_matrix)), deviance_vector)
+    result = np.exp(-0.5 * result)
+    result = result / (np.sqrt(((2 * np.pi) ** k) * covar_determinant))
+
+    return float(result)
+
+
 def normalize_list(in_list, norm_sum=1):
 
     factor = norm_sum / sum(in_list)
@@ -190,12 +203,30 @@ def variance(data):
     for item in data:
         sum_ += (item - mean)**2
 
-    if not len(data) == 0:
-        sum_ = sum_ / (len(data))
+    if len(data) > 1:
+        var = sum_ / (len(data) - 1)
     else:
-        sum_ = 0
+        var = 0
 
-    return sum_
+    return var
+
+
+def covariance(data_1, data_2):
+
+    mean_1 = mean_val(data_1)
+    mean_2 = mean_val(data_2)
+
+    sum_ = 0
+
+    for item_1, item_2 in zip(data_1, data_2):
+        sum_ += (item_1 - mean_1) * (item_2 - mean_2)
+
+    if len(data_1) > 1:
+        covar = sum_ / (len(data_1) - 1)
+    else:
+        covar = 0
+
+    return covar
 
 
 def deviation(data):

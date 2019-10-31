@@ -176,7 +176,10 @@ def mesh_levels(graph, i, level):
         indices = graph.vertices[i].neighbour_indices
 
         for x in range(0, graph.vertices[i].n()):
-
+            print('\n')
+            print(i)
+            print(indices)
+            print(x)
             reciprocal = graph.test_reciprocality(i, indices[x])
 
             if not graph.vertices[indices[x]].flag_1 and not graph.vertices[i].is_edge_column and reciprocal:

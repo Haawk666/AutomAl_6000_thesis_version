@@ -898,7 +898,7 @@ class MainUI(QtWidgets.QMainWindow):
                 self.project_instance.graph.map_meshes(self.selected_column)
             else:
                 self.project_instance.graph.map_meshes(np.floor(self.project_instance.num_columns / 2))
-            logger.info('Mehses mapped. Updating graphics')
+            logger.info('Meshes mapped. Updating graphics')
             self.gs_atomic_graph.re_draw_mesh_details()
             self.sys_message('Ready.')
 
@@ -918,7 +918,27 @@ class MainUI(QtWidgets.QMainWindow):
         pass
 
     def btn_test_trigger(self):
-        params_ = params.calculate_params(self.savefile, plot=True)
+        path = 'C:\\Users\\haakot\\OneDrive\\NTNU\\TFY4900 Master\\Data_a\\'
+        files = '{}008_control\n{}012a_control\n{}023_control\n{}030_control\n{}Smart_aligned_Qprime_control\n' +\
+                '{}Small_Qprime_control'.replace('{}', path)
+        params_, covar_matrices, reduced_model_covar_matrices, covar_determinants, reduced_model_covar_determinants,\
+            inverse_covar_matrices, inverse_reduced_model_covar_matrices = params.produce_params(calc=True, files=files)
+        for i, element in enumerate(['Cu', 'Si_1', 'Si_2', 'Al_1', 'Al_2', 'Mg_1', 'Mg_2']):
+            print(element)
+            for j in range(0, 7):
+                print(covar_matrices[i][j])
+        print('\n')
+        print(covar_matrices)
+        print('\n')
+        print(reduced_model_covar_matrices)
+        print('\n')
+        print(covar_determinants)
+        print('\n')
+        print(reduced_model_covar_determinants)
+        print('\n')
+        print(inverse_covar_matrices)
+        print('\n')
+        print(inverse_reduced_model_covar_matrices)
 
     def btn_make_plot_trigger(self):
         GUI_elements.PlotWizard(ui_obj=self)

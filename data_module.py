@@ -304,7 +304,6 @@ class VertexNumericData:
                         self.data = np.concatenate((self.data, np.reshape(values, (1, len(self.keys)))), axis=0)
                     self.num_vertices += 1
 
-            print('matrix: {}'.format(self.data.shape))
             self.num_files += 1
 
         self.attribute_keys = copy.deepcopy(self.keys)

@@ -13,15 +13,6 @@ import sys
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-params = [
-            [(1.94, 0.15), (2.25, 0.20), (1.94, 0.16), (2.19, 0.13), (2.07, 0.2), (0.52, 0.22), (0.48, 0.14)],
-            [(1.60, 0.13), (2.45, 0.15), (1.61, 0.14), (2.43, 0.13), (2.09, 0.2), (0.33, 0.06), (0.32, 0.04)],
-            [(1.94, 0.10), (2.26, 0.11), (1.93, 0.12), (2.26, 0.11), (2.09, 0.2), (0.32, 0.07), (0.32, 0.05)],
-            [(1.46, 0.13), (3.13, 0.21), (1.37, 0.13), (1.76, 0.14), (1.57, 0.2), (0.29, 0.13), (0.31, 0.08)],
-            [(1.54, 0.13), (3.11, 0.08), (1.48, 0.06), (1.66, 0.06), (1.57, 0.2), (0.30, 0.04), (0.31, 0.03)],
-            [(1.25, 0.11), (2.63, 0.11), (1.13, 0.06), (1.42, 0.10), (1.26, 0.2), (0.19, 0.09), (0.24, 0.05)],
-            [(1.23, 0.07), (3.72, 0.13), (1.10, 0.07), (1.43, 0.11), (1.26, 0.2), (0.14, 0.12), (0.22, 0.06)]
-        ]
 
 class Vertex:
     """A Vertex is a base building-block of a graph structure.
@@ -378,10 +369,9 @@ class Vertex:
         h_prob = 0.0
         h_index = 0
 
-        for y in range(0, self.num_selections):
-
-            if self.prob_vector[y] >= h_prob:
-                h_prob = self.prob_vector[y]
+        for y, prob in enumerate(self.prob_vector):
+            if prob >= h_prob:
+                h_prob = prob
                 h_index = y
 
         if not h_prob > 0.0:
@@ -1213,7 +1203,7 @@ class AtomicGraph:
 
         logger.debug('Finding next angle from {} -> {}'.format(i, j))
 
-        min_angle = 100
+        min_angle = 300
         next_index = -1
         p1 = self.vertices[i].real_coor()
         pivot = self.vertices[j].real_coor()
@@ -1259,7 +1249,7 @@ class AtomicGraph:
 
             if next_index == corners[0] or counter > 14:
                 _, nextnext = self.angle_sort(j, next_index, strict=strict, use_friends=use_friends)
-                if not nextnext == corners[1]:
+                if not nextnext == corners[1] and not use_friends:
                     corners, i, j = self.rebase(corners, nextnext, next_index, append=False)
                 stop = True
 
@@ -1335,7 +1325,13 @@ class AtomicGraph:
         sub_graph = SubGraph(self.map_size)
         sub_graph.add_vertex(self.vertices[i])
 
-        for partner in self.vertices[i].partners():
+        search_space = self.vertices[i].partners()
+        if use_friends:
+            for l in self.vertices[i].friendly_indices:
+                if l not in search_space:
+                    search_space.append(l)
+
+        for partner in search_space:
             sub_graph.add_vertex(self.vertices[partner])
             corners, ang, vec = self.find_mesh(i, partner, strict=strict, use_friends=use_friends)
             mesh = Mesh()

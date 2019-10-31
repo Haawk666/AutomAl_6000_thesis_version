@@ -1031,13 +1031,17 @@ class SuchSoftware:
             self.graph.sort_subsets_by_distance()
             self.calc_avg_gamma()
             self.normalize_gamma()
+            probs = []
             for i in range(0, self.num_columns):
                 if not self.graph.vertices[i].set_by_user and not self.graph.vertices[i].is_edge_column:
                     self.graph.vertices[i].reset_symmetry_vector()
                     self.graph.vertices[i].reset_prob_vector()
-                    self.graph.vertices[i].prob_vector = \
-                        graph_op.base_stat_score(self.graph, i)
-                    self.graph.vertices[i].prob_vector = np.array(self.graph.vertices[i].prob_vector)
+                    probs.append(np.array(graph_op.base_stat_score(self.graph, i)))
+                else:
+                    probs.append([0, 0, 0, 0, 0, 0, 0])
+            for i in range(0, self.num_columns):
+                if not self.graph.vertices[i].set_by_user and not self.graph.vertices[i].is_edge_column:
+                    self.graph.vertices[i].prob_vector = probs[i]
                     self.graph.vertices[i].define_species()
             logger.info('Experimental stat model complete!')
 
