@@ -188,7 +188,7 @@ def base_pca_score(graph_obj, i, apply=True):
         return max(alpha), min(alpha)
 
 
-def base_stat_score(graph_obj, i):
+def base_stat_score(graph_obj, i, get_individual_predictions=False):
     alpha = graph_obj.produce_alpha_angles(i)
     alpha_min = min(alpha)
     alpha_max = max(alpha)
@@ -211,6 +211,14 @@ def base_stat_score(graph_obj, i):
 
     probs = []
 
+    alpha_min_probs = []
+    alpha_max_probs = []
+    theta_min_probs = []
+    theta_max_probs = []
+    theta_avg_probs = []
+    norm_peak_gamma_probs = []
+    norm_avg_gamma_probs = []
+
     for i, element in enumerate(['Cu', 'Si_1', 'Si_2', 'Al_1', 'Al_2', 'Mg_1', 'Mg_2']):
 
         if theta:
@@ -225,10 +233,45 @@ def base_stat_score(graph_obj, i):
                 reduced_values.append(values[j])
             probs.append(utils.multivariate_normal_dist(reduced_values, means, reduced_model_covar_determinants[i], inverse_reduced_model_covar_matrices[i]))
 
+        if get_individual_predictions:
+
+            alpha_min_probs.append(utils.normal_dist(values[0], parameters[i][0][0], parameters[i][0][1]))
+            alpha_max_probs.append(utils.normal_dist(values[1], parameters[i][1][0], parameters[i][1][1]))
+            theta_min_probs.append(utils.normal_dist(values[2], parameters[i][2][0], parameters[i][2][1]))
+            theta_max_probs.append(utils.normal_dist(values[3], parameters[i][3][0], parameters[i][3][1]))
+            theta_avg_probs.append(utils.normal_dist(values[4], parameters[i][4][0], parameters[i][4][1]))
+            norm_peak_gamma_probs.append(utils.normal_dist(values[5], parameters[i][5][0], parameters[i][5][1]))
+            norm_avg_gamma_probs.append(utils.normal_dist(values[6], parameters[i][6][0], parameters[i][6][1]))
+
     probs = utils.normalize_list(probs, 1)
     sum_probs = [probs[1] + probs[2], probs[0], 0, probs[3] + probs[4], 0, probs[5] + probs[6], 0]
 
-    return sum_probs
+    if get_individual_predictions:
+
+        alpha_min_probs = utils.normalize_list(alpha_min_probs, 1)
+        alpha_max_probs = utils.normalize_list(alpha_max_probs, 1)
+        theta_min_probs = utils.normalize_list(theta_min_probs, 1)
+        theta_max_probs = utils.normalize_list(theta_max_probs, 1)
+        theta_avg_probs = utils.normalize_list(theta_avg_probs, 1)
+        norm_peak_gamma_probs = utils.normalize_list(norm_peak_gamma_probs, 1)
+        norm_avg_gamma_probs = utils.normalize_list(norm_avg_gamma_probs, 1)
+
+        alpha_min_probs = [alpha_min_probs[1] + alpha_min_probs[2], alpha_min_probs[0], 0, alpha_min_probs[3] + alpha_min_probs[4], 0, alpha_min_probs[5] + alpha_min_probs[6], 0]
+        alpha_max_probs = [alpha_max_probs[1] + alpha_max_probs[2], alpha_max_probs[0], 0, alpha_max_probs[3] + alpha_max_probs[4], 0, alpha_max_probs[5] + alpha_max_probs[6], 0]
+        theta_min_probs = [theta_min_probs[1] + theta_min_probs[2], theta_min_probs[0], 0, theta_min_probs[3] + theta_min_probs[4], 0, theta_min_probs[5] + theta_min_probs[6], 0]
+        theta_max_probs = [theta_max_probs[1] + theta_max_probs[2], theta_max_probs[0], 0, theta_max_probs[3] + theta_max_probs[4], 0, theta_max_probs[5] + theta_max_probs[6], 0]
+        theta_avg_probs = [theta_avg_probs[1] + theta_avg_probs[2], theta_avg_probs[0], 0, theta_avg_probs[3] + theta_avg_probs[4], 0, theta_avg_probs[5] + theta_avg_probs[6], 0]
+        norm_peak_gamma_probs = [norm_peak_gamma_probs[1] + norm_peak_gamma_probs[2], norm_peak_gamma_probs[0], 0, norm_peak_gamma_probs[3] + norm_peak_gamma_probs[4], 0, norm_peak_gamma_probs[5] + norm_peak_gamma_probs[6], 0]
+        norm_avg_gamma_probs = [norm_avg_gamma_probs[1] + norm_avg_gamma_probs[2], norm_avg_gamma_probs[0], 0, norm_avg_gamma_probs[3] + norm_avg_gamma_probs[4], 0, norm_avg_gamma_probs[5] + norm_avg_gamma_probs[6], 0]
+
+        product_probs = [a * b * c * d * e * f * g for a, b, c, d, e, f, g in zip(alpha_min_probs, alpha_max_probs, theta_min_probs, theta_max_probs, theta_avg_probs, norm_peak_gamma_probs, norm_avg_gamma_probs)]
+        product_probs = utils.normalize_list(product_probs, 1)
+
+        return [sum_probs, alpha_min_probs, alpha_max_probs, theta_min_probs, theta_max_probs, theta_avg_probs, norm_peak_gamma_probs, norm_avg_gamma_probs, product_probs]
+
+    else:
+
+        return sum_probs
 
 
 def base_angle_score(graph_obj, i, apply=True):

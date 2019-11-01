@@ -8,6 +8,7 @@ import graph_op
 import compatibility
 import legacy_items
 import untangling
+import params
 # External imports:
 import numpy as np
 import dm3_lib as dm3
@@ -304,21 +305,43 @@ class SuchSoftware:
 
         """
         vertex = self.graph.vertices[i]
-        alpha_max, alpha_min = graph_op.base_angle_score(self.graph, i, apply=False)
-        rotation_map, angles, variance = self.graph.calc_central_angle_variance(i)
+
+        alpha = self.graph.produce_alpha_angles(i)
+        alpha_min = min(alpha)
+        alpha_max = max(alpha)
+        theta = self.graph.produce_theta_angles(i, exclude_angles_from_inconsistent_meshes=True)
+        if theta:
+            theta_min = min(theta)
+            theta_max = max(theta)
+            theta_avg = sum(theta) / len(theta)
+        else:
+            theta_min = 0
+            theta_max = 0
+            theta_avg = 0
+        normalized_peak_gamma = self.graph.vertices[i].normalized_peak_gamma
+        normalized_avg_gamma = self.graph.vertices[i].normalized_avg_gamma
+
+        model_predictions = graph_op.base_stat_score(self.graph, i, get_individual_predictions=True)
+        parameters, *_ = params.produce_params(calc=False)
+
         string = 'Vertex summary: ----------\n' + \
                  '    Index: {}\n'.format(vertex.i) + \
                  '    Image pos: ({}, {})\n'.format(vertex.im_coor_x, vertex.im_coor_y) + \
                  '    Real pos: ({}, {})\n'.format(vertex.real_coor_x, vertex.real_coor_y) + \
                  '    Atomic Species: {}\n'.format(vertex.species()) + \
-                 '    Probability vector: {}\n'.format(vertex.prob_vector).replace('\n', '') + \
+                 '    Probability vector: {}\n'.format(vertex.prob_vector.tolist()) + \
                  '    Partner vector: {}\n'.format(vertex.partners()) + \
                  '    Friendly vector: {}\n'.format(vertex.friendly_indices) + \
-                 '    Alpha max: {}\n'.format(alpha_max) + \
-                 '    Alpha min: {}\n'.format(alpha_min) + \
-                 '    Central angle variance = {}\n'.format(variance) + \
-                 '    Rotation map: {}\n'.format(str(rotation_map)) + \
-                 '    Central angles: {}\n'.format(str(angles)) + \
+                 '    Model parameters: ------------\n' + \
+                 '        Alpha min: {}\n            Prediction: {}\n            {}\n'.format(alpha_min, model_predictions[1], model_predictions[1].index(max(model_predictions[1]))) + \
+                 '        Alpha max: {}\n            Prediction: {}\n            {}\n'.format(alpha_max, model_predictions[2], model_predictions[2].index(max(model_predictions[2]))) + \
+                 '        Theta min: {}\n            Prediction: {}\n            {}\n'.format(theta_min, model_predictions[3], model_predictions[3].index(max(model_predictions[3]))) + \
+                 '        Theta max: {}\n            Prediction: {}\n            {}\n'.format(theta_max, model_predictions[4], model_predictions[4].index(max(model_predictions[4]))) + \
+                 '        Theta avg: {}\n            Prediction: {}\n            {}\n'.format(theta_avg, model_predictions[5], model_predictions[5].index(max(model_predictions[5]))) + \
+                 '        Norm peak gamma: {}\n            Prediction: {}\n            {}\n'.format(normalized_peak_gamma, model_predictions[6], model_predictions[6].index(max(model_predictions[6]))) + \
+                 '        Norm avg gamma: {}\n            Prediction: {}\n            {}\n'.format(normalized_avg_gamma, model_predictions[7], model_predictions[7].index(max(model_predictions[7]))) + \
+                 '        Product prediction: {}\n            {}\n'.format(model_predictions[8], model_predictions[8].index(max(model_predictions[8]))) + \
+                 '        Model prediction: {}\n            {}\n'.format(model_predictions[0], model_predictions[0].index(max(model_predictions[0]))) + \
                  '    Is edge column: {}\n'.format(vertex.is_edge_column) + \
                  '    Level: {}\n'.format(vertex.level) + \
                  '    Anti-level: {}\n'.format(vertex.anti_level()) + \
