@@ -719,11 +719,12 @@ class AtomicGraph:
 
     def sort_subsets_by_distance(self):
         self.map_all_subsets()
+        logger.info('Sorting subsets')
         for vertex in self.vertices:
 
             true_partner_distances = []
             unfriendly_partner_distances = []
-            true_anti_partner_distnaces = []
+            true_anti_partner_distances = []
             friendly_anti_partner_distances = []
             outsider_distances = []
 
@@ -732,7 +733,7 @@ class AtomicGraph:
             for up in vertex.unfriendly_partner_indices:
                 unfriendly_partner_distances.append(self.projected_distance(vertex.i, up))
             for ta in vertex.true_anti_partner_indices:
-                true_anti_partner_distnaces.append(self.projected_distance(vertex.i, ta))
+                true_anti_partner_distances.append(self.projected_distance(vertex.i, ta))
             for fa in vertex.friendly_anti_partner_indices:
                 friendly_anti_partner_distances.append(self.projected_distance(vertex.i, fa))
             for out in vertex.outsider_indices:
@@ -740,7 +741,7 @@ class AtomicGraph:
 
             vertex.true_partner_indices = [y for x, y in sorted(zip(true_partner_distances, vertex.true_partner_indices))]
             vertex.unfriendly_partner_indices = [y for x, y in sorted(zip(unfriendly_partner_distances, vertex.unfriendly_partner_indices))]
-            vertex.true_anti_partner_indices = [y for x, y in sorted(zip(true_partner_distances, vertex.true_anti_partner_indices))]
+            vertex.true_anti_partner_indices = [y for x, y in sorted(zip(true_anti_partner_distances, vertex.true_anti_partner_indices))]
             vertex.friendly_anti_partner_indices = [y for x, y in sorted(zip(friendly_anti_partner_distances, vertex.friendly_anti_partner_indices))]
             vertex.outsider_indices = [y for x, y in sorted(zip(outsider_distances, vertex.outsider_indices))]
 
@@ -760,11 +761,13 @@ class AtomicGraph:
         logger.info('friends mapped!')
 
     def map_all_subsets(self):
+        logger.info('Mapping subsets..')
         self.map_friends()
         for i in self.vertex_indices:
             self.determine_subsets(i)
 
     def determine_subsets(self, i):
+        logger.info('determening subsets')
         partner_indices = self.vertices[i].partners()
         anti_partner_indices = self.vertices[i].anti_partners()
 

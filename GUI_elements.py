@@ -629,7 +629,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_show = QtWidgets.QCheckBox('Show in overlay')
         self.chb_move = QtWidgets.QCheckBox('Enable move')
 
-        self.chb_perturb_mode = QtWidgets.QCheckBox('Enable perturb mode')
+        self.chb_perturb_mode = QtWidgets.QCheckBox('Enable permute mode')
         self.chb_enable_ruler = QtWidgets.QCheckBox('Enable ruler')
         self.chb_graph = QtWidgets.QCheckBox('Show inconsistent connections')
         self.chb_toggle_mesh = QtWidgets.QCheckBox('Show mesh details')

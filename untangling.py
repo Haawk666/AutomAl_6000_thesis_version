@@ -179,8 +179,8 @@ def weak_resolve(graph_obj, configs, classes, search_type):
                 if graph_obj.vertices[i].partner_query(j):
                     for partner in graph_obj.vertices[j].partners():
                         if partner not in [i, j, a, b] and not graph_obj.vertices[partner].partner_query(j):
-                            graph_obj.perturb_j_k(j, partner, i)
-                            changes += 1
+                            # graph_obj.perturb_j_k(j, partner, i)
+                            # changes += 1
                             break
             elif class_ == 'F_1' or class_ == 'F_2':
                 pass
@@ -201,8 +201,9 @@ def weak_resolve(graph_obj, configs, classes, search_type):
                     graph_obj.perturb_j_k(i, j, b)
                     changes += 1
             elif class_ == 'I_1':
-                graph_obj.perturb_j_k(i, j, b)
-                changes += 1
+                pass
+                # graph_obj.perturb_j_k(i, j, b)
+                # changes += 1
 
         return len(classes), changes
 

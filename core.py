@@ -1028,9 +1028,7 @@ class SuchSoftware:
         elif search_type == 22:
             # Stat model
             logger.info('Running experimental stat model')
-            self.graph.sort_subsets_by_distance()
-            self.calc_avg_gamma()
-            self.normalize_gamma()
+            self.graph.map_friends()
             probs = []
             for i in range(0, self.num_columns):
                 if not self.graph.vertices[i].set_by_user and not self.graph.vertices[i].is_edge_column:
