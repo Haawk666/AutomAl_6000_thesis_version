@@ -2,12 +2,12 @@ Guides
 ---------------------------------------------
 
 Herein we have collected a selection of guides that tries to give a step-by-step solution to certain tasks that a
-user of AutoAtom6000 might want to accomplish.
+user of AutomAl 6000 might want to accomplish.
 
 Installation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To install AutoAtom6000, simply follow the steps below.
+To install AutomAl 6000, simply follow the steps below.
 
     1. Go to the **download** section of this webpage, and download the zip-file provided under **Executable** to a
     desired location on your computer.
@@ -20,16 +20,16 @@ To install AutoAtom6000, simply follow the steps below.
 
 .. note::
 
-    When starting AutoAtom, there will be a significant waiting-time (\~20 sec) before the GUI loads. This is because
+    When starting AutomAl, there will be a significant waiting-time (\~20 sec) before the GUI loads. This is because
     the exe will first build its environment in temporary folders, which takes some time. Unfortunately, as a
     consequence of pyinstaller's --onefile option, during this time there will be no indication that the program is
     running, so be patient before clicking several times! In the future, a full-fledged installer is planned, which will
     eliminate this 'quirk'.
 
-Project workflow with AutoAtom's GUI
+Project workflow with AutomAl's GUI
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-There is an implicit logical progression when analyzing images with the AutoAtom GUI. When working with images, the
+There is an implicit logical progression when analyzing images with the AutomAl GUI. When working with images, the
 project file will be in certain *stages*, and what state the project is in will affect what you can and/or should do
 next. The stages are
 

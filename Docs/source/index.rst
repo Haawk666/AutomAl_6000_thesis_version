@@ -4,10 +4,10 @@
    contain the root `toctree` directive.
 
 ========================================================================
-Welcome to the AutoAtom 6000 home-page!
+Welcome to the AutomAl 6000 home-page!
 ========================================================================
 
-The AutoAtom project is the master-project of student Haakon Tvedt at the department of physics, NTNU.
+The AutomAl project is the master-project of student Haakon Tvedt at the department of physics, NTNU.
 The general aim of the project is to build a software tool to aid in the analysis of HAADF-STEM images,
 initially focused specifically around images of precipitates in the Al-Mg-Si-(Cu) precipitation sequences.
 
