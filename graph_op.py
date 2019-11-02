@@ -219,29 +219,29 @@ def base_stat_score(graph_obj, i, get_individual_predictions=False):
     norm_peak_gamma_probs = []
     norm_avg_gamma_probs = []
 
-    for i, element in enumerate(['Cu', 'Si_1', 'Si_2', 'Al_1', 'Al_2', 'Mg_1', 'Mg_2']):
+    for j, element in enumerate(['Cu', 'Si_1', 'Si_2', 'Al_1', 'Al_2', 'Mg_1', 'Mg_2']):
 
         if theta:
-            means = [a[0] for a in parameters[i]]
-            probs.append(utils.multivariate_normal_dist(values, means, covar_determinants[i], inverse_covar_matrices[i]))
+            means = [a[0] for a in parameters[j]]
+            probs.append(utils.multivariate_normal_dist(values, means, covar_determinants[j], inverse_covar_matrices[j]))
 
         else:
             means = []
             reduced_values = []
-            for j in [0, 1, 5, 6]:
-                means.append(parameters[i][j][0])
-                reduced_values.append(values[j])
-            probs.append(utils.multivariate_normal_dist(reduced_values, means, reduced_model_covar_determinants[i], inverse_reduced_model_covar_matrices[i]))
+            for k in [0, 1, 5, 6]:
+                means.append(parameters[j][k][0])
+                reduced_values.append(values[k])
+            probs.append(utils.multivariate_normal_dist(reduced_values, means, reduced_model_covar_determinants[j], inverse_reduced_model_covar_matrices[j]))
 
         if get_individual_predictions:
 
-            alpha_min_probs.append(utils.normal_dist(values[0], parameters[i][0][0], parameters[i][0][1]))
-            alpha_max_probs.append(utils.normal_dist(values[1], parameters[i][1][0], parameters[i][1][1]))
-            theta_min_probs.append(utils.normal_dist(values[2], parameters[i][2][0], parameters[i][2][1]))
-            theta_max_probs.append(utils.normal_dist(values[3], parameters[i][3][0], parameters[i][3][1]))
-            theta_avg_probs.append(utils.normal_dist(values[4], parameters[i][4][0], parameters[i][4][1]))
-            norm_peak_gamma_probs.append(utils.normal_dist(values[5], parameters[i][5][0], parameters[i][5][1]))
-            norm_avg_gamma_probs.append(utils.normal_dist(values[6], parameters[i][6][0], parameters[i][6][1]))
+            alpha_min_probs.append(utils.normal_dist(values[0], parameters[j][0][0], 2 * parameters[j][0][1]))
+            alpha_max_probs.append(utils.normal_dist(values[1], parameters[j][1][0], 2 * parameters[j][1][1]))
+            theta_min_probs.append(utils.normal_dist(values[2], parameters[j][2][0], 2 * parameters[j][2][1]))
+            theta_max_probs.append(utils.normal_dist(values[3], parameters[j][3][0], 2 * parameters[j][3][1]))
+            theta_avg_probs.append(utils.normal_dist(values[4], parameters[j][4][0], 2 * parameters[j][4][1]))
+            norm_peak_gamma_probs.append(utils.normal_dist(values[5], parameters[j][5][0], 2 * parameters[j][5][1]))
+            norm_avg_gamma_probs.append(utils.normal_dist(values[6], parameters[j][6][0], 2 * parameters[j][6][1]))
 
     probs = utils.normalize_list(probs, 1)
     sum_probs = [probs[1] + probs[2], probs[0], 0, probs[3] + probs[4], 0, probs[5] + probs[6], 0]
@@ -266,6 +266,19 @@ def base_stat_score(graph_obj, i, get_individual_predictions=False):
 
         product_probs = [a * b * c * d * e * f * g for a, b, c, d, e, f, g in zip(alpha_min_probs, alpha_max_probs, theta_min_probs, theta_max_probs, theta_avg_probs, norm_peak_gamma_probs, norm_avg_gamma_probs)]
         product_probs = utils.normalize_list(product_probs, 1)
+
+        print('\n{} :'.format(i))
+        print('alpha min probs: {}'.format(alpha_min_probs))
+        print('alpha max probs: {}'.format(alpha_max_probs))
+        print('theta min probs: {}'.format(theta_min_probs))
+        print('theta max probs: {}'.format(theta_max_probs))
+        print('theta avg probs: {}'.format(theta_avg_probs))
+        print('peak gamma probs: {}'.format(norm_peak_gamma_probs))
+        print('avg gamma probs: {}'.format(norm_avg_gamma_probs))
+        print('\n')
+        print('Product probs: {}'.format(product_probs))
+        print('Model: {}'.format(sum_probs))
+        print('\n')
 
         return [sum_probs, alpha_min_probs, alpha_max_probs, theta_min_probs, theta_max_probs, theta_avg_probs, norm_peak_gamma_probs, norm_avg_gamma_probs, product_probs]
 
