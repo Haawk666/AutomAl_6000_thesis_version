@@ -341,8 +341,10 @@ class SuchSoftware:
                  '        Norm peak gamma: {}\n            Prediction: {}\n            {}\n'.format(normalized_peak_gamma, model_predictions[6], model_predictions[6].index(max(model_predictions[6]))) + \
                  '        Norm avg gamma: {}\n            Prediction: {}\n            {}\n'.format(normalized_avg_gamma, model_predictions[7], model_predictions[7].index(max(model_predictions[7]))) + \
                  '        Product prediction: {}\n            {}\n'.format(model_predictions[8], model_predictions[8].index(max(model_predictions[8]))) + \
+                 '        Weighted product prediction: {}\n            {}\n'.format(model_predictions[9], model_predictions[9].index(max(model_predictions[8]))) + \
                  '        Model prediction: {}\n            {}\n'.format(model_predictions[0], model_predictions[0].index(max(model_predictions[0]))) + \
                  '    Is edge column: {}\n'.format(vertex.is_edge_column) + \
+                 '    Is set by user: {}\n'.format(vertex.set_by_user) + \
                  '    Level: {}\n'.format(vertex.level) + \
                  '    Anti-level: {}\n'.format(vertex.anti_level()) + \
                  '    Flag 1: {}\n'.format(vertex.flag_1) + \
@@ -910,7 +912,7 @@ class SuchSoftware:
             logger.info('Resetting user-set columns...')
             for i in range(0, self.num_columns):
                 if self.graph.vertices[i].set_by_user:
-                    self.graph.vertices[i].reset_prob_vector()
+                    self.graph.vertices[i].set_by_user = False
             logger.info('User-set columns was re-set.')
 
         elif search_type == 14:
@@ -1055,9 +1057,7 @@ class SuchSoftware:
             probs = []
             for i in range(0, self.num_columns):
                 if not self.graph.vertices[i].set_by_user and not self.graph.vertices[i].is_edge_column:
-                    self.graph.vertices[i].reset_symmetry_vector()
-                    self.graph.vertices[i].reset_prob_vector()
-                    probs.append(np.array(graph_op.base_stat_score(self.graph, i, get_individual_predictions=True)[8]))
+                    probs.append(np.array(graph_op.base_stat_score(self.graph, i, get_individual_predictions=True)[9]))
                     print('numpy array: {}\n'.format(probs[-1]))
                 else:
                     probs.append([0, 0, 0, 0, 0, 0, 0])

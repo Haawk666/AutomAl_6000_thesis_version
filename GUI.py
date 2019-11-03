@@ -607,24 +607,31 @@ class MainUI(QtWidgets.QMainWindow):
         if self.project_instance is not None and self.control_instance is not None and self.project_instance.num_columns > 0:
             if not len(self.project_instance.graph.vertices) == len(self.control_instance.graph.vertices):
                 msg = 'Could not compare instances!'
+                deviation_indices = []
             else:
                 deviations = 0
                 symmetry_deviations = 0
+                deviation_indices = []
                 for vertex, control_vertex in zip(self.project_instance.graph.vertices, self.control_instance.graph.vertices):
                     if vertex.h_index == control_vertex.h_index:
                         pass
                     elif vertex.h_index == 0 and control_vertex.h_index == 1:
                         deviations += 1
+                        deviation_indices.append(vertex.i)
                     elif vertex.h_index == 1 and control_vertex.h_index == 0:
                         deviations += 1
+                        deviation_indices.append(vertex.i)
                     else:
                         deviations += 1
                         symmetry_deviations += 1
+                        deviation_indices.append(vertex.i)
 
                 msg = 'Control comparison:----------\n    Deviations: {}\n    Symmetry deviations: {}'.format(deviations, symmetry_deviations)
             message = QtWidgets.QMessageBox()
             message.setText(msg)
             message.exec_()
+            for index in deviation_indices:
+                msg += '\n        {}'.format(index)
             logger.info(msg)
 
     def menu_test_consistency_trigger(self):
