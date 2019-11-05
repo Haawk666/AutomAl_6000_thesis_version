@@ -207,7 +207,7 @@ def base_stat_score(graph_obj, i, get_individual_predictions=False):
 
     values = [alpha_min, alpha_max, theta_min, theta_max, theta_avg, normalized_peak_gamma, normalized_avg_gamma]
     parameters, covar_matrices, reduced_model_covar_matrices, covar_determinants, reduced_model_covar_determinants,\
-        inverse_covar_matrices, inverse_reduced_model_covar_matrices = params.produce_params(calc=False)
+        inverse_covar_matrices, inverse_reduced_model_covar_matrices = params.produce_params(calc=False, scaled_model=True)
 
     probs = []
 
@@ -266,22 +266,22 @@ def base_stat_score(graph_obj, i, get_individual_predictions=False):
 
         product_probs = [a * b * c * d * e * f * g for a, b, c, d, e, f, g in zip(alpha_min_probs, alpha_max_probs, theta_min_probs, theta_max_probs, theta_avg_probs, norm_peak_gamma_probs, norm_avg_gamma_probs)]
         product_probs = utils.normalize_list(product_probs, 1)
-        weighted_product_probs = [0.1 * a * 0.1 * b * c * d * 1.5 * e * f * g for a, b, c, d, e, f, g in zip(alpha_min_probs, alpha_max_probs, theta_min_probs, theta_max_probs, theta_avg_probs, norm_peak_gamma_probs, norm_avg_gamma_probs)]
+        weighted_product_probs = [a * b * c * d * e * f * g for a, b, c, d, e, f, g in zip(alpha_min_probs, alpha_max_probs, theta_min_probs, theta_max_probs, theta_avg_probs, norm_peak_gamma_probs, norm_avg_gamma_probs)]
         weighted_product_probs = utils.normalize_list(weighted_product_probs, 1)
 
-        print('\n{} :'.format(i))
-        print('values: {}'.format(values))
-        print('alpha min probs: {}'.format(alpha_min_probs))
-        print('alpha max probs: {}'.format(alpha_max_probs))
-        print('theta min probs: {}'.format(theta_min_probs))
-        print('theta max probs: {}'.format(theta_max_probs))
-        print('theta avg probs: {}'.format(theta_avg_probs))
-        print('peak gamma probs: {}'.format(norm_peak_gamma_probs))
-        print('avg gamma probs: {}'.format(norm_avg_gamma_probs))
-        print('\n')
-        print('Product probs: {}'.format(product_probs))
-        print('Model: {}'.format(sum_probs))
-        print('\n')
+        # print('\n{} :'.format(i))
+        # print('values: {}'.format(values))
+        # print('alpha min probs: {}'.format(alpha_min_probs))
+        # print('alpha max probs: {}'.format(alpha_max_probs))
+        # print('theta min probs: {}'.format(theta_min_probs))
+        # print('theta max probs: {}'.format(theta_max_probs))
+        # print('theta avg probs: {}'.format(theta_avg_probs))
+        # print('peak gamma probs: {}'.format(norm_peak_gamma_probs))
+        # print('avg gamma probs: {}'.format(norm_avg_gamma_probs))
+        # print('\n')
+        # print('Product probs: {}'.format(product_probs))
+        # print('Model: {}'.format(sum_probs))
+        # print('\n')
 
         return [sum_probs, alpha_min_probs, alpha_max_probs, theta_min_probs, theta_max_probs, theta_avg_probs, norm_peak_gamma_probs, norm_avg_gamma_probs, product_probs, weighted_product_probs]
 

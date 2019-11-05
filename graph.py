@@ -1668,7 +1668,6 @@ class SubGraph:
         closed = False
         if len(self.meshes) == 0:
             closed = True
-            print('Error in sub_graph.sort_meshes()')
 
         while not closed:
 
@@ -1688,8 +1687,6 @@ class SubGraph:
 
         if len(new_list) == len(self.meshes):
             self.meshes = new_list
-        else:
-            print('Error in sub_graph.sort_meshes()')
 
     def add_vertex(self, vertex):
 

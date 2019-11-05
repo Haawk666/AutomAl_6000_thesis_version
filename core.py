@@ -701,22 +701,32 @@ class SuchSoftware:
             # Summarize:
             logger.info('Summarizing stats.')
             self.summarize_stats()
-            # Experimental weak untanglng
-            self.column_characterization(starting_index, search_type=10)
-            # Sort neighbours
-            self.column_characterization(starting_index, search_type=21)
-            # Angle analysis:
-            self.column_characterization(starting_index, search_type=16)
+            # Base stat score:
+            self.column_characterization(starting_index, search_type=22)
+            # Check intersections
+            self.column_characterization(starting_index, search_type=14)
             # Find particle:
             self.column_characterization(starting_index, search_type=5)
             # Set levels:
             self.column_characterization(starting_index, search_type=6)
             # Add edges:
             self.column_characterization(starting_index, search_type=7)
+            # Base stat score:
+            self.column_characterization(starting_index, search_type=22)
             # Experimental weak untanglng
             self.column_characterization(starting_index, search_type=10)
-            # Experimental strong untangling
-            self.column_characterization(starting_index, search_type=11)
+            # Base stat score:
+            self.column_characterization(starting_index, search_type=22)
+            # Experimental weak untanglng
+            self.column_characterization(starting_index, search_type=10)
+            # Base stat score:
+            self.column_characterization(starting_index, search_type=22)
+            # Find particle:
+            self.column_characterization(starting_index, search_type=5)
+            # Set levels:
+            self.column_characterization(starting_index, search_type=6)
+            # Add edges:
+            self.column_characterization(starting_index, search_type=7)
             # Map meshes
             self.column_characterization(starting_index, search_type=20)
             # Summarize:
@@ -1057,8 +1067,7 @@ class SuchSoftware:
             probs = []
             for i in range(0, self.num_columns):
                 if not self.graph.vertices[i].set_by_user and not self.graph.vertices[i].is_edge_column:
-                    probs.append(np.array(graph_op.base_stat_score(self.graph, i, get_individual_predictions=True)[9]))
-                    print('numpy array: {}\n'.format(probs[-1]))
+                    probs.append(np.array(graph_op.base_stat_score(self.graph, i, get_individual_predictions=True)[8]))
                 else:
                     probs.append([0, 0, 0, 0, 0, 0, 0])
             for i in range(0, self.num_columns):
@@ -1069,7 +1078,6 @@ class SuchSoftware:
             logger.info('Experimental stat model complete!')
 
         else:
-
             logger.error('No such search type!')
 
     def calc_avg_gamma(self):
