@@ -53,6 +53,9 @@ btn_build_anti_graph = 'Build the \'anti-graph\' of the graph. In an anti-graph 
 btn_pca = 'Launch a principle component analysis (PCA) from a wizard'
 
 chb_toggle_positions = 'Toggle the overlay of atomic positions'
+chb_show_graphic_updates = 'Determines whether the graphical representation of the data will update while the\n' \
+                           'algorithm is running. This will slow down the process significantly, but could\n' \
+                           ' potentially make the process more entertaining if you have nothing else to do...'
 chb_precipitate_column = 'Toggle weahter the selected column is counted to be part of the particle or matrix.'
 chb_show = 'Toggle the apparence of the selected column in the overlay composition.'
 chb_move = 'Enable move mode. Use the \'atomic positions\'-tab for this.'
@@ -128,6 +131,7 @@ control_window_btn_list = [btn_show_stats,
                            btn_pca]
 
 control_window_chb_list = [chb_toggle_positions,
+                           chb_show_graphic_updates,
                            chb_precipitate_column,
                            chb_show,
                            chb_move,

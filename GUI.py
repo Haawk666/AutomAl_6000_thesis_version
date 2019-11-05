@@ -237,9 +237,7 @@ class MainUI(QtWidgets.QMainWindow):
 
     def update_info_graph(self):
         self.gs_info_graph = GUI_elements.InfoGraph(ui_obj=self, scale_factor=2)
-        print('Re-drawing info-graph')
         self.gs_info_graph.re_draw()
-        print('Info-graph re-drawn')
         self.gv_info_graph.setScene(self.gs_info_graph)
 
     def update_search_matrix(self, void=False):
@@ -876,7 +874,10 @@ class MainUI(QtWidgets.QMainWindow):
                     if string == strings[k]:
                         choice = k
                 if not choice == -1:
-                    self.project_instance.column_characterization(self.selected_column, choice)
+                    if self.control_window.chb_show_graphic_updates:
+                        self.project_instance.column_characterization(self.selected_column, choice, ui_obj=self)
+                    else:
+                        self.project_instance.column_characterization(self.selected_column, choice)
                     self.update_display()
                 else:
                     logger.error('Invalid selection. Was not able to start column detection.')
@@ -1060,6 +1061,9 @@ class MainUI(QtWidgets.QMainWindow):
                         position_graphic.show()
                     else:
                         position_graphic.hide()
+
+    def chb_show_graphic_updates_trigger(self, state):
+        pass
 
     def chb_precipitate_column_trigger(self, state):
         if self.project_instance is not None and not self.selected_column == -1:

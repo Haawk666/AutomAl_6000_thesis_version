@@ -78,14 +78,14 @@ def experimental_remove_intersections(graph_obj):
 
         if graph_obj.vertices[edge_1[0]].partner_query(edge_1[1]):
             if edge_2[0] in graph_obj.vertices[edge_1[0]].anti_partners():
-                graph_obj.perturb_j_k(edge_1[0], edge_1[1], edge_2[0])
+                graph_obj.permute_j_k(edge_1[0], edge_1[1], edge_2[0])
             else:
                 if not graph_obj.strong_remove_edge(edge_1[0], edge_1[1]):
                     print('Could not remove {} {}'.format(edge_1[0], edge_1[1]))
 
         if graph_obj.vertices[edge_2[0]].partner_query(edge_2[1]):
             if edge_1[0] in graph_obj.vertices[edge_2[0]].anti_partners():
-                graph_obj.perturb_j_k(edge_2[0], edge_2[1], edge_1[0])
+                graph_obj.permute_j_k(edge_2[0], edge_2[1], edge_1[0])
             else:
                 if not graph_obj.strong_remove_edge(edge_2[0], edge_2[1]):
                     print('Could not remove {} {}'.format(edge_2[0], edge_2[1]))
@@ -130,13 +130,13 @@ def remove_intersections(graph_obj):
         elif not edge_1_is_strong and not edge_2_is_strong:
 
             if edge_1[0] not in graph_obj.vertices[edge_2[0]].partners():
-                graph_obj.perturb_j_k(edge_2[0], edge_2[1], edge_1[0])
+                graph_obj.permute_j_k(edge_2[0], edge_2[1], edge_1[0])
             else:
                 if edge_2 not in remove_edges:
                     remove_edges.append(edge_2)
 
             if edge_2[0] not in graph_obj.vertices[edge_1[0]].partners():
-                graph_obj.perturb_j_k(edge_1[0], edge_2[0], edge_1[1])
+                graph_obj.permute_j_k(edge_1[0], edge_2[0], edge_1[1])
             else:
                 if edge_1 not in remove_edges:
                     remove_edges.append(edge_1)

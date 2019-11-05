@@ -2,7 +2,7 @@
 import graph
 
 
-def strong_resolve(graph_obj, configs, classes, search_type):
+def strong_resolve(graph_obj, configs, classes, search_type, ui_obj=None):
     """Resolve discovered configurations while allowing changes to vertex species.
 
     :param graph_obj: The atomic graph
@@ -19,6 +19,9 @@ def strong_resolve(graph_obj, configs, classes, search_type):
     :rtype: tuple<int>
 
     """
+
+    if ui_obj:
+        print('This is not good!!..')
 
     changes = 0
 
@@ -71,8 +74,8 @@ def strong_resolve(graph_obj, configs, classes, search_type):
                 pass
             elif class_ == 'B_1':
                 if graph_obj.vertices[i].partner_query(j) and graph_obj.vertices[a].partner_query(b):
-                    graph_obj.perturb_j_k(i, j, a)
-                    graph_obj.perturb_j_k(a, b, i)
+                    graph_obj.permute_j_k(i, j, a)
+                    graph_obj.permute_j_k(a, b, i)
                     changes += 1
 
         return len(classes), changes
@@ -88,8 +91,8 @@ def strong_resolve(graph_obj, configs, classes, search_type):
                 pass
             elif class_ == 'B_1':
                 if graph_obj.vertices[i].partner_query(j) and graph_obj.vertices[c].partner_query(b):
-                    graph_obj.perturb_j_k(i, j, c)
-                    graph_obj.perturb_j_k(c, b, i)
+                    graph_obj.permute_j_k(i, j, c)
+                    graph_obj.permute_j_k(c, b, i)
                     changes += 1
 
         return len(classes), changes
@@ -102,7 +105,7 @@ def strong_resolve(graph_obj, configs, classes, search_type):
 
             if class_ == 'A_1':
                 if graph_obj.vertices[i].partner_query(j):
-                    graph_obj.perturb_j_k(i, j, d)
+                    graph_obj.permute_j_k(i, j, d)
                     changes += 1
 
         return len(classes), changes
@@ -115,7 +118,7 @@ def strong_resolve(graph_obj, configs, classes, search_type):
 
             if class_ == 'A_1':
                 if graph_obj.vertices[i].partner_query(j):
-                    graph_obj.perturb_j_k(i, j, a)
+                    graph_obj.permute_j_k(i, j, a)
                     changes += 1
 
         return len(classes), changes
@@ -137,7 +140,7 @@ def strong_resolve(graph_obj, configs, classes, search_type):
         return len(classes), 0
 
 
-def weak_resolve(graph_obj, configs, classes, search_type):
+def weak_resolve(graph_obj, configs, classes, search_type, ui_obj=None):
 
     changes = 0
 
@@ -149,58 +152,89 @@ def weak_resolve(graph_obj, configs, classes, search_type):
             b = config[1].vertex_indices[2]
 
             if class_ == 'A_1':
-                if graph_obj.weak_remove_edge(i, j):
-                    changes += 1
+                k = graph_obj.weak_remove_edge(i, j)
+                if not k == -1:
+                    if graph_obj.permute_j_k(i, j, k):
+                        changes += 1
+                        if ui_obj is not None:
+                            ui_obj.gs_atomic_graph.perturb_edge(i, j, k, permute_data=False)
             elif class_ == 'B_1':
                 if graph_obj.vertices[j].partner_query(b):
-                    graph_obj.perturb_j_k(j, b, i)
-                    changes += 1
+                    if graph_obj.permute_j_k(j, b, i):
+                        changes += 1
+                        if ui_obj is not None:
+                            ui_obj.gs_atomic_graph.perturb_edge(j, b, i, permute_data=False)
             elif class_ == 'B_2':
                 if graph_obj.vertices[j].partner_query(a):
-                    graph_obj.perturb_j_k(j, a, i)
-                    changes += 1
+                    if graph_obj.permute_j_k(j, a, i):
+                        changes += 1
+                        if ui_obj is not None:
+                            ui_obj.gs_atomic_graph.perturb_edge(j, a, i, permute_data=False)
             elif class_ == 'C_1':
                 if graph_obj.vertices[i].partner_query(j):
-                    graph_obj.perturb_j_k(i, j, a)
-                    changes += 1
+                    if graph_obj.permute_j_k(i, j, a):
+                        changes += 1
+                        if ui_obj is not None:
+                            ui_obj.gs_atomic_graph.perturb_edge(i, j, a, permute_data=False)
             elif class_ == 'C_2':
                 if graph_obj.vertices[i].partner_query(j):
-                    graph_obj.perturb_j_k(i, j, b)
-                    changes += 1
+                    if graph_obj.permute_j_k(i, j, b):
+                        changes += 1
+                        if ui_obj is not None:
+                            ui_obj.gs_atomic_graph.perturb_edge(i, j, b, permute_data=False)
             elif class_ == 'D_1':
                 if graph_obj.vertices[i].partner_query(j):
-                    graph_obj.perturb_j_k(i, j, a)
-                    changes += 1
+                    if graph_obj.permute_j_k(i, j, a):
+                        changes += 1
+                        if ui_obj is not None:
+                            ui_obj.gs_atomic_graph.perturb_edge(i, j, a, permute_data=False)
             elif class_ == 'D_2':
                 if graph_obj.vertices[i].partner_query(j):
-                    graph_obj.perturb_j_k(i, j, b)
-                    changes += 1
+                    if graph_obj.permute_j_k(i, j, b):
+                        changes += 1
+                        if ui_obj is not None:
+                            ui_obj.gs_atomic_graph.perturb_edge(i, j, b, permute_data=False)
             elif class_ == 'E_1' or class_ == 'E_2':
                 pass
             elif class_ == 'F_1' or class_ == 'F_2':
-                if graph_obj.weak_remove_edge(i, j):
-                    changes += 1
+                k = graph_obj.weak_remove_edge(i, j)
+                if not k == -1:
+                    if graph_obj.permute_j_k(i, j, k):
+                        changes += 1
+                        if ui_obj is not None:
+                            ui_obj.gs_atomic_graph.perturb_edge(i, j, k, permute_data=False)
+
             elif class_ == 'G_1':
                 if graph_obj.vertices[i].partner_query(j):
-                    graph_obj.perturb_j_k(j, b, i)
-                    changes += 1
+                    if graph_obj.permute_j_k(j, b, i):
+                        changes += 1
+                        if ui_obj is not None:
+                            ui_obj.gs_atomic_graph.perturb_edge(j, b, i, permute_data=False)
             elif class_ == 'G_2':
                 if graph_obj.vertices[i].partner_query(j):
-                    graph_obj.perturb_j_k(j, a, i)
-                    changes += 1
+                    if graph_obj.permute_j_k(j, a, i):
+                        changes += 1
+                        if ui_obj is not None:
+                            ui_obj.gs_atomic_graph.perturb_edge(j, a, i, permute_data=False)
             elif class_ == 'H_1':
                 if graph_obj.vertices[i].partner_query(j):
-                    graph_obj.perturb_j_k(i, j, a)
-                    changes += 1
+                    if graph_obj.permute_j_k(i, j, a):
+                        changes += 1
+                        if ui_obj is not None:
+                            ui_obj.gs_atomic_graph.perturb_edge(i, j, a, permute_data=False)
             elif class_ == 'H_2':
                 if graph_obj.vertices[i].partner_query(j):
-                    graph_obj.perturb_j_k(i, j, b)
-                    changes += 1
+                    if graph_obj.permute_j_k(i, j, b):
+                        changes += 1
+                        if ui_obj is not None:
+                            ui_obj.gs_atomic_graph.perturb_edge(i, j, b, permute_data=False)
             elif class_ == 'I_1':
-                graph_obj.perturb_j_k(i, j, b)
-                changes += 1
+                if graph_obj.permute_j_k(i, j, b):
+                    changes += 1
+                    if ui_obj is not None:
+                        ui_obj.gs_atomic_graph.perturb_edge(i, j, b, permute_data=False)
 
-        return len(classes), changes
+        return changes
 
     elif search_type == 2:
         for class_, config in zip(classes, configs):
@@ -212,21 +246,30 @@ def weak_resolve(graph_obj, configs, classes, search_type):
 
             if class_ == 'A_1':
                 if graph_obj.vertices[j].partner_query(c):
-                    graph_obj.perturb_j_k(j, c, i)
-                    changes += 1
+                    if graph_obj.permute_j_k(j, c, i):
+                        changes += 1
+                        if ui_obj is not None:
+                            ui_obj.gs_atomic_graph.perturb_edge(j, c, i, permute_data=False)
 
             elif class_ == 'B_1':
                 if graph_obj.vertices[i].partner_query(j) and graph_obj.vertices[a].partner_query(b):
-                    graph_obj.perturb_j_k(i, j, a)
-                    graph_obj.perturb_j_k(a, b, i)
-                    changes += 1
+                    if graph_obj.permute_j_k(i, j, a):
+                        changes += 1
+                        if ui_obj is not None:
+                            ui_obj.gs_atomic_graph.perturb_edge(i, j, a, permute_data=False)
+                    if graph_obj.permute_j_k(a, b, i):
+                        changes += 1
+                        if ui_obj is not None:
+                            ui_obj.gs_atomic_graph.perturb_edge(a, b, i, permute_data=False)
 
             elif class_ == 'C_1':
                 if graph_obj.vertices[j].partner_query(j):
-                    graph_obj.perturb_j_k(j, c, i)
-                    changes += 1
+                    if graph_obj.permute_j_k(j, c, i):
+                        changes += 1
+                        if ui_obj is not None:
+                            ui_obj.gs_atomic_graph.perturb_edge(j, c, i, permute_data=False)
 
-        return len(classes), changes
+        return changes
 
     elif search_type == 3:
         for class_, config in zip(classes, configs):
@@ -238,19 +281,28 @@ def weak_resolve(graph_obj, configs, classes, search_type):
 
             if class_ == 'A_1':
                 if graph_obj.vertices[j].partner_query(a):
-                    graph_obj.perturb_j_k(j, a, i)
-                    changes += 1
+                    if graph_obj.permute_j_k(j, a, i):
+                        changes += 1
+                        if ui_obj is not None:
+                            ui_obj.gs_atomic_graph.perturb_edge(j, a, i, permute_data=False)
             elif class_ == 'B_1':
                 if graph_obj.vertices[i].partner_query(j) and graph_obj.vertices[c].partner_query(b):
-                    graph_obj.perturb_j_k(i, j, c)
-                    graph_obj.perturb_j_k(c, b, i)
-                    changes += 1
+                    if graph_obj.permute_j_k(i, j, c):
+                        changes += 1
+                        if ui_obj is not None:
+                            ui_obj.gs_atomic_graph.perturb_edge(i, j, c, permute_data=False)
+                    if graph_obj.permute_j_k(c, b, i):
+                        changes += 1
+                        if ui_obj is not None:
+                            ui_obj.gs_atomic_graph.perturb_edge(c, b, i, permute_data=False)
             elif class_ == 'C_1':
                 if graph_obj.vertices[j].partner_query(a):
-                    graph_obj.perturb_j_k(j, a, i)
-                    changes += 1
+                    if graph_obj.permute_j_k(j, a, i):
+                        changes += 1
+                        if ui_obj is not None:
+                            ui_obj.gs_atomic_graph.perturb_edge(j, a, i, permute_data=False)
 
-        return len(classes), changes
+        return changes
 
     elif search_type == 4:
         for class_, config in zip(classes, configs):
@@ -260,15 +312,19 @@ def weak_resolve(graph_obj, configs, classes, search_type):
 
             if class_ == 'A_1':
                 if graph_obj.vertices[i].partner_query(j):
-                    graph_obj.perturb_j_k(i, j, d)
-                    changes += 1
+                    if graph_obj.permute_j_k(i, j, d):
+                        changes += 1
+                        if ui_obj is not None:
+                            ui_obj.gs_atomic_graph.perturb_edge(i, j, d, permute_data=False)
 
             elif class_ == 'B_1':
                 if graph_obj.vertices[i].partner_query(j):
-                    graph_obj.perturb_j_k(i, j, d)
-                    changes += 1
+                    if graph_obj.permute_j_k(i, j, d):
+                        changes += 1
+                        if ui_obj is not None:
+                            ui_obj.gs_atomic_graph.perturb_edge(i, j, d, permute_data=False)
 
-        return len(classes), changes
+        return changes
 
     elif search_type == 5:
         for class_, config in zip(classes, configs):
@@ -278,19 +334,23 @@ def weak_resolve(graph_obj, configs, classes, search_type):
 
             if class_ == 'A_1':
                 if graph_obj.vertices[i].partner_query(j):
-                    graph_obj.perturb_j_k(i, j, a)
-                    changes += 1
+                    if graph_obj.permute_j_k(i, j, a):
+                        changes += 1
+                        if ui_obj is not None:
+                            ui_obj.gs_atomic_graph.perturb_edge(i, j, a, permute_data=False)
 
             elif class_ == 'B_1':
                 if graph_obj.vertices[i].partner_query(j):
-                    graph_obj.perturb_j_k(i, j, a)
-                    changes += 1
+                    if graph_obj.permute_j_k(i, j, a):
+                        changes += 1
+                        if ui_obj is not None:
+                            ui_obj.gs_atomic_graph.perturb_edge(i, j, a, permute_data=False)
 
-        return len(classes), changes
+        return changes
 
     else:
 
-        return len(classes), 0
+        return 0
 
 
 def find_class(graph_obj, type_, config):
@@ -493,10 +553,10 @@ def find_class(graph_obj, type_, config):
         return 'J'
 
 
-def find_type(graph_obj, search_type):
+def find_type(graph_obj, search_type, strong=False, ui_obj=None):
 
-    configs = []
-    classes = []
+    found = 0
+    changes = 0
 
     for vertex in graph_obj.vertices:
         for partner in vertex.partners():
@@ -525,8 +585,11 @@ def find_type(graph_obj, search_type):
                     config = mesh_1, mesh_2
                     class_ = find_class(graph_obj, 1, config)
                     if not class_ == 'J':
-                        configs.append(config)
-                        classes.append(class_)
+                        if strong:
+                            changes += strong_resolve(graph_obj, [config], [class_], search_type, ui_obj=ui_obj)
+                        else:
+                            changes += weak_resolve(graph_obj, [config], [class_], search_type, ui_obj=ui_obj)
+                        found += 1
                     else:
                         print('Class J encountered: {} {}'.format(vertex.i, partner))
 
@@ -534,8 +597,11 @@ def find_type(graph_obj, search_type):
                     config = mesh_1, mesh_2
                     class_ = find_class(graph_obj, 2, config)
                     if not class_ == 'J':
-                        configs.append(config)
-                        classes.append(class_)
+                        if strong:
+                            changes += strong_resolve(graph_obj, [config], [class_], search_type, ui_obj=ui_obj)
+                        else:
+                            changes += weak_resolve(graph_obj, [config], [class_], search_type, ui_obj=ui_obj)
+                        found += 1
                     else:
                         print('Class J encountered: {} {}'.format(vertex.i, partner))
 
@@ -543,8 +609,11 @@ def find_type(graph_obj, search_type):
                     config = mesh_1, mesh_2
                     class_ = find_class(graph_obj, 3, config)
                     if not class_ == 'J':
-                        configs.append(config)
-                        classes.append(class_)
+                        if strong:
+                            changes += strong_resolve(graph_obj, [config], [class_], search_type, ui_obj=ui_obj)
+                        else:
+                            changes += weak_resolve(graph_obj, [config], [class_], search_type, ui_obj=ui_obj)
+                        found += 1
                     else:
                         print('Class J encountered: {} {}'.format(vertex.i, partner))
 
@@ -552,8 +621,11 @@ def find_type(graph_obj, search_type):
                     config = mesh_1, mesh_2
                     class_ = find_class(graph_obj, 4, config)
                     if not class_ == 'J':
-                        configs.append(config)
-                        classes.append(class_)
+                        if strong:
+                            changes += strong_resolve(graph_obj, [config], [class_], search_type, ui_obj=ui_obj)
+                        else:
+                            changes += weak_resolve(graph_obj, [config], [class_], search_type, ui_obj=ui_obj)
+                        found += 1
                     else:
                         print('Class J encountered: {} {}'.format(vertex.i, partner))
 
@@ -561,8 +633,11 @@ def find_type(graph_obj, search_type):
                     config = mesh_1, mesh_2
                     class_ = find_class(graph_obj, 5, config)
                     if not class_ == 'J':
-                        configs.append(config)
-                        classes.append(class_)
+                        if strong:
+                            changes += strong_resolve(graph_obj, [config], [class_], search_type, ui_obj=ui_obj)
+                        else:
+                            changes += weak_resolve(graph_obj, [config], [class_], search_type, ui_obj=ui_obj)
+                        found += 1
                     else:
                         print('Class J encountered: {} {}'.format(vertex.i, partner))
 
@@ -570,21 +645,20 @@ def find_type(graph_obj, search_type):
                     config = mesh_1, mesh_2
                     class_ = find_class(graph_obj, 6, config)
                     if not class_ == 'J':
-                        configs.append(config)
-                        classes.append(class_)
+                        if strong:
+                            changes += strong_resolve(graph_obj, [config], [class_], search_type, ui_obj=ui_obj)
+                        else:
+                            changes += weak_resolve(graph_obj, [config], [class_], search_type, ui_obj=ui_obj)
+                        found += 1
                     else:
                         print('Class J encountered: {} {}'.format(vertex.i, partner))
 
-    return configs, classes
+    return found, changes
 
 
-def untangle(graph_obj, search_type, strong=False):
+def untangle(graph_obj, search_type, strong=False, ui_obj=None):
     if search_type in [1, 2, 3, 4, 5, 6]:
-        configs, classes = find_type(graph_obj, search_type)
-        if strong:
-            num_found, changes = strong_resolve(graph_obj, configs, classes, search_type)
-        else:
-            num_found, changes = weak_resolve(graph_obj, configs, classes, search_type)
+        num_found, changes = find_type(graph_obj, search_type, strong=strong, ui_obj=ui_obj)
         return num_found, changes
     else:
         return 0, 0
@@ -688,20 +762,20 @@ def resolve_mesh_configs(graph_obj, interesting_meshes, mesh_categories):
                     c = mesh.vertex_indices[1]
                     d = mesh.vertex_indices[2]
             if a in graph_obj.vertices[b].partners():
-                graph_obj.perturb_j_to_last_partner(b, a)
+                graph_obj.permute_j_to_last_partner(b, a)
                 graph_obj.decrease_h(b)
             if b in graph_obj.vertices[a].partners():
-                graph_obj.perturb_j_k(a, b, c)
+                graph_obj.permute_j_k(a, b, c)
             else:
-                graph_obj.perturb_j_to_first_antipartner(a, c)
+                graph_obj.permute_j_to_first_antipartner(a, c)
                 graph_obj.increase_h(a)
             if d in graph_obj.vertices[c].partners():
-                graph_obj.perturb_j_k(c, d, a)
+                graph_obj.permute_j_k(c, d, a)
             else:
-                graph_obj.perturb_j_to_first_antipartner(c, a)
+                graph_obj.permute_j_to_first_antipartner(c, a)
                 graph_obj.increase_h(c)
             if c in graph_obj.vertices[d].partners():
-                graph_obj.perturb_j_to_last_partner(d, c)
+                graph_obj.permute_j_to_last_partner(d, c)
                 graph_obj.decrease_h(d)
             changes_made += 1
         elif mesh_category == 2:
@@ -738,14 +812,14 @@ def resolve_mesh_configs(graph_obj, interesting_meshes, mesh_categories):
                         d = mesh.vertex_indices[2]
                         e = mesh.vertex_indices[3]
                     if e in graph_obj.vertices[a].partners():
-                        graph_obj.perturb_j_k(a, e, d)
+                        graph_obj.permute_j_k(a, e, d)
                     else:
-                        graph_obj.perturb_j_to_first_antipartner(a, d)
+                        graph_obj.permute_j_to_first_antipartner(a, d)
                         graph_obj.increase_h(a)
                     if a in graph_obj.vertices[e].partners():
-                        graph_obj.perturb_j_to_last_partner(e, a)
+                        graph_obj.permute_j_to_last_partner(e, a)
                         graph_obj.decrease_h(e)
-                    graph_obj.perturb_j_to_first_antipartner(d, a)
+                    graph_obj.permute_j_to_first_antipartner(d, a)
                     graph_obj.increase_h(d)
                     changes_made += 1
                     break

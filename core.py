@@ -637,7 +637,7 @@ class SuchSoftware:
             vertex.normalized_peak_gamma = vertex.peak_gamma - peak_mean_diff
             vertex.normalized_avg_gamma = vertex.avg_gamma - avg_mean_diff
 
-    def column_characterization(self, starting_index, search_type=0):
+    def column_characterization(self, starting_index, search_type=0, ui_obj=None):
         """Column characterization algorithm.
 
         Assumes a *starting_index*, that is taken to be an Al column in the matrix. The *search_type* enables access to
@@ -674,35 +674,15 @@ class SuchSoftware:
 
         if search_type == 0:
 
-            logger.info('Starting column characterization from vertex {}...'.format(starting_index))
-            logger.info('Setting alloy...')
-            self.set_alloy_mat()
-            logger.info('Alloy set.')
-            logger.info('Finding edge columns....')
-            self.find_edge_columns()
-            for i in range(0, self.num_columns):
-                if self.graph.vertices[i].is_edge_column and not self.graph.vertices[i].set_by_user:
-                    self.graph.vertices[i].reset_prob_vector(bias=3)
-            logger.info('Found edge columns.')
-            # Reset prob vectors:
-            self.column_characterization(starting_index, search_type=12)
-            # Spatial mapping:
-            self.column_characterization(starting_index, search_type=2)
-            # Angle analysis:
-            self.column_characterization(starting_index, search_type=16)
-            # Find particle:
-            self.column_characterization(starting_index, search_type=5)
-            # Set levels:
-            self.column_characterization(starting_index, search_type=6)
-            # Add edges:
-            self.column_characterization(starting_index, search_type=7)
-            # Calc normalized gamma:
-            self.column_characterization(starting_index, search_type=19)
-            # Summarize:
-            logger.info('Summarizing stats.')
-            self.summarize_stats()
+            self.column_characterization(starting_index, search_type=1, ui_obj=ui_obj)
+
+            logger.info('Running models and untangling...')
             # Base stat score:
             self.column_characterization(starting_index, search_type=22)
+            if ui_obj is not None:
+                ui_obj.update_overlay()
+                ui_obj.update_graph()
+                ui_obj.update_info_graph()
             # Check intersections
             self.column_characterization(starting_index, search_type=14)
             # Find particle:
@@ -713,13 +693,21 @@ class SuchSoftware:
             self.column_characterization(starting_index, search_type=7)
             # Base stat score:
             self.column_characterization(starting_index, search_type=22)
+            if ui_obj is not None:
+                ui_obj.update_overlay()
+                ui_obj.update_graph()
+                ui_obj.update_info_graph()
             # Experimental weak untanglng
             self.column_characterization(starting_index, search_type=10)
             # Base stat score:
-            self.column_characterization(starting_index, search_type=22)
+            self.column_characterization(starting_index, search_type=23)
+            if ui_obj is not None:
+                ui_obj.update_overlay()
+                ui_obj.update_graph()
+                ui_obj.update_info_graph()
             # Experimental weak untanglng
             self.column_characterization(starting_index, search_type=10)
-            # Base stat score:
+            # Base model score:
             self.column_characterization(starting_index, search_type=22)
             # Find particle:
             self.column_characterization(starting_index, search_type=5)
@@ -745,16 +733,30 @@ class SuchSoftware:
             self.column_characterization(starting_index, search_type=12)
             # Spatial mapping:
             self.column_characterization(starting_index, search_type=2)
+            if ui_obj is not None:
+                ui_obj.update_overlay()
+                ui_obj.update_graph()
+                ui_obj.update_info_graph()
             # Angle analysis:
             self.column_characterization(starting_index, search_type=16)
+            if ui_obj is not None:
+                ui_obj.update_overlay()
+                ui_obj.update_graph()
+                ui_obj.update_info_graph()
             # Find particle:
             self.column_characterization(starting_index, search_type=5)
             # Set levels:
             self.column_characterization(starting_index, search_type=6)
             # Add edges:
             self.column_characterization(starting_index, search_type=7)
+            if ui_obj is not None:
+                ui_obj.update_overlay()
+                ui_obj.update_graph()
+                ui_obj.update_info_graph()
             # Calc normalized gamma:
             self.column_characterization(starting_index, search_type=19)
+            # Map subsets:
+            self.column_characterization(starting_index, search_type=21)
             # Summarize:
             logger.info('Summarizing stats.')
             self.summarize_stats()
@@ -824,6 +826,8 @@ class SuchSoftware:
             # Weak untangling
             logger.info('Starting experimental weak untangling...')
 
+            self.column_characterization(starting_index, search_type=14)
+
             static = False
             total_changes = 0
             total_counter = 0
@@ -837,12 +841,11 @@ class SuchSoftware:
                     while cont:
                         self.graph.redraw_edges()
                         chi_before = self.graph.chi
-                        self.column_characterization(starting_index, search_type=14)
                         logger.info('Looking for type {}:'.format(type_num))
                         logger.info('Chi: {}'.format(chi_before))
-                        self.graph.sort_subsets_by_distance()
+                        self.graph.sort_all_subsets_by_distance()
 
-                        num_types, changes = untangling.untangle(self.graph, type_num, strong=False)
+                        num_types, changes = untangling.untangle(self.graph, type_num, strong=False, ui_obj=ui_obj)
 
                         total_changes += changes
                         self.graph.redraw_edges()
@@ -872,6 +875,8 @@ class SuchSoftware:
                 if total_counter > 3:
                     static = True
 
+            self.column_characterization(starting_index, search_type=14)
+
             self.graph.redraw_edges()
             logger.info('Weak untangling complete')
 
@@ -895,7 +900,7 @@ class SuchSoftware:
                         self.column_characterization(starting_index, search_type=14)
                         logger.info('Looking for type {}:'.format(type_num))
                         logger.info('Chi: {}'.format(chi_before))
-                        self.graph.sort_subsets_by_distance()
+                        self.graph.sort_all_subsets_by_distance()
 
                         num_types, changes = untangling.untangle(self.graph, type_num, strong=True)
 
@@ -1078,12 +1083,12 @@ class SuchSoftware:
         elif search_type == 21:
             # Sort neighbours
             logger.info('Sorting neighbours...')
-            self.graph.sort_subsets_by_distance()
+            self.graph.sort_all_subsets_by_distance()
             logger.info('Neighbours sorted')
 
         elif search_type == 22:
             # Stat model
-            logger.info('Running experimental stat model')
+            logger.info('Apply product predictions')
             self.graph.map_friends()
             probs = []
             for i in range(0, self.num_columns):
@@ -1096,7 +1101,24 @@ class SuchSoftware:
                     self.graph.vertices[i].prob_vector = probs[i]
                     self.graph.vertices[i].define_species()
             self.graph.map_friends()
-            logger.info('Experimental stat model complete!')
+            logger.info('Applied product predictions!')
+
+        elif search_type == 23:
+            # Stat model
+            logger.info('Apply model predictions')
+            self.graph.map_friends()
+            probs = []
+            for i in range(0, self.num_columns):
+                if not self.graph.vertices[i].set_by_user and not self.graph.vertices[i].is_edge_column:
+                    probs.append(np.array(graph_op.base_stat_score(self.graph, i, get_individual_predictions=False)))
+                else:
+                    probs.append([0, 0, 0, 0, 0, 0, 0])
+            for i in range(0, self.num_columns):
+                if not self.graph.vertices[i].set_by_user and not self.graph.vertices[i].is_edge_column:
+                    self.graph.vertices[i].prob_vector = probs[i]
+                    self.graph.vertices[i].define_species()
+            self.graph.map_friends()
+            logger.info('Applied model predictions!')
 
         else:
             logger.error('No such search type!')

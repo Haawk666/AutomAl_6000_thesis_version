@@ -719,36 +719,44 @@ class AtomicGraph:
     def __len__(self):
         return len(self.vertices)
 
-    def sort_subsets_by_distance(self):
+    def sort_all_subsets_by_distance(self):
         self.map_all_subsets()
         logger.info('Sorting subsets')
         for vertex in self.vertices:
+            self.sort_subsets_by_distance(vertex.i)
 
-            true_partner_distances = []
-            unfriendly_partner_distances = []
-            true_anti_partner_distances = []
-            friendly_anti_partner_distances = []
-            outsider_distances = []
+    def sort_subsets_by_distance(self, i):
 
-            for tp in vertex.true_partner_indices:
-                true_partner_distances.append(self.projected_distance(vertex.i, tp))
-            for up in vertex.unfriendly_partner_indices:
-                unfriendly_partner_distances.append(self.projected_distance(vertex.i, up))
-            for ta in vertex.true_anti_partner_indices:
-                true_anti_partner_distances.append(self.projected_distance(vertex.i, ta))
-            for fa in vertex.friendly_anti_partner_indices:
-                friendly_anti_partner_distances.append(self.projected_distance(vertex.i, fa))
-            for out in vertex.outsider_indices:
-                outsider_distances.append(self.projected_distance(vertex.i, out))
+        vertex = self.vertices[i]
 
-            vertex.true_partner_indices = [y for x, y in sorted(zip(true_partner_distances, vertex.true_partner_indices))]
-            vertex.unfriendly_partner_indices = [y for x, y in sorted(zip(unfriendly_partner_distances, vertex.unfriendly_partner_indices))]
-            vertex.true_anti_partner_indices = [y for x, y in sorted(zip(true_anti_partner_distances, vertex.true_anti_partner_indices))]
-            vertex.friendly_anti_partner_indices = [y for x, y in sorted(zip(friendly_anti_partner_distances, vertex.friendly_anti_partner_indices))]
-            vertex.outsider_indices = [y for x, y in sorted(zip(outsider_distances, vertex.outsider_indices))]
+        true_partner_distances = []
+        unfriendly_partner_distances = []
+        true_anti_partner_distances = []
+        friendly_anti_partner_distances = []
+        outsider_distances = []
 
-            vertex.partner_indices = vertex.true_partner_indices + vertex.unfriendly_partner_indices
-            vertex.anti_partner_indices = vertex.true_anti_partner_indices + vertex.friendly_anti_partner_indices
+        for tp in vertex.true_partner_indices:
+            true_partner_distances.append(self.projected_distance(vertex.i, tp))
+        for up in vertex.unfriendly_partner_indices:
+            unfriendly_partner_distances.append(self.projected_distance(vertex.i, up))
+        for ta in vertex.true_anti_partner_indices:
+            true_anti_partner_distances.append(self.projected_distance(vertex.i, ta))
+        for fa in vertex.friendly_anti_partner_indices:
+            friendly_anti_partner_distances.append(self.projected_distance(vertex.i, fa))
+        for out in vertex.outsider_indices:
+            outsider_distances.append(self.projected_distance(vertex.i, out))
+
+        vertex.true_partner_indices = [y for x, y in sorted(zip(true_partner_distances, vertex.true_partner_indices))]
+        vertex.unfriendly_partner_indices = [y for x, y in sorted(
+            zip(unfriendly_partner_distances, vertex.unfriendly_partner_indices))]
+        vertex.true_anti_partner_indices = [y for x, y in
+                                            sorted(zip(true_anti_partner_distances, vertex.true_anti_partner_indices))]
+        vertex.friendly_anti_partner_indices = [y for x, y in sorted(
+            zip(friendly_anti_partner_distances, vertex.friendly_anti_partner_indices))]
+        vertex.outsider_indices = [y for x, y in sorted(zip(outsider_distances, vertex.outsider_indices))]
+
+        vertex.partner_indices = vertex.true_partner_indices + vertex.unfriendly_partner_indices
+        vertex.anti_partner_indices = vertex.true_anti_partner_indices + vertex.friendly_anti_partner_indices
 
     def map_friends(self):
         logger.info('Mapping friends..')
@@ -1037,46 +1045,56 @@ class AtomicGraph:
         else:
             return True
 
-    def weak_remove_edge(self, i, j, aggresive=False):
+    def weak_remove_edge(self, i, j, aggressive=False):
 
-        for anti_partner in self.vertices[i].anti_partners():
+        k = -1
 
-            if self.vertices[anti_partner].partner_query(i):
-                if aggresive:
-                    self.perturb_j_k(i, j, anti_partner)
-                    break
-                else:
-                    if len(self.vertices[anti_partner].friendly_anti_partner_indices) == 0:
-                        self.perturb_j_k(i, j, anti_partner)
-                        break
+        if self.vertices[i].is_edge_column:
+            return False
+
+        config = self.get_atomic_configuration(i, use_friends=True)
+
+        options = []
+
+        for mesh in config.meshes:
+            for m, corner in enumerate(mesh.vertex_indices):
+                if m not in [0, 1, len(mesh.vertex_indices) - 1]:
+                    options.append(corner)
+                if m == 1 and corner not in self.vertices[i].partners():
+                    options.append(corner)
+
+        for option in options:
+
+            mesh_1 = self.find_mesh(i, option, return_mesh=True, use_friends=True)
+            mesh_2 = self.find_mesh(option, i, return_mesh=True, use_friends=True)
+
+            if mesh_1.num_corners == 4 and mesh_2.num_corners == 4:
+                k = option
+                print('Weak untangling wants to permute ({}, {}, {})'.format(i, j, option))
+                break
 
         else:
 
-            for anti_partner_2 in self.vertices[i].anti_partners():
-                found = False
-                for anti_partner_partner in self.vertices[anti_partner_2].partners():
+            if aggressive:
 
-                    if not self.vertices[anti_partner_partner].partner_query(anti_partner_2) and\
-                            self.vertices[i].level == self.vertices[anti_partner_2].anti_level():
-
-                        self.perturb_j_k(i, j, anti_partner_2)
-                        found = True
-                        break
-
-                if found:
+                for option in options:
+                    k = option
+                    print('Weak untangling wants to permute ({}, {}, {})'.format(i, j, option))
                     break
+
+                else:
+
+                    return -1
 
             else:
 
-                return False
+                return -1
 
-            return True
-
-        return True
+        return k
 
     def strong_remove_edge(self, i, j):
 
-        if self.perturb_j_to_last_partner(i, j):
+        if self.permute_j_to_last_partner(i, j):
             if self.decrease_h(i):
                 return True
             else:
@@ -1087,13 +1105,13 @@ class AtomicGraph:
     def strong_enforce_edge(self, i, j):
 
         k = self.vertices[j].anti_partners()[0]
-        self.vertices[j].perturb_j_k(k, i)
+        self.vertices[j].permute_j_k(k, i)
         if self.increase_h(j):
             return True
         else:
             return False
 
-    def perturb_j_k(self, i, j, k):
+    def permute_j_k(self, i, j, k, check_intersections=True):
 
         if not j == k:
 
@@ -1106,14 +1124,52 @@ class AtomicGraph:
                 if neighbour == k:
                     pos_k = m
 
-            if pos_k == -1:
-                last_index = self.vertices[i].neighbour_indices[self.map_size - 1]
-                self.substitute_neighbour(i, last_index, k)
-                pos_k = self.map_size - 1
+            if not pos_j == -1:
 
-            self.perturb_pos_j_pos_k(i, pos_j, pos_k)
+                if check_intersections:
+                    sub_graph = self.get_atomic_configuration(i, use_friends=True)
+                    if k in sub_graph.vertex_indices:
+                        continue_ = True
+                    else:
+                        continue_ = False
+                else:
+                    continue_ = True
 
-    def perturb_pos_j_pos_k(self, i, pos_j, pos_k):
+                if continue_:
+
+                    if pos_k == -1:
+                        self.vertices[i].neighbour_indices[-1] = k
+                        pos_k = self.map_size - 1
+
+                    if i in self.vertices[j].friendly_indices:
+                        self.vertices[j].friendly_indices.remove(i)
+                    if i not in self.vertices[k].friendly_indices:
+                        self.vertices[k].friendly_indices.append(i)
+
+                    for index in [i, j, k]:
+                        self.determine_subsets(index)
+                        self.sort_subsets_by_distance(index)
+
+                    print('    permuted ({}, {}, {})'.format(i, j, k))
+                    self.permute_pos_j_pos_k(i, pos_j, pos_k)
+                    return True
+
+                else:
+
+                    print('    Permutation ({}, {}, {}) denied because it will cause an intersection'.format(i, j, k))
+                    return False
+
+            else:
+
+                print('    Permutation ({}, {}, {}) denied because j is not in neighbours'.format(i, j, k))
+                return False
+
+        else:
+
+            print('    Permutation ({}, {}, {}) denied because j == k'.format(i, j, k))
+            return False
+
+    def permute_pos_j_pos_k(self, i, pos_j, pos_k):
 
         self.vertices[i].neighbour_indices[pos_j], self.vertices[i].neighbour_indices[pos_k] =\
             self.vertices[i].neighbour_indices[pos_k], self.vertices[i].neighbour_indices[pos_j]
@@ -1129,7 +1185,7 @@ class AtomicGraph:
             return False
         return True
 
-    def perturb_j_to_last_partner(self, i, j):
+    def permute_j_to_last_partner(self, i, j):
 
         for pos, k in enumerate(self.vertices[i].partners()):
             if k == j:
@@ -1142,13 +1198,13 @@ class AtomicGraph:
             return False
         return True
 
-    def perturb_j_to_first_antipartner(self, i, j):
+    def permute_j_to_first_antipartner(self, i, j):
         if j in self.vertices[i].neighbour_indices:
             pass
         else:
             self.vertices[i].neighbour_indices[-1] = j
         k = self.vertices[i].anti_partners()[0]
-        self.perturb_j_k(i, j, k)
+        self.permute_j_k(i, j, k)
 
     def redraw_edges(self):
         self.edges = []
@@ -1629,7 +1685,7 @@ class AntiGraph:
             if not vertex.is_edge_column:
                 sub_graph = self.graph.get_atomic_configuration(vertex.i)
                 for mesh in sub_graph.meshes:
-                    self.vertices[i].perturb_j_k(mesh.vertex_indices[1], mesh.vertex_indices[2])
+                    self.vertices[i].permute_j_k(mesh.vertex_indices[1], mesh.vertex_indices[2])
                 self.vertices[i].partners()
         self.graph = AtomicGraph()
         for vertex in self.vertices:

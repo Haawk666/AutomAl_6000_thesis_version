@@ -153,9 +153,10 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
             self.setBackgroundBrush(GUI_settings.background_brush)
         self.re_draw()
 
-    def perturb_edge(self, i, j, k):
+    def perturb_edge(self, i, j, k, permute_data=True):
         """Finds the edge from i to j, and makes it point from i to k."""
-        self.ui_obj.project_instance.graph.vertices[i].perturb_j_k(j, k)
+        if permute_data:
+            self.ui_obj.project_instance.graph.vertices[i].permute_j_k(j, k)
         self.redraw_star(i)
         for n, edge in enumerate(self.edges[j]):
             if edge.j == i:
@@ -292,11 +293,8 @@ class InfoGraph(QtWidgets.QGraphicsScene):
     def re_draw(self):
         """Redraw contents."""
         if self.ui_obj.project_instance is not None:
-            print('re-drawing edges')
             self.re_draw_edges()
-            print('re-drawing vertices')
             self.re_draw_vertices()
-            print('re-drawing meshes')
             self.re_draw_mesh_details()
 
     def re_draw_vertices(self):
@@ -772,6 +770,8 @@ class ControlWindow(QtWidgets.QWidget):
         # Checkboxes
         self.chb_toggle_positions = QtWidgets.QCheckBox('Show column position overlay')
 
+        self.chb_show_graphic_updates = QtWidgets.QCheckBox('Show graphic updates (slow)')
+
         self.chb_precipitate_column = QtWidgets.QCheckBox('Precipitate column')
         self.chb_show = QtWidgets.QCheckBox('Show in overlay')
         self.chb_move = QtWidgets.QCheckBox('Enable move')
@@ -836,6 +836,8 @@ class ControlWindow(QtWidgets.QWidget):
 
         self.chb_toggle_positions.setChecked(True)
 
+        self.chb_show_graphic_updates.setChecked(False)
+
         self.chb_precipitate_column.setChecked(False)
         self.chb_show.setChecked(False)
         self.chb_move.setChecked(False)
@@ -870,6 +872,8 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_scalebar.setChecked(True)
 
         self.chb_toggle_positions.toggled.connect(self.ui_obj.chb_toggle_positions_trigger)
+
+        self.chb_show_graphic_updates.toggled.connect(self.ui_obj.chb_show_graphic_updates_trigger)
 
         self.chb_precipitate_column.toggled.connect(self.ui_obj.chb_precipitate_column_trigger)
         self.chb_show.toggled.connect(self.ui_obj.chb_show_trigger)
@@ -1042,8 +1046,8 @@ class ControlWindow(QtWidgets.QWidget):
 
         self.alg_2_box_layout = QtWidgets.QVBoxLayout()
         self.alg_2_box_layout.addLayout(btn_alg_2_btns_layout)
-        self.alg_2_box_layout.addLayout(self.btn_set_scale_layout)
         self.alg_2_box_layout.addLayout(self.btn_set_alloy_layout)
+        self.alg_2_box_layout.addWidget(self.chb_show_graphic_updates)
         self.alg_2_box = GUI_custom_components.GroupBox('Column characterization', menu_action=self.ui_obj.menu.toggle_alg_2_control_action)
         self.alg_2_box.setLayout(self.alg_2_box_layout)
 
@@ -1165,6 +1169,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_list.append(self.btn_pca)
 
         self.chb_list.append(self.chb_toggle_positions)
+        self.chb_list.append(self.chb_show_graphic_updates)
         self.chb_list.append(self.chb_precipitate_column)
         self.chb_list.append(self.chb_show)
         self.chb_list.append(self.chb_move)
