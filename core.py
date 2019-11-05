@@ -737,7 +737,28 @@ class SuchSoftware:
 
         elif search_type == 1:
 
-            pass
+            logger.info('Doing the basics...')
+            logger.info('Setting alloy...')
+            self.set_alloy_mat()
+            logger.info('Alloy set.')
+            # Reset prob vectors:
+            self.column_characterization(starting_index, search_type=12)
+            # Spatial mapping:
+            self.column_characterization(starting_index, search_type=2)
+            # Angle analysis:
+            self.column_characterization(starting_index, search_type=16)
+            # Find particle:
+            self.column_characterization(starting_index, search_type=5)
+            # Set levels:
+            self.column_characterization(starting_index, search_type=6)
+            # Add edges:
+            self.column_characterization(starting_index, search_type=7)
+            # Calc normalized gamma:
+            self.column_characterization(starting_index, search_type=19)
+            # Summarize:
+            logger.info('Summarizing stats.')
+            self.summarize_stats()
+            logger.info('Basics done')
 
         elif search_type == 2:
             # Run spatial mapping
@@ -819,7 +840,7 @@ class SuchSoftware:
                         self.column_characterization(starting_index, search_type=14)
                         logger.info('Looking for type {}:'.format(type_num))
                         logger.info('Chi: {}'.format(chi_before))
-                        self.graph.map_friends()
+                        self.graph.sort_subsets_by_distance()
 
                         num_types, changes = untangling.untangle(self.graph, type_num, strong=False)
 
@@ -874,7 +895,7 @@ class SuchSoftware:
                         self.column_characterization(starting_index, search_type=14)
                         logger.info('Looking for type {}:'.format(type_num))
                         logger.info('Chi: {}'.format(chi_before))
-                        self.graph.map_friends()
+                        self.graph.sort_subsets_by_distance()
 
                         num_types, changes = untangling.untangle(self.graph, type_num, strong=True)
 

@@ -682,6 +682,8 @@ class AtomicGraph:
 
     """
 
+    al_lattice_const = 404.95
+
     def __init__(self, map_size=8):
 
         self.vertices = []
@@ -748,8 +750,6 @@ class AtomicGraph:
             vertex.partner_indices = vertex.true_partner_indices + vertex.unfriendly_partner_indices
             vertex.anti_partner_indices = vertex.true_anti_partner_indices + vertex.friendly_anti_partner_indices
 
-            vertex.neighbour_indices = vertex.partner_indices + vertex.anti_partner_indices
-
     def map_friends(self):
         logger.info('Mapping friends..')
         for vertex in self.vertices:
@@ -767,7 +767,6 @@ class AtomicGraph:
             self.determine_subsets(i)
 
     def determine_subsets(self, i):
-        logger.info('determening subsets')
         partner_indices = self.vertices[i].partners()
         anti_partner_indices = self.vertices[i].anti_partners()
 
@@ -861,6 +860,12 @@ class AtomicGraph:
         for i in indices:
             vertices.append(self.vertices[i])
         return vertices
+
+    def produce_total_blueshift(self, i):
+        blueshift = 0
+        for partner in self.vertices[i].partners():
+            blueshift += self.get_blueshift(i, partner)
+        return blueshift
 
     def produce_alpha_angles(self, i):
         pivot = self.vertices[i].real_coor()
@@ -1032,13 +1037,18 @@ class AtomicGraph:
         else:
             return True
 
-    def weak_remove_edge(self, i, j, aggresive=True):
+    def weak_remove_edge(self, i, j, aggresive=False):
 
         for anti_partner in self.vertices[i].anti_partners():
 
             if self.vertices[anti_partner].partner_query(i):
-                self.perturb_j_k(i, j, anti_partner)
-                break
+                if aggresive:
+                    self.perturb_j_k(i, j, anti_partner)
+                    break
+                else:
+                    if len(self.vertices[anti_partner].friendly_anti_partner_indices) == 0:
+                        self.perturb_j_k(i, j, anti_partner)
+                        break
 
         else:
 
@@ -1046,7 +1056,7 @@ class AtomicGraph:
                 found = False
                 for anti_partner_partner in self.vertices[anti_partner_2].partners():
 
-                    if aggresive and not self.vertices[anti_partner_partner].partner_query(anti_partner_2) and\
+                    if not self.vertices[anti_partner_partner].partner_query(anti_partner_2) and\
                             self.vertices[i].level == self.vertices[anti_partner_2].anti_level():
 
                         self.perturb_j_k(i, j, anti_partner_2)
@@ -1503,6 +1513,45 @@ class AtomicGraph:
         delta_y = self.vertices[j].real_coor_y - self.vertices[i].real_coor_y
         arg = delta_x ** 2 + delta_y ** 2
         return np.sqrt(arg)
+
+    def real_projected_distance(self, i, j, scale):
+        x = self.vertices[i].real_coor_x - self.vertices[j].real_coor_x
+        x *= scale
+        y = self.vertices[i].real_coor_y - self.vertices[j].real_coor_y
+        y *= scale
+        projected_distance = np.sqrt(x ** 2 + y ** 2)
+        return projected_distance
+
+    def real_distance(self, i, j, scale):
+        projected_distance = self.real_projected_distance(i, j, scale)
+        if self.vertices[i].level == self.vertices[j].level:
+            spatial_distance = projected_distance
+        else:
+            spatial_distance = np.sqrt(projected_distance ** 2 + (self.al_lattice_const / 2) ** 2)
+        return spatial_distance
+
+    def get_hard_sphere_distance(self, i, j):
+        # Atomic "hard sphere" radii in pm:
+        si_radii = 117.5
+        cu_radii = 127.81
+        zn_radii = 133.25
+        al_radii = 143
+        ag_radii = 144.5
+        mg_radii = 160
+        un_radii = 200
+
+        # Indexable list of atomic radii
+        atomic_radii = (si_radii, cu_radii, zn_radii, al_radii, ag_radii, mg_radii, un_radii)
+
+        hard_sphere = atomic_radii[self.vertices[i].h_index] + atomic_radii[self.vertices[j].h_index]
+
+        return hard_sphere
+
+    def get_blueshift(self, i, j, scale):
+        real_distance = self.real_distance(i, j, scale)
+        hard_sphere = self.get_hard_sphere_distance(i, j)
+        blue_shift = hard_sphere - real_distance
+        return blue_shift
 
     def test_reciprocality(self, i, j):
         # Is i in j.partners?

@@ -176,14 +176,10 @@ def weak_resolve(graph_obj, configs, classes, search_type):
                     graph_obj.perturb_j_k(i, j, b)
                     changes += 1
             elif class_ == 'E_1' or class_ == 'E_2':
-                if graph_obj.vertices[i].partner_query(j):
-                    for partner in graph_obj.vertices[j].partners():
-                        if partner not in [i, j, a, b] and not graph_obj.vertices[partner].partner_query(j):
-                            # graph_obj.perturb_j_k(j, partner, i)
-                            # changes += 1
-                            break
-            elif class_ == 'F_1' or class_ == 'F_2':
                 pass
+            elif class_ == 'F_1' or class_ == 'F_2':
+                if graph_obj.weak_remove_edge(i, j):
+                    changes += 1
             elif class_ == 'G_1':
                 if graph_obj.vertices[i].partner_query(j):
                     graph_obj.perturb_j_k(j, b, i)
@@ -201,9 +197,8 @@ def weak_resolve(graph_obj, configs, classes, search_type):
                     graph_obj.perturb_j_k(i, j, b)
                     changes += 1
             elif class_ == 'I_1':
-                pass
-                # graph_obj.perturb_j_k(i, j, b)
-                # changes += 1
+                graph_obj.perturb_j_k(i, j, b)
+                changes += 1
 
         return len(classes), changes
 
@@ -213,13 +208,22 @@ def weak_resolve(graph_obj, configs, classes, search_type):
             j = config[0].vertex_indices[1]
             a = config[0].vertex_indices[2]
             b = config[0].vertex_indices[3]
+            c = config[1].vertex_indices[2]
 
             if class_ == 'A_1':
-                pass
+                if graph_obj.vertices[j].partner_query(c):
+                    graph_obj.perturb_j_k(j, c, i)
+                    changes += 1
+
             elif class_ == 'B_1':
                 if graph_obj.vertices[i].partner_query(j) and graph_obj.vertices[a].partner_query(b):
                     graph_obj.perturb_j_k(i, j, a)
                     graph_obj.perturb_j_k(a, b, i)
+                    changes += 1
+
+            elif class_ == 'C_1':
+                if graph_obj.vertices[j].partner_query(j):
+                    graph_obj.perturb_j_k(j, c, i)
                     changes += 1
 
         return len(classes), changes
@@ -228,15 +232,22 @@ def weak_resolve(graph_obj, configs, classes, search_type):
         for class_, config in zip(classes, configs):
             i = config[0].vertex_indices[0]
             j = config[0].vertex_indices[1]
+            a = config[0].vertex_indices[2]
             b = config[1].vertex_indices[2]
             c = config[1].vertex_indices[3]
 
             if class_ == 'A_1':
-                pass
+                if graph_obj.vertices[j].partner_query(a):
+                    graph_obj.perturb_j_k(j, a, i)
+                    changes += 1
             elif class_ == 'B_1':
                 if graph_obj.vertices[i].partner_query(j) and graph_obj.vertices[c].partner_query(b):
                     graph_obj.perturb_j_k(i, j, c)
                     graph_obj.perturb_j_k(c, b, i)
+                    changes += 1
+            elif class_ == 'C_1':
+                if graph_obj.vertices[j].partner_query(a):
+                    graph_obj.perturb_j_k(j, a, i)
                     changes += 1
 
         return len(classes), changes
@@ -252,6 +263,11 @@ def weak_resolve(graph_obj, configs, classes, search_type):
                     graph_obj.perturb_j_k(i, j, d)
                     changes += 1
 
+            elif class_ == 'B_1':
+                if graph_obj.vertices[i].partner_query(j):
+                    graph_obj.perturb_j_k(i, j, d)
+                    changes += 1
+
         return len(classes), changes
 
     elif search_type == 5:
@@ -261,6 +277,11 @@ def weak_resolve(graph_obj, configs, classes, search_type):
             a = config[0].vertex_indices[2]
 
             if class_ == 'A_1':
+                if graph_obj.vertices[i].partner_query(j):
+                    graph_obj.perturb_j_k(i, j, a)
+                    changes += 1
+
+            elif class_ == 'B_1':
                 if graph_obj.vertices[i].partner_query(j):
                     graph_obj.perturb_j_k(i, j, a)
                     changes += 1
@@ -348,6 +369,8 @@ def find_class(graph_obj, type_, config):
             return 'A_1'
         elif s_types == [0, 1, 0, 0, 0]:
             return 'B_1'
+        elif s_types == [0, 0, 0, 0, 2]:
+            return 'C_1'
         else:
             return 'J'
 
@@ -373,6 +396,8 @@ def find_class(graph_obj, type_, config):
             return 'A_1'
         elif s_types == [0, 0, 0, 2, 0]:
             return 'B_1'
+        elif s_types == [1, 0, 0, 0, 0]:
+            return 'C_1'
         else:
             return 'J'
 
@@ -397,6 +422,8 @@ def find_class(graph_obj, type_, config):
 
         if s_types == [0, 0, 0, 0, 0, 0]:
             return 'A_1'
+        elif s_types == [0, 0, 0, 0, 2, 0]:
+            return 'B_1'
         else:
             return 'J'
 
@@ -421,6 +448,8 @@ def find_class(graph_obj, type_, config):
 
         if s_types == [0, 0, 0, 0, 0, 0]:
             return 'A_1'
+        elif s_types == [0, 1, 0, 0, 0, 0]:
+            return 'B_1'
         else:
             return 'J'
 

@@ -260,6 +260,49 @@ class Arrow(QtWidgets.QGraphicsItemGroup):
         self.setZValue(-1)
 
 
+class DistanceArrow(QtWidgets.QGraphicsItemGroup):
+
+    def __init__(self, *args, color=None, i=0, j=1, p1=(0, 0), p2=(1, 1), r=1, scale_factor=1):
+        super().__init__(*args)
+
+        self.inconsistent_pen = GUI_settings.pen_inconsistent_edge
+        self.dislocation_pen = GUI_settings.pen_dislocation_edge
+        self.normal_pen = GUI_settings.pen_edge
+
+        if color is None:
+            self.color = QtGui.QColor(255, 255, 255, 255)
+        else:
+            self.color = QtGui.QColor(color[0], color[1], color[2], color[3])
+        self.pen = QtGui.QPen(self.color)
+        self.pen.setWidth(3)
+
+        self.scale_factor = scale_factor
+        self.r = r
+        self.p1 = p1
+        self.p2 = p2
+        self.i = i
+        self.j = j
+
+        self.make_arrow_obj()
+        self.set_style()
+
+    def set_style(self):
+
+            self.childItems()[0].setPen(self.pen)
+            self.childItems()[0].show()
+            self.show()
+
+    def make_arrow_obj(self):
+
+        line = QtWidgets.QGraphicsLineItem(self.scale_factor * self.p1[0],
+                                           self.scale_factor * self.p1[1],
+                                           self.scale_factor * self.p2[0],
+                                           self.scale_factor * self.p2[1])
+
+        self.addToGroup(line)
+        self.setZValue(-1)
+
+
 class ScaleBar(QtWidgets.QGraphicsItemGroup):
 
     def __init__(self, *args, length=2, scale=5, r=10, height=512):

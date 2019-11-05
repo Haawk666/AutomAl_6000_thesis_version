@@ -84,6 +84,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.gs_atomic_graph = GUI_elements.AtomicGraph(ui_obj=self, background=self.no_graphic)
         self.gs_atomic_sub_graph = GUI_elements.AtomicSubGraph(ui_obj=self, background=self.no_graphic)
         self.gs_anti_graph = GUI_elements.AtomicGraph(ui_obj=self, background=self.no_graphic)
+        self.gs_info_graph = GUI_elements.InfoGraph(ui_obj=self, background=self.no_graphic)
         self.gs_search_matrix = GUI_elements.RawImage(ui_obj=self, background=self.no_graphic)
         self.gs_fft = GUI_elements.RawImage(ui_obj=self, background=self.no_graphic)
 
@@ -94,6 +95,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.gv_atomic_graph = GUI_elements.ZoomGraphicsView(self.gs_atomic_graph, ui_obj=self, trigger_func=self.key_press_trigger)
         self.gv_atomic_sub_graph = GUI_elements.ZoomGraphicsView(self.gs_atomic_sub_graph, ui_obj=self, trigger_func=self.key_press_trigger)
         self.gv_anti_graph = GUI_elements.ZoomGraphicsView(self.gs_anti_graph, ui_obj=self, trigger_func=self.key_press_trigger)
+        self.gv_info_graph = GUI_elements.ZoomGraphicsView(self.gs_info_graph, ui_obj=self, trigger_func=self.key_press_trigger)
         self.gv_search_matrix = GUI_elements.ZoomGraphicsView(self.gs_search_matrix, ui_obj=self, trigger_func=self.key_press_trigger)
         self.gv_fft = GUI_elements.ZoomGraphicsView(self.gs_fft, ui_obj=self, trigger_func=self.key_press_trigger)
 
@@ -106,6 +108,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.tab_atomic_graph = self.tabs.addTab(self.gv_atomic_graph, 'Atomic graph')
         self.tab_atomic_sub_graph = self.tabs.addTab(self.gv_atomic_sub_graph, 'Atomic sub-graph')
         self.tab_anti_graph = self.tabs.addTab(self.gv_anti_graph, 'Anti-graph')
+        self.tab_info_graph = self.tabs.addTab(self.gv_info_graph, 'Info-graph')
         self.tab_search_matrix = self.tabs.addTab(self.gv_search_matrix, 'Search matrix')
         self.tab_fft = self.tabs.addTab(self.gv_fft, 'FFT image')
 
@@ -139,6 +142,7 @@ class MainUI(QtWidgets.QMainWindow):
             self.project_instance.graph.vertices[self.selected_column].force_species(h)
             self.gs_overlay_composition.interactive_overlay_objects[self.selected_column].set_style()
             self.gs_atomic_graph.redraw_neighbourhood(self.selected_column)
+            self.gs_info_graph.redraw_neighbourhood(self.selected_column)
             # Update control window info:
             self.control_window.lbl_column_species.setText(
                 'Atomic species: ' + self.project_instance.graph.vertices[self.selected_column].atomic_species)
@@ -155,6 +159,7 @@ class MainUI(QtWidgets.QMainWindow):
             self.gs_overlay_composition.interactive_overlay_objects[self.selected_column].set_style()
             self.gs_atomic_graph.interactive_vertex_objects[self.selected_column].set_style()
             self.gs_atomic_graph.redraw_neighbourhood(self.selected_column)
+            self.gs_info_graph.redraw_neighbourhood(self.selected_column)
             # Update control window info:
             self.control_window.lbl_column_level.setText('Level: {}'.format(level))
 
@@ -181,6 +186,9 @@ class MainUI(QtWidgets.QMainWindow):
         self.update_graph()
         self.update_sub_graph(void=void)
         self.update_anti_graph(void=void)
+        print('updating info')
+        self.update_info_graph()
+        print('info updated')
         self.update_search_matrix(void=void)
         self.update_fft(void=void)
 
@@ -227,6 +235,13 @@ class MainUI(QtWidgets.QMainWindow):
             self.gs_anti_graph = GUI_elements.AtomicSubGraph(ui_obj=self, background=graphic_)
             self.gv_anti_graph.setScene(self.gs_anti_graph)
 
+    def update_info_graph(self):
+        self.gs_info_graph = GUI_elements.InfoGraph(ui_obj=self, scale_factor=2)
+        print('Re-drawing info-graph')
+        self.gs_info_graph.re_draw()
+        print('Info-graph re-drawn')
+        self.gv_info_graph.setScene(self.gs_info_graph)
+
     def update_search_matrix(self, void=False):
         if void:
             graphic_ = self.no_graphic
@@ -268,19 +283,18 @@ class MainUI(QtWidgets.QMainWindow):
                 else:
                     self.selection_history.append(self.selected_column)
             if self.control_window.chb_enable_ruler.isChecked():
-                lattice_const = core.SuchSoftware.al_lattice_const
-                x = self.project_instance.graph.vertices[self.selected_column].real_coor_x - self.project_instance.graph.vertices[self.previous_selected_column].real_coor_x
-                x *= self.project_instance.scale
-                y = self.project_instance.graph.vertices[self.selected_column].real_coor_y - self.project_instance.graph.vertices[self.previous_selected_column].real_coor_y
-                y *= self.project_instance.scale
-                projected_distance = np.sqrt(x ** 2 + y ** 2)
-                if self.project_instance.graph.vertices[self.selected_column].level == self.project_instance.graph.vertices[self.previous_selected_column].level:
-                    spatial_distance = projected_distance
-                else:
-                    spatial_distance = np.sqrt(projected_distance ** 2 + (lattice_const / 2) ** 2)
+                projected_distance = self.project_instance.graph.real_projected_distance(self.selected_column, self.previous_selected_column, self.project_instance.scale)
+                spatial_distance = self.project_instance.graph.real_distance(self.selected_column, self.previous_selected_column, self.project_instance.scale)
+                expected_hard_sphere_distance = self.project_instance.graph.get_hard_sphere_distance(self.selected_column, self.previous_selected_column)
                 string = 'Distance between vertex {} and {}\n' \
                          '    Projected distance: {} pm\n' \
-                         '    Spatial distance: {} pm'.format(self.previous_selected_column, self.selected_column, projected_distance, spatial_distance)
+                         '    Spatial distance: {} pm\n' \
+                         '    Expected hard-sphere distance: {} pm\n' \
+                         '    Deviation from hard sphere: {} pm\n'.format(self.previous_selected_column,
+                                                                          self.selected_column, projected_distance,
+                                                                          spatial_distance,
+                                                                          expected_hard_sphere_distance,
+                                                                          expected_hard_sphere_distance - spatial_distance)
                 logger.info(string)
 
     def sys_message(self, msg):
@@ -907,6 +921,7 @@ class MainUI(QtWidgets.QMainWindow):
                 self.project_instance.graph.map_meshes(np.floor(self.project_instance.num_columns / 2))
             logger.info('Meshes mapped. Updating graphics')
             self.gs_atomic_graph.re_draw_mesh_details()
+            self.gs_info_graph.re_draw_mesh_details()
             self.sys_message('Ready.')
 
     def btn_deselect_trigger(self):
@@ -1078,6 +1093,7 @@ class MainUI(QtWidgets.QMainWindow):
         if self.project_instance is not None:
             self.sys_message('Working...')
             self.gs_atomic_graph.re_draw_mesh_details()
+            self.gs_info_graph.re_draw_mesh_details()
             self.sys_message('Ready.')
 
     def chb_show_level_0_trigger(self, state):

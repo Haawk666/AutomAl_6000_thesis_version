@@ -270,6 +270,153 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
             self.redraw_star(neighbours)
 
 
+class InfoGraph(QtWidgets.QGraphicsScene):
+
+    def __init__(self, *args, ui_obj=None, background=None, scale_factor=1):
+        """Initialize a custom QtWidgets.QGraphicsScene object for **atomic graphs**."""
+
+        super().__init__(*args)
+
+        self.ui_obj = ui_obj
+        self.scale_factor = scale_factor
+        self.interactive_vertex_objects = []
+        self.edges = []
+        self.mesh_details = []
+        self.background_image = background
+        if self.background_image is not None:
+            self.addPixmap(self.background_image)
+        if GUI_settings.theme == 'dark':
+            self.setBackgroundBrush(GUI_settings.background_brush)
+        self.re_draw()
+
+    def re_draw(self):
+        """Redraw contents."""
+        if self.ui_obj.project_instance is not None:
+            print('re-drawing edges')
+            self.re_draw_edges()
+            print('re-drawing vertices')
+            self.re_draw_vertices()
+            print('re-drawing meshes')
+            self.re_draw_mesh_details()
+
+    def re_draw_vertices(self):
+        """Redraws all column elements."""
+        self.interactive_vertex_objects = []
+        for vertex in self.ui_obj.project_instance.graph.vertices:
+            if len(vertex.neighbour_indices) > 0:
+                well_defined = True
+                if not vertex.is_edge_column and not vertex.set_by_user:
+                    if not vertex.h_index == 6:
+                        model_predictions = graph_op.base_stat_score(self.ui_obj.project_instance.graph, vertex.i, get_individual_predictions=True)
+                        if model_predictions[0].index(max(model_predictions[0])) == model_predictions[8].index(max(model_predictions[8])):
+                            well_defined = True
+                        else:
+                            well_defined = False
+                    else:
+                        well_defined = False
+            else:
+                well_defined = False
+            self.interactive_vertex_objects.append(GUI_custom_components.InteractiveGraphColumn(self.ui_obj, vertex.i, vertex.r, self.scale_factor))
+            if not well_defined:
+                pen_red = QtGui.QPen(QtCore.Qt.red)
+                pen_red.setWidth(3)
+                self.interactive_vertex_objects[-1].setPen(pen_red)
+            self.addItem(self.interactive_vertex_objects[-1])
+
+    def re_draw_edges(self):
+        """Redraws all edge elements."""
+        for inner_edges in self.edges:
+            for edge_item in inner_edges:
+                self.removeItem(edge_item)
+        self.edges = []
+
+        for vertex_a in self.ui_obj.project_instance.graph.vertices:
+            inner_edges = []
+            for n, vertex_b in enumerate(self.ui_obj.project_instance.graph.get_neighbours(vertex_a.i)):
+                p1 = vertex_a.real_coor()
+                p2 = vertex_b.real_coor()
+                real_distance = self.ui_obj.project_instance.graph.real_distance(vertex_a.i, vertex_b.i, self.ui_obj.project_instance.scale)
+                hard_sphere_distance = self.ui_obj.project_instance.graph.get_hard_sphere_distance(vertex_a.i, vertex_b.i)
+                max_shift = 70
+                if hard_sphere_distance > real_distance:
+                    if hard_sphere_distance - real_distance > max_shift:
+                        difference = max_shift
+                    else:
+                        difference = hard_sphere_distance - real_distance
+                    multiplier = - difference / max_shift + 1
+                    color = (multiplier * 255, multiplier * 255, 255, 255)
+                else:
+                    if real_distance - hard_sphere_distance > max_shift:
+                        difference = max_shift
+                    else:
+                        difference = real_distance - hard_sphere_distance
+                    multiplier = - difference / max_shift + 1
+                    color = (255, multiplier * 255, multiplier * 255, 255)
+
+                inner_edges.append(GUI_custom_components.DistanceArrow(color=color, i=vertex_a.i, j=vertex_b.i, p1=p1,
+                                                                       p2=p2, r=self.ui_obj.project_instance.r,
+                                                                       scale_factor=self.scale_factor))
+
+                self.addItem(inner_edges[-1])
+                if n >= vertex_a.n():
+                    inner_edges[-1].hide()
+            self.edges.append(inner_edges)
+
+    def re_draw_mesh_details(self):
+        """Redraws all mesh details"""
+        for mesh_detail in self.mesh_details:
+            self.removeItem(mesh_detail)
+        self.mesh_details = []
+
+        for mesh in self.ui_obj.project_instance.graph.meshes:
+            detail = GUI_custom_components.MeshDetail(mesh=mesh)
+            self.addItem(detail)
+            self.mesh_details.append(detail)
+            if self.ui_obj.control_window.chb_toggle_mesh.isChecked():
+                detail.show()
+            else:
+                detail.hide()
+
+    def redraw_star(self, i):
+        for edge_item in self.edges[i]:
+            self.removeItem(edge_item)
+        self.edges[i] = []
+        vertex_a = self.ui_obj.project_instance.graph.vertices[i]
+        for n, vertex_b in enumerate(self.ui_obj.project_instance.graph.get_neighbours(vertex_a.i)):
+            p1 = vertex_a.real_coor()
+            p2 = vertex_b.real_coor()
+            real_distance = self.ui_obj.project_instance.graph.real_distance(vertex_a.i, vertex_b.i,
+                                                                             self.ui_obj.project_instance.scale)
+            hard_sphere_distance = self.ui_obj.project_instance.graph.get_hard_sphere_distance(vertex_a.i, vertex_b.i)
+            max_shift = 70
+            if hard_sphere_distance > real_distance:
+                if hard_sphere_distance - real_distance > max_shift:
+                    difference = max_shift
+                else:
+                    difference = hard_sphere_distance - real_distance
+                multiplier = - difference / max_shift + 1
+                color = (255, multiplier * 255, multiplier * 255, 255)
+            else:
+                if real_distance - hard_sphere_distance > max_shift:
+                    difference = max_shift
+                else:
+                    difference = real_distance - hard_sphere_distance
+                multiplier = - difference / max_shift + 1
+                color = (multiplier * 255, multiplier * 255, 255, 255)
+
+            self.edges[i].append(GUI_custom_components.DistanceArrow(color=color, i=vertex_a.i, j=vertex_b.i, p1=p1,
+                                                                     p2=p2, r=self.ui_obj.project_instance.r,
+                                                                     scale_factor=self.scale_factor))
+            self.addItem(self.edges[i][-1])
+            if n >= vertex_a.n():
+                self.edges[i][-1].hide()
+
+    def redraw_neighbourhood(self, i):
+        self.redraw_star(i)
+        for neighbours in self.ui_obj.project_instance.graph.vertices[i].neighbour_indices:
+            self.redraw_star(neighbours)
+
+
 class AtomicSubGraph(QtWidgets.QGraphicsScene):
 
     def __init__(self, *args, ui_obj=None, background=None, sub_graph=None, scale_factor=1):
