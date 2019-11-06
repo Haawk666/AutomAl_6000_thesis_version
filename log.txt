@@ -2,67 +2,8 @@ GUI: Welcome to AACC by Haakon Tvedt
 GUI: GUI version: 0.0.1
 GUI: core version: 0.0.9
 ------------------------
-GUI: Opening file C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/005_C_full_plate_result_1
-core: Loaded C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/005_C_full_plate_result_1
-graph: Mapping friends..
-graph: friends mapped!
-graph: Mapping friends..
-graph: friends mapped!
-core: Vertex summary: ----------
-    Index: 3135
-    Image pos: (1902, 324)
-    Real pos: (1902.0546036293783, 324.198355401233)
-    Atomic Species: Mg
-    Probability vector: [4.5095860670940276e-12, 1.3673640259837274e-11, 0.0, 0.04098163154832794, 0.0, 0.9590183684334888, 0.0]
-    Partner vector: [3476, 3458, 3139, 3677, 3636]
-    Friendly vector: [3458, 3476, 3636, 3677]
-    Model parameters: ------------
-        Alpha min: 0.9612582417115512
-            Prediction: [0.046988970527832706, 0.004266571324569566, 0, 0.14253467642397458, 0, 0.8062097817236231, 0]
-            5
-        Alpha max: 3.848991614660843
-            Prediction: [1.5405083675946698e-05, 0.00026358206749475127, 0, 0.1466690444957295, 0, 0.8530519683530998, 0]
-            5
-        Theta min: 1.3654900595812562
-            Prediction: [0.183089920524622, 0.04050529749749834, 0, 0.6103493220121015, 0, 0.16605545996577836, 0]
-            3
-        Theta max: 1.6337972295376804
-            Prediction: [0.006226553480095517, 0.02519542947397189, 0, 0.6516038288944768, 0, 0.3169741881514558, 0]
-            3
-        Theta avg: 1.49074091330871
-            Prediction: [0.007953129983539385, 0.0053539935732769064, 0, 0.639208532600456, 0, 0.3474843438427277, 0]
-            3
-        Norm peak gamma: -0.05285973343972644
-            Prediction: [0.037522346523356905, 0.12033575665895892, 0, 0.2043879807463129, 0, 0.6377539160713714, 0]
-            5
-        Norm avg gamma: 0.10991728417079163
-            Prediction: [0.09435330614661996, 0.09528045282155648, 0, 0.1943976006303148, 0, 0.6159686404015088, 0]
-            5
-        Product prediction: [4.5095860670940276e-12, 1.3673640259837274e-11, 0.0, 0.04098163154832794, 0.0, 0.9590183684334888, 0.0]
-            5
-        Weighted product prediction: [4.5095860670940276e-12, 1.3673640259837274e-11, 0.0, 0.04098163154832794, 0.0, 0.9590183684334888, 0.0]
-            5
-        Model prediction: [8.495122377942324e-71, 7.5930110009772e-08, 0, 0.9968764521134086, 0, 0.003123471956481488, 0]
-            3
-    Is edge column: False
-    Is set by user: False
-    Level: 1
-    Anti-level: 0
-    Summed blueshift: 50.81462088126142
-    Flag 1: True
-    Flag 2: False
-    Flag 3: False
-    Flag 4: False
-core: Saved C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/005_C_full_plate_control
-graph: Mapping friends..
-graph: friends mapped!
-core: Running experimental level definition algorithm....
-graph: All flags reset!
-graph: Mapping subsets..
-graph: Mapping friends..
-graph: friends mapped!
-graph: Sorting subsets
-core: Levels set.
+GUI: Opening file C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/005_C_full_plate_control
+core: Loaded C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/005_C_full_plate_control
 graph: Mapping friends..
 graph: friends mapped!
 GUI: Mapping meshes...
@@ -72,5 +13,1253 @@ graph: friends mapped!
 graph: Meshes mapped!
 GUI: Meshes mapped. Updating graphics
 core: Saved C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/005_C_full_plate_control
+graph: Mapping friends..
+graph: friends mapped!
+graph: Mapping friends..
+graph: friends mapped!
+GUI: Opening file C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/008_columns
+core: Attempted to load un-compatible save-file. Running conversion script...
+core: Conversion successful!
+core: Loaded C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/008_columns
+graph: Mapping friends..
+graph: friends mapped!
+core: Doing the basics...
+core: Setting alloy...
+core: Alloy set.
+core: Resetting probability vectors with zero bias...
+core: Probability vectors reset.
+core: Mapping spatial locality...
+core: Spatial mapping complete.
+core: Running experimental angle analysis
+core: Angle analysis complete!
+core: Finding particle with legacy method....
+graph: All flags reset!
+graph: All flags reset!
+core: Found particle.
+core: Running legacy level definition algorithm....
+graph: All flags reset!
+graph: All flags reset!
+core: Levels set.
+core: Adding edges to graph...
+core: Edges added.
+core: Looking for intersections
+graph: Mapping friends..
+graph: friends mapped!
+core: Found 0 intersections
+core: 0 literal intersections still remain
+core: Sorting neighbours...
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Neighbours sorted
+core: Summarizing stats.
+core: Summarizing stats...
+core: Collected stats.
+core: Basics done
+core: Running models and untangling...
+core: Starting experimental weak untangling...
+core: Looking for intersections
+graph: Mapping friends..
+graph: friends mapped!
+core: Found 0 intersections
+core: 0 literal intersections still remain
+core: Looking for type 1:
+core: Chi: 0.20164870006341154
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 93 type 1's, made 74 changes
+core: Chi: 0.20164870006341154
+core: repeating...
+core: Looking for type 1:
+core: Chi: 0.18875502008032127
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 19 type 1's, made 1 changes
+core: Chi: 0.18875502008032127
+core: repeating...
+core: Looking for type 1:
+core: Chi: 0.18854364827731981
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 18 type 1's, made 0 changes
+core: Chi: 0.18854364827731981
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.18854364827731981
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 10 type 2's, made 18 changes
+core: Chi: 0.18854364827731981
+core: repeating...
+core: Looking for type 2:
+core: Chi: 0.1866413020503065
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 2's, made 0 changes
+core: Chi: 0.1866413020503065
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 3:
+core: Chi: 0.1866413020503065
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 6 type 3's, made 10 changes
+core: Chi: 0.1866413020503065
+core: repeating...
+core: Looking for type 3:
+core: Chi: 0.18558444303529908
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 3's, made 0 changes
+core: Chi: 0.18558444303529908
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.18558444303529908
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 1 type 4's, made 1 changes
+core: Chi: 0.18558444303529908
+core: repeating...
+core: Looking for type 4:
+core: Chi: 0.18558444303529908
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.18558444303529908
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.18558444303529908
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 1 type 5's, made 1 changes
+core: Chi: 0.18558444303529908
+core: repeating...
+core: Looking for type 5:
+core: Chi: 0.18558444303529908
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.18558444303529908
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 1:
+core: Chi: 0.18558444303529908
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 20 type 1's, made 1 changes
+core: Chi: 0.18558444303529908
+core: repeating...
+core: Looking for type 1:
+core: Chi: 0.18558444303529908
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 19 type 1's, made 0 changes
+core: Chi: 0.18558444303529908
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.18558444303529908
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 2 type 2's, made 2 changes
+core: Chi: 0.18558444303529908
+core: repeating...
+core: Looking for type 2:
+core: Chi: 0.18558444303529908
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 2's, made 0 changes
+core: Chi: 0.18558444303529908
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 3:
+core: Chi: 0.18558444303529908
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 2 type 3's, made 1 changes
+core: Chi: 0.18558444303529908
+core: repeating...
+core: Looking for type 3:
+core: Chi: 0.18558444303529908
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 1 type 3's, made 0 changes
+core: Chi: 0.18558444303529908
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.18558444303529908
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.18558444303529908
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.18558444303529908
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.18558444303529908
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 1:
+core: Chi: 0.18558444303529908
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 19 type 1's, made 0 changes
+core: Chi: 0.18558444303529908
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.18558444303529908
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 1 type 2's, made 1 changes
+core: Chi: 0.18558444303529908
+core: repeating...
+core: Looking for type 2:
+core: Chi: 0.18558444303529908
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 2's, made 0 changes
+core: Chi: 0.18558444303529908
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 3:
+core: Chi: 0.18558444303529908
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 2 type 3's, made 1 changes
+core: Chi: 0.18558444303529908
+core: repeating...
+core: Looking for type 3:
+core: Chi: 0.18558444303529908
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 1 type 3's, made 0 changes
+core: Chi: 0.18558444303529908
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.18558444303529908
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.18558444303529908
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.18558444303529908
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.18558444303529908
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 1:
+core: Chi: 0.18558444303529908
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 19 type 1's, made 0 changes
+core: Chi: 0.18558444303529908
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.18558444303529908
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 1 type 2's, made 1 changes
+core: Chi: 0.18558444303529908
+core: repeating...
+core: Looking for type 2:
+core: Chi: 0.18558444303529908
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 2's, made 0 changes
+core: Chi: 0.18558444303529908
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 3:
+core: Chi: 0.18558444303529908
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 2 type 3's, made 1 changes
+core: Chi: 0.18558444303529908
+core: repeating...
+core: Looking for type 3:
+core: Chi: 0.18558444303529908
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 1 type 3's, made 0 changes
+core: Chi: 0.18558444303529908
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.18558444303529908
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.18558444303529908
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.18558444303529908
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.18558444303529908
+core: repeating...
+core: No changes made, continuing...
+core: Looking for intersections
+graph: Mapping friends..
+graph: friends mapped!
+core: Found 0 intersections
+core: 0 literal intersections still remain
+core: Weak untangling complete
+core: Apply product predictions
+graph: Mapping friends..
+graph: friends mapped!
+graph: Mapping friends..
+graph: friends mapped!
+core: Applied product predictions!
+core: Starting experimental weak untangling...
+core: Looking for intersections
+graph: Mapping friends..
+graph: friends mapped!
+core: Found 0 intersections
+core: 0 literal intersections still remain
+core: Looking for type 1:
+core: Chi: 0.18286377545636806
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 18 type 1's, made 17 changes
+core: Chi: 0.18286377545636806
+core: repeating...
+core: Looking for type 1:
+core: Chi: 0.17990925398332805
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 1 type 1's, made 0 changes
+core: Chi: 0.17990925398332805
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.17990925398332805
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 2's, made 0 changes
+core: Chi: 0.17990925398332805
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 3:
+core: Chi: 0.17990925398332805
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 3 type 3's, made 3 changes
+core: Chi: 0.17990925398332805
+core: Looking for type 4:
+core: Chi: 0.18033132847947664
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.18033132847947664
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.18033132847947664
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.18033132847947664
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 1:
+core: Chi: 0.18033132847947664
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 4 type 1's, made 2 changes
+core: Chi: 0.18033132847947664
+core: repeating...
+core: Looking for type 1:
+core: Chi: 0.18012029123140233
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 2 type 1's, made 0 changes
+core: Chi: 0.18012029123140233
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.18012029123140233
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 2's, made 0 changes
+core: Chi: 0.18012029123140233
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 3:
+core: Chi: 0.18012029123140233
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 1 type 3's, made 1 changes
+core: Chi: 0.18012029123140233
+core: repeating...
+core: Looking for type 3:
+core: Chi: 0.17990925398332805
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 3's, made 0 changes
+core: Chi: 0.17990925398332805
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.17990925398332805
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.17990925398332805
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.17990925398332805
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.17990925398332805
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 1:
+core: Chi: 0.17990925398332805
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 2 type 1's, made 0 changes
+core: Chi: 0.17990925398332805
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.17990925398332805
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 1 type 2's, made 1 changes
+core: Chi: 0.17990925398332805
+core: Looking for type 3:
+core: Chi: 0.18012029123140233
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 1 type 3's, made 1 changes
+core: Chi: 0.18012029123140233
+core: repeating...
+core: Looking for type 3:
+core: Chi: 0.17990925398332805
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 3's, made 0 changes
+core: Chi: 0.17990925398332805
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.17990925398332805
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.17990925398332805
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.17990925398332805
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.17990925398332805
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 1:
+core: Chi: 0.17990925398332805
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 2 type 1's, made 0 changes
+core: Chi: 0.17990925398332805
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.17990925398332805
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 1 type 2's, made 1 changes
+core: Chi: 0.17990925398332805
+core: Looking for type 3:
+core: Chi: 0.18012029123140233
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 1 type 3's, made 1 changes
+core: Chi: 0.18012029123140233
+core: repeating...
+core: Looking for type 3:
+core: Chi: 0.17990925398332805
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 3's, made 0 changes
+core: Chi: 0.17990925398332805
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.17990925398332805
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.17990925398332805
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.17990925398332805
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.17990925398332805
+core: repeating...
+core: No changes made, continuing...
+core: Looking for intersections
+graph: Mapping friends..
+graph: friends mapped!
+core: Found 0 intersections
+core: 0 literal intersections still remain
+core: Weak untangling complete
+core: Finding particle with legacy method....
+graph: All flags reset!
+graph: All flags reset!
+core: Found particle.
+core: Running legacy level definition algorithm....
+graph: All flags reset!
+graph: All flags reset!
+core: Levels set.
+core: Running experimental level definition algorithm....
+graph: All flags reset!
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Levels set.
+core: Finding normalized intensities...
+core: Found intensities.
+core: Apply product predictions
+graph: Mapping friends..
+graph: friends mapped!
+graph: Mapping friends..
+graph: friends mapped!
+core: Applied product predictions!
+core: Starting experimental weak untangling...
+core: Looking for intersections
+graph: Mapping friends..
+graph: friends mapped!
+core: Found 0 intersections
+core: 0 literal intersections still remain
+core: Looking for type 1:
+core: Chi: 0.17327986492190797
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 2 type 1's, made 0 changes
+core: Chi: 0.17327986492190797
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.17327986492190797
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 2 type 2's, made 2 changes
+core: Chi: 0.17327986492190797
+core: repeating...
+core: Looking for type 2:
+core: Chi: 0.17327986492190797
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 2's, made 0 changes
+core: Chi: 0.17327986492190797
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 3:
+core: Chi: 0.17327986492190797
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 1 type 3's, made 1 changes
+core: Chi: 0.17327986492190797
+core: repeating...
+core: Looking for type 3:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 3's, made 0 changes
+core: Chi: 0.1730688054031237
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.1730688054031237
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.1730688054031237
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 1:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 3 type 1's, made 0 changes
+core: Chi: 0.1730688054031237
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 1 type 2's, made 1 changes
+core: Chi: 0.1730688054031237
+core: Looking for type 3:
+core: Chi: 0.17327986492190797
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 1 type 3's, made 1 changes
+core: Chi: 0.17327986492190797
+core: repeating...
+core: Looking for type 3:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 3's, made 0 changes
+core: Chi: 0.1730688054031237
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.1730688054031237
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.1730688054031237
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 1:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 3 type 1's, made 0 changes
+core: Chi: 0.1730688054031237
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 1 type 2's, made 1 changes
+core: Chi: 0.1730688054031237
+core: Looking for type 3:
+core: Chi: 0.17327986492190797
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 1 type 3's, made 1 changes
+core: Chi: 0.17327986492190797
+core: repeating...
+core: Looking for type 3:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 3's, made 0 changes
+core: Chi: 0.1730688054031237
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.1730688054031237
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.1730688054031237
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 1:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 3 type 1's, made 0 changes
+core: Chi: 0.1730688054031237
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 1 type 2's, made 1 changes
+core: Chi: 0.1730688054031237
+core: Looking for type 3:
+core: Chi: 0.17327986492190797
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 1 type 3's, made 1 changes
+core: Chi: 0.17327986492190797
+core: repeating...
+core: Looking for type 3:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 3's, made 0 changes
+core: Chi: 0.1730688054031237
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.1730688054031237
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.1730688054031237
+core: repeating...
+core: No changes made, continuing...
+core: Looking for intersections
+graph: Mapping friends..
+graph: friends mapped!
+core: Found 0 intersections
+core: 0 literal intersections still remain
+core: Weak untangling complete
+core: Apply product predictions
+graph: Mapping friends..
+graph: friends mapped!
+graph: Mapping friends..
+graph: friends mapped!
+core: Applied product predictions!
+core: Starting experimental weak untangling...
+core: Looking for intersections
+graph: Mapping friends..
+graph: friends mapped!
+core: Found 0 intersections
+core: 0 literal intersections still remain
+core: Looking for type 1:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 3 type 1's, made 0 changes
+core: Chi: 0.1730688054031237
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 1 type 2's, made 1 changes
+core: Chi: 0.1730688054031237
+core: Looking for type 3:
+core: Chi: 0.17327986492190797
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 1 type 3's, made 1 changes
+core: Chi: 0.17327986492190797
+core: repeating...
+core: Looking for type 3:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 3's, made 0 changes
+core: Chi: 0.1730688054031237
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.1730688054031237
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.1730688054031237
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 1:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 3 type 1's, made 0 changes
+core: Chi: 0.1730688054031237
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 1 type 2's, made 1 changes
+core: Chi: 0.1730688054031237
+core: Looking for type 3:
+core: Chi: 0.17327986492190797
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 1 type 3's, made 1 changes
+core: Chi: 0.17327986492190797
+core: repeating...
+core: Looking for type 3:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 3's, made 0 changes
+core: Chi: 0.1730688054031237
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.1730688054031237
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.1730688054031237
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 1:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 3 type 1's, made 0 changes
+core: Chi: 0.1730688054031237
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 1 type 2's, made 1 changes
+core: Chi: 0.1730688054031237
+core: Looking for type 3:
+core: Chi: 0.17327986492190797
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 1 type 3's, made 1 changes
+core: Chi: 0.17327986492190797
+core: repeating...
+core: Looking for type 3:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 3's, made 0 changes
+core: Chi: 0.1730688054031237
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.1730688054031237
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.1730688054031237
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 1:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 3 type 1's, made 0 changes
+core: Chi: 0.1730688054031237
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 1 type 2's, made 1 changes
+core: Chi: 0.1730688054031237
+core: Looking for type 3:
+core: Chi: 0.17327986492190797
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 1 type 3's, made 1 changes
+core: Chi: 0.17327986492190797
+core: repeating...
+core: Looking for type 3:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 3's, made 0 changes
+core: Chi: 0.1730688054031237
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.1730688054031237
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.1730688054031237
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.1730688054031237
+core: repeating...
+core: No changes made, continuing...
+core: Looking for intersections
+graph: Mapping friends..
+graph: friends mapped!
+core: Found 0 intersections
+core: 0 literal intersections still remain
+core: Weak untangling complete
+core: Finding particle with legacy method....
+graph: All flags reset!
+graph: All flags reset!
+core: Found particle.
+core: Running experimental level definition algorithm....
+graph: All flags reset!
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Levels set.
+core: Adding edges to graph...
+core: Edges added.
+core: Looking for intersections
+graph: Mapping friends..
+graph: friends mapped!
+core: Found 0 intersections
+core: 0 literal intersections still remain
+core: Sorting neighbours...
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Neighbours sorted
+core: Summarizing stats.
+core: Summarizing stats...
+core: Collected stats.
+core: Column characterization complete.
+graph: Mapping friends..
+graph: friends mapped!
+graph: Mapping friends..
+graph: friends mapped!
+core: Vertex summary: ----------
+    Index: 1448
+    Image pos: (468, 620)
+    Real pos: (468.40322146129654, 620.1648362074394)
+    Atomic Species: Mg
+    Probability vector: [6.859408484629882e-11, 2.3187935926583384e-12, 0.0, 0.39040692679258876, 0.0, 0.6095930731364982, 0.0]
+    Partner vector: [405, 1892, 21, 2224, 2300]
+    Friendly vector: [405, 1892, 2224, 2300]
+    Model parameters: ------------
+        Alpha min: 0.9392874410721066
+            Prediction: [0.04613855882611479, 0.004076763673023899, 0, 0.1453623083857586, 0, 0.8044223691151027, 0]
+            5
+        Alpha max: 3.9636388362060653
+            Prediction: [3.268120730048679e-06, 0.00011357409175203336, 0, 0.12408590750154475, 0, 0.8757972502859731, 0]
+            5
+        Theta min: 1.3514931808658461
+            Prediction: [0.17800175798838494, 0.03816208332409382, 0, 0.5760268221860602, 0, 0.2078093365014611, 0]
+            3
+        Theta max: 1.6391998552177143
+            Prediction: [0.006668806857970944, 0.026264306675065723, 0, 0.6582113726374804, 0, 0.30885551382948295, 0]
+            3
+        Theta avg: 1.4569840219949917
+            Prediction: [0.00466467278109068, 0.003194255437622981, 0, 0.580818985473706, 0, 0.41132208630758027, 0]
+            3
+        Norm peak gamma: 0.2865527057916906
+            Prediction: [0.35893904135260934, 0.04940255647771123, 0, 0.3805982424151148, 0, 0.21106015975456466, 0]
+            3
+        Norm avg gamma: 0.3062214127700699
+            Prediction: [0.3395478612844458, 0.046972206754315834, 0, 0.3831054543013708, 0, 0.23037447765986763, 0]
+            3
+        Product prediction: [6.859408484629882e-11, 2.3187935926583384e-12, 0.0, 0.39040692679258876, 0.0, 0.6095930731364982, 0.0]
+            5
+        Weighted product prediction: [6.859408484629882e-11, 2.3187935926583384e-12, 0.0, 0.39040692679258876, 0.0, 0.6095930731364982, 0.0]
+            5
+        Model prediction: [1.4873311095165974e-78, 2.2683257222798087e-09, 0, 0.9375246411063777, 0, 0.062475356625296706, 0]
+            3
+    Is edge column: False
+    Is set by user: False
+    Level: 0
+    Anti-level: 1
+    Summed blueshift: 90.30781843269972
+    Flag 1: True
+    Flag 2: False
+    Flag 3: False
+    Flag 4: False
+core: Loaded C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/008_control
+GUI: Control comparison:----------
+    Deviations: 15
+    Symmetry deviations: 9
+        11
+        12
+        13
+        14
+        20
+        424
+        590
+        1277
+        1448
+        1557
+        2011
+        2264
+        2274
+        2302
+        2355
+core: Saved C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/008_result_1
 graph: Mapping friends..
 graph: friends mapped!

@@ -722,14 +722,14 @@ class SuchSoftware:
 
             logger.info('Running models and untangling...')
             # Weak untangling
-            self.column_characterization(starting_index, search_type=10)
+            self.column_characterization(starting_index, search_type=10, ui_obj=ui_obj)
             # Base stat score:
             self.column_characterization(starting_index, search_type=22)
             if ui_obj is not None:
                 ui_obj.update_overlay()
                 ui_obj.update_graph()
             # Weak untangling
-            self.column_characterization(starting_index, search_type=10)
+            self.column_characterization(starting_index, search_type=10, ui_obj=ui_obj)
             # Find particle
             self.column_characterization(starting_index, search_type=5)
             # Set levels:
@@ -743,11 +743,11 @@ class SuchSoftware:
                 ui_obj.update_overlay()
                 ui_obj.update_graph()
             # Weak untangling
-            self.column_characterization(starting_index, search_type=10)
+            self.column_characterization(starting_index, search_type=10, ui_obj=ui_obj)
             # Base model score:
             self.column_characterization(starting_index, search_type=22)
             # Weak untangling
-            self.column_characterization(starting_index, search_type=10)
+            self.column_characterization(starting_index, search_type=10, ui_obj=ui_obj)
             # Find particle:
             self.column_characterization(starting_index, search_type=5)
             # Set levels:

@@ -818,12 +818,17 @@ class MainUI(QtWidgets.QMainWindow):
 
     def btn_continue_detection_trigger(self):
         if self.project_instance is not None:
-            items = ('s', 't', 'other')
+            items = ('Search size', 'Threshold', 'other')
             item, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Search type", items, 0, False)
             if ok_pressed and item:
                 self.sys_message('Working...')
                 self.project_instance.redraw_search_mat()
-                self.project_instance.column_detection(item)
+                if item == 'Search size':
+                    self.project_instance.column_detection('s')
+                elif item == 'Threshold':
+                    self.project_instance.column_detection('t')
+                else:
+                    self.project_instance.column_detection('o')
                 self.update_display()
                 self.sys_message('Ready.')
 

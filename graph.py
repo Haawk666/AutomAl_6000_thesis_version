@@ -1638,7 +1638,7 @@ class AtomicGraph:
 
         # Generator?
         partners = self.vertices[i].partners()
-        if partners is not None:
+        if partners is not None and len(partners) > 0:
             rotation_sorted_partners = []
             rotation_sorted_partners.append(partners[0])
             angles = []
