@@ -680,47 +680,7 @@ class SuchSoftware:
 
             self.column_characterization(starting_index, search_type=1, ui_obj=ui_obj)
 
-            logger.info('Running models and untangling...')
-            # Base stat score:
-            self.column_characterization(starting_index, search_type=22)
-            if ui_obj is not None:
-                ui_obj.update_overlay()
-                ui_obj.update_graph()
-            # Weak untangling
-            self.column_characterization(starting_index, search_type=10)
-            # Find particle
-            self.column_characterization(starting_index, search_type=5)
-            # Set levels:
-            self.column_characterization(starting_index, search_type=6)
-            self.column_characterization(starting_index, search_type=7)
-            # Calc normalized gamma:
-            self.column_characterization(starting_index, search_type=19)
-            # Base stat score:
-            self.column_characterization(starting_index, search_type=22)
-            if ui_obj is not None:
-                ui_obj.update_overlay()
-                ui_obj.update_graph()
-            # Weak untangling
-            self.column_characterization(starting_index, search_type=10)
-            # Base model score:
-            self.column_characterization(starting_index, search_type=22)
-            # Weak untangling
-            self.column_characterization(starting_index, search_type=10)
-            # Find particle:
-            self.column_characterization(starting_index, search_type=5)
-            # Set levels:
-            self.column_characterization(starting_index, search_type=7)
-            # Add edges:
-            self.column_characterization(starting_index, search_type=4)
-            # Search for intersections
-            self.column_characterization(starting_index, search_type=14)
-            # Map subsets:
-            self.column_characterization(starting_index, search_type=21)
-            # Summarize:
-            logger.info('Summarizing stats.')
-            self.summarize_stats()
-            # Complete:
-            logger.info('Column characterization complete.')
+            self.column_characterization(starting_index, search_type=2, ui_obj=ui_obj)
 
         elif search_type == 1:
 
@@ -761,6 +721,8 @@ class SuchSoftware:
         elif search_type == 2:
 
             logger.info('Running models and untangling...')
+            # Weak untangling
+            self.column_characterization(starting_index, search_type=10)
             # Base stat score:
             self.column_characterization(starting_index, search_type=22)
             if ui_obj is not None:

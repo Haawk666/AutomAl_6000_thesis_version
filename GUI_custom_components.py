@@ -360,10 +360,14 @@ class MeshDetail(QtWidgets.QGraphicsItemGroup):
             self.make()
 
     def make(self):
+        num_corners = self.mesh.num_corners
         text = QtWidgets.QGraphicsSimpleTextItem()
-        text.setText('{}'.format(self.mesh.num_corners))
+        text.setText('{}'.format(num_corners))
         text.setFont(GUI_settings.font_mesh_details)
-        text.setPen(GUI_settings.pen_boarder)
+        if num_corners == 4:
+            text.setPen(GUI_settings.pen_boarder)
+        else:
+            text.setPen(GUI_settings.pen_skinny_red)
         text.setBrush(GUI_settings.brush_black)
         rect = text.boundingRect()
         text.setX(2 * self.mesh.cm[0] - rect.width() / 2)

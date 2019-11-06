@@ -2,58 +2,75 @@ GUI: Welcome to AACC by Haakon Tvedt
 GUI: GUI version: 0.0.1
 GUI: core version: 0.0.9
 ------------------------
-GUI: Opening file C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/005_C_full_plate_columns
-core: Loaded C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/005_C_full_plate_columns
+GUI: Opening file C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/005_C_full_plate_result_1
+core: Loaded C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/005_C_full_plate_result_1
 graph: Mapping friends..
 graph: friends mapped!
-core: Doing the basics...
-core: Setting alloy...
-core: Alloy set.
-core: Resetting probability vectors with zero bias...
-core: Probability vectors reset.
-core: Mapping spatial locality...
-core: Spatial mapping complete.
-core: Looking for intersections
 graph: Mapping friends..
 graph: friends mapped!
-core: Found 0 intersections
-core: 0 literal intersections still remain
-core: Running experimental angle analysis
-core: Angle analysis complete!
-core: Looking for intersections
+core: Vertex summary: ----------
+    Index: 3135
+    Image pos: (1902, 324)
+    Real pos: (1902.0546036293783, 324.198355401233)
+    Atomic Species: Mg
+    Probability vector: [4.5095860670940276e-12, 1.3673640259837274e-11, 0.0, 0.04098163154832794, 0.0, 0.9590183684334888, 0.0]
+    Partner vector: [3476, 3458, 3139, 3677, 3636]
+    Friendly vector: [3458, 3476, 3636, 3677]
+    Model parameters: ------------
+        Alpha min: 0.9612582417115512
+            Prediction: [0.046988970527832706, 0.004266571324569566, 0, 0.14253467642397458, 0, 0.8062097817236231, 0]
+            5
+        Alpha max: 3.848991614660843
+            Prediction: [1.5405083675946698e-05, 0.00026358206749475127, 0, 0.1466690444957295, 0, 0.8530519683530998, 0]
+            5
+        Theta min: 1.3654900595812562
+            Prediction: [0.183089920524622, 0.04050529749749834, 0, 0.6103493220121015, 0, 0.16605545996577836, 0]
+            3
+        Theta max: 1.6337972295376804
+            Prediction: [0.006226553480095517, 0.02519542947397189, 0, 0.6516038288944768, 0, 0.3169741881514558, 0]
+            3
+        Theta avg: 1.49074091330871
+            Prediction: [0.007953129983539385, 0.0053539935732769064, 0, 0.639208532600456, 0, 0.3474843438427277, 0]
+            3
+        Norm peak gamma: -0.05285973343972644
+            Prediction: [0.037522346523356905, 0.12033575665895892, 0, 0.2043879807463129, 0, 0.6377539160713714, 0]
+            5
+        Norm avg gamma: 0.10991728417079163
+            Prediction: [0.09435330614661996, 0.09528045282155648, 0, 0.1943976006303148, 0, 0.6159686404015088, 0]
+            5
+        Product prediction: [4.5095860670940276e-12, 1.3673640259837274e-11, 0.0, 0.04098163154832794, 0.0, 0.9590183684334888, 0.0]
+            5
+        Weighted product prediction: [4.5095860670940276e-12, 1.3673640259837274e-11, 0.0, 0.04098163154832794, 0.0, 0.9590183684334888, 0.0]
+            5
+        Model prediction: [8.495122377942324e-71, 7.5930110009772e-08, 0, 0.9968764521134086, 0, 0.003123471956481488, 0]
+            3
+    Is edge column: False
+    Is set by user: False
+    Level: 1
+    Anti-level: 0
+    Summed blueshift: 50.81462088126142
+    Flag 1: True
+    Flag 2: False
+    Flag 3: False
+    Flag 4: False
+core: Saved C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/005_C_full_plate_control
 graph: Mapping friends..
 graph: friends mapped!
-core: Found 2 intersections
-core: 0 literal intersections still remain
-core: Finding particle with legacy method....
+core: Running experimental level definition algorithm....
 graph: All flags reset!
-graph: All flags reset!
-core: Found particle.
-core: Running legacy level definition algorithm....
-graph: All flags reset!
-graph: All flags reset!
-core: Levels set.
-core: Adding edges to graph...
-core: Edges added.
-core: Looking for intersections
-graph: Mapping friends..
-graph: friends mapped!
-core: Found 0 intersections
-core: 0 literal intersections still remain
-core: Looking for intersections
-graph: Mapping friends..
-graph: friends mapped!
-core: Found 0 intersections
-core: 0 literal intersections still remain
-core: Sorting neighbours...
 graph: Mapping subsets..
 graph: Mapping friends..
 graph: friends mapped!
 graph: Sorting subsets
-core: Neighbours sorted
-core: Summarizing stats.
-core: Summarizing stats...
-core: Collected stats.
-core: Basics done
+core: Levels set.
+graph: Mapping friends..
+graph: friends mapped!
+GUI: Mapping meshes...
+graph: Mapping meshes..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Meshes mapped!
+GUI: Meshes mapped. Updating graphics
+core: Saved C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/005_C_full_plate_control
 graph: Mapping friends..
 graph: friends mapped!
