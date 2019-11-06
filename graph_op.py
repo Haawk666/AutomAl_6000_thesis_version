@@ -11,184 +11,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
-def sort_neighbourhood(graph_obj):
-
-    for vertex in graph_obj.vertices:
-        i_level = vertex.level
-        tmp_1 = []
-        tmp_2 = []
-        for j, neighbour in enumerate(vertex.neighbour_indices):
-            j_level = graph_obj.vertices[neighbour].level
-            if i_level == j_level:
-                tmp_2.append(neighbour)
-            else:
-                tmp_1.append(neighbour)
-        vertex.neighbour_indices = tmp_1 + tmp_2
-
-
-def statistical_level_bleed(graph_obj, starting_index, level):
-
-    graph_obj.reset_all_flags()
-
-    if level == 0:
-        graph_obj.vertices[starting_index].level_vector = [0.9, 0.1]
-    elif level == 1:
-        graph_obj.vertices[starting_index].level_vector = [0.1, 0.9]
-
-    runs = []
-    measures = []
-
-    for m in range(0, 20):
-        level_tree_traverse(graph_obj, starting_index)
-        runs.append(m)
-        measures.append(graph_obj.calc_avg_level_confidence())
-        graph_obj.reset_all_flags()
-
-    return runs, measures
-
-
-def level_tree_traverse(graph_obj, i):
-    conf = graph_obj.vertices[i].analyse_level_vector_confidence()
-    level = graph_obj.vertices[i].set_level_from_vector()
-    edgy = graph_obj.vertices[i].is_edge_column
-    graph_obj.vertices[i].flag_1 = True
-
-    for partner in graph_obj.vertices[i].partners():
-        if not edgy:
-            if level == 0:
-                graph_obj.vertices[partner].level_vector[0] = graph_obj.vertices[partner].level_vector[0]
-                graph_obj.vertices[partner].level_vector[1] = graph_obj.vertices[partner].level_vector[1] + conf
-            elif level == 1:
-                graph_obj.vertices[partner].level_vector[1] = graph_obj.vertices[partner].level_vector[1]
-                graph_obj.vertices[partner].level_vector[0] = graph_obj.vertices[partner].level_vector[0] + conf
-            else:
-                print('Error in graph_op.level_tree_traverse')
-            graph_obj.vertices[partner].renorm_level_vector()
-        if not graph_obj.vertices[partner].flag_1:
-            level_tree_traverse(graph_obj, partner)
-
-
-def experimental_remove_intersections(graph_obj):
-    intersections = graph_obj.find_intersects()
-
-    for intersection in intersections:
-
-        edge_1 = (intersection[0], intersection[1])
-        edge_2 = (intersection[2], intersection[3])
-
-        if graph_obj.vertices[edge_1[0]].partner_query(edge_1[1]):
-            if edge_2[0] in graph_obj.vertices[edge_1[0]].anti_partners():
-                graph_obj.permute_j_k(edge_1[0], edge_1[1], edge_2[0])
-            else:
-                if not graph_obj.strong_remove_edge(edge_1[0], edge_1[1]):
-                    print('Could not remove {} {}'.format(edge_1[0], edge_1[1]))
-
-        if graph_obj.vertices[edge_2[0]].partner_query(edge_2[1]):
-            if edge_1[0] in graph_obj.vertices[edge_2[0]].anti_partners():
-                graph_obj.permute_j_k(edge_2[0], edge_2[1], edge_1[0])
-            else:
-                if not graph_obj.strong_remove_edge(edge_2[0], edge_2[1]):
-                    print('Could not remove {} {}'.format(edge_2[0], edge_2[1]))
-
-
-def remove_intersections(graph_obj):
-
-    intersections = graph_obj.find_intersects()
-    remove_edges = []
-    strong_intersections = []
-    weak_weak_intersections = 0
-    strong_stong_intersections = 0
-    not_removed = 0
-
-    # First identify inconsistent edges that cross consistent edges
-
-    for intersection in intersections:
-
-        edge_1 = (intersection[0], intersection[1])
-        edge_2 = (intersection[2], intersection[3])
-
-        if graph_obj.vertices[edge_1[1]].partner_query(edge_1[0]):
-            edge_1_is_strong = True
-        else:
-            edge_1_is_strong = False
-
-        if graph_obj.vertices[edge_2[1]].partner_query(edge_2[0]):
-            edge_2_is_strong = True
-        else:
-            edge_2_is_strong = False
-
-        if edge_1_is_strong and not edge_2_is_strong:
-
-            if edge_2 not in remove_edges:
-                remove_edges.append(edge_2)
-
-        elif not edge_1_is_strong and edge_2_is_strong:
-
-            if edge_1 not in remove_edges:
-                remove_edges.append(edge_1)
-
-        elif not edge_1_is_strong and not edge_2_is_strong:
-
-            if edge_1[0] not in graph_obj.vertices[edge_2[0]].partners():
-                graph_obj.permute_j_k(edge_2[0], edge_2[1], edge_1[0])
-            else:
-                if edge_2 not in remove_edges:
-                    remove_edges.append(edge_2)
-
-            if edge_2[0] not in graph_obj.vertices[edge_1[0]].partners():
-                graph_obj.permute_j_k(edge_1[0], edge_2[0], edge_1[1])
-            else:
-                if edge_1 not in remove_edges:
-                    remove_edges.append(edge_1)
-
-        else:
-
-            permutations = []
-            permutations.append((edge_1[0], edge_1[1], edge_2[0], edge_2[1]))
-            permutations.append((edge_1[0], edge_1[1], edge_2[1], edge_2[0]))
-            permutations.append((edge_1[0], edge_1[1], edge_2[0], edge_2[1]))
-            permutations.append((edge_1[0], edge_1[1], edge_2[1], edge_2[0]))
-            permutations.append((edge_2[0], edge_2[1], edge_1[0], edge_1[1]))
-            permutations.append((edge_2[0], edge_2[1], edge_1[1], edge_1[0]))
-            permutations.append((edge_2[0], edge_2[1], edge_1[0], edge_1[1]))
-            permutations.append((edge_2[0], edge_2[1], edge_1[1], edge_1[0]))
-
-            add = True
-
-            for permutation in permutations:
-
-                if permutation in strong_intersections:
-
-                    add = False
-
-            if add:
-                strong_intersections.append(permutations[0])
-                print(permutations[0])
-                strong_stong_intersections += 1
-
-    for edge in remove_edges:
-        # Test inclusion of weak remove here!
-        if not graph_obj.strong_remove_edge(edge[0], edge[1]):
-            not_removed += 1
-            print()
-
-    graph_obj.redraw_edges()
-    graph_obj.summarize_stats()
-
-    return not_removed, strong_intersections, weak_weak_intersections, strong_stong_intersections
-
-
-def base_pca_score(graph_obj, i, apply=True):
-
-    alpha = graph_obj.produce_alpha_angles(i)
-
-    if apply:
-        return alpha
-    else:
-        return max(alpha), min(alpha)
-
-
-def base_stat_score(graph_obj, i, get_individual_predictions=False):
+def base_stat_score(graph_obj, i, get_individual_predictions=False, scaled=True):
     alpha = graph_obj.produce_alpha_angles(i)
     alpha_min = min(alpha)
     alpha_max = max(alpha)
@@ -207,7 +30,7 @@ def base_stat_score(graph_obj, i, get_individual_predictions=False):
 
     values = [alpha_min, alpha_max, theta_min, theta_max, theta_avg, normalized_peak_gamma, normalized_avg_gamma]
     parameters, covar_matrices, reduced_model_covar_matrices, covar_determinants, reduced_model_covar_determinants,\
-        inverse_covar_matrices, inverse_reduced_model_covar_matrices = params.produce_params(calc=False, scaled_model=True)
+        inverse_covar_matrices, inverse_reduced_model_covar_matrices = params.produce_params(calc=False, scaled_model=scaled)
 
     probs = []
 
@@ -294,66 +117,6 @@ def base_angle_score(graph_obj, i, apply=True):
 
     alpha = graph_obj.produce_alpha_angles(i)
 
-    # cu_min_mean = 1.92
-    # si_min_mean = 1.69
-    # al_min_mean = 1.56
-    # mg_min_mean = 1.26
-    #
-    # cu_min_std = 0.19
-    # si_min_std = 0.21
-    # al_min_std = 0.05
-    # mg_min_std = 0.05
-    #
-    # cu_max_mean = 2.28
-    # si_max_mean = 2.40
-    # al_max_mean = 3.11
-    # mg_max_mean = 3.50
-    #
-    # cu_max_std = 0.26
-    # si_max_std = 0.17
-    # al_max_std = 0.07
-    # mg_max_std = 0.42
-
-    # cu_min_mean = 1.99
-    # si_min_mean = 1.92
-    # al_min_mean = 1.53
-    # mg_min_mean = 1.24
-    #
-    # cu_min_std = 0.03
-    # si_min_std = 0.10
-    # al_min_std = 0.06
-    # mg_min_std = 0.08
-    #
-    # cu_max_mean = 2.25
-    # si_max_mean = 2.29
-    # al_max_mean = 3.11
-    # mg_max_mean = 2.90
-    #
-    # cu_max_std = 0.06
-    # si_max_std = 0.12
-    # al_max_std = 0.09
-    # mg_max_std = 0.49
-
-    # cu_min_mean = 1.96
-    # si_min_mean = 1.81
-    # al_min_mean = 1.55
-    # mg_min_mean = 1.25
-    #
-    # cu_min_std = 0.11
-    # si_min_std = 0.16
-    # al_min_std = 0.06
-    # mg_min_std = 0.07
-    #
-    # cu_max_mean = 2.27
-    # si_max_mean = 2.35
-    # al_max_mean = 3.11
-    # mg_max_mean = 3.20
-    #
-    # cu_max_std = 0.16
-    # si_max_std = 0.15
-    # al_max_std = 0.08
-    # mg_max_std = 0.46
-
     if apply:
 
         cu_min_mean = 1.92
@@ -414,300 +177,62 @@ def base_angle_score(graph_obj, i, apply=True):
         return max(alpha), min(alpha)
 
 
-def mesh_angle_score(graph_obj, i, dist_3_std, dist_4_std, dist_5_std):
-
-    _, meshes = graph_obj.get_atomic_configuration(i, True)
-
-    mu_3 = 2 * np.pi / 3
-    mu_4 = np.pi / 2
-    mu_5 = 2 * np.pi / 5
-
-    probs = [1/3, 1/3, 1/3]
-
-    for mesh in meshes:
-        if mesh.test_sidedness():
-            cf_3 = utils.normal_dist(mesh.angles[0], mu_3, dist_3_std)
-            cf_4 = utils.normal_dist(mesh.angles[0], mu_4, dist_4_std)
-            cf_5 = utils.normal_dist(mesh.angles[0], mu_5, dist_5_std)
-            cf = [cf_3, cf_4, cf_5]
-            probs = [a * b for a, b in zip(cf, probs)]
-            probs = utils.normalize_list(probs)
-
-    probs = [a * b for a, b in zip(probs, graph_obj.vertices[i].symmetry_vector)]
-    probs = utils.normalize_list(probs)
-
-    return probs
-
-
-def apply_angle_score(graph_obj, i, dist_3_std, dist_4_std, dist_5_std, num_selections):
-
-    n = 3
-
-    a = np.ndarray([n], dtype=np.int)
-    b = np.ndarray([n], dtype=np.int)
-    alpha = np.ndarray([n], dtype=np.float64)
-
-    for x in range(0, n):
-        a[x] = graph_obj.vertices[graph_obj.vertices[i].neighbour_indices[x]].real_coor_x - graph_obj.vertices[i].real_coor_x
-        b[x] = graph_obj.vertices[graph_obj.vertices[i].neighbour_indices[x]].real_coor_y - graph_obj.vertices[i].real_coor_y
-
-    for x in range(0, n):
-
-        x_pluss = 0
-
-        if x == n - 1:
-
-            pass
-
-        else:
-
-            x_pluss = x + 1
-
-        alpha[x] = utils.find_angle(a[x], a[x_pluss], b[x], b[x_pluss])
-
-        # Deal with cases where the angle is over pi radians:
-        max_index = alpha.argmax()
-        angle_sum = 0.0
-        for x in range(0, n):
-            if x == max_index:
-                pass
-            else:
-                angle_sum = angle_sum + alpha[x]
-        if alpha.max() == angle_sum:
-            alpha[max_index] = 2 * np.pi - alpha.max()
-
-    symmetry_3 = 2 * np.pi / 3
-    symmetry_4 = np.pi / 2
-    symmetry_5 = 2 * np.pi / 5
-
-    correction_factor_3 = utils.normal_dist(alpha.max(), symmetry_3, dist_3_std)
-    correction_factor_4 = utils.normal_dist(alpha.max(), 2 * symmetry_4, dist_4_std)
-    correction_factor_5 = utils.normal_dist(alpha.min(), symmetry_5, dist_5_std)
-
-    if alpha.min() < symmetry_5:
-        correction_factor_5 = utils.normal_dist(symmetry_5, symmetry_5, dist_5_std)
-
-    for k in range(0, num_selections):
-        if k == 0 or k == 1:
-            graph_obj.vertices[i].prob_vector[k] *= correction_factor_3
-        elif k == 3:
-            graph_obj.vertices[i].prob_vector[k] *= correction_factor_4
-        elif k == 5:
-            graph_obj.vertices[i].prob_vector[k] *= correction_factor_5
-        elif k == 6:
-            graph_obj.vertices[i].prob_vector[k] *= 0
-
-    graph_obj.vertices[i].renorm_prob_vector()
-
-    correction_factor_3 = utils.normal_dist(alpha.min(), symmetry_3, dist_3_std)
-    correction_factor_4 = utils.normal_dist(alpha.min(), symmetry_4, dist_4_std)
-
-    for k in range(0, num_selections):
-        if k == 0 or k == 1:
-            graph_obj.vertices[i].prob_vector[k] *= correction_factor_3
-        elif k == 3:
-            graph_obj.vertices[i].prob_vector[k] *= correction_factor_4
-        elif k == 5:
-            graph_obj.vertices[i].prob_vector[k] *= correction_factor_5
-        elif k == 6:
-            graph_obj.vertices[i].prob_vector[k] *= 0
-
-    graph_obj.vertices[i].renorm_prob_vector()
-    graph_obj.vertices[i].define_species()
-
-
-def apply_intensity_score(graph_obj, i, num_selections, intensities, dist_8_std):
-
-    for x in range(0, num_selections):
-        graph_obj.vertices[i].prob_vector[x] *= utils.normal_dist(
-            graph_obj.vertices[i].peak_gamma, intensities[x], dist_8_std)
-
-    graph_obj.vertices[i].renorm_prob_vector()
-    graph_obj.vertices[i].define_species()
-
-
-def apply_dist_score(graph_obj, i, other_radii, num_selections, radii, dist_1_std, dist_2_std):
-
-    for y in range(0, num_selections):
-
-        if radii[y] <= other_radii:
-            graph_obj.vertices[i].prob_vector[y] *= utils.normal_dist(
-                radii[y], other_radii, dist_1_std)
-        else:
-            graph_obj.vertices[i].prob_vector[y] *= utils.normal_dist(
-                radii[y], other_radii, dist_2_std)
-
-    graph_obj.vertices[i].renorm_prob_vector()
-    graph_obj.vertices[i].define_species()
-
-
-def set_levels_basic(graph_obj, i, level, report, indent_string='        '):
-
-    if level is not None:
-
-        if not graph_obj.vertices[i].flag_1:
-            graph_obj.vertices[i].level = level
-            graph_obj.vertices[i].flag_1 = True
-            report('{}Set vertex {} to level {}'.format(indent_string, i, level), force=False)
-        else:
-            report('{}Vertex {} already set to level {}'.format(indent_string, i, level), force=False)
-
-        anti_level = graph_obj.vertices[i].anti_level()
-
-        j = graph_obj.vertices[i].neighbour_indices[0]
-        k = graph_obj.vertices[i].neighbour_indices[1]
-        l = graph_obj.vertices[i].neighbour_indices[2]
-
-        if anti_level is not None:
-            if not graph_obj.vertices[j].flag_1:
-                report('{}    Neighbour 1 was not set. Sending {}'.format(indent_string, j), force=False)
-                set_levels_basic(graph_obj, j, anti_level, report, indent_string=indent_string + '        ')
-                if not graph_obj.vertices[k].flag_1:
-                    report('{}    Neighbour 2 was not set. Sending {}'.format(indent_string, k), force=False)
-                    set_levels_basic(graph_obj, k, anti_level, report, indent_string=indent_string + '        ')
-                    if not graph_obj.vertices[l].flag_1:
-                        report('{}    Neighbour 3 was not set. Sending {}'.format(indent_string, l), force=False)
-                        set_levels_basic(graph_obj, l, anti_level, report, indent_string=indent_string + '        ')
-
-
-def set_levels(graph_obj, i, report, level, num_selections):
-
-    report('        Setting levels of matrix columns...', force=True)
+def determine_z_heights(graph_obj, i, level):
     graph_obj.reset_all_flags()
-    set_matrix_levels(graph_obj, i, level, report)
-    report('        Matrix levels set.', force=True)
-    report('        Setting levels of particle columns...', force=True)
-    complete = False
-    emer_abort = False
-    overcounter = 0
-    neighbour_level = 0
+    graph_obj.sort_all_subsets_by_distance()
+    determine_matrix_z_heights(graph_obj, i, level)
 
-    while not complete and not emer_abort:
+    for vertex in graph_obj.vertices:
+        if vertex.flag_2:
+            j = vertex.i
+            break
+    else:
+        j = -1
 
-        found = False
-        counter = 0
-
-        while counter < graph_obj.num_vertices:
-
-            if graph_obj.vertices[counter].is_in_precipitate and not graph_obj.vertices[counter].flag_1:
-
-                x = 0
-
-                while x <= neighbour_level:
-
-                    if graph_obj.vertices[graph_obj.vertices[counter].neighbour_indices[x]].is_in_precipitate and \
-                            graph_obj.vertices[graph_obj.vertices[counter].neighbour_indices[x]].flag_1:
-
-                        neighbour = graph_obj.vertices[counter].neighbour_indices[x]
-                        if graph_obj.vertices[neighbour].level == 0:
-                            graph_obj.vertices[counter].level = 1
-                        else:
-                            graph_obj.vertices[counter].level = 0
-                            graph_obj.vertices[counter].flag_1 = True
-                        found = True
-
-                    x = x + 1
-
-            counter = counter + 1
-
-        complete = True
-
-        for y in range(0, graph_obj.num_vertices):
-
-            if graph_obj.vertices[y].is_in_precipitate and not graph_obj.vertices[y].flag_1:
-                complete = False
-
-        if found and neighbour_level > 0:
-            neighbour_level = neighbour_level - 1
-
-        if not found and neighbour_level < 2:
-            neighbour_level = neighbour_level + 1
-
-        overcounter += 1
-        if overcounter > 100:
-            emer_abort = True
-            report('            Emergency abort', force=True)
-
-    graph_obj.reset_all_flags()
-    report('        Particle levels set.', force=True)
+    if not j == -1:
+        determine_particle_z_heights(graph_obj, j, graph_obj.vertices[j].level)
 
 
-def set_matrix_levels(graph_obj, i, level, report):
-
+def determine_matrix_z_heights(graph_obj, i, level):
     if graph_obj.vertices[i].is_in_precipitate:
-
         graph_obj.vertices[i].flag_1 = True
+        graph_obj.vertices[i].flag_2 = True
         graph_obj.set_level(i, level)
 
     else:
-
         graph_obj.vertices[i].flag_1 = True
+        graph_obj.set_level(i, level)
 
         next_level = 0
         if level == 0:
             next_level = 1
         elif level == 1:
             next_level = 0
-        else:
-            report('            Disaster!', force=True)
 
-        graph_obj.set_level(i, level)
-
-        indices = graph_obj.vertices[i].neighbour_indices
-
-        for x in range(0, graph_obj.vertices[i].n()):
-
-            reciprocal = graph_obj.test_reciprocality(i, indices[x])
-
-            if not graph_obj.vertices[indices[x]].flag_1 and not graph_obj.vertices[i].is_edge_column and reciprocal:
-                set_matrix_levels(graph_obj, indices[x], next_level, report)
-
-
-def set_particle_levels(graph_obj, i, level, report):
-    if not graph_obj.vertices[i].is_in_precipitate:
-
-        graph_obj.vertices[i].flag_1 = True
-
-    else:
-
-        graph_obj.vertices[i].flag_1 = True
-
-        next_level = 0
-        if level == 0:
-            next_level = 1
-        elif level == 1:
-            next_level = 0
-        else:
-            report('            Disaster!', force=True)
-
-        graph_obj.set_level(i, level)
-
-        indices = graph_obj.vertices[i].neighbour_indices
-
-        complete = False
-        counter_1 = 0
-        counter_2 = 0
-
-        while not complete:
-
-            if not graph_obj.vertices[indices[counter_1]].flag_1:
-
-                if graph_obj.test_reciprocality(i, indices[counter_1]):
-
-                    graph_obj.precipitate_levels(indices[counter_1], next_level)
-                    counter_1 = counter_1 + 1
-                    counter_2 = counter_2 + 1
-
+        for j in graph_obj.vertices[i].true_partner_indices:
+            if not graph_obj.vertices[j].flag_1:
+                if graph_obj.vertices[j].is_edge_column:
+                    graph_obj.set_level(j, next_level)
                 else:
+                    determine_matrix_z_heights(graph_obj, j, next_level)
 
-                    counter_1 = counter_1 + 1
 
+def determine_particle_z_heights(graph_obj, i, level):
+    graph_obj.vertices[i].flag_1 = True
+    graph_obj.set_level(i, level)
+
+    next_level = 0
+    if level == 0:
+        next_level = 1
+    elif level == 1:
+        next_level = 0
+
+    for j in graph_obj.vertices[i].true_partner_indices:
+        if not graph_obj.vertices[j].flag_1:
+            if graph_obj.vertices[j].is_edge_column:
+                graph_obj.set_level(j, next_level)
             else:
-
-                counter_1 = counter_1 + 1
-
-            if counter_2 == graph_obj.vertices[i].n() - 2 or counter_1 == graph_obj.vertices[i].n() - 2:
-                complete = True
+                determine_particle_z_heights(graph_obj, j, next_level)
 
 
 def precipitate_controller(graph_obj, i):
@@ -789,5 +314,28 @@ def precipitate_finder(graph_obj, i):
 
             if not graph_obj.vertices[indices[x]].flag_1:
                 precipitate_finder(graph_obj, indices[x])
+
+
+def experimental_remove_intersections(graph_obj):
+    intersections = graph_obj.find_intersects()
+
+    for intersection in intersections:
+
+        edge_1 = (intersection[0], intersection[1])
+        edge_2 = (intersection[2], intersection[3])
+
+        if graph_obj.vertices[edge_1[0]].partner_query(edge_1[1]):
+            if edge_2[0] in graph_obj.vertices[edge_1[0]].anti_partners():
+                graph_obj.permute_j_k(edge_1[0], edge_1[1], edge_2[0])
+            else:
+                if not graph_obj.strong_remove_edge(edge_1[0], edge_1[1]):
+                    print('Could not remove {} {}'.format(edge_1[0], edge_1[1]))
+
+        if graph_obj.vertices[edge_2[0]].partner_query(edge_2[1]):
+            if edge_1[0] in graph_obj.vertices[edge_2[0]].anti_partners():
+                graph_obj.permute_j_k(edge_2[0], edge_2[1], edge_1[0])
+            else:
+                if not graph_obj.strong_remove_edge(edge_2[0], edge_2[1]):
+                    print('Could not remove {} {}'.format(edge_2[0], edge_2[1]))
 
 

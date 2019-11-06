@@ -152,7 +152,7 @@ def weak_resolve(graph_obj, configs, classes, search_type, ui_obj=None):
             b = config[1].vertex_indices[2]
 
             if class_ == 'A_1':
-                k = graph_obj.weak_remove_edge(i, j)
+                k = graph_obj.weak_remove_edge(i, j, aggressive=True)
                 if not k == -1:
                     if graph_obj.permute_j_k(i, j, k):
                         changes += 1
@@ -197,7 +197,7 @@ def weak_resolve(graph_obj, configs, classes, search_type, ui_obj=None):
             elif class_ == 'E_1' or class_ == 'E_2':
                 pass
             elif class_ == 'F_1' or class_ == 'F_2':
-                k = graph_obj.weak_remove_edge(i, j)
+                k = graph_obj.weak_remove_edge(i, j, aggressive=False)
                 if not k == -1:
                     if graph_obj.permute_j_k(i, j, k):
                         changes += 1
@@ -251,7 +251,7 @@ def weak_resolve(graph_obj, configs, classes, search_type, ui_obj=None):
                         if ui_obj is not None:
                             ui_obj.gs_atomic_graph.perturb_edge(j, c, i, permute_data=False)
 
-            elif class_ == 'B_1':
+            elif class_ == 'B_1' or class_ == 'C_1':
                 if graph_obj.vertices[i].partner_query(j) and graph_obj.vertices[a].partner_query(b):
                     if graph_obj.permute_j_k(i, j, a):
                         changes += 1
@@ -262,12 +262,15 @@ def weak_resolve(graph_obj, configs, classes, search_type, ui_obj=None):
                         if ui_obj is not None:
                             ui_obj.gs_atomic_graph.perturb_edge(a, b, i, permute_data=False)
 
-            elif class_ == 'C_1':
+            elif class_ == 'D_1':
                 if graph_obj.vertices[j].partner_query(j):
                     if graph_obj.permute_j_k(j, c, i):
                         changes += 1
                         if ui_obj is not None:
                             ui_obj.gs_atomic_graph.perturb_edge(j, c, i, permute_data=False)
+
+            elif class_ == 'E_1':
+                pass
 
         return changes
 
@@ -285,7 +288,7 @@ def weak_resolve(graph_obj, configs, classes, search_type, ui_obj=None):
                         changes += 1
                         if ui_obj is not None:
                             ui_obj.gs_atomic_graph.perturb_edge(j, a, i, permute_data=False)
-            elif class_ == 'B_1':
+            elif class_ == 'B_1' or class_ == 'C_1':
                 if graph_obj.vertices[i].partner_query(j) and graph_obj.vertices[c].partner_query(b):
                     if graph_obj.permute_j_k(i, j, c):
                         changes += 1
@@ -295,12 +298,15 @@ def weak_resolve(graph_obj, configs, classes, search_type, ui_obj=None):
                         changes += 1
                         if ui_obj is not None:
                             ui_obj.gs_atomic_graph.perturb_edge(c, b, i, permute_data=False)
-            elif class_ == 'C_1':
+            elif class_ == 'D_1':
                 if graph_obj.vertices[j].partner_query(a):
                     if graph_obj.permute_j_k(j, a, i):
                         changes += 1
                         if ui_obj is not None:
                             ui_obj.gs_atomic_graph.perturb_edge(j, a, i, permute_data=False)
+
+            elif class_ == 'E_1':
+                pass
 
         return changes
 
@@ -429,8 +435,12 @@ def find_class(graph_obj, type_, config):
             return 'A_1'
         elif s_types == [0, 1, 0, 0, 0]:
             return 'B_1'
-        elif s_types == [0, 0, 0, 0, 2]:
+        elif s_types == [0, 1, 0, 1, 0]:
             return 'C_1'
+        elif s_types == [0, 0, 0, 0, 2]:
+            return 'D_1'
+        elif s_types == [0, 0, 1, 0, 0]:
+            return 'E_1'
         else:
             return 'J'
 
@@ -456,8 +466,12 @@ def find_class(graph_obj, type_, config):
             return 'A_1'
         elif s_types == [0, 0, 0, 2, 0]:
             return 'B_1'
-        elif s_types == [1, 0, 0, 0, 0]:
+        elif s_types == [0, 2, 0, 2, 0]:
             return 'C_1'
+        elif s_types == [1, 0, 0, 0, 0]:
+            return 'D_1'
+        elif s_types == [0, 0, 2, 0, 0]:
+            return 'E_1'
         else:
             return 'J'
 

@@ -324,6 +324,8 @@ class SuchSoftware:
         model_predictions = graph_op.base_stat_score(self.graph, i, get_individual_predictions=True)
         parameters, *_ = params.produce_params(calc=False)
 
+        blueshift = self.graph.produce_blueshift_sum(i, self.scale)
+
         string = 'Vertex summary: ----------\n' + \
                  '    Index: {}\n'.format(vertex.i) + \
                  '    Image pos: ({}, {})\n'.format(vertex.im_coor_x, vertex.im_coor_y) + \
@@ -347,6 +349,7 @@ class SuchSoftware:
                  '    Is set by user: {}\n'.format(vertex.set_by_user) + \
                  '    Level: {}\n'.format(vertex.level) + \
                  '    Anti-level: {}\n'.format(vertex.anti_level()) + \
+                 '    Summed blueshift: {}\n'.format(blueshift) + \
                  '    Flag 1: {}\n'.format(vertex.flag_1) + \
                  '    Flag 2: {}\n'.format(vertex.flag_2) + \
                  '    Flag 3: {}\n'.format(vertex.flag_3) + \
@@ -688,35 +691,35 @@ class SuchSoftware:
             # Find particle:
             self.column_characterization(starting_index, search_type=5)
             # Set levels:
-            self.column_characterization(starting_index, search_type=6)
-            # Add edges:
             self.column_characterization(starting_index, search_type=7)
+            # Add edges:
+            self.column_characterization(starting_index, search_type=3)
             # Base stat score:
             self.column_characterization(starting_index, search_type=22)
             if ui_obj is not None:
                 ui_obj.update_overlay()
                 ui_obj.update_graph()
                 ui_obj.update_info_graph()
-            # Experimental weak untanglng
+            # Weak untangling
             self.column_characterization(starting_index, search_type=10)
+            # Set levels:
+            self.column_characterization(starting_index, search_type=7)
             # Base stat score:
             self.column_characterization(starting_index, search_type=23)
             if ui_obj is not None:
                 ui_obj.update_overlay()
                 ui_obj.update_graph()
                 ui_obj.update_info_graph()
-            # Experimental weak untanglng
+            # Weak untangling
             self.column_characterization(starting_index, search_type=10)
             # Base model score:
             self.column_characterization(starting_index, search_type=22)
             # Find particle:
             self.column_characterization(starting_index, search_type=5)
             # Set levels:
-            self.column_characterization(starting_index, search_type=6)
-            # Add edges:
             self.column_characterization(starting_index, search_type=7)
-            # Map meshes
-            self.column_characterization(starting_index, search_type=20)
+            # Add edges:
+            self.column_characterization(starting_index, search_type=3)
             # Summarize:
             logger.info('Summarizing stats.')
             self.summarize_stats()
@@ -748,7 +751,7 @@ class SuchSoftware:
             # Set levels:
             self.column_characterization(starting_index, search_type=6)
             # Add edges:
-            self.column_characterization(starting_index, search_type=7)
+            self.column_characterization(starting_index, search_type=3)
             if ui_obj is not None:
                 ui_obj.update_overlay()
                 ui_obj.update_graph()
@@ -773,25 +776,13 @@ class SuchSoftware:
             logger.info('Spatial mapping complete.')
 
         elif search_type == 3:
-            # Legacy angle analysis (To be deprecated....)
-            logger.info('Analysing angles...')
-            for i, vertex in enumerate(self.graph.vertices):
-                if not vertex.set_by_user and not vertex.is_edge_column:
-                    vertex.reset_prob_vector(bias=vertex.h_index)
-                    graph_op.apply_angle_score(self.graph, i, self.dist_3_std, self.dist_4_std, self.dist_5_std,
-                                               self.num_selections)
-
-            logger.info('Angle analysis complete.')
+            # redraw edges
+            logger.info('Adding edges to graph...')
+            self.graph.redraw_edges()
+            logger.info('Edges added.')
 
         elif search_type == 4:
-            # Legacy intensity analysis (To be deprecated...)
-            logger.info('Analyzing intensities...')
-            for i in range(0, self.num_columns):
-                if not self.graph.vertices[i].set_by_user and not self.graph.vertices[i].is_edge_column:
-
-                    graph_op.apply_intensity_score(self.graph, i, self.num_selections, self.intensities[self.alloy],
-                                                   self.dist_8_std)
-            logger.info('Intensity analysis complete.')
+            pass
 
         elif search_type == 5:
             # Legacy particle detection
@@ -804,23 +795,19 @@ class SuchSoftware:
             # Legacy level determination
             logger.info('Running legacy level definition algorithm....')
             legacy_items.define_levels(self.graph, starting_index, self.graph.vertices[starting_index].level)
-            logger.info('    Levels set.')
+            logger.info('Levels set.')
 
         elif search_type == 7:
-            # redraw edges
-            logger.info('Adding edges to graph...')
-            self.graph.redraw_edges()
-            logger.info('Edges added.')
+            # Experimental level determination
+            logger.info('Running experimental level definition algorithm....')
+            graph_op.determine_z_heights(self.graph, starting_index, self.graph.vertices[starting_index].level)
+            logger.info('Levels set.')
 
         elif search_type == 8:
-            # Legacy weak untangling (To be deprecated....)
-            logger.info('Starting legacy weak untangling...')
-            logger.info('Legacy weak untangling complete!')
+            pass
 
         elif search_type == 9:
-            # Legacy strong untangling
-            logger.info('Starting strong untangling...')
-            logger.info('Could not start strong untangling because it is not implemented yet!')
+            pass
 
         elif search_type == 10:
             # Weak untangling
@@ -966,71 +953,7 @@ class SuchSoftware:
             logger.info('{} literal intersections still remain'.format(len(intersections)))
 
         elif search_type == 15:
-
-            logger.info('Starting column characterization from vertex {}...'.format(starting_index))
-            logger.info('Setting alloy...')
-            self.set_alloy_mat()
-            logger.info('Alloy set.')
-            logger.info('Finding edge columns....')
-            self.find_edge_columns()
-            for vertex in self.graph.vertices:
-                if vertex.is_edge_column and not vertex.set_by_user:
-                    vertex.reset_prob_vector(bias=3)
-                    vertex.reset_symmetry_vector(bias=-1)
-            logger.info('Found edge columns.')
-            # Reset prob vectors:
-            self.column_characterization(starting_index, search_type=12)
-            # Spatial mapping:
-            self.column_characterization(starting_index, search_type=2)
-            # Angle analysis:
-            self.column_characterization(starting_index, search_type=3)
-            # Intensity analysis
-            self.column_characterization(starting_index, search_type=4)
-            # Find particle:
-            self.column_characterization(starting_index, search_type=5)
-            # Set levels:
-            self.column_characterization(starting_index, search_type=6)
-            # Add edges:
-            self.column_characterization(starting_index, search_type=7)
-            # Remove crossing edges
-            self.column_characterization(starting_index, search_type=14)
-            # Weak
-            logger.info('Starting experimental weak untangling...')
-            for i in range(0, self.num_columns):
-                legacy_items.find_consistent_perturbations_simple(self.graph, i, sub=True)
-            self.graph.redraw_edges()
-            self.column_characterization(starting_index, search_type=12)
-            self.column_characterization(starting_index, search_type=4)
-            self.column_characterization(starting_index, search_type=16)
-            self.column_characterization(starting_index, search_type=5)
-            self.column_characterization(starting_index, search_type=6)
-            self.summarize_stats()
-            for i in range(0, self.num_columns):
-                legacy_items.find_consistent_perturbations_simple(self.graph, i)
-            self.graph.redraw_edges()
-            self.column_characterization(starting_index, search_type=12)
-            self.column_characterization(starting_index, search_type=4)
-            self.column_characterization(starting_index, search_type=16)
-            self.column_characterization(starting_index, search_type=5)
-            self.column_characterization(starting_index, search_type=6)
-            for i in range(0, self.num_columns):
-                legacy_items.find_consistent_perturbations_advanced(self.graph, i)
-            for i in range(0, self.num_columns):
-                legacy_items.find_consistent_perturbations_advanced(self.graph, i)
-            self.graph.redraw_edges()
-            self.column_characterization(starting_index, search_type=12)
-            self.column_characterization(starting_index, search_type=4)
-            self.column_characterization(starting_index, search_type=16)
-            self.column_characterization(starting_index, search_type=5)
-            self.column_characterization(starting_index, search_type=6)
-            # Summarize:
-            logger.info('Summarizing stats.')
-            self.summarize_stats()
-            # Summarize:
-            logger.info('Summarizing stats.')
-            self.summarize_stats()
-            # Complete:
-            logger.info('Column characterization complete.')
+            pass
 
         elif search_type == 16:
             # Alpha angle analysis
@@ -1046,15 +969,7 @@ class SuchSoftware:
             logger.info('Angle analysis complete!')
 
         elif search_type == 17:
-            # Level analysis
-            logger.info('Analysing levels...')
-            for vertex in self.graph.vertices:
-                vertex.reset_level_vector()
-            runs, measures = graph_op.statistical_level_bleed(self.graph, starting_index, self.graph.vertices[starting_index].level)
-            plt.plot(runs, measures)
-            plt.show()
-            graph_op.sort_neighbourhood(self.graph)
-            logger.info('Analysis complete.')
+            pass
 
         elif search_type == 18:
             # Find edge columns
@@ -1087,7 +1002,7 @@ class SuchSoftware:
             logger.info('Neighbours sorted')
 
         elif search_type == 22:
-            # Stat model
+            # product predictions
             logger.info('Apply product predictions')
             self.graph.map_friends()
             probs = []
@@ -1104,7 +1019,7 @@ class SuchSoftware:
             logger.info('Applied product predictions!')
 
         elif search_type == 23:
-            # Stat model
+            # Model predictions
             logger.info('Apply model predictions')
             self.graph.map_friends()
             probs = []
@@ -1344,12 +1259,15 @@ class SuchSoftware:
 
         """
 
+        blueshifts = self.graph.calc_total_blueshift(self.scale)
+
         self.stats_string = ('Number of detected columns: ' + str(self.num_columns) + '\n'
             'Number of detected precipitate columns: ' + str(self.num_precipitate_columns) + '\n\n'
             'Number of inconsistencies: ' + str(self.num_inconsistencies) + '\n'
             'Number of popular: ' + str(self.num_popular) + '\n'
             'Number of unpopular: ' + str(self.num_unpopular) + '\n'
             'Chi: ' + str(self.graph.chi) + '\n\n'
+            'Total blueshift: {}\nMatrix blueshift: {}\nParticle blueshift: {}\n\n'.format(blueshifts[0], blueshifts[1], blueshifts[2]) + \
             'Average peak intensity: ' + str(self.avg_peak_gamma) + '\n'
             'Average average intensity: ' + str(self.avg_avg_gamma) + '\n\n'
             'Average Si peak intensity: ' + str(self.avg_si_peak_gamma) + '\n'

@@ -869,11 +869,23 @@ class AtomicGraph:
             vertices.append(self.vertices[i])
         return vertices
 
-    def produce_total_blueshift(self, i):
+    def produce_blueshift_sum(self, i, scale):
         blueshift = 0
         for partner in self.vertices[i].partners():
-            blueshift += self.get_blueshift(i, partner)
+            blueshift += self.get_blueshift(i, partner, scale)
         return blueshift
+
+    def calc_total_blueshift(self, scale):
+        matrix_blueshift = 0
+        particle_blueshift = 0
+        for vertex in self.vertices:
+            if not vertex.is_edge_column:
+                if vertex.is_in_precipitate:
+                    particle_blueshift += self.produce_blueshift_sum(vertex.i, scale)
+                else:
+                    matrix_blueshift += self.produce_blueshift_sum(vertex.i, scale)
+        total_blueshift = matrix_blueshift + particle_blueshift
+        return total_blueshift / 2, matrix_blueshift / 2, particle_blueshift / 2
 
     def produce_alpha_angles(self, i):
         pivot = self.vertices[i].real_coor()
@@ -1047,13 +1059,7 @@ class AtomicGraph:
 
     def weak_remove_edge(self, i, j, aggressive=False):
 
-        k = -1
-
-        if self.vertices[i].is_edge_column:
-            return False
-
         config = self.get_atomic_configuration(i, use_friends=True)
-
         options = []
 
         for mesh in config.meshes:
@@ -1067,7 +1073,6 @@ class AtomicGraph:
 
             mesh_1 = self.find_mesh(i, option, return_mesh=True, use_friends=True)
             mesh_2 = self.find_mesh(option, i, return_mesh=True, use_friends=True)
-
             if mesh_1.num_corners == 4 and mesh_2.num_corners == 4:
                 k = option
                 print('Weak untangling wants to permute ({}, {}, {})'.format(i, j, option))
@@ -1076,18 +1081,18 @@ class AtomicGraph:
         else:
 
             if aggressive:
-
                 for option in options:
-                    k = option
-                    print('Weak untangling wants to permute ({}, {}, {})'.format(i, j, option))
-                    break
+                    mesh_1 = self.find_mesh(i, option, return_mesh=True, use_friends=True)
+                    mesh_2 = self.find_mesh(option, i, return_mesh=True, use_friends=True)
+                    if mesh_1.num_corners == 4 or mesh_2.num_corners == 4:
+                        k = option
+                        print('Weak untangling wants to permute ({}, {}, {})'.format(i, j, option))
+                        break
 
                 else:
-
                     return -1
 
             else:
-
                 return -1
 
         return k
