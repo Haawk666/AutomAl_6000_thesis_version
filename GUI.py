@@ -115,7 +115,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.setCentralWidget(self.tabs)
 
         # Generate elements
-        self.setWindowTitle('AACC - Automatic Atomic Column Characterizer - By Haakon Tvedt @ NTNU. Version {}.{}.{}'.
+        self.setWindowTitle('AutomAl 6000 - By Haakon Tvedt @ NTNU. Version {}.{}.{}'.
                             format(self.version[0], self.version[1], self.version[2]))
         self.resize(1500, 900)
         self.move(50, 30)
@@ -127,7 +127,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.show()
 
         # Intro
-        logger.info('Welcome to AACC by Haakon Tvedt')
+        logger.info('Welcome to AutomAl 6000 by Haakon Tvedt')
         logger.info('GUI version: {}.{}.{}'.format(self.version[0], self.version[1], self.version[2]))
         logger.info('core version: {}.{}.{}\n------------------------'.format(core.SuchSoftware.version[0], core.SuchSoftware.version[1], core.SuchSoftware.version[2]))
 
