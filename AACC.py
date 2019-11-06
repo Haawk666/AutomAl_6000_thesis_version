@@ -44,3 +44,10 @@ if __name__ == '__main__':
     program = GUI.MainUI(settings_file=config)
     sys.exit(app.exec_())
 
+
+def dump_log(program):
+    string = program.terminal_window.toPlainText()
+    with open('log.txt', 'w') as f_:
+        for line in iter(string.splitlines()):
+            f_.write(line)
+

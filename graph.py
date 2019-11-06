@@ -535,8 +535,8 @@ class Vertex:
                 break
         return found
 
-    def perturb_j_k(self, j, k):
-        """Perturb the neighbour positions.
+    def permute_j_k(self, j, k):
+        """Permute the neighbour positions.
 
         The neighbour with index *j*, will switch positions with the neighbour with index *k*. This change will also be
         reflected in the partner indices. If neither *j* or *k* is found, the last position of the neighbour_indices
@@ -632,7 +632,6 @@ class Edge:
             is_reciprocated = False
 
         if not self.vertex_a.partner_query(index_j):
-            print('Unexpected error in graph.Edge.is_consistent()')
             is_consistent = False
             is_reciprocated = False
 
@@ -1075,7 +1074,6 @@ class AtomicGraph:
             mesh_2 = self.find_mesh(option, i, return_mesh=True, use_friends=True)
             if mesh_1.num_corners == 4 and mesh_2.num_corners == 4:
                 k = option
-                print('Weak untangling wants to permute ({}, {}, {})'.format(i, j, option))
                 break
 
         else:
@@ -1086,7 +1084,6 @@ class AtomicGraph:
                     mesh_2 = self.find_mesh(option, i, return_mesh=True, use_friends=True)
                     if mesh_1.num_corners == 4 or mesh_2.num_corners == 4:
                         k = option
-                        print('Weak untangling wants to permute ({}, {}, {})'.format(i, j, option))
                         break
 
                 else:
@@ -1155,23 +1152,22 @@ class AtomicGraph:
                         self.determine_subsets(index)
                         self.sort_subsets_by_distance(index)
 
-                    print('    permuted ({}, {}, {})'.format(i, j, k))
+                    logger.info('    permuted ({}, {}, {})'.format(i, j, k))
                     self.permute_pos_j_pos_k(i, pos_j, pos_k)
                     return True
 
                 else:
 
-                    print('    Permutation ({}, {}, {}) denied because it will cause an intersection'.format(i, j, k))
+                    logger.info('    Permutation ({}, {}, {}) denied because it will cause an intersection'.format(i, j, k))
                     return False
 
             else:
 
-                print('    Permutation ({}, {}, {}) denied because j is not in neighbours'.format(i, j, k))
+                logger.info('    Permutation ({}, {}, {}) denied because j is not in neighbours'.format(i, j, k))
                 return False
 
         else:
-
-            print('    Permutation ({}, {}, {}) denied because j == k'.format(i, j, k))
+            logger.info('    Permutation ({}, {}, {}) denied because j == k'.format(i, j, k))
             return False
 
     def permute_pos_j_pos_k(self, i, pos_j, pos_k):

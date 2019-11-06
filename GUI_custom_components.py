@@ -6,6 +6,10 @@ import GUI_settings
 # External imports:
 from PyQt5 import QtWidgets, QtGui, QtCore
 import numpy as np
+import logging
+# Instantiate logger:
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 # ----------
 # Graphic elements:
@@ -145,7 +149,7 @@ class InteractiveOverlayColumn(InteractiveColumn):
                 if self.vertex.level == 0:
                     self.setBrush(self.brush_un)
             else:
-                print('TODO: Logger')
+                logger.error('Unknown h_index')
             if not self.vertex.show_in_overlay:
                 self.hide()
             else:

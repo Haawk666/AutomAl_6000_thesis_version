@@ -168,13 +168,31 @@ def base_angle_score(graph_obj, i, apply=True):
         probs = utils.normalize_list(cf)
         sum_probs = [probs[1] + probs[2], probs[0], 0, probs[3], 0, probs[4] + probs[5], 0]
 
-        print('alpha: {}\nmax: {}, min: {}\ncf_min: {}\ncf_max: {}\ncf: {}\nprobs: {}\nsum_probs: {}\n\n'.format(alpha, max(alpha), min(alpha), cf_min, cf_max, cf, probs, sum_probs))
+        # print('alpha: {}\nmax: {}, min: {}\ncf_min: {}\ncf_max: {}\ncf: {}\nprobs: {}\nsum_probs: {}\n\n'.format(alpha, max(alpha), min(alpha), cf_min, cf_max, cf, probs, sum_probs))
 
         return sum_probs
 
     else:
 
         return max(alpha), min(alpha)
+
+
+def naive_determine_z(graph_obj, i, level):
+    graph_obj.vertices[i].flag_1 = True
+    graph_obj.set_level(i, level)
+
+    next_level = 0
+    if level == 0:
+        next_level = 1
+    elif level == 1:
+        next_level = 0
+
+    for j in graph_obj.vertices[i].true_partner_indices:
+        if not graph_obj.vertices[j].flag_1:
+            if graph_obj.vertices[j].is_edge_column:
+                graph_obj.set_level(j, next_level)
+            else:
+                naive_determine_z(graph_obj, j, next_level)
 
 
 def determine_z_heights(graph_obj, i, level):
@@ -191,6 +209,8 @@ def determine_z_heights(graph_obj, i, level):
 
     if not j == -1:
         determine_particle_z_heights(graph_obj, j, graph_obj.vertices[j].level)
+
+    graph_obj.reset_all_flags()
 
 
 def determine_matrix_z_heights(graph_obj, i, level):
@@ -329,13 +349,13 @@ def experimental_remove_intersections(graph_obj):
                 graph_obj.permute_j_k(edge_1[0], edge_1[1], edge_2[0])
             else:
                 if not graph_obj.strong_remove_edge(edge_1[0], edge_1[1]):
-                    print('Could not remove {} {}'.format(edge_1[0], edge_1[1]))
+                    logger.warning('Could not remove {} {}'.format(edge_1[0], edge_1[1]))
 
         if graph_obj.vertices[edge_2[0]].partner_query(edge_2[1]):
             if edge_1[0] in graph_obj.vertices[edge_2[0]].anti_partners():
                 graph_obj.permute_j_k(edge_2[0], edge_2[1], edge_1[0])
             else:
                 if not graph_obj.strong_remove_edge(edge_2[0], edge_2[1]):
-                    print('Could not remove {} {}'.format(edge_2[0], edge_2[1]))
+                    logger.warning('Could not remove {} {}'.format(edge_2[0], edge_2[1]))
 
 

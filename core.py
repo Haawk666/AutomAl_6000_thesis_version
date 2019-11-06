@@ -800,7 +800,9 @@ class SuchSoftware:
         elif search_type == 7:
             # Experimental level determination
             logger.info('Running experimental level definition algorithm....')
-            graph_op.determine_z_heights(self.graph, starting_index, self.graph.vertices[starting_index].level)
+            self.graph.reset_all_flags()
+            self.graph.sort_all_subsets_by_distance()
+            graph_op.naive_determine_z(self.graph, starting_index, self.graph.vertices[starting_index].level)
             logger.info('Levels set.')
 
         elif search_type == 8:

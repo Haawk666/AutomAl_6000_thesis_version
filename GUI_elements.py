@@ -2936,9 +2936,7 @@ class PcaWizard(QtWidgets.QDialog):
             files = self.ui_obj.savefile
 
         keys = []
-        print(self.list_1.count())
         for j in range(self.list_1.count()):
-            print('{}: {}'.format(j, self.list_1.item(j).text().replace(' ', '_')))
             keys.append(self.list_1.item(j).text().replace(' ', '_'))
 
         vertex_pca = data_module.VertexNumericData(files, keys)

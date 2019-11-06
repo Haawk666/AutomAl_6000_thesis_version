@@ -26,7 +26,6 @@ def cyclic_sort(list_):
             break
 
     if min_index == -1:
-        print('Error')
         return list_
     elif min_index == 0:
         return list_
@@ -364,10 +363,8 @@ def gaussian_fit(mat, x_0, y_0, r):
                 zobs[counter] = temp_mat[y_i - y_0 + r, x_i - x_0 + r]
                 sigma[counter] = (distance / r) * temp_mat[y_i - y_0 + r, x_i - x_0 + r] + 0.001
                 counter = counter + 1
-    print(counter)
     guess = [temp_mat.max(), r, r, 0.0001, 0.0001, 0.0001, 0]
     (params, uncert) = opt.curve_fit(gauss_func, xy, zobs, p0=guess, sigma=sigma, absolute_sigma=True, maxfev=6400)
-    print(params)
     mat = gen_gauss(params[0], np.floor(params[1]), np.floor(params[2]), 2 * r + 1, 2 * r + 1, params[3], params[4], params[5], params[6])
     # Translate to coordinates of the real image:
     x_fit = int(np.floor(params[1]) + x_0 - r)

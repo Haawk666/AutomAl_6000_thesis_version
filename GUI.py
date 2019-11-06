@@ -186,9 +186,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.update_graph()
         self.update_sub_graph(void=void)
         self.update_anti_graph(void=void)
-        print('updating info')
         self.update_info_graph()
-        print('info updated')
         self.update_search_matrix(void=void)
         self.update_fft(void=void)
 
@@ -723,8 +721,6 @@ class MainUI(QtWidgets.QMainWindow):
                     self.project_instance.alloy = 0
                 elif item == 'Al-Mg-Si':
                     self.project_instance.alloy = 1
-                else:
-                    print('Error!')
                 self.project_instance.set_alloy_mat()
                 self.control_window.lbl_alloy.setText(self.project_instance.alloy_string())
 
@@ -875,7 +871,7 @@ class MainUI(QtWidgets.QMainWindow):
                     if string == strings[k]:
                         choice = k
                 if not choice == -1:
-                    if self.control_window.chb_show_graphic_updates:
+                    if self.control_window.chb_show_graphic_updates.isChecked():
                         self.project_instance.column_characterization(self.selected_column, choice, ui_obj=self)
                     else:
                         self.project_instance.column_characterization(self.selected_column, choice)
@@ -1035,7 +1031,7 @@ class MainUI(QtWidgets.QMainWindow):
         GUI_elements.PcaWizard(ui_obj=self)
 
     def btn_save_log_trigger(self):
-        filename = QtWidgets.QFileDialog.getSaveFileName(self, 'Save file', '')
+        filename = QtWidgets.QFileDialog.getSaveFileName(self, 'Save log-file', '')
         if filename[0]:
             self.sys_message('Working...')
             logger.info('Saving log file...')
