@@ -18,6 +18,14 @@ import sys
 import os
 import configparser
 
+
+def dump_log(program):
+    string = program.terminal_window.handler.widget.toPlainText()
+    with open('log.txt', 'w') as f_:
+        for line in iter(string.splitlines()):
+            f_.write('{}\n'.format(line))
+
+
 if __name__ == '__main__':
 
     app = QtWidgets.QApplication(sys.argv)
@@ -41,13 +49,8 @@ if __name__ == '__main__':
         pass
 
     # Start app
-    program = GUI.MainUI(settings_file=config)
-    sys.exit(app.exec_())
+    program_session = GUI.MainUI(settings_file=config)
+    app.exec_()
+    dump_log(program_session)
 
-
-def dump_log(program):
-    string = program.terminal_window.toPlainText()
-    with open('log.txt', 'w') as f_:
-        for line in iter(string.splitlines()):
-            f_.write(line)
 

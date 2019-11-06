@@ -195,6 +195,20 @@ def naive_determine_z(graph_obj, i, level):
                 naive_determine_z(graph_obj, j, next_level)
 
 
+def revise_z(graph_obj):
+    for vertex in graph_obj.vertices:
+        if not vertex.is_edge_column and not vertex.set_by_user:
+            agree = 0
+            disagree = 0
+            for true_partner in vertex.true_partner_indices:
+                if graph_obj.vertices[true_partner].level == vertex.level:
+                    disagree += 1
+                else:
+                    agree += 1
+            if disagree > agree:
+                vertex.level = vertex.anti_level()
+
+
 def determine_z_heights(graph_obj, i, level):
     graph_obj.reset_all_flags()
     graph_obj.sort_all_subsets_by_distance()

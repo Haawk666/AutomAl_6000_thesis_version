@@ -1152,22 +1152,22 @@ class AtomicGraph:
                         self.determine_subsets(index)
                         self.sort_subsets_by_distance(index)
 
-                    logger.info('    permuted ({}, {}, {})'.format(i, j, k))
+                    logger.debug('permuted ({}, {}, {})'.format(i, j, k))
                     self.permute_pos_j_pos_k(i, pos_j, pos_k)
                     return True
 
                 else:
 
-                    logger.info('    Permutation ({}, {}, {}) denied because it will cause an intersection'.format(i, j, k))
+                    logger.debug('Permutation ({}, {}, {}) denied because it will cause an intersection'.format(i, j, k))
                     return False
 
             else:
 
-                logger.info('    Permutation ({}, {}, {}) denied because j is not in neighbours'.format(i, j, k))
+                logger.debug('Permutation ({}, {}, {}) denied because j is not in neighbours'.format(i, j, k))
                 return False
 
         else:
-            logger.info('    Permutation ({}, {}, {}) denied because j == k'.format(i, j, k))
+            logger.debug('Permutation ({}, {}, {}) denied because j == k'.format(i, j, k))
             return False
 
     def permute_pos_j_pos_k(self, i, pos_j, pos_k):
@@ -1420,7 +1420,11 @@ class AtomicGraph:
             while not closed:
 
                 if corners[-1] not in self.vertices[i].partners():
-                    corners, ang, vec = self.find_mesh(i, corners[len(corners) - 1], strict=strict, use_friends=use_friends)
+                    new_corners, ang, vec = self.find_mesh(i, corners[-1], strict=strict, use_friends=use_friends)
+                    if new_corners[-1] == corners[-1]:
+                        closed = True
+                    else:
+                        corners = new_corners
                     mesh = Mesh()
                     for k, corner in enumerate(corners):
                         mesh.add_vertex(self.vertices[corner])

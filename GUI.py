@@ -218,7 +218,6 @@ class MainUI(QtWidgets.QMainWindow):
 
     def update_graph(self):
         self.gs_atomic_graph = GUI_elements.AtomicGraph(ui_obj=self, scale_factor=2)
-        self.gs_atomic_graph.re_draw()
         self.gv_atomic_graph.setScene(self.gs_atomic_graph)
 
     def update_sub_graph(self, void=False):
@@ -234,8 +233,8 @@ class MainUI(QtWidgets.QMainWindow):
             self.gv_anti_graph.setScene(self.gs_anti_graph)
 
     def update_info_graph(self):
+        logger.info('Making info-graph')
         self.gs_info_graph = GUI_elements.InfoGraph(ui_obj=self, scale_factor=2)
-        self.gs_info_graph.re_draw()
         self.gv_info_graph.setScene(self.gs_info_graph)
 
     def update_search_matrix(self, void=False):
@@ -838,10 +837,10 @@ class MainUI(QtWidgets.QMainWindow):
         if self.project_instance is not None and not self.selected_column == -1:
 
             strings = ['0 - Full column characterization algorithm',
-                       '1 - Basic mappings',
-                       '2 - Spatial mapping',
-                       '3 - Redraw edges',
-                       '4 - Not in use',
+                       '1 - Basic mappings...',
+                       '2 - ...The rest',
+                       '3 - Spatial mapping',
+                       '4 - Redraw edges',
                        '5 - Legacy particle detection',
                        '6 - Legacy z-height determination',
                        '7 - Experimental z-height determination',
@@ -934,9 +933,6 @@ class MainUI(QtWidgets.QMainWindow):
     def btn_set_indices_trigger(self):
         pass
 
-    def btn_set_indices_2_trigger(self):
-        pass
-
     def btn_test_trigger(self):
         # path = 'C:\\Users\\haakot\\OneDrive\\NTNU\\TFY4900 Master\\Data_a\\'
         path = 'F:\\Direktoratet\\Delt\\OneDrive\\NTNU\\TFY4900 Master\\Data_a\\'
@@ -961,6 +957,9 @@ class MainUI(QtWidgets.QMainWindow):
         print(inverse_covar_matrices)
         print('\n')
         print(inverse_reduced_model_covar_matrices)
+
+    def btn_crash_trigger(self):
+        raise IndexError
 
     def btn_make_plot_trigger(self):
         GUI_elements.PlotWizard(ui_obj=self)
@@ -1035,10 +1034,10 @@ class MainUI(QtWidgets.QMainWindow):
         if filename[0]:
             self.sys_message('Working...')
             logger.info('Saving log file...')
-            string = self.terminal_window.toPlainText()
+            string = self.terminal_window.handler.widget.toPlainText()
             with open(filename[0], 'w') as f:
                 for line in iter(string.splitlines()):
-                    f.write(line)
+                    f.write('{}\n'.format(line))
             f.close()
             self.sys_message('Ready.')
             logger.info('Saved log to {}'.format(filename[0]))

@@ -604,8 +604,6 @@ def find_type(graph_obj, search_type, strong=False, ui_obj=None):
                         else:
                             changes += weak_resolve(graph_obj, [config], [class_], search_type, ui_obj=ui_obj)
                         found += 1
-                    else:
-                        print('Class J encountered: {} {}'.format(vertex.i, partner))
 
                 elif search_type == 2 and mesh_1.num_corners == 4 and mesh_2.num_corners == 3:
                     config = mesh_1, mesh_2
@@ -616,8 +614,6 @@ def find_type(graph_obj, search_type, strong=False, ui_obj=None):
                         else:
                             changes += weak_resolve(graph_obj, [config], [class_], search_type, ui_obj=ui_obj)
                         found += 1
-                    else:
-                        print('Class J encountered: {} {}'.format(vertex.i, partner))
 
                 elif search_type == 3 and mesh_1.num_corners == 3 and mesh_2.num_corners == 4:
                     config = mesh_1, mesh_2
@@ -628,8 +624,6 @@ def find_type(graph_obj, search_type, strong=False, ui_obj=None):
                         else:
                             changes += weak_resolve(graph_obj, [config], [class_], search_type, ui_obj=ui_obj)
                         found += 1
-                    else:
-                        print('Class J encountered: {} {}'.format(vertex.i, partner))
 
                 elif search_type == 4 and mesh_1.num_corners == 3 and mesh_2.num_corners == 5:
                     config = mesh_1, mesh_2
@@ -640,8 +634,6 @@ def find_type(graph_obj, search_type, strong=False, ui_obj=None):
                         else:
                             changes += weak_resolve(graph_obj, [config], [class_], search_type, ui_obj=ui_obj)
                         found += 1
-                    else:
-                        print('Class J encountered: {} {}'.format(vertex.i, partner))
 
                 elif search_type == 5 and mesh_1.num_corners == 5 and mesh_2.num_corners == 3:
                     config = mesh_1, mesh_2
@@ -652,8 +644,6 @@ def find_type(graph_obj, search_type, strong=False, ui_obj=None):
                         else:
                             changes += weak_resolve(graph_obj, [config], [class_], search_type, ui_obj=ui_obj)
                         found += 1
-                    else:
-                        print('Class J encountered: {} {}'.format(vertex.i, partner))
 
                 elif search_type == 6 and mesh_1.num_corners == 4 and mesh_2.num_corners == 4:
                     config = mesh_1, mesh_2
@@ -664,8 +654,6 @@ def find_type(graph_obj, search_type, strong=False, ui_obj=None):
                         else:
                             changes += weak_resolve(graph_obj, [config], [class_], search_type, ui_obj=ui_obj)
                         found += 1
-                    else:
-                        print('Class J encountered: {} {}'.format(vertex.i, partner))
 
     return found, changes
 

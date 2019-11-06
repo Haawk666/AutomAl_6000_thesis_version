@@ -686,26 +686,17 @@ class SuchSoftware:
                 ui_obj.update_overlay()
                 ui_obj.update_graph()
                 ui_obj.update_info_graph()
-            # Check intersections
-            self.column_characterization(starting_index, search_type=14)
-            # Find particle:
-            self.column_characterization(starting_index, search_type=5)
-            # Set levels:
-            self.column_characterization(starting_index, search_type=7)
-            # Add edges:
-            self.column_characterization(starting_index, search_type=3)
-            # Base stat score:
-            self.column_characterization(starting_index, search_type=22)
-            if ui_obj is not None:
-                ui_obj.update_overlay()
-                ui_obj.update_graph()
-                ui_obj.update_info_graph()
             # Weak untangling
             self.column_characterization(starting_index, search_type=10)
+            # Find particle
+            self.column_characterization(starting_index, search_type=5)
             # Set levels:
+            self.column_characterization(starting_index, search_type=6)
             self.column_characterization(starting_index, search_type=7)
+            # Calc normalized gamma:
+            self.column_characterization(starting_index, search_type=19)
             # Base stat score:
-            self.column_characterization(starting_index, search_type=23)
+            self.column_characterization(starting_index, search_type=22)
             if ui_obj is not None:
                 ui_obj.update_overlay()
                 ui_obj.update_graph()
@@ -714,12 +705,14 @@ class SuchSoftware:
             self.column_characterization(starting_index, search_type=10)
             # Base model score:
             self.column_characterization(starting_index, search_type=22)
+            # Weak untangling
+            self.column_characterization(starting_index, search_type=10)
             # Find particle:
             self.column_characterization(starting_index, search_type=5)
             # Set levels:
             self.column_characterization(starting_index, search_type=7)
             # Add edges:
-            self.column_characterization(starting_index, search_type=3)
+            self.column_characterization(starting_index, search_type=4)
             # Summarize:
             logger.info('Summarizing stats.')
             self.summarize_stats()
@@ -735,7 +728,7 @@ class SuchSoftware:
             # Reset prob vectors:
             self.column_characterization(starting_index, search_type=12)
             # Spatial mapping:
-            self.column_characterization(starting_index, search_type=2)
+            self.column_characterization(starting_index, search_type=3)
             if ui_obj is not None:
                 ui_obj.update_overlay()
                 ui_obj.update_graph()
@@ -751,13 +744,13 @@ class SuchSoftware:
             # Set levels:
             self.column_characterization(starting_index, search_type=6)
             # Add edges:
-            self.column_characterization(starting_index, search_type=3)
+            self.column_characterization(starting_index, search_type=4)
             if ui_obj is not None:
                 ui_obj.update_overlay()
                 ui_obj.update_graph()
                 ui_obj.update_info_graph()
-            # Calc normalized gamma:
-            self.column_characterization(starting_index, search_type=19)
+            # Search for intersections
+            self.column_characterization(starting_index, search_type=14)
             # Map subsets:
             self.column_characterization(starting_index, search_type=21)
             # Summarize:
@@ -766,6 +759,48 @@ class SuchSoftware:
             logger.info('Basics done')
 
         elif search_type == 2:
+
+            logger.info('Running models and untangling...')
+            # Base stat score:
+            self.column_characterization(starting_index, search_type=22)
+            if ui_obj is not None:
+                ui_obj.update_overlay()
+                ui_obj.update_graph()
+                ui_obj.update_info_graph()
+            # Weak untangling
+            self.column_characterization(starting_index, search_type=10)
+            # Find particle
+            self.column_characterization(starting_index, search_type=5)
+            # Set levels:
+            self.column_characterization(starting_index, search_type=6)
+            self.column_characterization(starting_index, search_type=7)
+            # Calc normalized gamma:
+            self.column_characterization(starting_index, search_type=19)
+            # Base stat score:
+            self.column_characterization(starting_index, search_type=22)
+            if ui_obj is not None:
+                ui_obj.update_overlay()
+                ui_obj.update_graph()
+                ui_obj.update_info_graph()
+            # Weak untangling
+            self.column_characterization(starting_index, search_type=10)
+            # Base model score:
+            self.column_characterization(starting_index, search_type=22)
+            # Weak untangling
+            self.column_characterization(starting_index, search_type=10)
+            # Find particle:
+            self.column_characterization(starting_index, search_type=5)
+            # Set levels:
+            self.column_characterization(starting_index, search_type=7)
+            # Add edges:
+            self.column_characterization(starting_index, search_type=4)
+            # Summarize:
+            logger.info('Summarizing stats.')
+            self.summarize_stats()
+            # Complete:
+            logger.info('Column characterization complete.')
+
+        elif search_type == 3:
             # Run spatial mapping
             logger.info('Mapping spatial locality...')
             self.redraw_centre_mat()
@@ -775,14 +810,11 @@ class SuchSoftware:
             self.find_edge_columns()
             logger.info('Spatial mapping complete.')
 
-        elif search_type == 3:
+        elif search_type == 4:
             # redraw edges
             logger.info('Adding edges to graph...')
             self.graph.redraw_edges()
             logger.info('Edges added.')
-
-        elif search_type == 4:
-            pass
 
         elif search_type == 5:
             # Legacy particle detection
@@ -803,6 +835,8 @@ class SuchSoftware:
             self.graph.reset_all_flags()
             self.graph.sort_all_subsets_by_distance()
             graph_op.naive_determine_z(self.graph, starting_index, self.graph.vertices[starting_index].level)
+            graph_op.revise_z(self.graph)
+            graph_op.revise_z(self.graph)
             logger.info('Levels set.')
 
         elif search_type == 8:

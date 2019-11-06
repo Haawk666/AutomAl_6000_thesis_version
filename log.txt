@@ -1,0 +1,42 @@
+GUI: Welcome to AACC by Haakon Tvedt
+GUI: GUI version: 0.0.1
+GUI: core version: 0.0.9
+------------------------
+GUI: Opening file C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/005_C_full_plate_columns
+core: Loaded C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/005_C_full_plate_columns
+GUI: Making info-graph
+core: Doing the basics...
+core: Setting alloy...
+core: Alloy set.
+core: Resetting probability vectors with zero bias...
+core: Probability vectors reset.
+core: Mapping spatial locality...
+core: Spatial mapping complete.
+core: Running experimental angle analysis
+core: Angle analysis complete!
+core: Finding particle with legacy method....
+graph: All flags reset!
+graph: All flags reset!
+core: Found particle.
+core: Running legacy level definition algorithm....
+graph: All flags reset!
+graph: All flags reset!
+core: Levels set.
+core: Adding edges to graph...
+core: Edges added.
+core: Looking for intersections
+core: Found 2 intersections
+core: 0 literal intersections still remain
+core: Sorting neighbours...
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Neighbours sorted
+core: Summarizing stats.
+core: Summarizing stats...
+core: Collected stats.
+core: Basics done
+GUI: Making info-graph
+core: Saved C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/005_C_full_plate_basics
+GUI: Making info-graph

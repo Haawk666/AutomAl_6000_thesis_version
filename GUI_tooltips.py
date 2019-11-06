@@ -42,9 +42,9 @@ btn_refresh_mesh = 'Update internal mesh information and graphical representatio
 btn_deselect = 'Deselect any columns'
 btn_new = 'Not implemented'
 btn_set_style = 'Not implemented'
-btn_set_indices = 'DEPRECATED. Use \'perturb mode\''
-btn_set_indices_2 = 'DEPRECATED. Use \'perturb mode\''
+btn_set_indices = 'DEPRECATED. Use \'permute mode\''
 btn_test = 'Ad-Hoc debugging functionality'
+btn_crash = 'Throw an exception for science!... (Save your work first!)'
 btn_plot = 'Open a plotting wizard to generate a range of plots'
 btn_print_distances = 'Print a convenient list of inter-atomic hard-sphere distances in the terminal window\n' \
                       'for quick reference'
@@ -119,12 +119,13 @@ control_window_btn_list = [btn_show_stats,
                            btn_delete,
                            btn_print_details,
                            btn_sub,
+                           btn_refresh_mesh,
                            btn_deselect,
                            btn_new,
                            btn_set_style,
                            btn_set_indices,
-                           btn_set_indices_2,
                            btn_test,
+                           btn_crash,
                            btn_plot,
                            btn_print_distances,
                            btn_build_anti_graph,

@@ -145,9 +145,6 @@ def define_levels(graph, i, level=0):
         if overcounter > 100:
 
             emer_abort = True
-            print('Emergency abort')
-
-        print(neighbour_level)
 
     graph.reset_all_flags()
 
@@ -168,18 +165,12 @@ def mesh_levels(graph, i, level):
             next_level = 1
         elif level == 1:
             next_level = 0
-        else:
-            print('Disaster!')
 
         set_level(graph, i, level)
 
         indices = graph.vertices[i].neighbour_indices
 
         for x in range(0, graph.vertices[i].n()):
-            print('\n')
-            print(i)
-            print(indices)
-            print(x)
             reciprocal = graph.test_reciprocality(i, indices[x])
 
             if not graph.vertices[indices[x]].flag_1 and not graph.vertices[i].is_edge_column and reciprocal:
@@ -202,8 +193,6 @@ def precipitate_levels(graph, i, level):
             next_level = 1
         elif level == 1:
             next_level = 0
-        else:
-            print('Disaster!')
 
         set_level(graph, i, level)
 
@@ -435,8 +424,6 @@ def resolve_edge_inconsistency(graph, i, j, clockwise=True):
 
         shape_1_indices, num_edge_1 = find_shape(graph, j, i, clockwise=clockwise)
         shape_2_indices, num_edge_2 = find_shape(graph, i, j, clockwise=clockwise)
-
-    print(str(i) + ', ' + str(j) + ': ')
 
     if geometry_type == 1:
         # This means we want to break the connection!
@@ -979,11 +966,7 @@ def connection_shift_on_level(graph, i, experimental=False):
     bad_index = -1
     good_index = -1
 
-    print(str(i) + ': n = ' + str(n) + '\n----------------')
-
     for x in range(0, n):
-
-        print('k: ' + str(x))
 
         if graph.vertices[indices[x]].level == graph.vertices[i].level:
 
@@ -999,16 +982,11 @@ def connection_shift_on_level(graph, i, experimental=False):
 
     for x in range(n, high):
 
-        print('j: ' + str(n + high - 1 - x))
-
         if not graph.vertices[indices[n + high - 1 - x]].level == graph.vertices[i].level:
 
             good_index = n + high - 1 - x
 
     if not bad_index == -1 and not good_index == -1:
-        print(
-            str(i) + ' | ' + str(bad_index) + ': ' + str(indices[bad_index]) + ' | ' + str(good_index) + ': ' + str(
-                indices[good_index]))
         perturbator(graph, i, bad_index, good_index)
 
 
@@ -1079,11 +1057,9 @@ def find_shape(graph, i, j, clockwise=True):
 def clockwise_neighbour_sort(graph, i, j=-1):
 
     n = graph.vertices[i].n()
-    print('n: ' + str(n))
 
     if not j == -1:
         n = graph.vertices[i].n() + 1
-        print('changed n: ' + str(n))
 
     a = np.ndarray([n], dtype=np.int)
     b = np.ndarray([n], dtype=np.int)
@@ -1154,11 +1130,9 @@ def clockwise_neighbour_sort(graph, i, j=-1):
 def anticlockwise_neighbour_sort(graph, i, j=-1):
 
     n = graph.vertices[i].n()
-    print('n: ' + str(n))
 
     if not j == -1:
         n = graph.vertices[i].n() + 1
-        print('changed n: ' + str(n))
 
     a = np.ndarray([n], dtype=np.int)
     b = np.ndarray([n], dtype=np.int)
