@@ -304,6 +304,7 @@ class SuchSoftware:
         :rtype: string or None
 
         """
+        self.graph.map_friends()
         vertex = self.graph.vertices[i]
 
         alpha = self.graph.produce_alpha_angles(i)
@@ -685,7 +686,6 @@ class SuchSoftware:
             if ui_obj is not None:
                 ui_obj.update_overlay()
                 ui_obj.update_graph()
-                ui_obj.update_info_graph()
             # Weak untangling
             self.column_characterization(starting_index, search_type=10)
             # Find particle
@@ -700,7 +700,6 @@ class SuchSoftware:
             if ui_obj is not None:
                 ui_obj.update_overlay()
                 ui_obj.update_graph()
-                ui_obj.update_info_graph()
             # Weak untangling
             self.column_characterization(starting_index, search_type=10)
             # Base model score:
@@ -713,6 +712,10 @@ class SuchSoftware:
             self.column_characterization(starting_index, search_type=7)
             # Add edges:
             self.column_characterization(starting_index, search_type=4)
+            # Search for intersections
+            self.column_characterization(starting_index, search_type=14)
+            # Map subsets:
+            self.column_characterization(starting_index, search_type=21)
             # Summarize:
             logger.info('Summarizing stats.')
             self.summarize_stats()
@@ -732,13 +735,11 @@ class SuchSoftware:
             if ui_obj is not None:
                 ui_obj.update_overlay()
                 ui_obj.update_graph()
-                ui_obj.update_info_graph()
             # Angle analysis:
             self.column_characterization(starting_index, search_type=16)
             if ui_obj is not None:
                 ui_obj.update_overlay()
                 ui_obj.update_graph()
-                ui_obj.update_info_graph()
             # Find particle:
             self.column_characterization(starting_index, search_type=5)
             # Set levels:
@@ -748,7 +749,6 @@ class SuchSoftware:
             if ui_obj is not None:
                 ui_obj.update_overlay()
                 ui_obj.update_graph()
-                ui_obj.update_info_graph()
             # Search for intersections
             self.column_characterization(starting_index, search_type=14)
             # Map subsets:
@@ -766,7 +766,6 @@ class SuchSoftware:
             if ui_obj is not None:
                 ui_obj.update_overlay()
                 ui_obj.update_graph()
-                ui_obj.update_info_graph()
             # Weak untangling
             self.column_characterization(starting_index, search_type=10)
             # Find particle
@@ -781,7 +780,6 @@ class SuchSoftware:
             if ui_obj is not None:
                 ui_obj.update_overlay()
                 ui_obj.update_graph()
-                ui_obj.update_info_graph()
             # Weak untangling
             self.column_characterization(starting_index, search_type=10)
             # Base model score:
@@ -794,6 +792,10 @@ class SuchSoftware:
             self.column_characterization(starting_index, search_type=7)
             # Add edges:
             self.column_characterization(starting_index, search_type=4)
+            # Search for intersections
+            self.column_characterization(starting_index, search_type=14)
+            # Map subsets:
+            self.column_characterization(starting_index, search_type=21)
             # Summarize:
             logger.info('Summarizing stats.')
             self.summarize_stats()
@@ -982,6 +984,7 @@ class SuchSoftware:
             # not_removed, strong_intersections, ww, ss = graph_op.remove_intersections(self.graph)
             graph_op.experimental_remove_intersections(self.graph)
             intersections = self.graph.find_intersects()
+            self.graph.map_friends()
             logger.info('Found {} intersections'.format(num_intersections))
             # self.report('        Found {} strong intersections'.format(ss), force=True)
             # self.report('        Found {} weak-weak intersections'.format(ww), force=True)

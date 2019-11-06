@@ -233,7 +233,6 @@ class MainUI(QtWidgets.QMainWindow):
             self.gv_anti_graph.setScene(self.gs_anti_graph)
 
     def update_info_graph(self):
-        logger.info('Making info-graph')
         self.gs_info_graph = GUI_elements.InfoGraph(ui_obj=self, scale_factor=2)
         self.gv_info_graph.setScene(self.gs_info_graph)
 

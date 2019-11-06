@@ -4,7 +4,8 @@ GUI: core version: 0.0.9
 ------------------------
 GUI: Opening file C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/005_C_full_plate_columns
 core: Loaded C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/005_C_full_plate_columns
-GUI: Making info-graph
+graph: Mapping friends..
+graph: friends mapped!
 core: Doing the basics...
 core: Setting alloy...
 core: Alloy set.
@@ -12,8 +13,18 @@ core: Resetting probability vectors with zero bias...
 core: Probability vectors reset.
 core: Mapping spatial locality...
 core: Spatial mapping complete.
+core: Looking for intersections
+graph: Mapping friends..
+graph: friends mapped!
+core: Found 0 intersections
+core: 0 literal intersections still remain
 core: Running experimental angle analysis
 core: Angle analysis complete!
+core: Looking for intersections
+graph: Mapping friends..
+graph: friends mapped!
+core: Found 2 intersections
+core: 0 literal intersections still remain
 core: Finding particle with legacy method....
 graph: All flags reset!
 graph: All flags reset!
@@ -25,7 +36,14 @@ core: Levels set.
 core: Adding edges to graph...
 core: Edges added.
 core: Looking for intersections
-core: Found 2 intersections
+graph: Mapping friends..
+graph: friends mapped!
+core: Found 0 intersections
+core: 0 literal intersections still remain
+core: Looking for intersections
+graph: Mapping friends..
+graph: friends mapped!
+core: Found 0 intersections
 core: 0 literal intersections still remain
 core: Sorting neighbours...
 graph: Mapping subsets..
@@ -37,6 +55,5 @@ core: Summarizing stats.
 core: Summarizing stats...
 core: Collected stats.
 core: Basics done
-GUI: Making info-graph
-core: Saved C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/005_C_full_plate_basics
-GUI: Making info-graph
+graph: Mapping friends..
+graph: friends mapped!
