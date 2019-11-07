@@ -1,7 +1,7 @@
 Guides
 ---------------------------------------------
 
-Herein we have collected a selection of guides that tries to give a step-by-step solution to certain tasks that a
+Herein we have collected a selection of guides that tries to give a step-by-step introduction to certain tasks that a
 user of AutomAl 6000 might want to accomplish.
 
 Installation
@@ -37,8 +37,6 @@ next. The stages are
 
     #. Column detection has been performed, and the project now has information about 2D atomic positions. The project is now in a 'column' state.
 
-    #. A spatial mapping algorithm has been performed, so each column now has information about the location of its 8 closest neighbours. The project is in 'spatial map' state.
-
     #. Column characterization has been applied, and colums now have information about the probability of its own atomic species, its z-position, its neighbours in the opposite and same crystal plane, etc... The project is in a 'result' stage.
 
     #. Manual consideration of the data, and manual corrections and control has been performed by the user. This is the final state, and the project in now in a 'control' state.
@@ -52,7 +50,7 @@ results. The outline given below, should give a feel for how the GUI is intended
 Initial stage
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-Before importing an .dm3 -file into AutoAtom, one will usually find it beneficial to prepare the image in a specific
+Before importing an .dm3 -file into AutomAl, one will usually find it beneficial to prepare the image in a specific
 way. Using a program such as digital micrograph (DMG), one should apply a fft-mask to reduce the noise in the image. In
 addition, one could use digital micrograph's scaling algorithm to upscale the image if it is small and/or low
 magnification (The scale should typically not be any lower than \~6 pm / pixel). These preparation steps will greatly
@@ -61,30 +59,30 @@ in the software, but for now, pre-processing in DMG is necessary.
 
 .. Note::
 
-    The filetype of .dm3 must be maintained. It is the only file-type supported for import, and contains essential
+    The filetype of .dm3 must be maintained. It is the only file-type currently supported for import, and contains essential
     metadata. For example, when rescaled in DMG, the 'scale' field of the dm3 metadata is correctly and automatically
     updated.
 
-Now that we have a pre-processed .dm3 file ready, we can open AutoAtom, and from the 'file' menu select 'new'. Using the
+Now that we have a pre-processed .dm3 file ready, we can open AutomAl, and from the 'file' menu select 'new'. Using the
 file-dialog, locate the .dm3 and hit 'open'.
 
 With the program there is a sample image included which can be used to get familiar with the software. This file is
 called 'sample.dm3', and is already pre-processed, so can be imported directly. Once 'sample.dm3' is imported, the
-project instance that the GUI creates, is now in the 'initial' state, and can now be saved as a project file using
-'file -> save'. Typically though, one would proceed directly to column detection from this state.
+project instance that the GUI creates, is now in the 'initial' state, and can now be saved as an AutomAl project file using
+'file -> save'. This filetype has no exctension. Typically though, one would proceed directly to column detection from this state.
 
 Column stage
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-We now wish to locate the positions of columns in the image. To do this, using built-in centre of mass approach, set the
-threshold value under **column detection** to something like 0,3 and hit *start*. This will produce a pop-up; select *t*
+We now wish to locate the positions of the columns in the image. To do this, using the built-in centre of mass approach, set the
+threshold value under **column detection** to something like 0,3 and hit *start*. This will produce a pop-up; select *Threshold*
 from the drop-down menu and press okay. Column detection will now run for some time (1-10 mins depending on the size
-of the image). When it's complete, one should evaluate the result from the *atomic positions* tab. If there are too many
+and scale of the image). When it's complete, one should evaluate the result from the *atomic positions* tab. If there are too many
 columns detected, then the process should be reset with a higher threshold value. If however not all columns where
-detected, one should lower the threshold value, and press *start* again. This will continue from the current state, but
+detected, one should lower the threshold value, and press *start* again. This will continue from the current state, and
 will pick up progressively darker columns based on the threshold value. Continue this approach until the number of
 undetected columns are approachable by manual intervention. In the current version, you must select columns that are on
-the very edge, and press *enable move* and use those to cover columns in the precipitate.
+the very edge, and press *enable move* and use those to cover columns in the precipitate, if you wish to manually complete the column detection.
 
 .. Note::
 
@@ -93,22 +91,18 @@ the very edge, and press *enable move* and use those to cover columns in the pre
 
 .. Note::
 
-    Some manual fiddling is almost always necessary. For a typical image one would expect to have to manually set 5-10
+    Some manual fiddling is almost always necessary. For a typical image one would expect to have to manually set at most 5-10
     columns depending on properties of the image and precipitate. Additionally one might want to slightly adjust some
     positions, especially columns surrounding Cu or other
     bright columns. All this is due to the crudeness of the column detection. In the future other methods that are
-    available, like AtomMap might get integrated as an option for column detection.
+    available, like AtomMap might get integrated as an option for column detection. The column detection algorithm has not been a
+    major focus in this work, but it still plays an important part on the end result.
 
 .. Note::
 
     It is important to get a good result at this stage before proceeding to column characterization, since moving
-    columns after column characterization has been run, is not supported.
+    columns after column characterization has been performed, is not currently supported.
 
-Spatial map stage
-'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-
-We now want to gather information about spatial locality. Under the *column characterization* control group, select
-*start*. This produces a drop-down menu. Select *run spatial mapping* and press *ok*. This process takes a few mins.
 
 Result stage
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -116,7 +110,7 @@ Result stage
 To produce an atomic overlay, first set the correct alloy type under *Column characterization* -> *Alloy*. Next, select
 a column that is inside the Al-matrix, and manually set its species to Al. This will act as a kind of \'seed\' column.
 Then, while said column is still selected,
-hit *start* and select *full column characterization*. The algorithm might take anywhere between 1-15 mins, depending on
+hit *start* and select *0 - full column characterization*. The algorithm might take anywhere between 1-15 mins, depending on
 several factors.
 
 .. Note::
@@ -124,21 +118,8 @@ several factors.
     If no pop-up dialog appears when hitting *start*, it is because no column is selected, or because no project is open.
 
 One can also selectively do the individual steps of the algorithm by selecting the appropriate step in the pop-up menu.
-This allows you to review the results at different stages, if for whatever reason. The appropriate succession is
-
-    #. Apply angle statistics.
-
-    #. Apply intensity statistics.
-
-    #. Run particle detection.
-
-    #. Set levels
-
-    #. Run experimental weak untangling
-
-    #. Run experimental strong untangling
-
-    #. Calculate globally normalized gamma levels
+This allows you to review the results at different stages, if for whatever reason. It is not recommended to do this,
+unless the user is familiar with the underlying methods.
 
 These and other available sub-steps can also be useful in the manual sub-processing, see next section.
 
@@ -149,22 +130,34 @@ After the column characterization has run, manual consideration of the result is
 tools to aid in this, of which the *atomic graph*, is the central component. See [Master thesis] for details on atomic
 graphs and how to interpret them, but here is the TL;DR:
 
+Another tool you you can use to consider the result, is the *info-graph*. This shows...
+
 Generating plots
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Coming soon*
 
 Performing built-in principle component analysis (PCA)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+*Coming soon*
+
 Exporting data
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Coming soon*
 
 Testing the accuracy/effectiveness of the algorithms using the validation data-set
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+*Coming soon*
+
 Using core.SuchSoftware as an API without the GUI
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Writing plugins for AutoAtom6000
+*Coming soon*
+
+Writing plugins for AutomAl 6000
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
+*Coming soon*

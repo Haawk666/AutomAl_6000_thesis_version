@@ -19,7 +19,7 @@ sys.path.append('../')
 
 # -- Project information -----------------------------------------------------
 
-project = 'AutoAtom 6000'
+project = 'AutomAl 6000'
 copyright = '2019, Haakon Tvedt'
 author = 'Haakon Tvedt'
 
@@ -92,7 +92,7 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 # }
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
-html_short_title = 'AutoAtom'
+html_short_title = 'AutomAl'
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
@@ -145,7 +145,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'AutomaticAtomicColumnCharacterizerAACC.tex', 'Automatic Atomic Column Characterizer (AACC) Documentation',
+    (master_doc, 'AutomaticAtomicColumnCharacterizerAACC.tex', 'AutomAl 6000 Documentation',
      'Haakon Tvedt', 'manual'),
 ]
 
@@ -155,7 +155,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'automaticatomiccolumncharacterizeraacc', 'Automatic Atomic Column Characterizer (AACC) Documentation',
+    (master_doc, 'automaticatomiccolumncharacterizeraacc', 'AutomAl 6000 Documentation',
      [author], 1)
 ]
 
@@ -166,7 +166,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'AutomaticAtomicColumnCharacterizerAACC', 'Automatic Atomic Column Characterizer (AACC) Documentation',
+    (master_doc, 'AutomaticAtomicColumnCharacterizerAACC', 'AutomAl 6000 Documentation',
      author, 'AutomaticAtomicColumnCharacterizerAACC', 'One line description of project.',
      'Miscellaneous'),
 ]
