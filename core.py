@@ -821,7 +821,7 @@ class SuchSoftware:
 
             while not static:
 
-                for type_num in range(1, 6):
+                for type_num in range(1, 7):
 
                     cont = True
                     counter = 0

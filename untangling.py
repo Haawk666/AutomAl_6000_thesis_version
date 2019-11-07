@@ -358,7 +358,10 @@ def weak_resolve(graph_obj, configs, classes, search_type, ui_obj=None):
             d = config[1].vertex_indices[3]
 
             if class_ == 'A_1':
+                k = graph_obj.weak_preserve_edge(i, j)
                 pass
+
+        return changes
 
     else:
 

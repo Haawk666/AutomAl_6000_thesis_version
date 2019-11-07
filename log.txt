@@ -2,3 +2,1262 @@ GUI: Welcome to AutomAl 6000 by Haakon Tvedt
 GUI: GUI version: 0.0.1
 GUI: core version: 0.0.9
 ------------------------
+GUI: Opening file F:/Direktoratet/Delt/OneDrive/NTNU/TFY4900 Master/Data_a/034_columns
+core: Attempted to load un-compatible save-file. Running conversion script...
+core: Conversion successful!
+core: Loaded F:/Direktoratet/Delt/OneDrive/NTNU/TFY4900 Master/Data_a/034_columns
+graph: Mapping friends..
+graph: friends mapped!
+core: Doing the basics...
+core: Setting alloy...
+core: Alloy set.
+core: Resetting probability vectors with zero bias...
+core: Probability vectors reset.
+core: Mapping spatial locality...
+core: Spatial mapping complete.
+core: Running experimental angle analysis
+core: Angle analysis complete!
+core: Finding particle with legacy method....
+graph: All flags reset!
+graph: All flags reset!
+core: Found particle.
+core: Running legacy level definition algorithm....
+graph: All flags reset!
+graph: All flags reset!
+core: Levels set.
+core: Adding edges to graph...
+core: Edges added.
+core: Looking for intersections
+graph_op: Could not remove 877 111
+graph: permuted (877, 111, 5771)
+graph: Mapping friends..
+graph: friends mapped!
+core: Found 6 intersections
+core: 0 literal intersections still remain
+core: Sorting neighbours...
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Neighbours sorted
+core: Summarizing stats.
+core: Summarizing stats...
+core: Collected stats.
+core: Basics done
+graph: Mapping friends..
+graph: friends mapped!
+core: Saved F:/Direktoratet/Delt/OneDrive/NTNU/TFY4900 Master/Data_a/034_basics
+graph: Mapping friends..
+graph: friends mapped!
+core: Starting experimental weak untangling...
+core: Looking for intersections
+graph: Mapping friends..
+graph: friends mapped!
+core: Found 0 intersections
+core: 0 literal intersections still remain
+core: Looking for type 1:
+core: Chi: 0.19694731659281142
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+graph: permuted (149, 417, 5271)
+graph: permuted (191, 238, 2487)
+graph: permuted (198, 2103, 186)
+graph: permuted (224, 166, 5058)
+graph: permuted (266, 3142, 5694)
+graph: permuted (268, 130, 3506)
+graph: permuted (272, 181, 3210)
+graph: permuted (278, 2594, 4567)
+graph: permuted (293, 83, 4264)
+graph: permuted (294, 5545, 3784)
+graph: permuted (300, 98, 3986)
+graph: permuted (323, 13, 2970)
+graph: permuted (329, 2853, 5128)
+graph: permuted (341, 1303, 285)
+graph: permuted (349, 3137, 1458)
+graph: permuted (359, 155, 5330)
+graph: permuted (360, 8, 3392)
+graph: permuted (374, 78, 4113)
+graph: permuted (380, 53, 1227)
+graph: permuted (390, 500, 1711)
+graph: permuted (394, 124, 5046)
+graph: permuted (401, 81, 4130)
+graph: permuted (411, 11, 2446)
+graph: permuted (429, 104, 4715)
+graph: permuted (443, 200, 5395)
+graph: permuted (471, 15, 5909)
+graph: permuted (483, 65, 3850)
+graph: permuted (497, 1381, 3463)
+graph: permuted (528, 137, 5862)
+graph: permuted (546, 76, 3413)
+graph: permuted (551, 573, 5455)
+graph: permuted (578, 42, 5515)
+graph: permuted (582, 198, 1321)
+graph: permuted (594, 10, 2688)
+graph: permuted (610, 43, 5622)
+graph: permuted (612, 893, 5180)
+graph: permuted (625, 1903, 1916)
+graph: permuted (635, 14, 4874)
+graph: permuted (669, 82, 4489)
+graph: permuted (683, 61, 3193)
+graph: permuted (727, 96, 5180)
+graph: permuted (729, 62, 1451)
+graph: permuted (748, 0, 5408)
+graph: permuted (765, 95, 2394)
+graph: permuted (787, 22, 3602)
+graph: permuted (803, 75, 5802)
+graph: permuted (804, 59, 2180)
+graph: permuted (811, 629, 3763)
+graph: permuted (813, 34, 4610)
+graph: permuted (829, 766, 5975)
+graph: permuted (847, 135, 4617)
+graph: permuted (856, 29, 4772)
+graph: permuted (932, 3094, 1918)
+graph: permuted (1002, 28, 3446)
+graph: permuted (1017, 2, 1827)
+graph: permuted (1019, 145, 5485)
+graph: permuted (1033, 27, 5901)
+graph: permuted (1041, 4278, 5648)
+graph: permuted (1061, 107, 5561)
+graph: permuted (1090, 1884, 4424)
+graph: permuted (1091, 202, 1135)
+graph: permuted (1134, 4513, 2766)
+graph: permuted (1147, 193, 409)
+graph: permuted (1159, 2369, 5943)
+graph: permuted (1191, 417, 2504)
+graph: permuted (1215, 367, 826)
+graph: permuted (1236, 70, 3666)
+graph: permuted (1250, 80, 5321)
+graph: permuted (1263, 43, 2203)
+graph: permuted (1294, 117, 3716)
+graph: permuted (1338, 3669, 5917)
+graph: permuted (1369, 282, 5906)
+graph: permuted (1391, 1, 5722)
+graph: permuted (1403, 3021, 5314)
+graph: permuted (1404, 113, 3753)
+graph: permuted (1407, 46, 4802)
+graph: permuted (1539, 5986, 4629)
+graph: permuted (1548, 116, 5851)
+graph: permuted (1553, 129, 3821)
+graph: permuted (1629, 184, 3376)
+graph: permuted (1662, 101, 2743)
+graph: permuted (1682, 502, 5519)
+graph: permuted (1687, 144, 4874)
+graph: permuted (1698, 246, 6016)
+graph: permuted (1711, 178, 3809)
+graph: permuted (1715, 453, 5818)
+graph: permuted (1725, 1019, 4475)
+graph: permuted (1813, 1049, 5518)
+graph: permuted (1830, 2550, 1028)
+graph: permuted (1847, 425, 6015)
+graph: permuted (1859, 1697, 5673)
+graph: permuted (1875, 48, 1647)
+graph: permuted (1899, 325, 5590)
+graph: permuted (1962, 1303, 3291)
+graph: permuted (1973, 554, 5160)
+graph: permuted (1983, 236, 4687)
+graph: permuted (1987, 88, 5696)
+graph: permuted (4690, 416, 2012)
+graph: permuted (2012, 378, 3939)
+graph: permuted (5035, 600, 2031)
+graph: permuted (2108, 118, 2291)
+graph: permuted (3978, 1436, 2108)
+graph: permuted (2114, 54, 5350)
+graph: permuted (2154, 47, 5470)
+graph: permuted (2188, 637, 2582)
+graph: permuted (2215, 1293, 5128)
+graph: permuted (2241, 1927, 3716)
+graph: permuted (2261, 81, 5347)
+graph: permuted (2277, 3665, 5160)
+graph: permuted (2316, 1550, 5549)
+graph: permuted (2400, 86, 5274)
+graph: permuted (2403, 1242, 5155)
+graph: permuted (2409, 440, 4810)
+graph: permuted (2446, 362, 4669)
+graph: permuted (2453, 168, 5196)
+graph: permuted (2576, 3601, 152)
+graph: permuted (2623, 1770, 4849)
+graph: permuted (2638, 2430, 5596)
+graph: permuted (2709, 383, 3966)
+graph: permuted (2761, 133, 4538)
+graph: permuted (2767, 514, 5051)
+graph: permuted (2805, 13, 4382)
+graph: permuted (2862, 2762, 5793)
+graph: permuted (2868, 19, 3290)
+graph: permuted (2873, 2361, 5923)
+graph: permuted (2908, 321, 5545)
+graph: permuted (1840, 5340, 2912)
+graph: permuted (2928, 420, 3403)
+graph: permuted (2960, 2719, 4918)
+graph: permuted (1305, 1665, 2964)
+graph: permuted (2985, 747, 5934)
+graph: permuted (4887, 439, 3005)
+graph: permuted (3006, 114, 5773)
+graph: permuted (3046, 1351, 5382)
+graph: permuted (3049, 1564, 5509)
+graph: permuted (3055, 1067, 2826)
+graph: permuted (3123, 330, 2826)
+graph: permuted (3127, 5808, 5767)
+graph: permuted (3150, 1741, 5771)
+graph: permuted (3153, 2517, 1021)
+graph: permuted (3166, 2719, 5399)
+graph: permuted (3193, 679, 5862)
+graph: permuted (3209, 2026, 5698)
+graph: permuted (5209, 823, 3210)
+graph: permuted (3219, 609, 4095)
+graph: permuted (3222, 4600, 5771)
+graph: permuted (3230, 5090, 4628)
+graph: permuted (3238, 108, 5758)
+graph: permuted (3274, 571, 5648)
+graph: permuted (3305, 211, 1786)
+graph: permuted (3311, 330, 5834)
+graph: permuted (3347, 705, 5746)
+graph: permuted (3649, 314, 3423)
+graph: permuted (3440, 384, 5041)
+graph: permuted (3471, 923, 5944)
+graph: permuted (3478, 1546, 5223)
+graph: permuted (3482, 1423, 5188)
+graph: permuted (3519, 1264, 5272)
+graph: permuted (3521, 3572, 5760)
+graph: permuted (3533, 249, 3758)
+graph: permuted (3534, 2310, 323)
+graph: permuted (3592, 2422, 5782)
+graph: permuted (3627, 5650, 5339)
+graph: permuted (3635, 512, 5821)
+graph: permuted (3655, 2033, 5871)
+graph: permuted (4655, 1804, 3661)
+graph: permuted (3665, 291, 5223)
+graph: permuted (3666, 2371, 1236)
+graph: permuted (3679, 1876, 5659)
+graph: permuted (3853, 389, 3719)
+graph: permuted (3719, 251, 4353)
+graph: permuted (3740, 281, 3635)
+graph: permuted (5892, 1509, 3819)
+graph: permuted (3909, 2026, 4970)
+graph: permuted (3931, 197, 227)
+graph: permuted (3947, 255, 3173)
+graph: permuted (3958, 1000, 5844)
+graph: permuted (3986, 1314, 4577)
+graph: permuted (3994, 1837, 5107)
+graph: permuted (4922, 865, 4005)
+graph: permuted (4038, 826, 3675)
+graph: permuted (4062, 867, 5691)
+graph: permuted (4843, 1504, 4177)
+graph: permuted (4196, 569, 5661)
+graph: permuted (4199, 2570, 5601)
+graph: permuted (5350, 281, 4211)
+graph: permuted (4239, 230, 3997)
+graph: permuted (4253, 302, 2445)
+graph: permuted (4273, 4392, 396)
+graph: permuted (4293, 94, 3031)
+graph: permuted (4611, 378, 4340)
+graph: permuted (4395, 4027, 5572)
+graph: permuted (4448, 2354, 5058)
+graph: permuted (4453, 541, 1207)
+graph: permuted (4455, 746, 4517)
+graph: permuted (4482, 746, 5446)
+graph: permuted (4484, 251, 298)
+graph: permuted (4494, 1047, 5124)
+graph: permuted (4517, 756, 4956)
+graph: permuted (4532, 1275, 4477)
+graph: permuted (4541, 2597, 5663)
+graph: permuted (5723, 1322, 4553)
+graph: permuted (4562, 1834, 5331)
+graph: permuted (4567, 359, 2127)
+graph: permuted (4571, 310, 4935)
+graph: permuted (4587, 426, 4224)
+graph: permuted (4607, 1080, 4680)
+graph: permuted (4613, 4513, 5527)
+graph: permuted (4627, 717, 1899)
+graph: permuted (4629, 984, 5785)
+graph: permuted (4637, 2250, 3790)
+graph: permuted (4660, 428, 5887)
+graph: permuted (4665, 1233, 3864)
+graph: permuted (4680, 910, 3077)
+graph: permuted (4689, 2682, 4764)
+graph: permuted (4692, 2413, 5616)
+graph: permuted (4701, 2453, 5124)
+graph: permuted (4703, 3340, 3310)
+graph: permuted (4718, 951, 5707)
+graph: permuted (4720, 2459, 5599)
+graph: permuted (4729, 333, 4475)
+graph: permuted (4758, 671, 5839)
+graph: permuted (4761, 1161, 4970)
+graph: permuted (4764, 820, 3017)
+graph: permuted (4796, 333, 2745)
+graph: permuted (4806, 3063, 4658)
+graph: permuted (4814, 728, 5971)
+graph: permuted (4822, 338, 5465)
+graph: permuted (4849, 431, 2375)
+graph: permuted (4850, 648, 3972)
+graph: permuted (4860, 465, 3988)
+graph: permuted (4870, 1007, 5429)
+graph: permuted (4875, 1608, 5731)
+graph: permuted (4879, 307, 2703)
+graph: permuted (4881, 2723, 6015)
+graph: permuted (4896, 1566, 5847)
+graph: permuted (4897, 2099, 5405)
+graph: permuted (4898, 427, 4131)
+graph: permuted (4910, 962, 3772)
+graph: permuted (4976, 314, 3756)
+graph: permuted (4985, 1246, 5401)
+graph: permuted (5005, 1696, 5266)
+graph: permuted (5009, 1289, 3988)
+graph: permuted (5030, 3151, 5449)
+graph: permuted (5718, 394, 5046)
+graph: permuted (5046, 2053, 6029)
+graph: permuted (5589, 548, 5049)
+graph: permuted (5056, 149, 402)
+graph: permuted (5076, 1419, 3689)
+graph: permuted (5081, 715, 4937)
+graph: permuted (5084, 2599, 466)
+graph: permuted (5085, 3923, 1246)
+graph: permuted (5125, 3528, 5320)
+graph: permuted (5133, 3805, 5201)
+graph: permuted (5842, 3795, 5157)
+graph: permuted (5157, 2490, 5994)
+graph: permuted (5174, 710, 5696)
+graph: permuted (5182, 728, 3437)
+graph: permuted (5188, 3012, 3482)
+graph: permuted (5193, 547, 233)
+graph: permuted (5198, 999, 941)
+graph: permuted (5201, 2662, 4095)
+graph: permuted (5216, 453, 5661)
+graph: permuted (5265, 4308, 1846)
+graph: permuted (5290, 602, 3772)
+graph: permuted (5291, 683, 3079)
+graph: permuted (5298, 5054, 5628)
+graph: permuted (5313, 546, 1048)
+graph: permuted (5314, 3006, 5773)
+graph: permuted (5318, 3094, 242)
+graph: permuted (5322, 2931, 1124)
+graph: permuted (5324, 535, 3358)
+graph: permuted (5326, 888, 5812)
+graph: permuted (5330, 2440, 3477)
+graph: permuted (5340, 235, 2339)
+graph: permuted (5347, 2863, 5547)
+graph: permuted (5355, 1543, 5828)
+graph: permuted (5362, 2929, 473)
+graph: permuted (5368, 706, 4177)
+graph: permuted (5372, 487, 1478)
+graph: permuted (5384, 2883, 5541)
+graph: permuted (5385, 1540, 5395)
+graph: permuted (5400, 2039, 5977)
+graph: permuted (5405, 197, 5519)
+graph: permuted (5413, 949, 2274)
+graph: permuted (5447, 2080, 5667)
+graph: permuted (5468, 644, 3500)
+graph: permuted (5470, 269, 4528)
+graph: permuted (5475, 1534, 5429)
+graph: permuted (5500, 2400, 5976)
+graph: permuted (5501, 3750, 5284)
+graph: permuted (5505, 525, 4841)
+graph: permuted (5512, 4370, 5938)
+graph: permuted (5513, 2149, 5436)
+graph: permuted (5519, 1705, 5405)
+graph: permuted (5525, 1293, 5357)
+graph: permuted (5526, 1425, 5608)
+graph: permuted (5540, 4705, 2627)
+graph: permuted (5541, 1643, 5951)
+graph: permuted (5598, 3319, 3433)
+graph: permuted (5609, 159, 4730)
+graph: permuted (5671, 824, 4698)
+graph: permuted (5678, 514, 3885)
+graph: permuted (5687, 467, 5836)
+graph: permuted (5690, 536, 1970)
+graph: permuted (5733, 735, 5950)
+graph: permuted (5738, 1378, 5554)
+graph: permuted (5745, 2481, 2912)
+graph: permuted (5750, 1543, 5663)
+graph: permuted (5613, 1221, 5755)
+graph: permuted (5944, 3238, 5758)
+graph: permuted (5760, 1256, 3150)
+graph: permuted (5767, 4792, 3127)
+graph: permuted (5770, 1129, 5325)
+graph: permuted (5775, 684, 3274)
+graph: permuted (5778, 1553, 3414)
+graph: permuted (5799, 411, 3964)
+graph: permuted (5800, 1312, 5512)
+graph: permuted (5817, 1823, 5983)
+graph: permuted (5822, 431, 5009)
+graph: permuted (5831, 1244, 3674)
+graph: permuted (5833, 1770, 4694)
+graph: permuted (5835, 1021, 2380)
+graph: permuted (5871, 457, 3655)
+graph: permuted (5872, 1271, 3446)
+graph: permuted (5876, 4966, 5967)
+graph: permuted (5885, 1002, 1505)
+graph: permuted (5910, 229, 4687)
+graph: permuted (5917, 995, 5669)
+graph: permuted (5919, 338, 3192)
+graph: permuted (6027, 3023, 5932)
+graph: permuted (5935, 153, 1294)
+graph: permuted (5938, 3283, 5512)
+graph: permuted (5950, 3029, 1214)
+graph: permuted (5972, 2868, 3872)
+graph: permuted (5975, 470, 829)
+graph: permuted (5987, 2440, 4538)
+graph: permuted (5988, 792, 4736)
+graph: permuted (6008, 468, 3744)
+core: Found 570 type 1's, made 339 changes
+core: Chi: 0.19694731659281142
+core: repeating...
+core: Looking for type 1:
+core: Chi: 0.17905793533563105
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+graph: permuted (227, 969, 3931)
+graph: permuted (298, 455, 4484)
+graph: permuted (1214, 48, 5950)
+graph: permuted (1305, 407, 1665)
+graph: permuted (1478, 3578, 5372)
+graph: permuted (2127, 4508, 4567)
+core: Found 230 type 1's, made 6 changes
+core: Chi: 0.17905793533563105
+core: repeating...
+core: Looking for type 1:
+core: Chi: 0.1786476284260627
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 224 type 1's, made 0 changes
+core: Chi: 0.1786476284260627
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.1786476284260627
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+graph: permuted (150, 262, 1147)
+graph: permuted (1147, 409, 150)
+graph: permuted (1444, 5686, 220)
+graph: permuted (450, 3566, 259)
+graph: permuted (274, 969, 5458)
+graph: permuted (5458, 945, 274)
+graph: permuted (326, 547, 5935)
+graph: permuted (5935, 1294, 326)
+graph: permuted (372, 487, 4937)
+graph: permuted (4937, 1221, 372)
+graph: permuted (385, 414, 5056)
+graph: permuted (5056, 402, 385)
+graph: permuted (5862, 5514, 528)
+graph: permuted (587, 10, 1830)
+graph: permuted (1830, 1028, 587)
+graph: permuted (615, 605, 4197)
+graph: permuted (4197, 726, 615)
+graph: permuted (5390, 175, 732)
+graph: permuted (935, 68, 4844)
+graph: permuted (4844, 2429, 935)
+graph: permuted (1665, 2964, 1305)
+graph: permuted (1504, 33, 5368)
+graph: permuted (5368, 4177, 1504)
+graph: permuted (1827, 850, 5658)
+graph: permuted (5658, 1017, 1827)
+graph: permuted (1842, 1269, 5807)
+graph: permuted (5807, 4027, 1842)
+graph: permuted (1853, 331, 2343)
+graph: permuted (2343, 742, 1853)
+graph: permuted (2021, 292, 2180)
+graph: permuted (2180, 406, 2021)
+graph: permuted (2108, 2291, 4650)
+graph: permuted (4650, 230, 2108)
+graph: permuted (2437, 420, 5758)
+graph: permuted (5758, 923, 2437)
+graph: permuted (2455, 1074, 4939)
+graph: permuted (4939, 537, 2455)
+graph: permuted (3905, 2906, 2696)
+graph: permuted (250, 682, 2753)
+graph: permuted (439, 1469, 2805)
+graph: permuted (261, 1305, 2964)
+graph: permuted (3005, 445, 5439)
+graph: permuted (5439, 485, 3005)
+graph: permuted (3291, 1163, 3015)
+graph: permuted (586, 5251, 3020)
+graph: permuted (5355, 1862, 3031)
+graph: permuted (3048, 781, 3725)
+graph: permuted (3725, 954, 3048)
+graph: permuted (3096, 460, 4177)
+graph: permuted (4177, 794, 3096)
+graph: permuted (3155, 1378, 5196)
+graph: permuted (5196, 882, 3155)
+graph: permuted (244, 5110, 3160)
+graph: permuted (3210, 248, 3347)
+graph: permuted (3347, 272, 3210)
+graph: permuted (3376, 2945, 3921)
+graph: permuted (3921, 1629, 3376)
+graph: permuted (3423, 1322, 3953)
+graph: permuted (3953, 3238, 3423)
+graph: permuted (3450, 684, 5610)
+graph: permuted (5610, 345, 3450)
+graph: permuted (771, 4822, 3476)
+graph: permuted (3488, 1817, 5142)
+graph: permuted (5142, 1687, 3488)
+graph: permuted (3497, 874, 6011)
+graph: permuted (6011, 374, 3497)
+graph: permuted (3555, 457, 4788)
+graph: permuted (4788, 578, 3555)
+graph: permuted (3921, 3066, 3683)
+graph: permuted (1927, 5890, 3784)
+graph: permuted (3821, 1586, 5414)
+graph: permuted (5414, 1553, 3821)
+graph: permuted (5633, 950, 3958)
+graph: permuted (3966, 412, 4081)
+graph: permuted (4081, 729, 3966)
+graph: permuted (4005, 1677, 5415)
+graph: permuted (5415, 1257, 4005)
+graph: permuted (1192, 346, 4024)
+graph: permuted (4083, 671, 5699)
+graph: permuted (5699, 1548, 4083)
+graph: permuted (3315, 449, 4272)
+graph: permuted (396, 265, 4273)
+graph: permuted (4290, 2369, 5924)
+graph: permuted (5924, 758, 4290)
+graph: permuted (4357, 1697, 5673)
+graph: permuted (5673, 544, 4357)
+graph: permuted (4473, 169, 4849)
+graph: permuted (4849, 2375, 4473)
+graph: permuted (4485, 717, 4565)
+graph: permuted (4565, 218, 4485)
+graph: permuted (4499, 814, 4715)
+graph: permuted (4715, 636, 4499)
+graph: permuted (1491, 5723, 4553)
+graph: permuted (4569, 1160, 5957)
+graph: permuted (5957, 1336, 4569)
+graph: permuted (4601, 977, 5353)
+graph: permuted (5353, 744, 4601)
+graph: permuted (30, 910, 4607)
+graph: permuted (5707, 391, 4718)
+graph: permuted (4723, 973, 5773)
+graph: permuted (5773, 2468, 4723)
+graph: permuted (4525, 2729, 4740)
+graph: permuted (2200, 3471, 4844)
+graph: permuted (2882, 1164, 4866)
+graph: permuted (1561, 5897, 4867)
+graph: permuted (4902, 1148, 5267)
+graph: permuted (5267, 2222, 4902)
+graph: permuted (2695, 1236, 4963)
+graph: permuted (1047, 5655, 4971)
+graph: permuted (5876, 4912, 5043)
+graph: permuted (5070, 1689, 5116)
+graph: permuted (5116, 1371, 5070)
+graph: permuted (5085, 1246, 5911)
+graph: permuted (5911, 1691, 5085)
+graph: permuted (5089, 583, 5713)
+graph: permuted (5713, 901, 5089)
+graph: permuted (5182, 3437, 5929)
+graph: permuted (5929, 2925, 5182)
+graph: permuted (433, 4439, 5252)
+graph: permuted (1500, 5266, 5281)
+graph: permuted (5321, 1391, 5722)
+graph: permuted (5722, 1250, 5321)
+graph: permuted (2375, 3978, 5424)
+graph: permuted (5434, 2494, 5809)
+graph: permuted (5809, 1438, 5434)
+graph: permuted (5476, 861, 5947)
+graph: permuted (5947, 3135, 5476)
+graph: permuted (5561, 1414, 5575)
+graph: permuted (5575, 1061, 5561)
+graph: permuted (5564, 1516, 2773)
+graph: permuted (2773, 764, 5564)
+graph: permuted (5608, 820, 5755)
+graph: permuted (5755, 500, 5608)
+graph: permuted (5637, 1411, 5752)
+graph: permuted (5752, 3023, 5637)
+graph: permuted (5090, 4628, 5643)
+graph: permuted (4171, 1465, 5681)
+graph: permuted (2745, 1276, 5720)
+graph: permuted (2391, 5089, 5730)
+graph: permuted (5820, 4779, 5883)
+graph: permuted (5883, 2697, 5820)
+graph: permuted (5825, 4179, 5839)
+graph: permuted (5839, 1998, 5825)
+graph: permuted (572, 5819, 5870)
+graph: permuted (5902, 1271, 5310)
+graph: permuted (5310, 665, 5902)
+core: Found 97 type 2's, made 146 changes
+core: Chi: 0.1786476284260627
+core: repeating...
+core: Looking for type 2:
+core: Chi: 0.17561135729525684
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 5 type 2's, made 0 changes
+core: Chi: 0.17561135729525684
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 3:
+core: Chi: 0.17561135729525684
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+graph: permuted (396, 4273, 265)
+graph: permuted (2082, 5938, 276)
+graph: permuted (3315, 4272, 449)
+graph: permuted (580, 246, 3463)
+graph: permuted (3463, 226, 580)
+graph: permuted (1111, 855, 5865)
+graph: permuted (5865, 906, 1111)
+graph: permuted (2882, 4866, 1164)
+graph: permuted (261, 2964, 1305)
+graph: permuted (1451, 573, 5455)
+graph: permuted (5455, 729, 1451)
+graph: permuted (439, 2805, 1469)
+graph: permuted (508, 4887, 1469)
+graph: permuted (2025, 451, 2523)
+graph: permuted (2523, 775, 2025)
+graph: permuted (2064, 398, 3781)
+graph: permuted (3781, 999, 2064)
+graph: permuted (2144, 483, 3850)
+graph: permuted (3850, 938, 2144)
+graph: permuted (2203, 680, 5279)
+graph: permuted (5279, 1263, 2203)
+graph: permuted (2230, 2297, 5616)
+graph: permuted (5616, 1954, 2230)
+graph: permuted (2271, 437, 5257)
+graph: permuted (5257, 1240, 2271)
+graph: permuted (3700, 935, 2429)
+graph: permuted (2556, 2481, 4883)
+graph: permuted (4883, 2154, 2556)
+graph: permuted (2632, 406, 4087)
+graph: permuted (4087, 448, 2632)
+graph: permuted (4525, 4740, 2729)
+graph: permuted (172, 188, 2796)
+graph: permuted (3537, 3882, 2796)
+graph: permuted (4669, 768, 2862)
+graph: permuted (3905, 2696, 2906)
+graph: permuted (1665, 1305, 2964)
+graph: permuted (3000, 639, 5587)
+graph: permuted (5587, 2362, 3000)
+graph: permuted (3065, 609, 3748)
+graph: permuted (3748, 1629, 3065)
+graph: permuted (3102, 2070, 4203)
+graph: permuted (4203, 593, 3102)
+graph: permuted (3204, 224, 5704)
+graph: permuted (5704, 1438, 3204)
+graph: permuted (401, 1979, 3341)
+graph: permuted (3353, 2250, 5887)
+graph: permuted (5887, 2218, 3353)
+graph: permuted (2970, 1375, 3414)
+graph: permuted (2200, 4844, 3471)
+graph: permuted (450, 259, 3566)
+graph: permuted (3586, 646, 5483)
+graph: permuted (5483, 664, 3586)
+graph: permuted (2041, 5915, 3600)
+graph: permuted (3632, 300, 5403)
+graph: permuted (5403, 1774, 3632)
+graph: permuted (3661, 818, 4901)
+graph: permuted (4901, 901, 3661)
+graph: permuted (3761, 425, 5647)
+graph: permuted (5647, 1804, 3761)
+graph: permuted (454, 5560, 3785)
+graph: permuted (2478, 3602, 3787)
+graph: permuted (1257, 4461, 3808)
+graph: permuted (3819, 1267, 5726)
+graph: permuted (5726, 1148, 3819)
+graph: permuted (3840, 1832, 4543)
+graph: permuted (4543, 574, 3840)
+graph: permuted (3885, 2936, 5188)
+graph: permuted (5188, 2698, 3885)
+graph: permuted (4089, 226, 4617)
+graph: permuted (4617, 2175, 4089)
+graph: permuted (4264, 693, 2631)
+graph: permuted (2631, 702, 4264)
+graph: permuted (4287, 578, 5515)
+graph: permuted (5515, 743, 4287)
+graph: permuted (1395, 5615, 4299)
+graph: permuted (3227, 5449, 4304)
+graph: permuted (568, 4611, 4340)
+graph: permuted (4370, 610, 5622)
+graph: permuted (5622, 1312, 4370)
+graph: permuted (403, 3840, 4372)
+graph: permuted (433, 5252, 4439)
+graph: permuted (434, 595, 4468)
+graph: permuted (4510, 1608, 5683)
+graph: permuted (5683, 317, 4510)
+graph: permuted (4577, 300, 5576)
+graph: permuted (5576, 307, 4577)
+graph: permuted (664, 3028, 4625)
+graph: permuted (5090, 5643, 4628)
+graph: permuted (4639, 1049, 5210)
+graph: permuted (5210, 398, 4639)
+graph: permuted (1314, 3623, 4679)
+graph: permuted (4772, 1202, 5694)
+graph: permuted (5694, 856, 4772)
+graph: permuted (771, 3476, 4822)
+graph: permuted (4704, 2844, 4837)
+graph: permuted (216, 3287, 4852)
+graph: permuted (4990, 913, 2603)
+graph: permuted (2603, 602, 4990)
+graph: permuted (5037, 627, 5055)
+graph: permuted (5055, 311, 5037)
+graph: permuted (5040, 4162, 5426)
+graph: permuted (5426, 3179, 5040)
+graph: permuted (5049, 1594, 5931)
+graph: permuted (5931, 3179, 5049)
+graph: permuted (2391, 5730, 5089)
+graph: permuted (5165, 3654, 5172)
+graph: permuted (5172, 912, 5165)
+graph: permuted (5202, 2497, 5915)
+graph: permuted (5915, 1547, 5202)
+graph: permuted (548, 2452, 5213)
+graph: permuted (499, 4002, 5238)
+graph: permuted (586, 3020, 5251)
+graph: permuted (5271, 2039, 5964)
+graph: permuted (5964, 365, 5271)
+graph: permuted (5283, 1390, 4585)
+graph: permuted (4585, 426, 5283)
+graph: permuted (4045, 1124, 5308)
+graph: permuted (3413, 604, 5313)
+graph: permuted (4935, 788, 5397)
+graph: permuted (5097, 469, 5402)
+graph: permuted (1454, 392, 5413)
+graph: permuted (5449, 462, 5698)
+graph: permuted (5698, 3151, 5449)
+graph: permuted (2858, 5284, 5493)
+graph: permuted (1912, 2827, 5546)
+graph: permuted (1235, 4720, 5599)
+graph: permuted (591, 5030, 5618)
+graph: permuted (4144, 1983, 5627)
+graph: permuted (4293, 5412, 5652)
+graph: permuted (1047, 4971, 5655)
+graph: permuted (5665, 1145, 5725)
+graph: permuted (5725, 629, 5665)
+graph: permuted (3837, 5447, 5667)
+graph: permuted (1444, 220, 5686)
+graph: permuted (4439, 718, 5708)
+graph: permuted (5709, 1548, 5851)
+graph: permuted (5851, 353, 5709)
+graph: permuted (1491, 4553, 5723)
+graph: permuted (5757, 619, 5803)
+graph: permuted (5803, 1336, 5757)
+graph: permuted (5785, 1539, 5867)
+graph: permuted (5867, 4220, 5785)
+graph: permuted (572, 5870, 5819)
+graph: permuted (3625, 765, 5836)
+graph: permuted (3897, 1566, 5847)
+graph: permuted (1927, 3784, 5890)
+graph: permuted (805, 3753, 5906)
+graph: permuted (321, 5379, 6003)
+core: Found 108 type 3's, made 148 changes
+core: Chi: 0.17561135729525684
+core: repeating...
+core: Looking for type 3:
+core: Chi: 0.17331363860167406
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 4 type 3's, made 0 changes
+core: Chi: 0.17331363860167406
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.17331363860167406
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+graph: permuted (473, 5743, 6004)
+graph: permuted (2031, 2502, 5965)
+graph: permuted (3600, 4253, 5320)
+graph: permuted (4211, 2114, 4996)
+graph: permuted (4699, 3418, 5916)
+graph: permuted (5071, 1592, 5935)
+core: Found 6 type 4's, made 6 changes
+core: Chi: 0.17331363860167406
+core: repeating...
+core: Looking for type 4:
+core: Chi: 0.17331363860167406
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.17331363860167406
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.17331363860167406
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+graph: permuted (556, 224, 5058)
+graph: permuted (1814, 1341, 3593)
+core: Found 2 type 5's, made 2 changes
+core: Chi: 0.17331363860167406
+core: repeating...
+core: Looking for type 5:
+core: Chi: 0.17331363860167406
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.17331363860167406
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 1:
+core: Chi: 0.17331363860167406
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+graph: permuted (346, 1192, 697)
+graph: permuted (910, 30, 2129)
+graph: permuted (1124, 4045, 5322)
+graph: permuted (2144, 2329, 1048)
+graph: permuted (5266, 1500, 4965)
+graph: permuted (5514, 5862, 2345)
+core: Found 237 type 1's, made 6 changes
+core: Chi: 0.17331363860167406
+core: repeating...
+core: Looking for type 1:
+core: Chi: 0.17298539307401936
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 230 type 1's, made 0 changes
+core: Chi: 0.17298539307401936
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.17298539307401936
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+graph: permuted (1444, 5686, 220)
+graph: permuted (450, 3566, 259)
+graph: permuted (697, 3645, 346)
+graph: permuted (434, 4468, 595)
+graph: permuted (1665, 2964, 1305)
+graph: permuted (401, 3341, 1979)
+graph: permuted (4144, 5627, 1983)
+graph: permuted (1048, 938, 2144)
+graph: permuted (548, 5213, 2452)
+graph: permuted (3905, 2906, 2696)
+graph: permuted (439, 1469, 2805)
+graph: permuted (261, 1305, 2964)
+graph: permuted (586, 5251, 3020)
+graph: permuted (664, 4625, 3028)
+graph: permuted (216, 4852, 3287)
+graph: permuted (771, 4822, 3476)
+graph: permuted (2478, 3787, 3602)
+graph: permuted (1314, 4679, 3623)
+graph: permuted (1927, 5890, 3784)
+graph: permuted (3537, 2796, 3882)
+graph: permuted (499, 5238, 4002)
+graph: permuted (3315, 449, 4272)
+graph: permuted (396, 265, 4273)
+graph: permuted (1257, 3808, 4461)
+graph: permuted (1491, 5723, 4553)
+graph: permuted (1235, 5599, 4720)
+graph: permuted (4525, 2729, 4740)
+graph: permuted (2200, 3471, 4844)
+graph: permuted (2882, 1164, 4866)
+graph: permuted (508, 1469, 4887)
+graph: permuted (1500, 4939, 4965)
+graph: permuted (1047, 5655, 4971)
+graph: permuted (591, 5618, 5030)
+graph: permuted (433, 4439, 5252)
+graph: permuted (2858, 5493, 5284)
+graph: permuted (321, 6003, 5379)
+graph: permuted (4293, 5652, 5412)
+graph: permuted (3837, 5667, 5447)
+graph: permuted (454, 3785, 5560)
+graph: permuted (5090, 4628, 5643)
+graph: permuted (2391, 5089, 5730)
+graph: permuted (572, 5819, 5870)
+graph: permuted (2041, 3600, 5915)
+graph: permuted (2082, 276, 5938)
+core: Found 50 type 2's, made 44 changes
+core: Chi: 0.17298539307401936
+core: repeating...
+core: Looking for type 2:
+core: Chi: 0.17273920892827835
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 6 type 2's, made 0 changes
+core: Chi: 0.17273920892827835
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 3:
+core: Chi: 0.17273920892827835
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+graph: permuted (396, 4273, 265)
+graph: permuted (2082, 5938, 276)
+graph: permuted (3315, 4272, 449)
+graph: permuted (2882, 4866, 1164)
+graph: permuted (261, 2964, 1305)
+graph: permuted (439, 2805, 1469)
+graph: permuted (508, 4887, 1469)
+graph: permuted (4525, 4740, 2729)
+graph: permuted (3537, 3882, 2796)
+graph: permuted (3905, 2696, 2906)
+graph: permuted (1665, 1305, 2964)
+graph: permuted (401, 1979, 3341)
+graph: permuted (2200, 4844, 3471)
+graph: permuted (450, 259, 3566)
+graph: permuted (2041, 5915, 3600)
+graph: permuted (3645, 697, 5198)
+graph: permuted (5198, 941, 3645)
+graph: permuted (454, 5560, 3785)
+graph: permuted (2478, 3602, 3787)
+graph: permuted (1257, 4461, 3808)
+graph: permuted (433, 5252, 4439)
+graph: permuted (434, 595, 4468)
+graph: permuted (664, 3028, 4625)
+graph: permuted (5090, 5643, 4628)
+graph: permuted (1314, 3623, 4679)
+graph: permuted (771, 3476, 4822)
+graph: permuted (216, 3287, 4852)
+graph: permuted (1500, 4965, 4939)
+graph: permuted (2391, 5730, 5089)
+graph: permuted (548, 2452, 5213)
+graph: permuted (499, 4002, 5238)
+graph: permuted (586, 3020, 5251)
+graph: permuted (910, 2094, 5358)
+graph: permuted (2858, 5284, 5493)
+graph: permuted (1235, 4720, 5599)
+graph: permuted (591, 5030, 5618)
+graph: permuted (4144, 1983, 5627)
+graph: permuted (4293, 5412, 5652)
+graph: permuted (1047, 4971, 5655)
+graph: permuted (3837, 5447, 5667)
+graph: permuted (1444, 220, 5686)
+graph: permuted (1491, 4553, 5723)
+graph: permuted (572, 5870, 5819)
+graph: permuted (1927, 3784, 5890)
+graph: permuted (321, 5379, 6003)
+core: Found 48 type 3's, made 45 changes
+core: Chi: 0.17273920892827835
+core: Looking for type 4:
+core: Chi: 0.1731495158378467
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.1731495158378467
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.1731495158378467
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.1731495158378467
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 1:
+core: Chi: 0.1731495158378467
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 231 type 1's, made 0 changes
+core: Chi: 0.1731495158378467
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.1731495158378467
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+graph: permuted (1444, 5686, 220)
+graph: permuted (450, 3566, 259)
+graph: permuted (434, 4468, 595)
+graph: permuted (1665, 2964, 1305)
+graph: permuted (401, 3341, 1979)
+graph: permuted (4144, 5627, 1983)
+graph: permuted (910, 5358, 2094)
+graph: permuted (548, 5213, 2452)
+graph: permuted (3905, 2906, 2696)
+graph: permuted (439, 1469, 2805)
+graph: permuted (261, 1305, 2964)
+graph: permuted (586, 5251, 3020)
+graph: permuted (664, 4625, 3028)
+graph: permuted (216, 4852, 3287)
+graph: permuted (771, 4822, 3476)
+graph: permuted (2478, 3787, 3602)
+graph: permuted (1314, 4679, 3623)
+graph: permuted (1927, 5890, 3784)
+graph: permuted (3537, 2796, 3882)
+graph: permuted (499, 5238, 4002)
+graph: permuted (3315, 449, 4272)
+graph: permuted (396, 265, 4273)
+graph: permuted (1257, 3808, 4461)
+graph: permuted (1491, 5723, 4553)
+graph: permuted (1235, 5599, 4720)
+graph: permuted (4525, 2729, 4740)
+graph: permuted (2200, 3471, 4844)
+graph: permuted (2882, 1164, 4866)
+graph: permuted (508, 1469, 4887)
+graph: permuted (1500, 4939, 4965)
+graph: permuted (1047, 5655, 4971)
+graph: permuted (591, 5618, 5030)
+graph: permuted (433, 4439, 5252)
+graph: permuted (2858, 5493, 5284)
+graph: permuted (321, 6003, 5379)
+graph: permuted (4293, 5652, 5412)
+graph: permuted (3837, 5667, 5447)
+graph: permuted (454, 3785, 5560)
+graph: permuted (5090, 4628, 5643)
+graph: permuted (2391, 5089, 5730)
+graph: permuted (572, 5819, 5870)
+graph: permuted (2041, 3600, 5915)
+graph: permuted (2082, 276, 5938)
+core: Found 49 type 2's, made 43 changes
+core: Chi: 0.1731495158378467
+core: repeating...
+core: Looking for type 2:
+core: Chi: 0.17273920892827835
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 6 type 2's, made 0 changes
+core: Chi: 0.17273920892827835
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 3:
+core: Chi: 0.17273920892827835
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+graph: permuted (396, 4273, 265)
+graph: permuted (2082, 5938, 276)
+graph: permuted (3315, 4272, 449)
+graph: permuted (2882, 4866, 1164)
+graph: permuted (261, 2964, 1305)
+graph: permuted (439, 2805, 1469)
+graph: permuted (508, 4887, 1469)
+graph: permuted (4525, 4740, 2729)
+graph: permuted (3537, 3882, 2796)
+graph: permuted (3905, 2696, 2906)
+graph: permuted (1665, 1305, 2964)
+graph: permuted (401, 1979, 3341)
+graph: permuted (2200, 4844, 3471)
+graph: permuted (450, 259, 3566)
+graph: permuted (2041, 5915, 3600)
+graph: permuted (454, 5560, 3785)
+graph: permuted (2478, 3602, 3787)
+graph: permuted (1257, 4461, 3808)
+graph: permuted (433, 5252, 4439)
+graph: permuted (434, 595, 4468)
+graph: permuted (664, 3028, 4625)
+graph: permuted (5090, 5643, 4628)
+graph: permuted (1314, 3623, 4679)
+graph: permuted (771, 3476, 4822)
+graph: permuted (216, 3287, 4852)
+graph: permuted (1500, 4965, 4939)
+graph: permuted (2391, 5730, 5089)
+graph: permuted (548, 2452, 5213)
+graph: permuted (499, 4002, 5238)
+graph: permuted (586, 3020, 5251)
+graph: permuted (910, 2094, 5358)
+graph: permuted (2858, 5284, 5493)
+graph: permuted (1235, 4720, 5599)
+graph: permuted (591, 5030, 5618)
+graph: permuted (4144, 1983, 5627)
+graph: permuted (4293, 5412, 5652)
+graph: permuted (1047, 4971, 5655)
+graph: permuted (3837, 5447, 5667)
+graph: permuted (1444, 220, 5686)
+graph: permuted (1491, 4553, 5723)
+graph: permuted (572, 5870, 5819)
+graph: permuted (1927, 3784, 5890)
+graph: permuted (321, 5379, 6003)
+core: Found 47 type 3's, made 43 changes
+core: Chi: 0.17273920892827835
+core: Looking for type 4:
+core: Chi: 0.1731495158378467
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.1731495158378467
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.1731495158378467
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.1731495158378467
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 1:
+core: Chi: 0.1731495158378467
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 231 type 1's, made 0 changes
+core: Chi: 0.1731495158378467
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.1731495158378467
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+graph: permuted (1444, 5686, 220)
+graph: permuted (450, 3566, 259)
+graph: permuted (434, 4468, 595)
+graph: permuted (1665, 2964, 1305)
+graph: permuted (401, 3341, 1979)
+graph: permuted (4144, 5627, 1983)
+graph: permuted (910, 5358, 2094)
+graph: permuted (548, 5213, 2452)
+graph: permuted (3905, 2906, 2696)
+graph: permuted (439, 1469, 2805)
+graph: permuted (261, 1305, 2964)
+graph: permuted (586, 5251, 3020)
+graph: permuted (664, 4625, 3028)
+graph: permuted (216, 4852, 3287)
+graph: permuted (771, 4822, 3476)
+graph: permuted (2478, 3787, 3602)
+graph: permuted (1314, 4679, 3623)
+graph: permuted (1927, 5890, 3784)
+graph: permuted (3537, 2796, 3882)
+graph: permuted (499, 5238, 4002)
+graph: permuted (3315, 449, 4272)
+graph: permuted (396, 265, 4273)
+graph: permuted (1257, 3808, 4461)
+graph: permuted (1491, 5723, 4553)
+graph: permuted (1235, 5599, 4720)
+graph: permuted (4525, 2729, 4740)
+graph: permuted (2200, 3471, 4844)
+graph: permuted (2882, 1164, 4866)
+graph: permuted (508, 1469, 4887)
+graph: permuted (1500, 4939, 4965)
+graph: permuted (1047, 5655, 4971)
+graph: permuted (591, 5618, 5030)
+graph: permuted (433, 4439, 5252)
+graph: permuted (2858, 5493, 5284)
+graph: permuted (321, 6003, 5379)
+graph: permuted (4293, 5652, 5412)
+graph: permuted (3837, 5667, 5447)
+graph: permuted (454, 3785, 5560)
+graph: permuted (5090, 4628, 5643)
+graph: permuted (2391, 5089, 5730)
+graph: permuted (572, 5819, 5870)
+graph: permuted (2041, 3600, 5915)
+graph: permuted (2082, 276, 5938)
+core: Found 49 type 2's, made 43 changes
+core: Chi: 0.1731495158378467
+core: repeating...
+core: Looking for type 2:
+core: Chi: 0.17273920892827835
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 6 type 2's, made 0 changes
+core: Chi: 0.17273920892827835
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 3:
+core: Chi: 0.17273920892827835
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+graph: permuted (396, 4273, 265)
+graph: permuted (2082, 5938, 276)
+graph: permuted (3315, 4272, 449)
+graph: permuted (2882, 4866, 1164)
+graph: permuted (261, 2964, 1305)
+graph: permuted (439, 2805, 1469)
+graph: permuted (508, 4887, 1469)
+graph: permuted (4525, 4740, 2729)
+graph: permuted (3537, 3882, 2796)
+graph: permuted (3905, 2696, 2906)
+graph: permuted (1665, 1305, 2964)
+graph: permuted (401, 1979, 3341)
+graph: permuted (2200, 4844, 3471)
+graph: permuted (450, 259, 3566)
+graph: permuted (2041, 5915, 3600)
+graph: permuted (454, 5560, 3785)
+graph: permuted (2478, 3602, 3787)
+graph: permuted (1257, 4461, 3808)
+graph: permuted (433, 5252, 4439)
+graph: permuted (434, 595, 4468)
+graph: permuted (664, 3028, 4625)
+graph: permuted (5090, 5643, 4628)
+graph: permuted (1314, 3623, 4679)
+graph: permuted (771, 3476, 4822)
+graph: permuted (216, 3287, 4852)
+graph: permuted (1500, 4965, 4939)
+graph: permuted (2391, 5730, 5089)
+graph: permuted (548, 2452, 5213)
+graph: permuted (499, 4002, 5238)
+graph: permuted (586, 3020, 5251)
+graph: permuted (910, 2094, 5358)
+graph: permuted (2858, 5284, 5493)
+graph: permuted (1235, 4720, 5599)
+graph: permuted (591, 5030, 5618)
+graph: permuted (4144, 1983, 5627)
+graph: permuted (4293, 5412, 5652)
+graph: permuted (1047, 4971, 5655)
+graph: permuted (3837, 5447, 5667)
+graph: permuted (1444, 220, 5686)
+graph: permuted (1491, 4553, 5723)
+graph: permuted (572, 5870, 5819)
+graph: permuted (1927, 3784, 5890)
+graph: permuted (321, 5379, 6003)
+core: Found 47 type 3's, made 43 changes
+core: Chi: 0.17273920892827835
+core: Looking for type 4:
+core: Chi: 0.1731495158378467
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.1731495158378467
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.1731495158378467
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.1731495158378467
+core: repeating...
+core: No changes made, continuing...
+core: Looking for intersections
+graph: Mapping friends..
+graph: friends mapped!
+core: Found 0 intersections
+core: 0 literal intersections still remain
+core: Weak untangling complete
+graph: Mapping friends..
+graph: friends mapped!
