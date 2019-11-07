@@ -354,6 +354,18 @@ def weak_resolve(graph_obj, configs, classes, search_type, ui_obj=None):
 
         return changes
 
+    elif search_type == 6:
+        for class_, config in zip(classes, configs):
+            i = config[0].vertex_indices[0]
+            j = config[0].vertex_indices[1]
+            a = config[0].vertex_indices[2]
+            b = config[0].vertex_indices[3]
+            c = config[1].vertex_indices[2]
+            d = config[1].vertex_indices[3]
+
+            if class_ == 'A_1':
+                pass
+
     else:
 
         return 0

@@ -1094,6 +1094,18 @@ class AtomicGraph:
 
         return k
 
+    def weak_preserve_edge(self, i, j, aggressive=False):
+
+        config = self.get_atomic_configuration(j, use_friends=True)
+        options = []
+
+        for mesh in config.meshes:
+            for m, corner in enumerate(mesh.vertex_indices):
+                if m not in [0, 1, len(mesh.vertex_indices) - 1]:
+                    options.append(corner)
+                if m == 1 and corner not in self.vertices[i].partners():
+                    options.append(corner)
+
     def strong_remove_edge(self, i, j):
 
         if self.permute_j_to_last_partner(i, j):
