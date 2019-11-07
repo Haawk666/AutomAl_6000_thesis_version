@@ -1164,7 +1164,7 @@ class AtomicGraph:
                         self.determine_subsets(index)
                         self.sort_subsets_by_distance(index)
 
-                    logger.debug('permuted ({}, {}, {})'.format(i, j, k))
+                    logger.info('permuted ({}, {}, {})'.format(i, j, k))
                     self.permute_pos_j_pos_k(i, pos_j, pos_k)
                     return True
 

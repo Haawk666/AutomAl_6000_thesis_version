@@ -205,11 +205,8 @@ def weak_resolve(graph_obj, configs, classes, search_type, ui_obj=None):
                             ui_obj.gs_atomic_graph.perturb_edge(i, j, k, permute_data=False)
 
             elif class_ == 'G_1':
-                if graph_obj.vertices[i].partner_query(j):
-                    if graph_obj.permute_j_k(j, b, i):
-                        changes += 1
-                        if ui_obj is not None:
-                            ui_obj.gs_atomic_graph.perturb_edge(j, b, i, permute_data=False)
+                pass
+
             elif class_ == 'G_2':
                 if graph_obj.vertices[i].partner_query(j):
                     if graph_obj.permute_j_k(j, a, i):

@@ -73,7 +73,6 @@ class MainUI(QtWidgets.QMainWindow):
 
         self.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.terminal_window_dock)
 
-        # pssst
         # Tab contents:
         self.no_graphic = QtGui.QPixmap('Images\\no_image.png')
         self.graphic = QtGui.QPixmap('Images\\no_image.png')
