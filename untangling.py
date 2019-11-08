@@ -1,5 +1,9 @@
 """Module containing the graph untangling algorithm by Haakon Tvedt."""
 import graph
+import logging
+# Instantiate logger:
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 def strong_resolve(graph_obj, configs, classes, search_type, ui_obj=None):
@@ -359,7 +363,10 @@ def weak_resolve(graph_obj, configs, classes, search_type, ui_obj=None):
 
             if class_ == 'A_1':
                 k = graph_obj.weak_preserve_edge(i, j)
-                pass
+                if graph_obj.permute_j_k(j, k, i):
+                    changes += 1
+                    if ui_obj is not None:
+                        ui_obj.gs_atomic_graph.perturb_edge(j, k, i, permute_data=False)
 
         return changes
 
@@ -611,6 +618,7 @@ def find_type(graph_obj, search_type, strong=False, ui_obj=None):
                         if strong:
                             changes += strong_resolve(graph_obj, [config], [class_], search_type, ui_obj=ui_obj)
                         else:
+                            logger.info('{}, {}: {} - {}'.format(config[0].vertex_indices[0], config[0].vertex_indices[1], search_type, class_))
                             changes += weak_resolve(graph_obj, [config], [class_], search_type, ui_obj=ui_obj)
                         found += 1
 
@@ -621,6 +629,8 @@ def find_type(graph_obj, search_type, strong=False, ui_obj=None):
                         if strong:
                             changes += strong_resolve(graph_obj, [config], [class_], search_type, ui_obj=ui_obj)
                         else:
+                            logger.info('{}, {}: {} - {}'.format(config[0].vertex_indices[0], config[0].vertex_indices[1],
+                                                           search_type, class_))
                             changes += weak_resolve(graph_obj, [config], [class_], search_type, ui_obj=ui_obj)
                         found += 1
 
@@ -631,6 +641,8 @@ def find_type(graph_obj, search_type, strong=False, ui_obj=None):
                         if strong:
                             changes += strong_resolve(graph_obj, [config], [class_], search_type, ui_obj=ui_obj)
                         else:
+                            logger.info('{}, {}: {} - {}'.format(config[0].vertex_indices[0], config[0].vertex_indices[1],
+                                                           search_type, class_))
                             changes += weak_resolve(graph_obj, [config], [class_], search_type, ui_obj=ui_obj)
                         found += 1
 
@@ -641,6 +653,8 @@ def find_type(graph_obj, search_type, strong=False, ui_obj=None):
                         if strong:
                             changes += strong_resolve(graph_obj, [config], [class_], search_type, ui_obj=ui_obj)
                         else:
+                            logger.info('{}, {}: {} - {}'.format(config[0].vertex_indices[0], config[0].vertex_indices[1],
+                                                           search_type, class_))
                             changes += weak_resolve(graph_obj, [config], [class_], search_type, ui_obj=ui_obj)
                         found += 1
 
@@ -651,6 +665,8 @@ def find_type(graph_obj, search_type, strong=False, ui_obj=None):
                         if strong:
                             changes += strong_resolve(graph_obj, [config], [class_], search_type, ui_obj=ui_obj)
                         else:
+                            logger.info('{}, {}: {} - {}'.format(config[0].vertex_indices[0], config[0].vertex_indices[1],
+                                                           search_type, class_))
                             changes += weak_resolve(graph_obj, [config], [class_], search_type, ui_obj=ui_obj)
                         found += 1
 
@@ -661,6 +677,8 @@ def find_type(graph_obj, search_type, strong=False, ui_obj=None):
                         if strong:
                             changes += strong_resolve(graph_obj, [config], [class_], search_type, ui_obj=ui_obj)
                         else:
+                            logger.info('{}, {}: {} - {}'.format(config[0].vertex_indices[0], config[0].vertex_indices[1],
+                                                           search_type, class_))
                             changes += weak_resolve(graph_obj, [config], [class_], search_type, ui_obj=ui_obj)
                         found += 1
 

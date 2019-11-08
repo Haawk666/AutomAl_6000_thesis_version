@@ -184,9 +184,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.update_column_positions(void=void)
         self.update_overlay(void=void)
         self.update_graph()
-        self.update_sub_graph(void=void)
-        self.update_anti_graph(void=void)
-        self.update_info_graph()
+
         self.update_search_matrix(void=void)
         self.update_fft(void=void)
 
@@ -220,17 +218,13 @@ class MainUI(QtWidgets.QMainWindow):
         self.gs_atomic_graph = GUI_elements.AtomicGraph(ui_obj=self, scale_factor=2)
         self.gv_atomic_graph.setScene(self.gs_atomic_graph)
 
-    def update_sub_graph(self, void=False):
-        if void:
-            graphic_ = self.no_graphic
-            self.gs_atomic_sub_graph = GUI_elements.AtomicSubGraph(ui_obj=self, background=graphic_)
-            self.gv_atomic_sub_graph.setScene(self.gs_atomic_sub_graph)
+    def update_sub_graph(self):
+        self.gs_atomic_sub_graph = GUI_elements.AtomicSubGraph(ui_obj=self)
+        self.gv_atomic_sub_graph.setScene(self.gs_atomic_sub_graph)
 
-    def update_anti_graph(self, void=False):
-        if void:
-            graphic_ = self.no_graphic
-            self.gs_anti_graph = GUI_elements.AtomicSubGraph(ui_obj=self, background=graphic_)
-            self.gv_anti_graph.setScene(self.gs_anti_graph)
+    def update_anti_graph(self):
+        self.gs_anti_graph = GUI_elements.AtomicSubGraph(ui_obj=self)
+        self.gv_anti_graph.setScene(self.gs_anti_graph)
 
     def update_info_graph(self):
         self.gs_info_graph = GUI_elements.InfoGraph(ui_obj=self, scale_factor=2)
@@ -366,7 +360,6 @@ class MainUI(QtWidgets.QMainWindow):
             self.project_instance = core.SuchSoftware(filename[0])
             self.control_instance = None
             self.update_display()
-            self.update_sub_graph(True)
         else:
             self.sys_message('Ready')
 
@@ -386,7 +379,6 @@ class MainUI(QtWidgets.QMainWindow):
                 self.control_instance = None
                 self.savefile = filename[0]
                 self.update_display()
-                self.update_sub_graph(True)
                 self.sys_message('Ready')
             else:
                 logger.info('File was not loaded. Something must have gone wrong!')
@@ -416,7 +408,6 @@ class MainUI(QtWidgets.QMainWindow):
         self.project_instance = None
         self.control_instance = None
         self.update_display()
-        self.update_sub_graph(True)
         self.sys_message('Ready.')
 
     def menu_exit_trigger(self):
@@ -593,6 +584,8 @@ class MainUI(QtWidgets.QMainWindow):
             self.control_window.debug_box.set_hidden()
 
     def menu_add_mark_trigger(self):
+        logger.info('Column positions: {}'.format(self.gv_atomic_positions.size()))
+        logger.info('Graph: {}'.format(self.gv_atomic_positions.size()))
         logger.info('-------------')
 
     def menu_clear_flags_trigger(self):
@@ -896,6 +889,18 @@ class MainUI(QtWidgets.QMainWindow):
     def btn_print_details_trigger(self):
         if self.project_instance is not None and not self.selected_column == -1:
             self.project_instance.vertex_report(self.selected_column)
+
+    def btn_snap_trigger(self):
+        if self.project_instance is not None and not self.selected_column == -1:
+            coor = self.project_instance.graph.vertices[self.selected_column].real_coor()
+            self.gv_raw_image.scale(3.5, 3.5)
+            self.gv_raw_image.centerOn(coor[0], coor[1])
+            self.gv_atomic_positions.scale(3.5, 3.5)
+            self.gv_atomic_positions.centerOn(coor[0], coor[1])
+            self.gv_overlay_composition.scale(3.5, 3.5)
+            self.gv_overlay_composition.centerOn(coor[0], coor[1])
+            self.gv_atomic_graph.scale(3.5, 3.5)
+            self.gv_atomic_graph.centerOn(coor[0], coor[1])
 
     def btn_gen_sub_graph(self):
         if self.project_instance is not None:

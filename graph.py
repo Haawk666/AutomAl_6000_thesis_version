@@ -171,8 +171,7 @@ class Vertex:
         :rtype: tuple(<float>, <float>)
 
         """
-        real_coor = (self.real_coor_x, self.real_coor_y)
-        return real_coor
+        return (self.real_coor_x, self.real_coor_y)
 
     def spatial_coor(self):
         """Return a tuple of the vertex spatial coordinates in floats.
@@ -1104,8 +1103,6 @@ class AtomicGraph:
                 if (m == 1 or m == len(mesh.vertex_indices) - 1) and corner in self.vertices[j].partners() and not corner == i:
                     options.append(corner)
 
-        print('{}, {}, {}'.format(i, j, options))
-
         k = -1
         for option in options:
             mesh_1 = self.find_mesh(j, option, return_mesh=True, use_friends=True)
@@ -1113,8 +1110,6 @@ class AtomicGraph:
             if mesh_1.num_corners == 3 and mesh_2.num_corners == 3:
                 k = option
                 break
-
-        print(k)
 
         return k
 
