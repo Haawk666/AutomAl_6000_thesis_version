@@ -163,17 +163,11 @@ def weak_resolve(graph_obj, configs, classes, search_type, ui_obj=None):
                         if ui_obj is not None:
                             ui_obj.gs_atomic_graph.perturb_edge(i, j, k, permute_data=False)
             elif class_ == 'B_1':
-                if graph_obj.vertices[j].partner_query(b):
-                    if graph_obj.permute_j_k(j, b, i):
-                        changes += 1
-                        if ui_obj is not None:
-                            ui_obj.gs_atomic_graph.perturb_edge(j, b, i, permute_data=False)
+                pass
+
             elif class_ == 'B_2':
-                if graph_obj.vertices[j].partner_query(a):
-                    if graph_obj.permute_j_k(j, a, i):
-                        changes += 1
-                        if ui_obj is not None:
-                            ui_obj.gs_atomic_graph.perturb_edge(j, a, i, permute_data=False)
+                pass
+
             elif class_ == 'C_1':
                 if graph_obj.vertices[i].partner_query(j):
                     if graph_obj.permute_j_k(i, j, a):
@@ -243,11 +237,12 @@ def weak_resolve(graph_obj, configs, classes, search_type, ui_obj=None):
             c = config[1].vertex_indices[2]
 
             if class_ == 'A_1':
-                if graph_obj.vertices[j].partner_query(c):
-                    if graph_obj.permute_j_k(j, c, i):
+                k = graph_obj.weak_preserve_edge(i, j)
+                if not k == -1:
+                    if graph_obj.permute_j_k(j, k, i):
                         changes += 1
                         if ui_obj is not None:
-                            ui_obj.gs_atomic_graph.perturb_edge(j, c, i, permute_data=False)
+                            ui_obj.gs_atomic_graph.perturb_edge(j, k, i, permute_data=False)
 
             elif class_ == 'B_1' or class_ == 'C_1':
                 if graph_obj.vertices[i].partner_query(j) and graph_obj.vertices[a].partner_query(b):
@@ -255,17 +250,14 @@ def weak_resolve(graph_obj, configs, classes, search_type, ui_obj=None):
                         changes += 1
                         if ui_obj is not None:
                             ui_obj.gs_atomic_graph.perturb_edge(i, j, a, permute_data=False)
-                    if graph_obj.permute_j_k(a, b, i):
-                        changes += 1
-                        if ui_obj is not None:
-                            ui_obj.gs_atomic_graph.perturb_edge(a, b, i, permute_data=False)
 
             elif class_ == 'D_1':
-                if graph_obj.vertices[j].partner_query(j):
-                    if graph_obj.permute_j_k(j, c, i):
+                k = graph_obj.weak_preserve_edge(i, j)
+                if not k == -1:
+                    if graph_obj.permute_j_k(j, k, i):
                         changes += 1
                         if ui_obj is not None:
-                            ui_obj.gs_atomic_graph.perturb_edge(j, c, i, permute_data=False)
+                            ui_obj.gs_atomic_graph.perturb_edge(j, k, i, permute_data=False)
 
             elif class_ == 'E_1':
                 pass
@@ -281,27 +273,27 @@ def weak_resolve(graph_obj, configs, classes, search_type, ui_obj=None):
             c = config[1].vertex_indices[3]
 
             if class_ == 'A_1':
-                if graph_obj.vertices[j].partner_query(a):
-                    if graph_obj.permute_j_k(j, a, i):
+                k = graph_obj.weak_preserve_edge(i, j)
+                if not k == -1:
+                    if graph_obj.permute_j_k(j, k, i):
                         changes += 1
                         if ui_obj is not None:
-                            ui_obj.gs_atomic_graph.perturb_edge(j, a, i, permute_data=False)
+                            ui_obj.gs_atomic_graph.perturb_edge(j, k, i, permute_data=False)
+
             elif class_ == 'B_1' or class_ == 'C_1':
                 if graph_obj.vertices[i].partner_query(j) and graph_obj.vertices[c].partner_query(b):
                     if graph_obj.permute_j_k(i, j, c):
                         changes += 1
                         if ui_obj is not None:
                             ui_obj.gs_atomic_graph.perturb_edge(i, j, c, permute_data=False)
-                    if graph_obj.permute_j_k(c, b, i):
-                        changes += 1
-                        if ui_obj is not None:
-                            ui_obj.gs_atomic_graph.perturb_edge(c, b, i, permute_data=False)
+
             elif class_ == 'D_1':
-                if graph_obj.vertices[j].partner_query(a):
-                    if graph_obj.permute_j_k(j, a, i):
+                k = graph_obj.weak_preserve_edge(i, j)
+                if not k == -1:
+                    if graph_obj.permute_j_k(j, k, i):
                         changes += 1
                         if ui_obj is not None:
-                            ui_obj.gs_atomic_graph.perturb_edge(j, a, i, permute_data=False)
+                            ui_obj.gs_atomic_graph.perturb_edge(j, k, i, permute_data=False)
 
             elif class_ == 'E_1':
                 pass
@@ -315,18 +307,20 @@ def weak_resolve(graph_obj, configs, classes, search_type, ui_obj=None):
             d = config[1].vertex_indices[4]
 
             if class_ == 'A_1':
-                if graph_obj.vertices[i].partner_query(j):
-                    if graph_obj.permute_j_k(i, j, d):
+                k = graph_obj.weak_preserve_edge(i, j)
+                if not k == -1:
+                    if graph_obj.permute_j_k(j, k, i):
                         changes += 1
                         if ui_obj is not None:
-                            ui_obj.gs_atomic_graph.perturb_edge(i, j, d, permute_data=False)
+                            ui_obj.gs_atomic_graph.perturb_edge(j, k, i, permute_data=False)
 
             elif class_ == 'B_1':
-                if graph_obj.vertices[i].partner_query(j):
-                    if graph_obj.permute_j_k(i, j, d):
+                k = graph_obj.weak_preserve_edge(i, j)
+                if not k == -1:
+                    if graph_obj.permute_j_k(j, k, i):
                         changes += 1
                         if ui_obj is not None:
-                            ui_obj.gs_atomic_graph.perturb_edge(i, j, d, permute_data=False)
+                            ui_obj.gs_atomic_graph.perturb_edge(j, k, i, permute_data=False)
 
         return changes
 
@@ -337,18 +331,20 @@ def weak_resolve(graph_obj, configs, classes, search_type, ui_obj=None):
             a = config[0].vertex_indices[2]
 
             if class_ == 'A_1':
-                if graph_obj.vertices[i].partner_query(j):
-                    if graph_obj.permute_j_k(i, j, a):
+                k = graph_obj.weak_preserve_edge(i, j)
+                if not k == -1:
+                    if graph_obj.permute_j_k(j, k, i):
                         changes += 1
                         if ui_obj is not None:
-                            ui_obj.gs_atomic_graph.perturb_edge(i, j, a, permute_data=False)
+                            ui_obj.gs_atomic_graph.perturb_edge(j, k, i, permute_data=False)
 
             elif class_ == 'B_1':
-                if graph_obj.vertices[i].partner_query(j):
-                    if graph_obj.permute_j_k(i, j, a):
+                k = graph_obj.weak_preserve_edge(i, j)
+                if not k == -1:
+                    if graph_obj.permute_j_k(j, k, i):
                         changes += 1
                         if ui_obj is not None:
-                            ui_obj.gs_atomic_graph.perturb_edge(i, j, a, permute_data=False)
+                            ui_obj.gs_atomic_graph.perturb_edge(j, k, i, permute_data=False)
 
         return changes
 
@@ -363,10 +359,27 @@ def weak_resolve(graph_obj, configs, classes, search_type, ui_obj=None):
 
             if class_ == 'A_1':
                 k = graph_obj.weak_preserve_edge(i, j)
-                if graph_obj.permute_j_k(j, k, i):
-                    changes += 1
-                    if ui_obj is not None:
-                        ui_obj.gs_atomic_graph.perturb_edge(j, k, i, permute_data=False)
+                if not k == -1:
+                    if graph_obj.permute_j_k(j, k, i):
+                        changes += 1
+                        if ui_obj is not None:
+                            ui_obj.gs_atomic_graph.perturb_edge(j, k, i, permute_data=False)
+
+            elif class_ == 'B_1' or class_ == 'B_2':
+                k = graph_obj.weak_preserve_edge(i, j)
+                if not k == -1:
+                    if graph_obj.permute_j_k(j, k, i):
+                        changes += 1
+                        if ui_obj is not None:
+                            ui_obj.gs_atomic_graph.perturb_edge(j, k, i, permute_data=False)
+
+            elif class_ == 'C_1':
+                k = graph_obj.weak_preserve_edge(i, j)
+                if not k == -1:
+                    if graph_obj.permute_j_k(j, k, i):
+                        changes += 1
+                        if ui_obj is not None:
+                            ui_obj.gs_atomic_graph.perturb_edge(j, k, i, permute_data=False)
 
         return changes
 

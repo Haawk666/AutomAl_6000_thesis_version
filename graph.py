@@ -885,7 +885,7 @@ class AtomicGraph:
         total_blueshift = matrix_blueshift + particle_blueshift
         return total_blueshift / 2, matrix_blueshift / 2, particle_blueshift / 2
 
-    def produce_alpha_angles(self, i):
+    def produce_alpha_angles(self, i, prioritize=False):
         pivot = self.vertices[i].real_coor()
         neighbours = self.vertices[i].neighbour_indices
         j_1 = self.vertices[neighbours[0]].real_coor()
@@ -1109,6 +1109,7 @@ class AtomicGraph:
             mesh_2 = self.find_mesh(option, j, return_mesh=True, use_friends=True)
             if mesh_1.num_corners == 3 and mesh_2.num_corners == 3:
                 k = option
+                print('Preserved!')
                 break
 
         return k
