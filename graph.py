@@ -885,13 +885,35 @@ class AtomicGraph:
         total_blueshift = matrix_blueshift + particle_blueshift
         return total_blueshift / 2, matrix_blueshift / 2, particle_blueshift / 2
 
-    def produce_alpha_angles(self, i, prioritize=False):
+    def produce_alpha_angles(self, i, prioritize_friendly=False):
+
         pivot = self.vertices[i].real_coor()
         neighbours = self.vertices[i].neighbour_indices
-        j_1 = self.vertices[neighbours[0]].real_coor()
-        j_2 = self.vertices[neighbours[1]].real_coor()
-        j_3 = self.vertices[neighbours[2]].real_coor()
-        j = [j_1, j_2, j_3, j_1]
+        friendlies = self.vertices[i].friendly_indices
+        partners = self.vertices[i].partners()
+
+        if prioritize_friendly:
+            j = []
+            for partner in partners:
+                if partner in friendlies:
+                    j.append(partner)
+                if len(j) == 3:
+                    break
+            else:
+                for partner_2 in partners:
+                    if partner_2 not in j:
+                        j.append(partner_2)
+                    if len(j) == 3:
+                        break
+            j.append(j[0])
+            for k, index in enumerate(j):
+                j[k] = self.vertices[index].real_coor()
+
+        else:
+            j_1 = self.vertices[neighbours[0]].real_coor()
+            j_2 = self.vertices[neighbours[1]].real_coor()
+            j_3 = self.vertices[neighbours[2]].real_coor()
+            j = [j_1, j_2, j_3, j_1]
 
         alpha = []
         for i in range(0, 3):
@@ -1109,7 +1131,6 @@ class AtomicGraph:
             mesh_2 = self.find_mesh(option, j, return_mesh=True, use_friends=True)
             if mesh_1.num_corners == 3 and mesh_2.num_corners == 3:
                 k = option
-                print('Preserved!')
                 break
 
         return k

@@ -142,7 +142,6 @@ class MainUI(QtWidgets.QMainWindow):
             self.project_instance.graph.vertices[self.selected_column].force_species(h)
             self.gs_overlay_composition.interactive_overlay_objects[self.selected_column].set_style()
             self.gs_atomic_graph.redraw_neighbourhood(self.selected_column)
-            self.gs_info_graph.redraw_neighbourhood(self.selected_column)
             # Update control window info:
             self.control_window.lbl_column_species.setText(
                 'Atomic species: ' + self.project_instance.graph.vertices[self.selected_column].atomic_species)
@@ -159,7 +158,6 @@ class MainUI(QtWidgets.QMainWindow):
             self.gs_overlay_composition.interactive_overlay_objects[self.selected_column].set_style()
             self.gs_atomic_graph.interactive_vertex_objects[self.selected_column].set_style()
             self.gs_atomic_graph.redraw_neighbourhood(self.selected_column)
-            self.gs_info_graph.redraw_neighbourhood(self.selected_column)
             # Update control window info:
             self.control_window.lbl_column_level.setText('Level: {}'.format(level))
 
@@ -458,11 +456,23 @@ class MainUI(QtWidgets.QMainWindow):
         else:
             self.control_window.graph_box.set_hidden()
 
+    def menu_toggle_sub_graphs_control_trigger(self, state):
+        if state:
+            self.control_window.sub_graphs_box.set_visible()
+        else:
+            self.control_window.sub_graphs_box.set_hidden()
+
     def menu_toggle_anti_graph_control_trigger(self, state):
         if state:
             self.control_window.anti_graph_box.set_visible()
         else:
             self.control_window.anti_graph_box.set_hidden()
+
+    def menu_toggle_info_graph_control_trigger(self, state):
+        if state:
+            self.control_window.info_graph_box.set_visible()
+        else:
+            self.control_window.info_graph_box.set_hidden()
 
     def menu_toggle_analysis_control_trigger(self, state):
         if state:
@@ -780,6 +790,30 @@ class MainUI(QtWidgets.QMainWindow):
                     level = 0
                 self.set_level(level)
 
+    def btn_set_sub_graph_type_trigger(self):
+        if self.project_instance is not None:
+            items = ('Column-centered', 'Edge-centered', 'Mesh-centered')
+            item, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Sub-graph-type:", items, 0, False)
+            if ok_pressed and item:
+                if item == 'Column-centered':
+                    self.control_window.lbl_sub_graph_type.setText('Sub-graph type: Column-centered')
+                elif item == 'Edge-centered':
+                    self.control_window.lbl_sub_graph_type.setText('Sub-graph type: Edge-centered')
+                elif item == 'Mesh-centered':
+                    self.control_window.lbl_sub_graph_type.setText('Sub-graph type: Mesh-centered')
+
+    def btn_set_sub_graph_order_trigger(self):
+        if self.project_instance is not None:
+            items = ('1st', '2nd', '3rd')
+            item, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Sub-graph-order:", items, 0, False)
+            if ok_pressed and item:
+                if item == '1st':
+                    self.control_window.lbl_sub_graph_order.setText('Sub-graph order: 1st')
+                elif item == '2nd':
+                    self.control_window.lbl_sub_graph_order.setText('Sub-graph order: 2nd')
+                elif item == '3rd':
+                    self.control_window.lbl_sub_graph_order.setText('Sub-graph order: 3rd')
+
     # ----------
     # Other button triggers:
     # ----------
@@ -842,7 +876,7 @@ class MainUI(QtWidgets.QMainWindow):
                        '6 - Legacy z-height determination',
                        '7 - Experimental z-height determination',
                        '8 - Not in use',
-                       '9 - Not in use',
+                       '9 - Basic weak untangling',
                        '10 - Weak untangling',
                        '11 - Strong untangling',
                        '12 - Reset probability vectors',
@@ -1033,6 +1067,15 @@ class MainUI(QtWidgets.QMainWindow):
                     self.gs_anti_graph = GUI_elements.AntiGraph(ui_obj=self, scale_factor=2, graph=anti_graph)
                     self.gv_anti_graph.setScene(self.gs_anti_graph)
                     logger.info('Got anti-graph!')
+                    self.sys_message('Ready')
+
+    def btn_build_info_graph_trigger(self):
+        if self.project_instance is not None:
+            if self.project_instance.num_columns > 0:
+                if len(self.project_instance.graph.vertices[0].neighbour_indices) > 0:
+                    self.sys_message('Working...')
+                    self.gs_info_graph = GUI_elements.InfoGraph(ui_obj=self, scale_factor=2)
+                    self.gv_info_graph.setScene(self.gs_info_graph)
                     self.sys_message('Ready')
 
     def btn_pca_trigger(self):

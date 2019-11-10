@@ -520,7 +520,7 @@ class AntiGraph(QtWidgets.QGraphicsScene):
     def re_draw(self):
         """Redraw contents."""
         if self.graph is not None:
-            self.re_draw_edges(self.ui_obj.project_instance.r)
+            self.re_draw_edges()
             self.re_draw_vertices()
 
     def re_draw_vertices(self):
@@ -530,7 +530,7 @@ class AntiGraph(QtWidgets.QGraphicsScene):
             self.interactive_vertex_objects.append(GUI_custom_components.InteractiveGraphColumn(self.ui_obj, vertex.i, vertex.r, self.scale_factor))
             self.addItem(self.interactive_vertex_objects[-1])
 
-    def re_draw_edges(self, r):
+    def re_draw_edges(self):
         """Redraws all edge elements."""
         self.graph.redraw_edges()
         for edge_item in self.edges:
@@ -539,10 +539,32 @@ class AntiGraph(QtWidgets.QGraphicsScene):
         for edge in self.graph.edges:
             p1 = edge.vertex_a.real_coor()
             p2 = edge.vertex_b.real_coor()
-            self.edges.append(GUI_custom_components.Arrow(i=edge.vertex_a.i, j=edge.vertex_b.i, p1=p1, p2=p2, r=self.ui_obj.project_instance.r, scale_factor=self.scale_factor, consistent=True, dislocation=False))
+            real_distance = self.ui_obj.project_instance.graph.real_distance(edge.vertex_a.i, edge.vertex_b.i,
+                                                                             self.ui_obj.project_instance.scale)
+            hard_sphere_distance = self.ui_obj.project_instance.graph.get_hard_sphere_distance(edge.vertex_a.i,
+                                                                                               edge.vertex_b.i)
+            max_shift = 70
+            if hard_sphere_distance > real_distance:
+                if hard_sphere_distance - real_distance > max_shift:
+                    difference = max_shift
+                else:
+                    difference = hard_sphere_distance - real_distance
+                multiplier = - difference / max_shift + 1
+                color = (multiplier * 255, multiplier * 255, 255, 255)
+            else:
+                if real_distance - hard_sphere_distance > max_shift:
+                    difference = max_shift
+                else:
+                    difference = real_distance - hard_sphere_distance
+                multiplier = - difference / max_shift + 1
+                color = (255, multiplier * 255, multiplier * 255, 255)
+
+            self.edges.append(GUI_custom_components.DistanceArrow(color=color, i=edge.vertex_a.i, j=edge.vertex_b.i,
+                                                                  p1=p1, p2=p2, r=self.ui_obj.project_instance.r,
+                                                                  scale_factor=self.scale_factor))
             self.addItem(self.edges[-1])
             if edge.vertex_a.level == 1 and edge.vertex_b.level == 1:
-                self.edges[-1].childItems()[0].setPen(GUI_settings.pen_skinny_red)
+                pass
             else:
                 self.edges[-1].setZValue(-2)
 
@@ -770,6 +792,9 @@ class ControlWindow(QtWidgets.QWidget):
         self.lbl_avg_symmetry_confidence = QtWidgets.QLabel('Average symmetry confidence: ')
         self.lbl_avg_species_confidence = QtWidgets.QLabel('Average species confidence: ')
 
+        self.lbl_sub_graph_type = QtWidgets.QLabel('Sub-graph type: ')
+        self.lbl_sub_graph_order = QtWidgets.QLabel('Sub-graph order: ')
+
         # Checkboxes
         self.chb_toggle_positions = QtWidgets.QCheckBox('Show column position overlay')
 
@@ -926,6 +951,8 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_find_column_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_find_column_trigger, label=self.lbl_column_index)
         self.btn_set_species_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_species_trigger, label=self.lbl_column_species)
         self.btn_set_level_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_level_trigger, label=self.lbl_column_level)
+        self.btn_set_sub_graph_type = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_sub_graph_type_trigger, label=self.lbl_sub_graph_type)
+        self.btn_set_sub_graph_order = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_sub_graph_order_trigger, label=self.lbl_sub_graph_order)
 
         # Move buttons
         self.btn_cancel_move = GUI_custom_components.SmallButton('Cancel', self, trigger_func=self.ui_obj.btn_cancel_move_trigger)
@@ -945,7 +972,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_delete = GUI_custom_components.SmallButton('Delete', self, trigger_func=self.ui_obj.btn_delete_trigger)
         self.btn_print_details = GUI_custom_components.SmallButton('Print', self, trigger_func=self.ui_obj.btn_print_details_trigger)
         self.btn_snap = GUI_custom_components.SmallButton('Show', self, trigger_func=self.ui_obj.btn_snap_trigger)
-        self.btn_sub = GUI_custom_components.MediumButton('Sub-graph', self, trigger_func=self.ui_obj.btn_gen_sub_graph)
+        self.btn_sub = GUI_custom_components.MediumButton('Build sub-graph', self, trigger_func=self.ui_obj.btn_gen_sub_graph)
         self.btn_refresh_mesh = GUI_custom_components.MediumButton('Refresh mesh', self, trigger_func=self.ui_obj.btn_refresh_mesh_trigger)
         self.btn_deselect = GUI_custom_components.SmallButton('Deselect', self, trigger_func=self.ui_obj.btn_deselect_trigger)
         self.btn_new = GUI_custom_components.SmallButton('New', self, trigger_func=self.ui_obj.btn_new_column_trigger)
@@ -956,6 +983,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_plot = GUI_custom_components.MediumButton('Make plots', self, trigger_func=self.ui_obj.btn_make_plot_trigger)
         self.btn_print_distances = GUI_custom_components.MediumButton('Print distances', self, trigger_func=self.ui_obj.btn_print_distances_trigger)
         self.btn_build_anti_graph = GUI_custom_components.MediumButton('Build anti-graph', self, trigger_func=self.ui_obj.btn_build_anti_graph_trigger)
+        self.btn_build_info_graph = GUI_custom_components.MediumButton('Build info-graph', self, trigger_func=self.ui_obj.btn_build_info_graph_trigger)
         self.btn_pca = GUI_custom_components.MediumButton('Perform PCA', self, trigger_func=self.ui_obj.btn_pca_trigger)
 
         # Button layouts
@@ -1006,13 +1034,20 @@ class ControlWindow(QtWidgets.QWidget):
 
         btn_graph_btns_layout = QtWidgets.QHBoxLayout()
         btn_graph_btns_layout.addWidget(self.btn_print_distances)
-        btn_graph_btns_layout.addWidget(self.btn_sub)
         btn_graph_btns_layout.addWidget(self.btn_refresh_mesh)
         btn_graph_btns_layout.addStretch()
+
+        btn_sub_graphs_layout = QtWidgets.QHBoxLayout()
+        btn_sub_graphs_layout.addWidget(self.btn_sub)
+        btn_sub_graphs_layout.addStretch()
 
         btn_anti_graph_layout = QtWidgets.QHBoxLayout()
         btn_anti_graph_layout.addWidget(self.btn_build_anti_graph)
         btn_anti_graph_layout.addStretch()
+
+        btn_info_graph_layout = QtWidgets.QHBoxLayout()
+        btn_info_graph_layout.addWidget(self.btn_build_info_graph)
+        btn_info_graph_layout.addStretch()
 
         btn_analysis_layout = QtWidgets.QHBoxLayout()
         btn_analysis_layout.addWidget(self.btn_plot)
@@ -1097,12 +1132,24 @@ class ControlWindow(QtWidgets.QWidget):
         self.graph_box = GUI_custom_components.GroupBox('Atomic graph', menu_action=self.ui_obj.menu.toggle_graph_control_action)
         self.graph_box.setLayout(self.graph_box_layout)
 
+        self.sub_graphs_box_layout = QtWidgets.QVBoxLayout()
+        self.sub_graphs_box_layout.addLayout(btn_sub_graphs_layout)
+        self.sub_graphs_box_layout.addLayout(self.btn_set_sub_graph_type)
+        self.sub_graphs_box_layout.addLayout(self.btn_set_sub_graph_order)
+        self.sub_graphs_box = GUI_custom_components.GroupBox('Sub-graphs', menu_action=self.ui_obj.menu.toggle_sub_graphs_control_action)
+        self.sub_graphs_box.setLayout(self.sub_graphs_box_layout)
+
         self.anti_graph_box_layout = QtWidgets.QVBoxLayout()
         self.anti_graph_box_layout.addLayout(btn_anti_graph_layout)
         self.anti_graph_box_layout.addWidget(self.chb_show_level_0)
         self.anti_graph_box_layout.addWidget(self.chb_show_level_1)
         self.anti_graph_box = GUI_custom_components.GroupBox('Anti-graph', menu_action=self.ui_obj.menu.toggle_anti_graph_control_action)
         self.anti_graph_box.setLayout(self.anti_graph_box_layout)
+
+        self.info_graph_box_layout = QtWidgets.QVBoxLayout()
+        self.info_graph_box_layout.addLayout(btn_info_graph_layout)
+        self.info_graph_box = GUI_custom_components.GroupBox('Info-graph', menu_action=self.ui_obj.menu.toggle_info_graph_control_action)
+        self.info_graph_box.setLayout(self.info_graph_box_layout)
 
         self.analysis_box_layout = QtWidgets.QVBoxLayout()
         self.analysis_box_layout.addLayout(btn_analysis_layout)
@@ -1123,7 +1170,9 @@ class ControlWindow(QtWidgets.QWidget):
         self.info_display_layout.addWidget(self.alg_2_box)
         self.info_display_layout.addWidget(self.column_box)
         self.info_display_layout.addWidget(self.graph_box)
+        self.info_display_layout.addWidget(self.sub_graphs_box)
         self.info_display_layout.addWidget(self.anti_graph_box)
+        self.info_display_layout.addWidget(self.info_graph_box)
         self.info_display_layout.addWidget(self.analysis_box)
         self.info_display_layout.addWidget(self.overlay_box)
         self.info_display_layout.addStretch()
@@ -1151,6 +1200,8 @@ class ControlWindow(QtWidgets.QWidget):
         self.set_btn_list.append(self.btn_find_column_layout.itemAt(0).widget())
         self.set_btn_list.append(self.btn_set_species_layout.itemAt(0).widget())
         self.set_btn_list.append(self.btn_set_level_layout.itemAt(0).widget())
+        self.set_btn_list.append(self.btn_set_sub_graph_type.itemAt(0).widget())
+        self.set_btn_list.append(self.btn_set_sub_graph_order.itemAt(0).widget())
 
         self.btn_move_list.append(self.btn_cancel_move)
         self.btn_move_list.append(self.btn_set_move)
@@ -1177,6 +1228,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_list.append(self.btn_plot)
         self.btn_list.append(self.btn_print_distances)
         self.btn_list.append(self.btn_build_anti_graph)
+        self.btn_list.append(self.btn_build_info_graph)
         self.btn_list.append(self.btn_pca)
 
         self.chb_list.append(self.chb_toggle_positions)
@@ -1644,9 +1696,15 @@ class MenuBar:
         self.toggle_graph_control_action = QtWidgets.QAction('Show atomic graph controls', self.ui_obj)
         self.toggle_graph_control_action.setCheckable(True)
         self.toggle_graph_control_action.setChecked(True)
+        self.toggle_sub_graphs_control_action = QtWidgets.QAction('Show sub-graph controls', self.ui_obj)
+        self.toggle_sub_graphs_control_action.setCheckable(True)
+        self.toggle_sub_graphs_control_action.setChecked(True)
         self.toggle_anti_graph_control_action = QtWidgets.QAction('Show anti-graph controls', self.ui_obj)
         self.toggle_anti_graph_control_action.setCheckable(True)
         self.toggle_anti_graph_control_action.setChecked(True)
+        self.toggle_info_graph_control_action = QtWidgets.QAction('Show info-graph controls', self.ui_obj)
+        self.toggle_info_graph_control_action.setCheckable(True)
+        self.toggle_info_graph_control_action.setChecked(True)
         self.toggle_overlay_control_action = QtWidgets.QAction('Show overlay controls', self.ui_obj)
         self.toggle_overlay_control_action.setCheckable(True)
         self.toggle_overlay_control_action.setChecked(True)
@@ -1713,7 +1771,9 @@ class MenuBar:
         view.addAction(self.toggle_alg_2_control_action)
         view.addAction(self.toggle_column_control_action)
         view.addAction(self.toggle_graph_control_action)
+        view.addAction(self.toggle_sub_graphs_control_action)
         view.addAction(self.toggle_anti_graph_control_action)
+        view.addAction(self.toggle_info_graph_control_action)
         view.addAction(self.toggle_overlay_control_action)
         view.addAction(self.toggle_analysis_control_action)
         # - Process
@@ -1767,7 +1827,9 @@ class MenuBar:
         self.toggle_alg_2_control_action.triggered.connect(self.ui_obj.menu_toggle_alg_2_control_trigger)
         self.toggle_column_control_action.triggered.connect(self.ui_obj.menu_toggle_column_control_trigger)
         self.toggle_graph_control_action.triggered.connect(self.ui_obj.menu_toggle_graph_control_trigger)
+        self.toggle_sub_graphs_control_action.triggered.connect(self.ui_obj.menu_toggle_sub_graphs_control_trigger)
         self.toggle_anti_graph_control_action.triggered.connect(self.ui_obj.menu_toggle_anti_graph_control_trigger)
+        self.toggle_info_graph_control_action.triggered.connect(self.ui_obj.menu_toggle_info_graph_control_trigger)
         self.toggle_overlay_control_action.triggered.connect(self.ui_obj.menu_toggle_overlay_control_trigger)
         self.toggle_analysis_control_action.triggered.connect(self.ui_obj.menu_toggle_analysis_control_trigger)
         # - Process

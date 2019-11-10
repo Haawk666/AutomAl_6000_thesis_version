@@ -22,6 +22,8 @@ btn_set_cert_threshold_layout = 'DEPRECATED'
 btn_find_column_layout = 'Select column by index reference.'
 btn_set_species_layout = 'Manually determine the atomic species of the selected column.'
 btn_set_level_layout = 'Manually set the z-height of the selected column.'
+btn_set_sub_graph_layout = 'Select the sub graph type.. Options are: Column-centered, Edge-centered or Mesh-centered.'
+btn_set_sub_graph_order_layout = 'Set the order of the sub-graph.. Options are: 1st, 2nd or 3rd.'
 
 btn_cancel_move = 'Cancel the column position'
 btn_set_move = 'Accept the new column position'
@@ -51,6 +53,10 @@ btn_print_distances = 'Print a convenient list of inter-atomic hard-sphere dista
                       'for quick reference'
 btn_build_anti_graph = 'Build the \'anti-graph\' of the graph. In an anti-graph only vertices in the same spatial\n' \
                        'plane are connected.'
+btn_build_info_graph = 'Build the \'info-graph\' of the graph. Here the edges are color-coded with red-shift or\n' \
+                       'blue-shift depending on their deviance from hard-sphere expectance. Vertices are also colored\n' \
+                       'red wherever the underlying statistical models disagree on its species, which could indicate\n' \
+                       'the need for manual inspection..'
 btn_pca = 'Launch a principle component analysis (PCA) from a wizard'
 
 chb_toggle_positions = 'Toggle the overlay of atomic positions'
@@ -104,7 +110,9 @@ control_window_set_list = [btn_set_threshold_layout,
                            btn_set_cert_threshold_layout,
                            btn_find_column_layout,
                            btn_set_species_layout,
-                           btn_set_level_layout]
+                           btn_set_level_layout,
+                           btn_set_sub_graph_layout,
+                           btn_set_sub_graph_order_layout]
 
 control_window_move_list = [btn_cancel_move,
                             btn_set_move]
@@ -131,6 +139,7 @@ control_window_btn_list = [btn_show_stats,
                            btn_plot,
                            btn_print_distances,
                            btn_build_anti_graph,
+                           btn_build_info_graph,
                            btn_pca]
 
 control_window_chb_list = [chb_toggle_positions,

@@ -12,7 +12,7 @@ logger.setLevel(logging.DEBUG)
 
 
 def base_stat_score(graph_obj, i, get_individual_predictions=False, scaled=True):
-    alpha = graph_obj.produce_alpha_angles(i)
+    alpha = graph_obj.produce_alpha_angles(i, prioritize_friendly=True)
     alpha_min = min(alpha)
     alpha_max = max(alpha)
     theta = graph_obj.produce_theta_angles(i, exclude_angles_from_inconsistent_meshes=True)

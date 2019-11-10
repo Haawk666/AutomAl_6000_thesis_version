@@ -710,7 +710,7 @@ class SuchSoftware:
                 ui_obj.update_overlay()
                 ui_obj.update_graph()
             # Search for intersections
-            self.column_characterization(starting_index, search_type=14)
+            self.column_characterization(starting_index, search_type=14, ui_obj=ui_obj)
             # Map subsets:
             self.column_characterization(starting_index, search_type=21)
             # Summarize:
@@ -755,7 +755,7 @@ class SuchSoftware:
             # Add edges:
             self.column_characterization(starting_index, search_type=4)
             # Search for intersections
-            self.column_characterization(starting_index, search_type=14)
+            self.column_characterization(starting_index, search_type=14, ui_obj=ui_obj)
             # Map subsets:
             self.column_characterization(starting_index, search_type=21)
             # Summarize:
@@ -807,13 +807,68 @@ class SuchSoftware:
             pass
 
         elif search_type == 9:
-            pass
+            # Basic Weak untangling
+            logger.info('Starting experimental weak untangling...')
+
+            self.column_characterization(starting_index, search_type=14)
+
+            static = False
+            total_changes = 0
+            total_counter = 0
+
+            while not static:
+
+                for type_num in range(1, 2):
+
+                    cont = True
+                    counter = 0
+                    while cont:
+                        self.graph.redraw_edges()
+                        chi_before = self.graph.chi
+                        logger.info('Looking for type {}:'.format(type_num))
+                        logger.info('Chi: {}'.format(chi_before))
+                        self.graph.sort_all_subsets_by_distance()
+
+                        num_types, changes = untangling.untangle(self.graph, type_num, strong=False, ui_obj=ui_obj)
+
+                        total_changes += changes
+                        self.graph.redraw_edges()
+                        chi_after = self.graph.chi
+                        logger.info('Found {} type {}\'s, made {} changes'.format(num_types, type_num, changes))
+                        logger.info('Chi: {}'.format(chi_before))
+
+                        if chi_after <= chi_before:
+                            logger.info('repeating...')
+                            counter += 1
+                        else:
+                            cont = False
+
+                        if changes == 0:
+                            cont = False
+                            logger.info('No changes made, continuing...')
+
+                        if counter > 4:
+                            cont = False
+                            logger.info('Emergency abort!')
+
+                total_counter += 1
+
+                if total_changes == 0:
+                    static = True
+
+                if total_counter > 3:
+                    static = True
+
+            self.column_characterization(starting_index, search_type=14)
+
+            self.graph.redraw_edges()
+            logger.info('Weak untangling complete')
 
         elif search_type == 10:
             # Weak untangling
             logger.info('Starting experimental weak untangling...')
 
-            self.column_characterization(starting_index, search_type=14)
+            self.column_characterization(starting_index, search_type=14, ui_obj=ui_obj)
 
             static = False
             total_changes = 0
@@ -862,7 +917,7 @@ class SuchSoftware:
                 if total_counter > 3:
                     static = True
 
-            self.column_characterization(starting_index, search_type=14)
+            self.column_characterization(starting_index, search_type=14, ui_obj=ui_obj)
 
             self.graph.redraw_edges()
             logger.info('Weak untangling complete')
@@ -947,6 +1002,9 @@ class SuchSoftware:
             graph_op.experimental_remove_intersections(self.graph)
             intersections = self.graph.find_intersects()
             self.graph.map_friends()
+            if ui_obj is not None:
+                ui_obj.update_overlay()
+                ui_obj.update_graph()
             logger.info('Found {} intersections'.format(num_intersections))
             # self.report('        Found {} strong intersections'.format(ss), force=True)
             # self.report('        Found {} weak-weak intersections'.format(ww), force=True)
