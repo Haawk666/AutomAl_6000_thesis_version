@@ -153,7 +153,7 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
             self.setBackgroundBrush(GUI_settings.background_brush)
         self.re_draw()
 
-    def perturb_edge(self, i, j, k, permute_data=True):
+    def perturb_edge(self, i, j, k, permute_data=True, center_view=False):
         """Finds the edge from i to j, and makes it point from i to k."""
         if permute_data:
             self.ui_obj.project_instance.graph.vertices[i].permute_j_k(j, k)
@@ -172,6 +172,10 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
                     self.edges[k][n].set_style()
                 else:
                     self.edges[k][n].hide()
+        if center_view:
+            self.ui_obj.btn_snap_trigger(i=i)
+            self.ui_obj.column_selected(i)
+            print('Hello')
 
     def eval_style(self, i, m):
         vertex_a = self.ui_obj.project_instance.graph.vertices[i]

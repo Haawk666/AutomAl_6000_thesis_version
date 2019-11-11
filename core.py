@@ -804,7 +804,62 @@ class SuchSoftware:
             logger.info('Levels set.')
 
         elif search_type == 8:
-            pass
+            # Aggressive weak untangling
+            logger.info('Starting experimental weak untangling...')
+
+            self.column_characterization(starting_index, search_type=14, ui_obj=ui_obj)
+
+            static = False
+            total_changes = 0
+            total_counter = 0
+
+            while not static:
+
+                for type_num in range(1, 7):
+
+                    cont = True
+                    counter = 0
+                    while cont:
+                        self.graph.redraw_edges()
+                        chi_before = self.graph.chi
+                        logger.info('Looking for type {}:'.format(type_num))
+                        logger.info('Chi: {}'.format(chi_before))
+                        self.graph.sort_all_subsets_by_distance()
+
+                        num_types, changes = untangling.untangle(self.graph, type_num, strong=False, ui_obj=ui_obj, aggressive=True)
+
+                        total_changes += changes
+                        self.graph.redraw_edges()
+                        chi_after = self.graph.chi
+                        logger.info('Found {} type {}\'s, made {} changes'.format(num_types, type_num, changes))
+                        logger.info('Chi: {}'.format(chi_before))
+
+                        if chi_after <= chi_before:
+                            logger.info('repeating...')
+                            counter += 1
+                        else:
+                            cont = False
+
+                        if changes == 0:
+                            cont = False
+                            logger.info('No changes made, continuing...')
+
+                        if counter > 4:
+                            cont = False
+                            logger.info('Emergency abort!')
+
+                total_counter += 1
+
+                if total_changes == 0:
+                    static = True
+
+                if total_counter > 3:
+                    static = True
+
+            self.column_characterization(starting_index, search_type=14, ui_obj=ui_obj)
+
+            self.graph.redraw_edges()
+            logger.info('Weak untangling complete')
 
         elif search_type == 9:
             # Basic Weak untangling

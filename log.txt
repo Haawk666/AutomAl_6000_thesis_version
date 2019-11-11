@@ -2,5 +2,3 @@ GUI: Welcome to AutomAl 6000 by Haakon Tvedt
 GUI: GUI version: 0.0.1
 GUI: core version: 0.0.9
 ------------------------
-GUI: Opening file C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/008_control
-core: Loaded C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/008_control

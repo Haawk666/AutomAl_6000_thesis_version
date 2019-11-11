@@ -954,9 +954,11 @@ class MainUI(QtWidgets.QMainWindow):
         if self.project_instance is not None and not self.selected_column == -1:
             self.project_instance.vertex_report(self.selected_column)
 
-    def btn_snap_trigger(self):
+    def btn_snap_trigger(self, i=None):
         if self.project_instance is not None and not self.selected_column == -1:
-            coor = self.project_instance.graph.vertices[self.selected_column].real_coor()
+            if i is None:
+                i = self.selected_column
+            coor = self.project_instance.graph.vertices[i].real_coor()
             transform = QtGui.QTransform()
             transform.scale(7.5, 7.5)
             self.gv_raw_image.setTransform(transform)
