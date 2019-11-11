@@ -99,6 +99,18 @@ class MainUI(QtWidgets.QMainWindow):
         self.gv_search_matrix = GUI_elements.ZoomGraphicsView(self.gs_search_matrix, ui_obj=self, trigger_func=self.key_press_trigger)
         self.gv_fft = GUI_elements.ZoomGraphicsView(self.gs_fft, ui_obj=self, trigger_func=self.key_press_trigger)
 
+        self.gv_list = [
+                            self.gv_raw_image,
+                            self.gv_atomic_positions,
+                            self.gv_overlay_composition,
+                            self.gv_atomic_graph,
+                            self.gv_atomic_sub_graph,
+                            self.gv_anti_graph,
+                            self.gv_info_graph,
+                            self.gv_search_matrix,
+                            self.gv_fft
+                        ]
+
         # Set up tabs for central widget
         self.tabs = QtWidgets.QTabWidget()
 
@@ -840,6 +852,24 @@ class MainUI(QtWidgets.QMainWindow):
     def btn_view_image_title_trigger(self):
         self.menu_view_image_title_trigger()
 
+    def btn_align_views_trigger(self):
+        tab = self.tabs.currentIndex()
+        coor = self.gv_list[tab].mapToScene(self.gv_list[tab].viewport().rect().center())
+        print(coor)
+        coor_2 = 2 * coor
+        print(coor_2)
+        transform = self.gv_list[tab].transform()
+        for i, gv in enumerate(self.gv_list):
+            if i in [0, 1, 2, 7, 8]:
+                gv.resetTransform()
+                gv.setTransform(transform)
+                gv.centerOn(coor)
+            else:
+                gv.resetTransform()
+                gv.setTransform(transform)
+                gv.scale(0.5, 0.5)
+                gv.centerOn(coor_2)
+
     def btn_export_overlay_image_trigger(self):
         GUI_elements.DataExportWizard(ui_obj=self)
 
@@ -927,14 +957,17 @@ class MainUI(QtWidgets.QMainWindow):
     def btn_snap_trigger(self):
         if self.project_instance is not None and not self.selected_column == -1:
             coor = self.project_instance.graph.vertices[self.selected_column].real_coor()
-            self.gv_raw_image.scale(3.5, 3.5)
+            transform = QtGui.QTransform()
+            transform.scale(7.5, 7.5)
+            self.gv_raw_image.setTransform(transform)
             self.gv_raw_image.centerOn(coor[0], coor[1])
-            self.gv_atomic_positions.scale(3.5, 3.5)
+            self.gv_atomic_positions.setTransform(transform)
             self.gv_atomic_positions.centerOn(coor[0], coor[1])
-            self.gv_overlay_composition.scale(3.5, 3.5)
+            self.gv_overlay_composition.setTransform(transform)
             self.gv_overlay_composition.centerOn(coor[0], coor[1])
-            self.gv_atomic_graph.scale(3.5, 3.5)
-            self.gv_atomic_graph.centerOn(coor[0], coor[1])
+            transform.scale(0.5, 0.5)
+            self.gv_atomic_graph.setTransform(transform)
+            self.gv_atomic_graph.centerOn(2 * coor[0], 2 * coor[1])
 
     def btn_gen_sub_graph(self):
         if self.project_instance is not None:

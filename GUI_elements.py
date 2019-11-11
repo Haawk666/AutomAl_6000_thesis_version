@@ -963,6 +963,7 @@ class ControlWindow(QtWidgets.QWidget):
         # other buttons
         self.btn_show_stats = GUI_custom_components.SmallButton('Stats', self, trigger_func=self.ui_obj.btn_show_stats_trigger)
         self.btn_show_source = GUI_custom_components.SmallButton('Source', self, trigger_func=self.ui_obj.btn_view_image_title_trigger)
+        self.btn_align_views = GUI_custom_components.MediumButton('Align views', self, trigger_func=self.ui_obj.btn_align_views_trigger)
         self.btn_export = GUI_custom_components.MediumButton('Export data', self, trigger_func=self.ui_obj.btn_export_overlay_image_trigger)
         self.btn_start_alg_1 = GUI_custom_components.SmallButton('Start', self, trigger_func=self.ui_obj.btn_continue_detection_trigger)
         self.btn_reset_alg_1 = GUI_custom_components.SmallButton('Reset', self, trigger_func=self.ui_obj.btn_restart_detection_trigger)
@@ -1002,6 +1003,7 @@ class ControlWindow(QtWidgets.QWidget):
         btn_image_btns_layout = QtWidgets.QHBoxLayout()
         btn_image_btns_layout.addWidget(self.btn_show_stats)
         btn_image_btns_layout.addWidget(self.btn_show_source)
+        btn_image_btns_layout.addWidget(self.btn_align_views)
         btn_image_btns_layout.addStretch()
 
         btn_alg_1_btns_layout = QtWidgets.QHBoxLayout()
@@ -1208,6 +1210,7 @@ class ControlWindow(QtWidgets.QWidget):
 
         self.btn_list.append(self.btn_show_stats)
         self.btn_list.append(self.btn_show_source)
+        self.btn_list.append(self.btn_align_views)
         self.btn_list.append(self.btn_export)
         self.btn_list.append(self.btn_start_alg_1)
         self.btn_list.append(self.btn_reset_alg_1)

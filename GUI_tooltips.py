@@ -31,6 +31,7 @@ btn_set_move = 'Accept the new column position'
 btn_show_stats = 'Show a numerical summary of the image.'
 btn_show_source = 'Show the full path and filename of the original image this project was created from\n' \
                   '(in case you forgot;)'
+btn_align_views = 'Align all tab-views to the same area as the current tab'
 btn_export = 'Export data with the export wizard'
 btn_start_alg_1 = 'Start column detection'
 btn_reset_alg_1 = 'Restart column detection'
@@ -119,6 +120,7 @@ control_window_move_list = [btn_cancel_move,
 
 control_window_btn_list = [btn_show_stats,
                            btn_show_source,
+                           btn_align_views,
                            btn_export,
                            btn_start_alg_1,
                            btn_reset_alg_1,
