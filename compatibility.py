@@ -68,6 +68,7 @@ def convert(obj, old_version, version):
         obj.graph.avg_central_variance = 0.0
         obj.graph.meshes = []
         obj.graph.mesh_indices = []
+        obj.graph.scale = obj.scale
         fresh_obj = obj
 
     elif old_version == [0, 0, 1]:
@@ -104,6 +105,7 @@ def convert(obj, old_version, version):
         obj.graph.avg_central_variance = 0.0
         obj.graph.meshes = []
         obj.graph.mesh_indices = []
+        obj.graph.scale = obj.scale
         fresh_obj = obj
 
     elif old_version == [0, 0, 2]:
@@ -130,6 +132,7 @@ def convert(obj, old_version, version):
         obj.graph.avg_central_variance = 0.0
         obj.graph.meshes = []
         obj.graph.mesh_indices = []
+        obj.graph.scale = obj.scale
         fresh_obj = obj
 
     elif old_version == [0, 0, 3]:
@@ -150,6 +153,7 @@ def convert(obj, old_version, version):
         obj.graph.avg_central_variance = 0.0
         obj.graph.meshes = []
         obj.graph.mesh_indices = []
+        obj.graph.scale = obj.scale
         fresh_obj = obj
 
     elif old_version == [0, 0, 4]:
@@ -168,6 +172,7 @@ def convert(obj, old_version, version):
             vertex.outsider_indices = []
         obj.graph.meshes = []
         obj.graph.mesh_indices = []
+        obj.graph.scale = obj.scale
         fresh_obj = obj
 
     elif old_version == [0, 0, 5]:
@@ -184,6 +189,7 @@ def convert(obj, old_version, version):
             vertex.outsider_indices = []
         obj.graph.meshes = []
         obj.graph.mesh_indices = []
+        obj.graph.scale = obj.scale
         fresh_obj = obj
 
     elif old_version == [0, 0, 6]:
@@ -198,9 +204,11 @@ def convert(obj, old_version, version):
             vertex.outsider_indices = []
         obj.graph.meshes = []
         obj.graph.mesh_indices = []
+        obj.graph.scale = obj.scale
         fresh_obj = obj
 
     elif old_version == [0, 0, 7]:
+        obj.graph.scale = obj.scale
         for vertex in obj.graph.vertices:
             vertex.friendly_indices = []
             vertex.anti_partner_indices = []
@@ -213,6 +221,7 @@ def convert(obj, old_version, version):
         fresh_obj = obj
 
     elif old_version == [0, 0, 8]:
+        obj.graph.scale = obj.scale
         for vertex in obj.graph.vertices:
             vertex.anti_partner_indices = []
             vertex.true_partner_indices = []
@@ -221,6 +230,10 @@ def convert(obj, old_version, version):
             vertex.anti_friend_indices = []
             vertex.friend_indices = []
             vertex.outsider_indices = []
+        fresh_obj = obj
+
+    elif old_version == [0, 0, 9]:
+        obj.graph.scale = obj.scale
         fresh_obj = obj
 
     else:

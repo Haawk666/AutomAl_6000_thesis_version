@@ -98,7 +98,7 @@ class SuchSoftware:
     """
 
     # Version
-    version = [0, 0, 9]
+    version = [0, 0, 10]
 
     # Number of elements in the probability vectors
     num_selections = 7
@@ -242,7 +242,7 @@ class SuchSoftware:
         self.overhead = int(6 * (self.r / 10))
 
         # Initialize an empty graph
-        self.graph = graph.AtomicGraph(map_size=self.map_size)
+        self.graph = graph.AtomicGraph(self.scale, map_size=self.map_size)
 
         logger.info('Generated instance from {}'.format(filename_full))
 
@@ -1373,7 +1373,7 @@ class SuchSoftware:
 
         """
 
-        blueshifts = self.graph.calc_total_blueshift(self.scale)
+        blueshifts = self.graph.calc_total_blueshift()
 
         self.stats_string = ('Number of detected columns: ' + str(self.num_columns) + '\n'
             'Number of detected precipitate columns: ' + str(self.num_precipitate_columns) + '\n\n'

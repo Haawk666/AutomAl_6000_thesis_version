@@ -281,8 +281,8 @@ class MainUI(QtWidgets.QMainWindow):
                 else:
                     self.selection_history.append(self.selected_column)
             if self.control_window.chb_enable_ruler.isChecked():
-                projected_distance = self.project_instance.graph.real_projected_distance(self.selected_column, self.previous_selected_column, self.project_instance.scale)
-                spatial_distance = self.project_instance.graph.real_distance(self.selected_column, self.previous_selected_column, self.project_instance.scale)
+                projected_distance = self.project_instance.graph.real_projected_distance(self.selected_column, self.previous_selected_column)
+                spatial_distance = self.project_instance.graph.real_distance(self.selected_column, self.previous_selected_column)
                 expected_hard_sphere_distance = self.project_instance.graph.get_hard_sphere_distance(self.selected_column, self.previous_selected_column)
                 string = 'Distance between vertex {} and {}\n' \
                          '    Projected distance: {} pm\n' \

@@ -682,7 +682,7 @@ class AtomicGraph:
 
     al_lattice_const = 404.95
 
-    def __init__(self, map_size=8):
+    def __init__(self, scale, map_size=8):
 
         self.vertices = []
         self.vertex_indices = []
@@ -692,6 +692,7 @@ class AtomicGraph:
         self.meshes = []
         self.mesh_indices = []
 
+        self.scale = scale
         self.map_size = map_size
 
         # Stats
@@ -867,21 +868,21 @@ class AtomicGraph:
             vertices.append(self.vertices[i])
         return vertices
 
-    def produce_blueshift_sum(self, i, scale):
+    def produce_blueshift_sum(self, i):
         blueshift = 0
         for partner in self.vertices[i].partners():
-            blueshift += self.get_blueshift(i, partner, scale)
+            blueshift += self.get_blueshift(i, partner)
         return blueshift
 
-    def calc_total_blueshift(self, scale):
+    def calc_total_blueshift(self):
         matrix_blueshift = 0
         particle_blueshift = 0
         for vertex in self.vertices:
             if not vertex.is_edge_column:
                 if vertex.is_in_precipitate:
-                    particle_blueshift += self.produce_blueshift_sum(vertex.i, scale)
+                    particle_blueshift += self.produce_blueshift_sum(vertex.i)
                 else:
-                    matrix_blueshift += self.produce_blueshift_sum(vertex.i, scale)
+                    matrix_blueshift += self.produce_blueshift_sum(vertex.i)
         total_blueshift = matrix_blueshift + particle_blueshift
         return total_blueshift / 2, matrix_blueshift / 2, particle_blueshift / 2
 
@@ -1616,16 +1617,16 @@ class AtomicGraph:
         arg = delta_x ** 2 + delta_y ** 2
         return np.sqrt(arg)
 
-    def real_projected_distance(self, i, j, scale):
+    def real_projected_distance(self, i, j):
         x = self.vertices[i].real_coor_x - self.vertices[j].real_coor_x
-        x *= scale
+        x *= self.scale
         y = self.vertices[i].real_coor_y - self.vertices[j].real_coor_y
-        y *= scale
+        y *= self.scale
         projected_distance = np.sqrt(x ** 2 + y ** 2)
         return projected_distance
 
-    def real_distance(self, i, j, scale):
-        projected_distance = self.real_projected_distance(i, j, scale)
+    def real_distance(self, i, j):
+        projected_distance = self.real_projected_distance(i, j)
         if self.vertices[i].level == self.vertices[j].level:
             spatial_distance = projected_distance
         else:
@@ -1649,8 +1650,8 @@ class AtomicGraph:
 
         return hard_sphere
 
-    def get_blueshift(self, i, j, scale):
-        real_distance = self.real_distance(i, j, scale)
+    def get_blueshift(self, i, j):
+        real_distance = self.real_distance(i, j)
         hard_sphere = self.get_hard_sphere_distance(i, j)
         blue_shift = hard_sphere - real_distance
         return blue_shift

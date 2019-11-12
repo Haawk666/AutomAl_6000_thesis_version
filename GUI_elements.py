@@ -173,9 +173,10 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
                 else:
                     self.edges[k][n].hide()
         if center_view:
-            self.ui_obj.btn_snap_trigger(i=i)
-            self.ui_obj.column_selected(i)
-            print('Hello')
+            pass
+            # self.ui_obj.btn_snap_trigger(column_index=i)
+            # self.ui_obj.column_selected(i)
+            # print('Hello')
 
     def eval_style(self, i, m):
         vertex_a = self.ui_obj.project_instance.graph.vertices[i]
@@ -339,7 +340,7 @@ class InfoGraph(QtWidgets.QGraphicsScene):
             for n, vertex_b in enumerate(self.ui_obj.project_instance.graph.get_neighbours(vertex_a.i)):
                 p1 = vertex_a.real_coor()
                 p2 = vertex_b.real_coor()
-                real_distance = self.ui_obj.project_instance.graph.real_distance(vertex_a.i, vertex_b.i, self.ui_obj.project_instance.scale)
+                real_distance = self.ui_obj.project_instance.graph.real_distance(vertex_a.i, vertex_b.i)
                 hard_sphere_distance = self.ui_obj.project_instance.graph.get_hard_sphere_distance(vertex_a.i, vertex_b.i)
                 max_shift = 70
                 if hard_sphere_distance > real_distance:
