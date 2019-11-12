@@ -954,10 +954,12 @@ class MainUI(QtWidgets.QMainWindow):
         if self.project_instance is not None and not self.selected_column == -1:
             self.project_instance.vertex_report(self.selected_column)
 
-    def btn_snap_trigger(self, i=None):
+    def btn_snap_trigger(self, column_index=None):
         if self.project_instance is not None and not self.selected_column == -1:
-            if i is None:
+            if column_index is None or not column_index:
                 i = self.selected_column
+            else:
+                i = column_index
             coor = self.project_instance.graph.vertices[i].real_coor()
             transform = QtGui.QTransform()
             transform.scale(7.5, 7.5)
