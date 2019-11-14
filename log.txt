@@ -2,12 +2,2500 @@ GUI: Welcome to AutomAl 6000 by Haakon Tvedt
 GUI: GUI version: 0.0.1
 GUI: core version: 0.0.10
 ------------------------
-GUI: Opening file C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/008_control
-core: Attempted to load un-compatible save-file. Running conversion script...
-core: Conversion successful!
-core: Loaded C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/008_control
-export_module: Accumulating data...
-core: Attempted to load un-compatible save-file. Running conversion script...
-core: Conversion successful!
-core: Loaded C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/008_control
-GUI: Successfully exported C:/Users/haakot/Desktop/test.csv
+core: Generated instance from C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/haakon_040.dm3
+core: Starting column detection. Search mode is 't'
+core: Summarizing stats...
+core: Collected stats.
+core: Column detection complete! Found 3963 columns.
+core: Continuing column detection. Search mode is 't'
+core: Summarizing stats...
+core: Collected stats.
+core: Column detection complete! Found 4000 columns.
+GUI: C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/haakon_040.dm3
+core: Saved C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/haakon_040_columns
+core: Doing the basics...
+core: Setting alloy...
+core: Alloy set.
+core: Resetting probability vectors with zero bias...
+core: Probability vectors reset.
+core: Mapping spatial locality...
+core: Spatial mapping complete.
+core: Running experimental angle analysis
+core: Angle analysis complete!
+core: Finding particle with legacy method....
+graph: All flags reset!
+graph: All flags reset!
+core: Found particle.
+core: Running legacy level definition algorithm....
+graph: All flags reset!
+graph: All flags reset!
+core: Levels set.
+core: Adding edges to graph...
+core: Edges added.
+core: Looking for intersections
+graph: Mapping friends..
+graph: friends mapped!
+core: Found 0 intersections
+core: 0 literal intersections still remain
+core: Sorting neighbours...
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Neighbours sorted
+core: Summarizing stats.
+core: Summarizing stats...
+core: Collected stats.
+core: Basics done
+core: Running models and untangling...
+core: Starting experimental weak untangling...
+core: Looking for intersections
+graph: Mapping friends..
+graph: friends mapped!
+core: Found 0 intersections
+core: 0 literal intersections still remain
+core: Looking for type 1:
+core: Chi: 0.17040190309252534
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 21, 5: 1 - C_2
+graph: permuted (21, 5, 3931)
+untangling: 43, 3: 1 - C_2
+graph: permuted (43, 3, 1402)
+untangling: 61, 2: 1 - C_2
+graph: permuted (61, 2, 666)
+untangling: 78, 1: 1 - C_2
+graph: permuted (78, 1, 2820)
+untangling: 79, 3844: 1 - A_1
+untangling: 79, 9: 1 - F_1
+untangling: 95, 6: 1 - A_1
+untangling: 164, 2534: 1 - C_1
+graph: permuted (164, 2534, 3843)
+untangling: 180, 93: 1 - A_1
+untangling: 252, 3759: 1 - A_1
+graph: permuted (252, 3759, 1183)
+untangling: 258, 83: 1 - C_1
+graph: permuted (258, 83, 3821)
+untangling: 314, 8: 1 - A_1
+untangling: 367, 470: 1 - C_1
+graph: permuted (367, 470, 3887)
+untangling: 397, 797: 1 - A_1
+untangling: 445, 997: 1 - C_1
+graph: permuted (445, 997, 3440)
+untangling: 448, 135: 1 - C_1
+graph: permuted (448, 135, 3900)
+untangling: 529, 34: 1 - C_1
+graph: permuted (529, 34, 3788)
+untangling: 654, 2: 1 - C_2
+graph: permuted (654, 2, 3289)
+untangling: 889, 2670: 1 - A_1
+untangling: 930, 903: 1 - F_1
+graph: permuted (930, 903, 2114)
+untangling: 949, 160: 1 - I_1
+graph: permuted (949, 160, 3776)
+untangling: 1027, 968: 1 - A_1
+untangling: 1072, 259: 1 - A_1
+untangling: 1183, 2998: 1 - A_1
+graph: permuted (1183, 2998, 252)
+untangling: 1270, 112: 1 - C_1
+graph: permuted (1270, 112, 3771)
+untangling: 1280, 1282: 1 - A_1
+graph: permuted (1280, 1282, 475)
+untangling: 1365, 93: 1 - C_2
+graph: permuted (1365, 93, 3472)
+untangling: 1365, 168: 1 - A_1
+untangling: 1402, 118: 1 - C_2
+graph: permuted (1402, 118, 3870)
+untangling: 1435, 1489: 1 - A_1
+untangling: 1457, 854: 1 - F_2
+untangling: 1547, 2911: 1 - C_1
+graph: permuted (1547, 2911, 3954)
+untangling: 1577, 1722: 1 - F_2
+untangling: 1646, 298: 1 - C_1
+graph: permuted (1646, 298, 3596)
+untangling: 1654, 119: 1 - C_2
+graph: permuted (1654, 119, 2673)
+untangling: 1718, 21: 1 - C_2
+graph: permuted (1718, 21, 3807)
+untangling: 1718, 142: 1 - A_1
+untangling: 1728, 1775: 1 - C_1
+graph: permuted (1728, 1775, 3890)
+untangling: 1822, 3860: 1 - A_1
+untangling: 1825, 17: 1 - A_1
+untangling: 1833, 23: 1 - C_2
+graph: permuted (1833, 23, 3805)
+untangling: 1867, 1370: 1 - C_2
+graph: permuted (1867, 1370, 3915)
+untangling: 1872, 32: 1 - A_1
+untangling: 1872, 51: 1 - C_1
+graph: permuted (1872, 51, 3907)
+untangling: 1943, 90: 1 - A_1
+untangling: 1985, 1342: 1 - A_1
+untangling: 2112, 138: 1 - D_2
+graph: permuted (2112, 138, 3829)
+untangling: 2166, 55: 1 - C_2
+graph: permuted (2166, 55, 2296)
+untangling: 2178, 2272: 1 - G_2
+untangling: 2245, 133: 1 - C_1
+graph: permuted (2245, 133, 2049)
+untangling: 2249, 38: 1 - A_1
+untangling: 2249, 2549: 1 - A_1
+untangling: 2259, 1626: 1 - A_1
+graph: permuted (2259, 1626, 409)
+untangling: 2359, 3153: 1 - A_1
+untangling: 2391, 109: 1 - C_1
+graph: permuted (2391, 109, 3434)
+untangling: 2430, 3435: 1 - F_2
+untangling: 2520, 2727: 1 - A_1
+untangling: 2549, 38: 1 - A_1
+untangling: 2613, 268: 1 - C_2
+graph: permuted (2613, 268, 3377)
+untangling: 2658, 19: 1 - A_1
+untangling: 2741, 259: 1 - A_1
+graph: permuted (2741, 259, 3898)
+untangling: 2746, 168: 1 - C_2
+graph: permuted (2746, 168, 3910)
+untangling: 2757, 1843: 1 - A_1
+untangling: 2760, 504: 1 - C_2
+graph: permuted (2760, 504, 3696)
+untangling: 2766, 1525: 1 - F_1
+untangling: 2782, 342: 1 - A_1
+untangling: 2924, 2222: 1 - A_1
+untangling: 2992, 16: 1 - A_1
+untangling: 3131, 99: 1 - C_1
+graph: permuted (3131, 99, 3845)
+untangling: 3135, 1566: 1 - A_1
+untangling: 3220, 667: 1 - A_1
+untangling: 3309, 3794: 1 - G_2
+untangling: 3331, 361: 1 - C_1
+graph: permuted (3331, 361, 3947)
+untangling: 3370, 41: 1 - C_2
+graph: permuted (3370, 41, 3434)
+untangling: 3380, 63: 1 - A_1
+graph: permuted (3380, 63, 3162)
+untangling: 3389, 638: 1 - A_1
+graph: permuted (3389, 638, 2344)
+untangling: 3392, 618: 1 - A_1
+graph: permuted (3392, 618, 3777)
+untangling: 3467, 647: 1 - F_1
+untangling: 3722, 90: 1 - C_2
+graph: permuted (3722, 90, 3827)
+untangling: 3732, 347: 1 - A_1
+untangling: 3784, 620: 1 - C_2
+graph: permuted (3784, 620, 3900)
+untangling: 3786, 3905: 1 - B_1
+untangling: 3786, 69: 1 - D_1
+graph: permuted (3786, 69, 3861)
+untangling: 3806, 169: 1 - C_2
+graph: permuted (3806, 169, 3835)
+untangling: 3813, 2388: 1 - A_1
+untangling: 3816, 291: 1 - C_1
+graph: permuted (3816, 291, 3937)
+untangling: 3835, 258: 1 - A_1
+untangling: 3836, 63: 1 - A_1
+untangling: 3837, 55: 1 - I_1
+graph: permuted (3837, 55, 3402)
+untangling: 3847, 3892: 1 - F_1
+untangling: 3853, 161: 1 - D_1
+graph: permuted (3853, 161, 3924)
+untangling: 3854, 98: 1 - C_2
+graph: permuted (3854, 98, 3873)
+untangling: 3872, 968: 1 - C_2
+graph: permuted (3872, 968, 3908)
+untangling: 3890, 1822: 1 - C_1
+graph: permuted (3890, 1822, 3893)
+untangling: 3894, 44: 1 - A_1
+untangling: 3905, 96: 1 - C_2
+graph: permuted (3905, 96, 3786)
+untangling: 3914, 782: 1 - C_2
+graph: permuted (3914, 782, 3853)
+untangling: 3921, 175: 1 - A_1
+untangling: 3922, 295: 1 - A_1
+untangling: 3926, 1869: 1 - C_2
+graph: permuted (3926, 1869, 3898)
+untangling: 3932, 634: 1 - A_1
+untangling: 3933, 311: 1 - C_1
+graph: permuted (3933, 311, 3886)
+untangling: 3943, 33: 1 - A_1
+untangling: 3957, 2386: 1 - A_1
+core: Found 104 type 1's, made 56 changes
+core: Chi: 0.17040190309252534
+core: repeating...
+core: Looking for type 1:
+core: Chi: 0.16401652685614124
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 79, 3844: 1 - A_1
+untangling: 79, 9: 1 - F_1
+untangling: 95, 6: 1 - A_1
+untangling: 180, 93: 1 - A_1
+untangling: 314, 8: 1 - A_1
+untangling: 397, 797: 1 - A_1
+untangling: 889, 2670: 1 - A_1
+untangling: 1027, 968: 1 - A_1
+untangling: 1072, 259: 1 - A_1
+untangling: 1365, 168: 1 - A_1
+untangling: 1435, 1489: 1 - A_1
+untangling: 1457, 854: 1 - F_2
+untangling: 1577, 1722: 1 - F_2
+untangling: 1718, 142: 1 - A_1
+untangling: 1822, 3860: 1 - A_1
+untangling: 1825, 17: 1 - A_1
+untangling: 1872, 32: 1 - A_1
+untangling: 1943, 90: 1 - A_1
+untangling: 1985, 1342: 1 - A_1
+untangling: 2178, 2272: 1 - G_2
+untangling: 2249, 38: 1 - A_1
+untangling: 2249, 2549: 1 - A_1
+untangling: 2359, 3153: 1 - A_1
+untangling: 2430, 3435: 1 - F_2
+untangling: 2520, 2727: 1 - A_1
+untangling: 2549, 38: 1 - A_1
+untangling: 2658, 19: 1 - A_1
+untangling: 2757, 1843: 1 - A_1
+untangling: 2766, 1525: 1 - F_1
+untangling: 2782, 342: 1 - A_1
+untangling: 2924, 2222: 1 - A_1
+untangling: 2992, 16: 1 - A_1
+untangling: 3135, 1566: 1 - A_1
+untangling: 3220, 667: 1 - A_1
+untangling: 3309, 3794: 1 - G_2
+untangling: 3467, 647: 1 - F_1
+untangling: 3732, 347: 1 - A_1
+untangling: 3813, 2388: 1 - A_1
+untangling: 3835, 258: 1 - A_1
+untangling: 3836, 63: 1 - A_1
+untangling: 3847, 3892: 1 - F_1
+untangling: 3894, 44: 1 - A_1
+untangling: 3921, 175: 1 - A_1
+untangling: 3922, 295: 1 - A_1
+untangling: 3932, 634: 1 - A_1
+untangling: 3943, 33: 1 - A_1
+untangling: 3957, 2386: 1 - A_1
+core: Found 47 type 1's, made 0 changes
+core: Chi: 0.16401652685614124
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.16401652685614124
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 2296, 212: 2 - B_1
+graph: permuted (2296, 212, 3765)
+untangling: 2936, 46: 2 - B_1
+graph: permuted (2936, 46, 3906)
+untangling: 3177, 420: 2 - B_1
+graph: permuted (3177, 420, 3772)
+untangling: 3440, 576: 2 - B_1
+graph: permuted (3440, 576, 3950)
+untangling: 3596, 100: 2 - B_1
+graph: permuted (3596, 100, 3787)
+untangling: 3763, 634: 2 - B_1
+graph: permuted (3763, 634, 3915)
+untangling: 3815, 1342: 2 - B_1
+graph: permuted (3815, 1342, 3911)
+untangling: 3827, 132: 2 - B_1
+graph: permuted (3827, 132, 3862)
+untangling: 3832, 782: 2 - B_1
+graph: permuted (3832, 782, 3867)
+untangling: 3838, 389: 2 - B_1
+graph: permuted (3838, 389, 3852)
+untangling: 3847, 1528: 2 - C_1
+graph: permuted (3847, 1528, 3945)
+untangling: 3864, 156: 2 - B_1
+graph: permuted (3864, 156, 3887)
+untangling: 3873, 342: 2 - B_1
+graph: permuted (3873, 342, 3908)
+untangling: 3910, 2171: 2 - B_1
+graph: permuted (3910, 2171, 3964)
+untangling: 3924, 1448: 2 - A_1
+core: Found 15 type 2's, made 14 changes
+core: Chi: 0.16401652685614124
+core: repeating...
+core: Looking for type 2:
+core: Chi: 0.16401652685614124
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 3924, 1448: 2 - A_1
+core: Found 1 type 2's, made 0 changes
+core: Chi: 0.16401652685614124
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 3:
+core: Chi: 0.16401652685614124
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 111, 134: 3 - B_1
+graph: permuted (111, 134, 3176)
+untangling: 666, 24: 3 - B_1
+graph: permuted (666, 24, 3819)
+untangling: 706, 529: 3 - B_1
+graph: permuted (706, 529, 3124)
+untangling: 2296, 3765: 3 - D_1
+untangling: 2820, 3788: 3 - A_1
+untangling: 2936, 3906: 3 - D_1
+untangling: 3177, 3772: 3 - D_1
+untangling: 3180, 44: 3 - B_1
+graph: permuted (3180, 44, 3875)
+untangling: 3363, 229: 3 - B_1
+graph: permuted (3363, 229, 3687)
+untangling: 3440, 3950: 3 - D_1
+untangling: 3517, 453: 3 - B_1
+graph: permuted (3517, 453, 3821)
+untangling: 3596, 3787: 3 - D_1
+untangling: 3696, 3868: 3 - A_1
+untangling: 3763, 3915: 3 - D_1
+untangling: 3774, 2613: 3 - A_1
+untangling: 3815, 3911: 3 - D_1
+untangling: 3816, 638: 3 - A_1
+untangling: 3827, 3862: 3 - D_1
+untangling: 3832, 3867: 3 - D_1
+untangling: 3838, 3852: 3 - D_1
+untangling: 3863, 82: 3 - B_1
+graph: permuted (3863, 82, 3907)
+untangling: 3864, 3887: 3 - D_1
+untangling: 3871, 3774: 3 - A_1
+untangling: 3873, 3908: 3 - D_1
+untangling: 3876, 29: 3 - B_1
+graph: permuted (3876, 29, 3305)
+untangling: 3910, 3964: 3 - D_1
+core: Found 26 type 3's, made 8 changes
+core: Chi: 0.16401652685614124
+core: repeating...
+core: Looking for type 3:
+core: Chi: 0.16401652685614124
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 2296, 3765: 3 - D_1
+untangling: 2820, 3788: 3 - A_1
+untangling: 2936, 3906: 3 - D_1
+untangling: 3177, 3772: 3 - D_1
+untangling: 3440, 3950: 3 - D_1
+untangling: 3596, 3787: 3 - D_1
+untangling: 3696, 3868: 3 - A_1
+untangling: 3763, 3915: 3 - D_1
+untangling: 3774, 2613: 3 - A_1
+untangling: 3815, 3911: 3 - D_1
+untangling: 3816, 638: 3 - A_1
+untangling: 3827, 3862: 3 - D_1
+untangling: 3832, 3867: 3 - D_1
+untangling: 3838, 3852: 3 - D_1
+untangling: 3864, 3887: 3 - D_1
+untangling: 3871, 3774: 3 - A_1
+untangling: 3873, 3908: 3 - D_1
+untangling: 3910, 3964: 3 - D_1
+core: Found 18 type 3's, made 0 changes
+core: Chi: 0.16401652685614124
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.16401652685614124
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 3289, 112: 4 - A_1
+graph: permuted (3289, 112, 84)
+core: Found 1 type 4's, made 1 changes
+core: Chi: 0.16401652685614124
+core: repeating...
+core: Looking for type 4:
+core: Chi: 0.16401652685614124
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.16401652685614124
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.16401652685614124
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 1883, 2386: 5 - A_1
+graph: permuted (1883, 2386, 3837)
+untangling: 1909, 91: 5 - A_1
+graph: permuted (1909, 91, 3732)
+untangling: 2673, 369: 5 - A_1
+graph: permuted (2673, 369, 3836)
+untangling: 3842, 1168: 5 - A_1
+graph: permuted (3842, 1168, 1448)
+untangling: 3849, 1428: 5 - A_1
+graph: permuted (3849, 1428, 3953)
+untangling: 3919, 53: 5 - A_1
+graph: permuted (3919, 53, 2549)
+core: Found 6 type 5's, made 6 changes
+core: Chi: 0.16401652685614124
+core: repeating...
+core: Looking for type 5:
+core: Chi: 0.16401652685614124
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.16401652685614124
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 6:
+core: Chi: 0.16401652685614124
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 36, 488: 6 - A_1
+untangling: 67, 282: 6 - A_1
+untangling: 210, 219: 6 - A_1
+untangling: 232, 693: 6 - A_1
+untangling: 237, 196: 6 - A_1
+untangling: 320, 588: 6 - A_1
+untangling: 344, 1090: 6 - A_1
+untangling: 355, 489: 6 - A_1
+untangling: 585, 618: 6 - A_1
+untangling: 611, 144: 6 - A_1
+untangling: 633, 2784: 6 - A_1
+untangling: 723, 387: 6 - A_1
+untangling: 765, 856: 6 - A_1
+untangling: 838, 915: 6 - A_1
+untangling: 930, 683: 6 - A_1
+untangling: 994, 457: 6 - A_1
+untangling: 1070, 964: 6 - A_1
+untangling: 1203, 2052: 6 - A_1
+untangling: 1246, 1701: 6 - A_1
+untangling: 1429, 2872: 6 - A_1
+untangling: 1486, 1804: 6 - A_1
+untangling: 1490, 3529: 6 - A_1
+untangling: 1513, 2101: 6 - A_1
+untangling: 1524, 836: 6 - A_1
+untangling: 1751, 2330: 6 - A_1
+untangling: 1831, 59: 6 - A_1
+untangling: 1879, 1576: 6 - A_1
+untangling: 1883, 3837: 6 - A_1
+untangling: 1909, 3732: 6 - A_1
+graph: permuted (3732, 347, 1909)
+untangling: 1912, 1628: 6 - A_1
+untangling: 1957, 1846: 6 - A_1
+untangling: 2085, 2637: 6 - A_1
+untangling: 2112, 3837: 6 - A_1
+untangling: 2185, 1170: 6 - A_1
+untangling: 2197, 1096: 6 - A_1
+untangling: 2213, 2810: 6 - A_1
+untangling: 2466, 2540: 6 - A_1
+untangling: 2673, 3836: 6 - A_1
+graph: permuted (3836, 63, 2673)
+untangling: 2684, 1972: 6 - A_1
+untangling: 2688, 3670: 6 - A_1
+untangling: 2721, 2583: 6 - A_1
+untangling: 2763, 2546: 6 - A_1
+untangling: 2938, 3899: 6 - A_1
+untangling: 3088, 3820: 6 - A_1
+untangling: 3128, 756: 6 - A_1
+untangling: 3236, 2734: 6 - A_1
+untangling: 3258, 2489: 6 - A_1
+untangling: 3289, 84: 6 - A_1
+untangling: 3358, 3145: 6 - A_1
+untangling: 3466, 2765: 6 - A_1
+untangling: 3500, 3346: 6 - A_1
+untangling: 3620, 2255: 6 - A_1
+untangling: 3800, 949: 6 - A_1
+untangling: 3825, 367: 6 - A_1
+untangling: 3842, 1448: 6 - A_1
+graph: permuted (1448, 889, 3842)
+untangling: 3849, 3953: 6 - A_1
+graph: permuted (3953, 114, 3849)
+untangling: 3870, 1202: 6 - A_1
+untangling: 3919, 2549: 6 - A_1
+graph: permuted (2549, 7, 3919)
+core: Found 58 type 6's, made 5 changes
+core: Chi: 0.16401652685614124
+core: repeating...
+core: Looking for type 6:
+core: Chi: 0.16389132340052587
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 36, 488: 6 - A_1
+untangling: 67, 282: 6 - A_1
+untangling: 210, 219: 6 - A_1
+untangling: 232, 693: 6 - A_1
+untangling: 237, 196: 6 - A_1
+untangling: 320, 588: 6 - A_1
+untangling: 344, 1090: 6 - A_1
+untangling: 355, 489: 6 - A_1
+untangling: 585, 618: 6 - A_1
+untangling: 611, 144: 6 - A_1
+untangling: 633, 2784: 6 - A_1
+untangling: 723, 387: 6 - A_1
+untangling: 765, 856: 6 - A_1
+untangling: 838, 915: 6 - A_1
+untangling: 930, 683: 6 - A_1
+untangling: 994, 457: 6 - A_1
+untangling: 1070, 964: 6 - A_1
+untangling: 1203, 2052: 6 - A_1
+untangling: 1246, 1701: 6 - A_1
+untangling: 1429, 2872: 6 - A_1
+untangling: 1486, 1804: 6 - A_1
+untangling: 1490, 3529: 6 - A_1
+untangling: 1513, 2101: 6 - A_1
+untangling: 1524, 836: 6 - A_1
+untangling: 1751, 2330: 6 - A_1
+untangling: 1831, 59: 6 - A_1
+untangling: 1879, 1576: 6 - A_1
+untangling: 1883, 3837: 6 - A_1
+untangling: 1912, 1628: 6 - A_1
+untangling: 1957, 1846: 6 - A_1
+untangling: 2085, 2637: 6 - A_1
+untangling: 2112, 3837: 6 - A_1
+untangling: 2185, 1170: 6 - A_1
+untangling: 2197, 1096: 6 - A_1
+untangling: 2213, 2810: 6 - A_1
+untangling: 2466, 2540: 6 - A_1
+untangling: 2684, 1972: 6 - A_1
+untangling: 2688, 3670: 6 - A_1
+untangling: 2721, 2583: 6 - A_1
+untangling: 2763, 2546: 6 - A_1
+untangling: 2938, 3899: 6 - A_1
+untangling: 3088, 3820: 6 - A_1
+untangling: 3128, 756: 6 - A_1
+untangling: 3236, 2734: 6 - A_1
+untangling: 3258, 2489: 6 - A_1
+untangling: 3289, 84: 6 - A_1
+untangling: 3358, 3145: 6 - A_1
+untangling: 3466, 2765: 6 - A_1
+untangling: 3500, 3346: 6 - A_1
+untangling: 3620, 2255: 6 - A_1
+untangling: 3800, 949: 6 - A_1
+untangling: 3825, 367: 6 - A_1
+untangling: 3870, 1202: 6 - A_1
+core: Found 53 type 6's, made 0 changes
+core: Chi: 0.16389132340052587
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 1:
+core: Chi: 0.16389132340052587
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 79, 3844: 1 - A_1
+untangling: 79, 9: 1 - F_1
+untangling: 95, 6: 1 - A_1
+untangling: 114, 3953: 1 - A_1
+untangling: 180, 93: 1 - A_1
+untangling: 314, 8: 1 - A_1
+untangling: 397, 797: 1 - A_1
+untangling: 889, 2670: 1 - A_1
+untangling: 1027, 968: 1 - A_1
+untangling: 1072, 259: 1 - A_1
+untangling: 1365, 168: 1 - A_1
+untangling: 1435, 1489: 1 - A_1
+untangling: 1457, 854: 1 - F_2
+untangling: 1577, 1722: 1 - F_2
+untangling: 1718, 142: 1 - A_1
+untangling: 1822, 3860: 1 - A_1
+untangling: 1825, 17: 1 - A_1
+untangling: 1872, 32: 1 - A_1
+untangling: 1943, 90: 1 - A_1
+untangling: 1985, 1342: 1 - A_1
+untangling: 2178, 2272: 1 - G_2
+untangling: 2249, 38: 1 - A_1
+untangling: 2359, 3153: 1 - A_1
+untangling: 2430, 3435: 1 - F_2
+untangling: 2520, 2727: 1 - A_1
+untangling: 2549, 38: 1 - C_2
+graph: permuted (2549, 38, 7)
+untangling: 2658, 19: 1 - A_1
+untangling: 2757, 1843: 1 - A_1
+untangling: 2766, 1525: 1 - F_1
+untangling: 2782, 342: 1 - A_1
+untangling: 2924, 2222: 1 - A_1
+untangling: 2992, 16: 1 - A_1
+untangling: 3124, 35: 1 - C_2
+graph: permuted (3124, 35, 706)
+untangling: 3135, 1566: 1 - A_1
+untangling: 3176, 14: 1 - C_2
+graph: permuted (3176, 14, 111)
+untangling: 3220, 667: 1 - A_1
+untangling: 3309, 3794: 1 - G_2
+untangling: 3467, 647: 1 - F_1
+untangling: 3687, 1370: 1 - D_2
+graph: permuted (3687, 1370, 3363)
+untangling: 3765, 77: 1 - D_1
+graph: permuted (3765, 77, 2296)
+untangling: 3772, 35: 1 - D_1
+graph: permuted (3772, 35, 3177)
+untangling: 3787, 1481: 1 - C_1
+graph: permuted (3787, 1481, 3596)
+untangling: 3813, 2388: 1 - A_1
+untangling: 3819, 61: 1 - C_2
+graph: permuted (3819, 61, 666)
+untangling: 3821, 434: 1 - C_2
+graph: permuted (3821, 434, 3517)
+untangling: 3835, 258: 1 - A_1
+untangling: 3852, 145: 1 - C_1
+graph: permuted (3852, 145, 3838)
+untangling: 3862, 127: 1 - C_1
+graph: permuted (3862, 127, 3827)
+untangling: 3867, 105: 1 - C_1
+graph: permuted (3867, 105, 3832)
+untangling: 3875, 96: 1 - C_2
+graph: permuted (3875, 96, 3180)
+untangling: 3887, 510: 1 - C_1
+graph: permuted (3887, 510, 3864)
+untangling: 3894, 44: 1 - A_1
+untangling: 3906, 304: 1 - C_1
+graph: permuted (3906, 304, 2936)
+untangling: 3907, 460: 1 - C_2
+graph: permuted (3907, 460, 3863)
+untangling: 3908, 889: 1 - C_1
+graph: permuted (3908, 889, 3873)
+untangling: 3911, 117: 1 - C_1
+graph: permuted (3911, 117, 3815)
+untangling: 3915, 1746: 1 - C_1
+graph: permuted (3915, 1746, 3763)
+untangling: 3921, 175: 1 - A_1
+untangling: 3922, 295: 1 - A_1
+untangling: 3932, 634: 1 - A_1
+untangling: 3943, 33: 1 - A_1
+untangling: 3945, 997: 1 - C_1
+graph: permuted (3945, 997, 3847)
+untangling: 3950, 377: 1 - C_1
+graph: permuted (3950, 377, 3440)
+untangling: 3957, 2386: 1 - A_1
+untangling: 3964, 1321: 1 - C_1
+graph: permuted (3964, 1321, 3910)
+core: Found 65 type 1's, made 22 changes
+core: Chi: 0.16389132340052587
+core: repeating...
+core: Looking for type 1:
+core: Chi: 0.16151245774383374
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 79, 3844: 1 - A_1
+untangling: 79, 9: 1 - F_1
+untangling: 95, 6: 1 - A_1
+untangling: 114, 3953: 1 - A_1
+untangling: 180, 93: 1 - A_1
+untangling: 314, 8: 1 - A_1
+untangling: 397, 797: 1 - A_1
+untangling: 889, 2670: 1 - A_1
+untangling: 1027, 968: 1 - A_1
+graph: permuted (1027, 968, 3772)
+untangling: 1072, 259: 1 - A_1
+untangling: 1365, 168: 1 - A_1
+untangling: 1435, 1489: 1 - A_1
+untangling: 1457, 854: 1 - F_2
+untangling: 1577, 1722: 1 - F_2
+untangling: 1718, 142: 1 - A_1
+untangling: 1822, 3860: 1 - A_1
+untangling: 1825, 17: 1 - A_1
+untangling: 1872, 32: 1 - A_1
+untangling: 1943, 90: 1 - A_1
+graph: permuted (1943, 90, 3687)
+untangling: 1985, 1342: 1 - A_1
+untangling: 2178, 2272: 1 - G_2
+untangling: 2249, 38: 1 - A_1
+untangling: 2249, 2549: 1 - A_1
+untangling: 2359, 3153: 1 - A_1
+untangling: 2430, 3435: 1 - F_2
+untangling: 2520, 2727: 1 - A_1
+untangling: 2658, 19: 1 - A_1
+untangling: 2757, 1843: 1 - A_1
+untangling: 2766, 1525: 1 - F_1
+untangling: 2782, 342: 1 - A_1
+untangling: 2924, 2222: 1 - A_1
+untangling: 2992, 16: 1 - A_1
+untangling: 3135, 1566: 1 - A_1
+untangling: 3220, 667: 1 - A_1
+untangling: 3309, 3794: 1 - G_2
+untangling: 3467, 647: 1 - F_1
+untangling: 3813, 2388: 1 - A_1
+untangling: 3835, 258: 1 - A_1
+untangling: 3894, 44: 1 - A_1
+untangling: 3921, 175: 1 - A_1
+untangling: 3922, 295: 1 - A_1
+untangling: 3932, 634: 1 - A_1
+untangling: 3943, 33: 1 - A_1
+untangling: 3957, 2386: 1 - A_1
+core: Found 44 type 1's, made 2 changes
+core: Chi: 0.16151245774383374
+core: repeating...
+core: Looking for type 1:
+core: Chi: 0.16126205083260298
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 79, 3844: 1 - A_1
+untangling: 79, 9: 1 - F_1
+untangling: 95, 6: 1 - A_1
+untangling: 114, 3953: 1 - A_1
+untangling: 180, 93: 1 - A_1
+untangling: 314, 8: 1 - A_1
+untangling: 397, 797: 1 - A_1
+untangling: 889, 2670: 1 - A_1
+untangling: 1072, 259: 1 - A_1
+untangling: 1365, 168: 1 - A_1
+untangling: 1435, 1489: 1 - A_1
+untangling: 1457, 854: 1 - F_2
+untangling: 1577, 1722: 1 - F_2
+untangling: 1718, 142: 1 - A_1
+untangling: 1822, 3860: 1 - A_1
+untangling: 1825, 17: 1 - A_1
+untangling: 1872, 32: 1 - A_1
+untangling: 1985, 1342: 1 - A_1
+untangling: 2178, 2272: 1 - G_2
+untangling: 2249, 38: 1 - A_1
+untangling: 2249, 2549: 1 - A_1
+untangling: 2359, 3153: 1 - A_1
+untangling: 2430, 3435: 1 - F_2
+untangling: 2520, 2727: 1 - A_1
+untangling: 2658, 19: 1 - A_1
+untangling: 2757, 1843: 1 - A_1
+untangling: 2766, 1525: 1 - F_1
+untangling: 2782, 342: 1 - A_1
+untangling: 2924, 2222: 1 - A_1
+untangling: 2992, 16: 1 - A_1
+untangling: 3135, 1566: 1 - A_1
+untangling: 3220, 667: 1 - A_1
+untangling: 3309, 3794: 1 - G_2
+untangling: 3467, 647: 1 - F_1
+untangling: 3813, 2388: 1 - A_1
+untangling: 3835, 258: 1 - A_1
+untangling: 3894, 44: 1 - A_1
+untangling: 3921, 175: 1 - A_1
+untangling: 3922, 295: 1 - A_1
+untangling: 3932, 634: 1 - A_1
+untangling: 3943, 33: 1 - A_1
+untangling: 3957, 2386: 1 - A_1
+core: Found 42 type 1's, made 0 changes
+core: Chi: 0.16126205083260298
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.16126205083260298
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 3847, 3892: 2 - A_1
+untangling: 3876, 3305: 2 - D_1
+core: Found 2 type 2's, made 0 changes
+core: Chi: 0.16126205083260298
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 3:
+core: Chi: 0.16126205083260298
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 2820, 3788: 3 - A_1
+untangling: 3696, 3868: 3 - A_1
+untangling: 3774, 2613: 3 - A_1
+untangling: 3816, 638: 3 - A_1
+untangling: 3871, 3774: 3 - A_1
+core: Found 5 type 3's, made 0 changes
+core: Chi: 0.16126205083260298
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.16126205083260298
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.16126205083260298
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.16126205083260298
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.16126205083260298
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 6:
+core: Chi: 0.16126205083260298
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 36, 488: 6 - A_1
+untangling: 67, 282: 6 - A_1
+untangling: 210, 219: 6 - A_1
+untangling: 232, 693: 6 - A_1
+untangling: 237, 196: 6 - A_1
+untangling: 320, 588: 6 - A_1
+untangling: 344, 1090: 6 - A_1
+untangling: 355, 489: 6 - A_1
+untangling: 585, 618: 6 - A_1
+untangling: 611, 144: 6 - A_1
+untangling: 633, 2784: 6 - A_1
+untangling: 723, 387: 6 - A_1
+untangling: 765, 856: 6 - A_1
+untangling: 838, 915: 6 - A_1
+untangling: 930, 683: 6 - A_1
+untangling: 994, 457: 6 - A_1
+untangling: 1070, 964: 6 - A_1
+untangling: 1203, 2052: 6 - A_1
+untangling: 1246, 1701: 6 - A_1
+untangling: 1429, 2872: 6 - A_1
+untangling: 1486, 1804: 6 - A_1
+untangling: 1490, 3529: 6 - A_1
+untangling: 1513, 2101: 6 - A_1
+untangling: 1524, 836: 6 - A_1
+untangling: 1751, 2330: 6 - A_1
+untangling: 1831, 59: 6 - A_1
+untangling: 1879, 1576: 6 - A_1
+untangling: 1883, 3837: 6 - A_1
+untangling: 1912, 1628: 6 - A_1
+untangling: 1957, 1846: 6 - A_1
+untangling: 2085, 2637: 6 - A_1
+untangling: 2112, 3837: 6 - A_1
+untangling: 2185, 1170: 6 - A_1
+untangling: 2197, 1096: 6 - A_1
+untangling: 2213, 2810: 6 - A_1
+untangling: 2466, 2540: 6 - A_1
+untangling: 2684, 1972: 6 - A_1
+untangling: 2688, 3670: 6 - A_1
+untangling: 2721, 2583: 6 - A_1
+untangling: 2763, 2546: 6 - A_1
+untangling: 2938, 3899: 6 - A_1
+untangling: 3088, 3820: 6 - A_1
+untangling: 3128, 756: 6 - A_1
+untangling: 3236, 2734: 6 - A_1
+untangling: 3258, 2489: 6 - A_1
+untangling: 3289, 84: 6 - A_1
+untangling: 3358, 3145: 6 - A_1
+untangling: 3466, 2765: 6 - A_1
+untangling: 3500, 3346: 6 - A_1
+untangling: 3620, 2255: 6 - A_1
+untangling: 3765, 2391: 6 - A_1
+untangling: 3800, 949: 6 - A_1
+untangling: 3825, 367: 6 - A_1
+untangling: 3870, 1202: 6 - A_1
+core: Found 54 type 6's, made 0 changes
+core: Chi: 0.16126205083260298
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 1:
+core: Chi: 0.16126205083260298
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 79, 3844: 1 - A_1
+untangling: 79, 9: 1 - F_1
+untangling: 95, 6: 1 - A_1
+untangling: 114, 3953: 1 - A_1
+untangling: 180, 93: 1 - A_1
+untangling: 314, 8: 1 - A_1
+untangling: 397, 797: 1 - A_1
+untangling: 889, 2670: 1 - A_1
+untangling: 1072, 259: 1 - A_1
+untangling: 1365, 168: 1 - A_1
+untangling: 1435, 1489: 1 - A_1
+untangling: 1457, 854: 1 - F_2
+untangling: 1577, 1722: 1 - F_2
+untangling: 1718, 142: 1 - A_1
+untangling: 1822, 3860: 1 - A_1
+untangling: 1825, 17: 1 - A_1
+untangling: 1872, 32: 1 - A_1
+untangling: 1985, 1342: 1 - A_1
+untangling: 2178, 2272: 1 - G_2
+untangling: 2249, 38: 1 - A_1
+untangling: 2249, 2549: 1 - A_1
+untangling: 2359, 3153: 1 - A_1
+untangling: 2430, 3435: 1 - F_2
+untangling: 2520, 2727: 1 - A_1
+untangling: 2658, 19: 1 - A_1
+untangling: 2757, 1843: 1 - A_1
+untangling: 2766, 1525: 1 - F_1
+untangling: 2782, 342: 1 - A_1
+untangling: 2924, 2222: 1 - A_1
+untangling: 2992, 16: 1 - A_1
+untangling: 3135, 1566: 1 - A_1
+untangling: 3220, 667: 1 - A_1
+untangling: 3309, 3794: 1 - G_2
+untangling: 3467, 647: 1 - F_1
+untangling: 3813, 2388: 1 - A_1
+untangling: 3835, 258: 1 - A_1
+untangling: 3894, 44: 1 - A_1
+untangling: 3921, 175: 1 - A_1
+untangling: 3922, 295: 1 - A_1
+untangling: 3932, 634: 1 - A_1
+untangling: 3943, 33: 1 - A_1
+untangling: 3957, 2386: 1 - A_1
+core: Found 42 type 1's, made 0 changes
+core: Chi: 0.16126205083260298
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.16126205083260298
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 3847, 3892: 2 - A_1
+untangling: 3876, 3305: 2 - D_1
+core: Found 2 type 2's, made 0 changes
+core: Chi: 0.16126205083260298
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 3:
+core: Chi: 0.16126205083260298
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 2820, 3788: 3 - A_1
+untangling: 3696, 3868: 3 - A_1
+untangling: 3774, 2613: 3 - A_1
+untangling: 3816, 638: 3 - A_1
+untangling: 3871, 3774: 3 - A_1
+core: Found 5 type 3's, made 0 changes
+core: Chi: 0.16126205083260298
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.16126205083260298
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.16126205083260298
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.16126205083260298
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.16126205083260298
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 6:
+core: Chi: 0.16126205083260298
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 36, 488: 6 - A_1
+untangling: 67, 282: 6 - A_1
+untangling: 210, 219: 6 - A_1
+untangling: 232, 693: 6 - A_1
+untangling: 237, 196: 6 - A_1
+untangling: 320, 588: 6 - A_1
+untangling: 344, 1090: 6 - A_1
+untangling: 355, 489: 6 - A_1
+untangling: 585, 618: 6 - A_1
+untangling: 611, 144: 6 - A_1
+untangling: 633, 2784: 6 - A_1
+untangling: 723, 387: 6 - A_1
+untangling: 765, 856: 6 - A_1
+untangling: 838, 915: 6 - A_1
+untangling: 930, 683: 6 - A_1
+untangling: 994, 457: 6 - A_1
+untangling: 1070, 964: 6 - A_1
+untangling: 1203, 2052: 6 - A_1
+untangling: 1246, 1701: 6 - A_1
+untangling: 1429, 2872: 6 - A_1
+untangling: 1486, 1804: 6 - A_1
+untangling: 1490, 3529: 6 - A_1
+untangling: 1513, 2101: 6 - A_1
+untangling: 1524, 836: 6 - A_1
+untangling: 1751, 2330: 6 - A_1
+untangling: 1831, 59: 6 - A_1
+untangling: 1879, 1576: 6 - A_1
+untangling: 1883, 3837: 6 - A_1
+untangling: 1912, 1628: 6 - A_1
+untangling: 1957, 1846: 6 - A_1
+untangling: 2085, 2637: 6 - A_1
+untangling: 2112, 3837: 6 - A_1
+untangling: 2185, 1170: 6 - A_1
+untangling: 2197, 1096: 6 - A_1
+untangling: 2213, 2810: 6 - A_1
+untangling: 2466, 2540: 6 - A_1
+untangling: 2684, 1972: 6 - A_1
+untangling: 2688, 3670: 6 - A_1
+untangling: 2721, 2583: 6 - A_1
+untangling: 2763, 2546: 6 - A_1
+untangling: 2938, 3899: 6 - A_1
+untangling: 3088, 3820: 6 - A_1
+untangling: 3128, 756: 6 - A_1
+untangling: 3236, 2734: 6 - A_1
+untangling: 3258, 2489: 6 - A_1
+untangling: 3289, 84: 6 - A_1
+untangling: 3358, 3145: 6 - A_1
+untangling: 3466, 2765: 6 - A_1
+untangling: 3500, 3346: 6 - A_1
+untangling: 3620, 2255: 6 - A_1
+untangling: 3765, 2391: 6 - A_1
+untangling: 3800, 949: 6 - A_1
+untangling: 3825, 367: 6 - A_1
+untangling: 3870, 1202: 6 - A_1
+core: Found 54 type 6's, made 0 changes
+core: Chi: 0.16126205083260298
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 1:
+core: Chi: 0.16126205083260298
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 79, 3844: 1 - A_1
+untangling: 79, 9: 1 - F_1
+untangling: 95, 6: 1 - A_1
+untangling: 114, 3953: 1 - A_1
+untangling: 180, 93: 1 - A_1
+untangling: 314, 8: 1 - A_1
+untangling: 397, 797: 1 - A_1
+untangling: 889, 2670: 1 - A_1
+untangling: 1072, 259: 1 - A_1
+untangling: 1365, 168: 1 - A_1
+untangling: 1435, 1489: 1 - A_1
+untangling: 1457, 854: 1 - F_2
+untangling: 1577, 1722: 1 - F_2
+untangling: 1718, 142: 1 - A_1
+untangling: 1822, 3860: 1 - A_1
+untangling: 1825, 17: 1 - A_1
+untangling: 1872, 32: 1 - A_1
+untangling: 1985, 1342: 1 - A_1
+untangling: 2178, 2272: 1 - G_2
+untangling: 2249, 38: 1 - A_1
+untangling: 2249, 2549: 1 - A_1
+untangling: 2359, 3153: 1 - A_1
+untangling: 2430, 3435: 1 - F_2
+untangling: 2520, 2727: 1 - A_1
+untangling: 2658, 19: 1 - A_1
+untangling: 2757, 1843: 1 - A_1
+untangling: 2766, 1525: 1 - F_1
+untangling: 2782, 342: 1 - A_1
+untangling: 2924, 2222: 1 - A_1
+untangling: 2992, 16: 1 - A_1
+untangling: 3135, 1566: 1 - A_1
+untangling: 3220, 667: 1 - A_1
+untangling: 3309, 3794: 1 - G_2
+untangling: 3467, 647: 1 - F_1
+untangling: 3813, 2388: 1 - A_1
+untangling: 3835, 258: 1 - A_1
+untangling: 3894, 44: 1 - A_1
+untangling: 3921, 175: 1 - A_1
+untangling: 3922, 295: 1 - A_1
+untangling: 3932, 634: 1 - A_1
+untangling: 3943, 33: 1 - A_1
+untangling: 3957, 2386: 1 - A_1
+core: Found 42 type 1's, made 0 changes
+core: Chi: 0.16126205083260298
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.16126205083260298
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 3847, 3892: 2 - A_1
+untangling: 3876, 3305: 2 - D_1
+core: Found 2 type 2's, made 0 changes
+core: Chi: 0.16126205083260298
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 3:
+core: Chi: 0.16126205083260298
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 2820, 3788: 3 - A_1
+untangling: 3696, 3868: 3 - A_1
+untangling: 3774, 2613: 3 - A_1
+untangling: 3816, 638: 3 - A_1
+untangling: 3871, 3774: 3 - A_1
+core: Found 5 type 3's, made 0 changes
+core: Chi: 0.16126205083260298
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.16126205083260298
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.16126205083260298
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.16126205083260298
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.16126205083260298
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 6:
+core: Chi: 0.16126205083260298
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 36, 488: 6 - A_1
+untangling: 67, 282: 6 - A_1
+untangling: 210, 219: 6 - A_1
+untangling: 232, 693: 6 - A_1
+untangling: 237, 196: 6 - A_1
+untangling: 320, 588: 6 - A_1
+untangling: 344, 1090: 6 - A_1
+untangling: 355, 489: 6 - A_1
+untangling: 585, 618: 6 - A_1
+untangling: 611, 144: 6 - A_1
+untangling: 633, 2784: 6 - A_1
+untangling: 723, 387: 6 - A_1
+untangling: 765, 856: 6 - A_1
+untangling: 838, 915: 6 - A_1
+untangling: 930, 683: 6 - A_1
+untangling: 994, 457: 6 - A_1
+untangling: 1070, 964: 6 - A_1
+untangling: 1203, 2052: 6 - A_1
+untangling: 1246, 1701: 6 - A_1
+untangling: 1429, 2872: 6 - A_1
+untangling: 1486, 1804: 6 - A_1
+untangling: 1490, 3529: 6 - A_1
+untangling: 1513, 2101: 6 - A_1
+untangling: 1524, 836: 6 - A_1
+untangling: 1751, 2330: 6 - A_1
+untangling: 1831, 59: 6 - A_1
+untangling: 1879, 1576: 6 - A_1
+untangling: 1883, 3837: 6 - A_1
+untangling: 1912, 1628: 6 - A_1
+untangling: 1957, 1846: 6 - A_1
+untangling: 2085, 2637: 6 - A_1
+untangling: 2112, 3837: 6 - A_1
+untangling: 2185, 1170: 6 - A_1
+untangling: 2197, 1096: 6 - A_1
+untangling: 2213, 2810: 6 - A_1
+untangling: 2466, 2540: 6 - A_1
+untangling: 2684, 1972: 6 - A_1
+untangling: 2688, 3670: 6 - A_1
+untangling: 2721, 2583: 6 - A_1
+untangling: 2763, 2546: 6 - A_1
+untangling: 2938, 3899: 6 - A_1
+untangling: 3088, 3820: 6 - A_1
+untangling: 3128, 756: 6 - A_1
+untangling: 3236, 2734: 6 - A_1
+untangling: 3258, 2489: 6 - A_1
+untangling: 3289, 84: 6 - A_1
+untangling: 3358, 3145: 6 - A_1
+untangling: 3466, 2765: 6 - A_1
+untangling: 3500, 3346: 6 - A_1
+untangling: 3620, 2255: 6 - A_1
+untangling: 3765, 2391: 6 - A_1
+untangling: 3800, 949: 6 - A_1
+untangling: 3825, 367: 6 - A_1
+untangling: 3870, 1202: 6 - A_1
+core: Found 54 type 6's, made 0 changes
+core: Chi: 0.16126205083260298
+core: repeating...
+core: No changes made, continuing...
+core: Looking for intersections
+graph: Mapping friends..
+graph: friends mapped!
+core: Found 0 intersections
+core: 0 literal intersections still remain
+core: Weak untangling complete
+core: Apply product predictions
+graph: Mapping friends..
+graph: friends mapped!
+graph: Mapping friends..
+graph: friends mapped!
+core: Applied product predictions!
+core: Starting experimental weak untangling...
+core: Looking for intersections
+graph: Mapping friends..
+graph: friends mapped!
+core: Found 0 intersections
+core: 0 literal intersections still remain
+core: Looking for type 1:
+core: Chi: 0.15675743192605546
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 40, 5: 1 - A_1
+untangling: 79, 3844: 1 - A_1
+untangling: 79, 9: 1 - F_1
+untangling: 84, 726: 1 - A_1
+graph: permuted (84, 726, 3289)
+untangling: 95, 6: 1 - C_1
+graph: permuted (95, 6, 706)
+untangling: 114, 3953: 1 - A_1
+untangling: 258, 83: 1 - A_1
+untangling: 272, 20: 1 - A_1
+untangling: 314, 8: 1 - C_1
+graph: permuted (314, 8, 2114)
+untangling: 367, 30: 1 - C_2
+graph: permuted (367, 30, 3825)
+untangling: 517, 22: 1 - C_2
+graph: permuted (517, 22, 2633)
+untangling: 638, 9: 1 - C_1
+graph: permuted (638, 9, 3816)
+untangling: 889, 1448: 1 - A_1
+graph: permuted (889, 1448, 3873)
+untangling: 1202, 1375: 1 - A_1
+graph: permuted (1202, 1375, 3870)
+untangling: 1872, 32: 1 - C_1
+graph: permuted (1872, 32, 3591)
+untangling: 1985, 1342: 1 - A_1
+graph: permuted (1985, 1342, 3869)
+untangling: 2249, 38: 1 - A_1
+untangling: 2391, 109: 1 - A_1
+graph: permuted (2391, 109, 3765)
+untangling: 2430, 3435: 1 - C_2
+graph: permuted (2430, 3435, 3998)
+untangling: 2520, 2727: 1 - A_1
+untangling: 2613, 268: 1 - A_1
+untangling: 2658, 19: 1 - A_1
+untangling: 2869, 1255: 1 - A_1
+untangling: 2992, 16: 1 - C_1
+graph: permuted (2992, 16, 3786)
+untangling: 3135, 1566: 1 - A_1
+graph: permuted (3135, 1566, 3936)
+untangling: 3220, 667: 1 - A_1
+graph: permuted (3220, 667, 3787)
+untangling: 3712, 32: 1 - A_1
+untangling: 3788, 236: 1 - C_1
+graph: permuted (3788, 236, 2820)
+untangling: 3835, 258: 1 - A_1
+untangling: 3837, 55: 1 - C_1
+graph: permuted (3837, 55, 2112)
+untangling: 3838, 494: 1 - C_2
+graph: permuted (3838, 494, 3998)
+untangling: 3892, 2992: 1 - C_2
+graph: permuted (3892, 2992, 3847)
+untangling: 3894, 44: 1 - A_1
+untangling: 3922, 295: 1 - A_1
+untangling: 3931, 58: 1 - C_2
+graph: permuted (3931, 58, 1586)
+untangling: 3932, 634: 1 - A_1
+untangling: 3957, 2386: 1 - A_1
+core: Found 37 type 1's, made 20 changes
+core: Chi: 0.15675743192605546
+core: repeating...
+core: Looking for type 1:
+core: Chi: 0.1548838371221584
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 40, 5: 1 - A_1
+untangling: 79, 3844: 1 - A_1
+untangling: 79, 9: 1 - F_1
+untangling: 114, 3953: 1 - A_1
+untangling: 258, 83: 1 - A_1
+untangling: 272, 20: 1 - A_1
+untangling: 2249, 38: 1 - A_1
+untangling: 2520, 2727: 1 - A_1
+untangling: 2613, 268: 1 - A_1
+untangling: 2658, 19: 1 - A_1
+untangling: 2869, 1255: 1 - A_1
+untangling: 3712, 32: 1 - A_1
+untangling: 3835, 258: 1 - A_1
+untangling: 3894, 44: 1 - A_1
+untangling: 3922, 295: 1 - A_1
+untangling: 3932, 634: 1 - A_1
+untangling: 3957, 2386: 1 - A_1
+core: Found 17 type 1's, made 0 changes
+core: Chi: 0.1548838371221584
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.1548838371221584
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 170, 29: 2 - B_1
+graph: permuted (170, 29, 795)
+untangling: 3905, 1822: 2 - A_1
+core: Found 2 type 2's, made 1 changes
+core: Chi: 0.1548838371221584
+core: repeating...
+core: Looking for type 2:
+core: Chi: 0.1548838371221584
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 3905, 1822: 2 - A_1
+core: Found 1 type 2's, made 0 changes
+core: Chi: 0.1548838371221584
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 3:
+core: Chi: 0.1548838371221584
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 170, 795: 3 - D_1
+untangling: 3696, 3868: 3 - A_1
+untangling: 3774, 2613: 3 - A_1
+untangling: 3871, 3774: 3 - A_1
+core: Found 4 type 3's, made 0 changes
+core: Chi: 0.1548838371221584
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.1548838371221584
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 2190, 73: 4 - A_1
+graph: permuted (2190, 73, 3894)
+untangling: 3998, 175: 4 - A_1
+graph: permuted (3998, 175, 3957)
+core: Found 2 type 4's, made 2 changes
+core: Chi: 0.1548838371221584
+core: repeating...
+core: Looking for type 4:
+core: Chi: 0.1548838371221584
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.1548838371221584
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.1548838371221584
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.1548838371221584
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 6:
+core: Chi: 0.1548838371221584
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 2190, 3894: 6 - A_1
+graph: permuted (3894, 44, 2190)
+untangling: 3875, 3180: 6 - A_1
+graph: permuted (3180, 1822, 3875)
+untangling: 3998, 3957: 6 - A_1
+graph: permuted (3957, 2386, 3998)
+core: Found 3 type 6's, made 3 changes
+core: Chi: 0.1548838371221584
+core: repeating...
+core: Looking for type 6:
+core: Chi: 0.15450911816137897
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 6's, made 0 changes
+core: Chi: 0.15450911816137897
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 1:
+core: Chi: 0.15450911816137897
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 40, 5: 1 - A_1
+untangling: 79, 3844: 1 - A_1
+untangling: 79, 9: 1 - F_1
+untangling: 114, 3953: 1 - A_1
+untangling: 258, 83: 1 - A_1
+untangling: 272, 20: 1 - A_1
+untangling: 795, 40: 1 - C_1
+graph: permuted (795, 40, 170)
+untangling: 1822, 3180: 1 - C_2
+graph: permuted (1822, 3180, 3905)
+untangling: 2249, 38: 1 - A_1
+untangling: 2520, 2727: 1 - A_1
+untangling: 2613, 268: 1 - A_1
+untangling: 2658, 19: 1 - A_1
+untangling: 2869, 1255: 1 - A_1
+untangling: 3712, 32: 1 - A_1
+untangling: 3835, 258: 1 - A_1
+untangling: 3922, 295: 1 - A_1
+untangling: 3932, 634: 1 - A_1
+core: Found 17 type 1's, made 2 changes
+core: Chi: 0.15450911816137897
+core: repeating...
+core: Looking for type 1:
+core: Chi: 0.15425930552085937
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 40, 5: 1 - A_1
+untangling: 79, 3844: 1 - A_1
+untangling: 79, 9: 1 - F_1
+untangling: 114, 3953: 1 - A_1
+untangling: 258, 83: 1 - A_1
+untangling: 272, 20: 1 - A_1
+untangling: 2249, 38: 1 - A_1
+untangling: 2520, 2727: 1 - A_1
+untangling: 2613, 268: 1 - A_1
+untangling: 2658, 19: 1 - A_1
+untangling: 2869, 1255: 1 - A_1
+untangling: 3712, 32: 1 - A_1
+untangling: 3835, 258: 1 - A_1
+untangling: 3922, 295: 1 - A_1
+untangling: 3932, 634: 1 - A_1
+core: Found 15 type 1's, made 0 changes
+core: Chi: 0.15425930552085937
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.15425930552085937
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 2's, made 0 changes
+core: Chi: 0.15425930552085937
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 3:
+core: Chi: 0.15425930552085937
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 3696, 3868: 3 - A_1
+untangling: 3774, 2613: 3 - A_1
+untangling: 3871, 3774: 3 - A_1
+core: Found 3 type 3's, made 0 changes
+core: Chi: 0.15425930552085937
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.15425930552085937
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.15425930552085937
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.15425930552085937
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.15425930552085937
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 6:
+core: Chi: 0.15425930552085937
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 6's, made 0 changes
+core: Chi: 0.15425930552085937
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 1:
+core: Chi: 0.15425930552085937
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 40, 5: 1 - A_1
+untangling: 79, 3844: 1 - A_1
+untangling: 79, 9: 1 - F_1
+untangling: 114, 3953: 1 - A_1
+untangling: 258, 83: 1 - A_1
+untangling: 272, 20: 1 - A_1
+untangling: 2249, 38: 1 - A_1
+untangling: 2520, 2727: 1 - A_1
+untangling: 2613, 268: 1 - A_1
+untangling: 2658, 19: 1 - A_1
+untangling: 2869, 1255: 1 - A_1
+untangling: 3712, 32: 1 - A_1
+untangling: 3835, 258: 1 - A_1
+untangling: 3922, 295: 1 - A_1
+untangling: 3932, 634: 1 - A_1
+core: Found 15 type 1's, made 0 changes
+core: Chi: 0.15425930552085937
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.15425930552085937
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 2's, made 0 changes
+core: Chi: 0.15425930552085937
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 3:
+core: Chi: 0.15425930552085937
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 3696, 3868: 3 - A_1
+untangling: 3774, 2613: 3 - A_1
+untangling: 3871, 3774: 3 - A_1
+core: Found 3 type 3's, made 0 changes
+core: Chi: 0.15425930552085937
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.15425930552085937
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.15425930552085937
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.15425930552085937
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.15425930552085937
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 6:
+core: Chi: 0.15425930552085937
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 6's, made 0 changes
+core: Chi: 0.15425930552085937
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 1:
+core: Chi: 0.15425930552085937
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 40, 5: 1 - A_1
+untangling: 79, 3844: 1 - A_1
+untangling: 79, 9: 1 - F_1
+untangling: 114, 3953: 1 - A_1
+untangling: 258, 83: 1 - A_1
+untangling: 272, 20: 1 - A_1
+untangling: 2249, 38: 1 - A_1
+untangling: 2520, 2727: 1 - A_1
+untangling: 2613, 268: 1 - A_1
+untangling: 2658, 19: 1 - A_1
+untangling: 2869, 1255: 1 - A_1
+untangling: 3712, 32: 1 - A_1
+untangling: 3835, 258: 1 - A_1
+untangling: 3922, 295: 1 - A_1
+untangling: 3932, 634: 1 - A_1
+core: Found 15 type 1's, made 0 changes
+core: Chi: 0.15425930552085937
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.15425930552085937
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 2's, made 0 changes
+core: Chi: 0.15425930552085937
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 3:
+core: Chi: 0.15425930552085937
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 3696, 3868: 3 - A_1
+untangling: 3774, 2613: 3 - A_1
+untangling: 3871, 3774: 3 - A_1
+core: Found 3 type 3's, made 0 changes
+core: Chi: 0.15425930552085937
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.15425930552085937
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.15425930552085937
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.15425930552085937
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.15425930552085937
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 6:
+core: Chi: 0.15425930552085937
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 6's, made 0 changes
+core: Chi: 0.15425930552085937
+core: repeating...
+core: No changes made, continuing...
+core: Looking for intersections
+graph: Mapping friends..
+graph: friends mapped!
+core: Found 0 intersections
+core: 0 literal intersections still remain
+core: Weak untangling complete
+core: Finding particle with legacy method....
+graph: All flags reset!
+graph: All flags reset!
+core: Found particle.
+core: Running legacy level definition algorithm....
+graph: All flags reset!
+graph: All flags reset!
+core: Levels set.
+core: Running experimental level definition algorithm....
+graph: All flags reset!
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Levels set.
+core: Finding normalized intensities...
+core: Found intensities.
+core: Apply product predictions
+graph: Mapping friends..
+graph: friends mapped!
+graph: Mapping friends..
+graph: friends mapped!
+core: Applied product predictions!
+core: Starting experimental weak untangling...
+core: Looking for intersections
+graph: Mapping friends..
+graph: friends mapped!
+core: Found 0 intersections
+core: 0 literal intersections still remain
+core: Looking for type 1:
+core: Chi: 0.16370907273181703
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 79, 3844: 1 - A_1
+untangling: 79, 9: 1 - F_1
+untangling: 114, 3953: 1 - A_1
+untangling: 2249, 38: 1 - A_1
+untangling: 2520, 2727: 1 - A_1
+untangling: 2613, 268: 1 - A_1
+untangling: 2658, 19: 1 - A_1
+untangling: 2869, 1255: 1 - A_1
+untangling: 3712, 32: 1 - A_1
+untangling: 3835, 258: 1 - A_1
+untangling: 3922, 295: 1 - A_1
+untangling: 3932, 634: 1 - A_1
+core: Found 12 type 1's, made 0 changes
+core: Chi: 0.16370907273181703
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.16370907273181703
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 2's, made 0 changes
+core: Chi: 0.16370907273181703
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 3:
+core: Chi: 0.16370907273181703
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 795, 29: 3 - A_1
+untangling: 3696, 3868: 3 - A_1
+untangling: 3774, 2613: 3 - A_1
+untangling: 3871, 3774: 3 - A_1
+core: Found 4 type 3's, made 0 changes
+core: Chi: 0.16370907273181703
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.16370907273181703
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 3679, 236: 4 - A_1
+graph: permuted (3679, 236, 2658)
+core: Found 1 type 4's, made 1 changes
+core: Chi: 0.16370907273181703
+core: repeating...
+core: Looking for type 4:
+core: Chi: 0.16370907273181703
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.16370907273181703
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.16370907273181703
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.16370907273181703
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 6:
+core: Chi: 0.16370907273181703
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 3679, 2658: 6 - A_1
+graph: permuted (2658, 19, 3679)
+untangling: 3931, 1586: 6 - A_1
+core: Found 2 type 6's, made 1 changes
+core: Chi: 0.16370907273181703
+core: repeating...
+core: Looking for type 6:
+core: Chi: 0.1635841039740065
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 3931, 1586: 6 - A_1
+core: Found 1 type 6's, made 0 changes
+core: Chi: 0.1635841039740065
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 1:
+core: Chi: 0.1635841039740065
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 79, 3844: 1 - A_1
+untangling: 79, 9: 1 - F_1
+untangling: 114, 3953: 1 - A_1
+untangling: 2249, 38: 1 - A_1
+untangling: 2520, 2727: 1 - A_1
+untangling: 2613, 268: 1 - A_1
+untangling: 2869, 1255: 1 - A_1
+untangling: 3712, 32: 1 - A_1
+untangling: 3835, 258: 1 - A_1
+untangling: 3922, 295: 1 - A_1
+untangling: 3932, 634: 1 - A_1
+core: Found 11 type 1's, made 0 changes
+core: Chi: 0.1635841039740065
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.1635841039740065
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 2's, made 0 changes
+core: Chi: 0.1635841039740065
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 3:
+core: Chi: 0.1635841039740065
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 795, 29: 3 - A_1
+untangling: 3696, 3868: 3 - A_1
+untangling: 3774, 2613: 3 - A_1
+untangling: 3871, 3774: 3 - A_1
+core: Found 4 type 3's, made 0 changes
+core: Chi: 0.1635841039740065
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.1635841039740065
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.1635841039740065
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.1635841039740065
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.1635841039740065
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 6:
+core: Chi: 0.1635841039740065
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 3931, 1586: 6 - A_1
+core: Found 1 type 6's, made 0 changes
+core: Chi: 0.1635841039740065
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 1:
+core: Chi: 0.1635841039740065
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 79, 3844: 1 - A_1
+untangling: 79, 9: 1 - F_1
+untangling: 114, 3953: 1 - A_1
+untangling: 2249, 38: 1 - A_1
+untangling: 2520, 2727: 1 - A_1
+untangling: 2613, 268: 1 - A_1
+untangling: 2869, 1255: 1 - A_1
+untangling: 3712, 32: 1 - A_1
+untangling: 3835, 258: 1 - A_1
+untangling: 3922, 295: 1 - A_1
+untangling: 3932, 634: 1 - A_1
+core: Found 11 type 1's, made 0 changes
+core: Chi: 0.1635841039740065
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.1635841039740065
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 2's, made 0 changes
+core: Chi: 0.1635841039740065
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 3:
+core: Chi: 0.1635841039740065
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 795, 29: 3 - A_1
+untangling: 3696, 3868: 3 - A_1
+untangling: 3774, 2613: 3 - A_1
+untangling: 3871, 3774: 3 - A_1
+core: Found 4 type 3's, made 0 changes
+core: Chi: 0.1635841039740065
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.1635841039740065
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.1635841039740065
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.1635841039740065
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.1635841039740065
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 6:
+core: Chi: 0.1635841039740065
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 3931, 1586: 6 - A_1
+core: Found 1 type 6's, made 0 changes
+core: Chi: 0.1635841039740065
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 1:
+core: Chi: 0.1635841039740065
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 79, 3844: 1 - A_1
+untangling: 79, 9: 1 - F_1
+untangling: 114, 3953: 1 - A_1
+untangling: 2249, 38: 1 - A_1
+untangling: 2520, 2727: 1 - A_1
+untangling: 2613, 268: 1 - A_1
+untangling: 2869, 1255: 1 - A_1
+untangling: 3712, 32: 1 - A_1
+untangling: 3835, 258: 1 - A_1
+untangling: 3922, 295: 1 - A_1
+untangling: 3932, 634: 1 - A_1
+core: Found 11 type 1's, made 0 changes
+core: Chi: 0.1635841039740065
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.1635841039740065
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 2's, made 0 changes
+core: Chi: 0.1635841039740065
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 3:
+core: Chi: 0.1635841039740065
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 795, 29: 3 - A_1
+untangling: 3696, 3868: 3 - A_1
+untangling: 3774, 2613: 3 - A_1
+untangling: 3871, 3774: 3 - A_1
+core: Found 4 type 3's, made 0 changes
+core: Chi: 0.1635841039740065
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.1635841039740065
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.1635841039740065
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.1635841039740065
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.1635841039740065
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 6:
+core: Chi: 0.1635841039740065
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 3931, 1586: 6 - A_1
+core: Found 1 type 6's, made 0 changes
+core: Chi: 0.1635841039740065
+core: repeating...
+core: No changes made, continuing...
+core: Looking for intersections
+graph: Mapping friends..
+graph: friends mapped!
+core: Found 0 intersections
+core: 0 literal intersections still remain
+core: Weak untangling complete
+core: Apply product predictions
+graph: Mapping friends..
+graph: friends mapped!
+graph: Mapping friends..
+graph: friends mapped!
+core: Applied product predictions!
+core: Starting experimental weak untangling...
+core: Looking for intersections
+graph: Mapping friends..
+graph: friends mapped!
+core: Found 0 intersections
+core: 0 literal intersections still remain
+core: Looking for type 1:
+core: Chi: 0.16351140268666042
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 79, 3844: 1 - A_1
+untangling: 79, 9: 1 - A_1
+untangling: 114, 3953: 1 - A_1
+untangling: 2249, 38: 1 - A_1
+untangling: 2520, 2727: 1 - A_1
+untangling: 2613, 268: 1 - A_1
+untangling: 2869, 1255: 1 - A_1
+untangling: 3712, 32: 1 - A_1
+untangling: 3835, 258: 1 - A_1
+untangling: 3922, 295: 1 - A_1
+untangling: 3932, 634: 1 - A_1
+core: Found 11 type 1's, made 0 changes
+core: Chi: 0.16351140268666042
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.16351140268666042
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 3305, 648: 2 - B_1
+graph: permuted (3305, 648, 3902)
+core: Found 1 type 2's, made 1 changes
+core: Chi: 0.16351140268666042
+core: repeating...
+core: Looking for type 2:
+core: Chi: 0.16351140268666042
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 2's, made 0 changes
+core: Chi: 0.16351140268666042
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 3:
+core: Chi: 0.16351140268666042
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 795, 29: 3 - A_1
+untangling: 3305, 3902: 3 - D_1
+untangling: 3696, 3868: 3 - A_1
+untangling: 3774, 2613: 3 - A_1
+untangling: 3871, 3774: 3 - A_1
+core: Found 5 type 3's, made 0 changes
+core: Chi: 0.16351140268666042
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.16351140268666042
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.16351140268666042
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.16351140268666042
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.16351140268666042
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 6:
+core: Chi: 0.16351140268666042
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 3931, 1586: 6 - A_1
+core: Found 1 type 6's, made 0 changes
+core: Chi: 0.16351140268666042
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 1:
+core: Chi: 0.16351140268666042
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 79, 3844: 1 - A_1
+untangling: 79, 9: 1 - A_1
+untangling: 114, 3953: 1 - A_1
+untangling: 2249, 38: 1 - A_1
+untangling: 2520, 2727: 1 - A_1
+untangling: 2613, 268: 1 - A_1
+untangling: 2869, 1255: 1 - A_1
+untangling: 3712, 32: 1 - A_1
+untangling: 3835, 258: 1 - A_1
+untangling: 3902, 79: 1 - D_1
+graph: permuted (3902, 79, 3305)
+untangling: 3922, 295: 1 - A_1
+untangling: 3932, 634: 1 - A_1
+core: Found 12 type 1's, made 1 changes
+core: Chi: 0.16351140268666042
+core: repeating...
+core: Looking for type 1:
+core: Chi: 0.1633864417369572
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 79, 3844: 1 - A_1
+untangling: 79, 9: 1 - A_1
+untangling: 114, 3953: 1 - A_1
+untangling: 2249, 38: 1 - A_1
+untangling: 2520, 2727: 1 - A_1
+untangling: 2613, 268: 1 - A_1
+untangling: 2869, 1255: 1 - A_1
+graph: permuted (2869, 1255, 3902)
+untangling: 3712, 32: 1 - A_1
+untangling: 3835, 258: 1 - A_1
+untangling: 3922, 295: 1 - A_1
+untangling: 3932, 634: 1 - A_1
+core: Found 11 type 1's, made 1 changes
+core: Chi: 0.1633864417369572
+core: repeating...
+core: Looking for type 1:
+core: Chi: 0.16326148078725397
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 79, 3844: 1 - A_1
+untangling: 79, 9: 1 - A_1
+untangling: 114, 3953: 1 - A_1
+untangling: 2249, 38: 1 - A_1
+untangling: 2520, 2727: 1 - A_1
+untangling: 2613, 268: 1 - A_1
+untangling: 3712, 32: 1 - A_1
+untangling: 3835, 258: 1 - A_1
+untangling: 3922, 295: 1 - A_1
+untangling: 3932, 634: 1 - A_1
+core: Found 10 type 1's, made 0 changes
+core: Chi: 0.16326148078725397
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.16326148078725397
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 2's, made 0 changes
+core: Chi: 0.16326148078725397
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 3:
+core: Chi: 0.16326148078725397
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 795, 29: 3 - A_1
+untangling: 3696, 3868: 3 - A_1
+untangling: 3774, 2613: 3 - A_1
+untangling: 3871, 3774: 3 - A_1
+core: Found 4 type 3's, made 0 changes
+core: Chi: 0.16326148078725397
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.16326148078725397
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.16326148078725397
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.16326148078725397
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.16326148078725397
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 6:
+core: Chi: 0.16326148078725397
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 3931, 1586: 6 - A_1
+core: Found 1 type 6's, made 0 changes
+core: Chi: 0.16326148078725397
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 1:
+core: Chi: 0.16326148078725397
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 79, 3844: 1 - A_1
+untangling: 79, 9: 1 - A_1
+untangling: 114, 3953: 1 - A_1
+untangling: 2249, 38: 1 - A_1
+untangling: 2520, 2727: 1 - A_1
+untangling: 2613, 268: 1 - A_1
+untangling: 3712, 32: 1 - A_1
+untangling: 3835, 258: 1 - A_1
+untangling: 3922, 295: 1 - A_1
+untangling: 3932, 634: 1 - A_1
+core: Found 10 type 1's, made 0 changes
+core: Chi: 0.16326148078725397
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.16326148078725397
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 2's, made 0 changes
+core: Chi: 0.16326148078725397
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 3:
+core: Chi: 0.16326148078725397
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 795, 29: 3 - A_1
+untangling: 3696, 3868: 3 - A_1
+untangling: 3774, 2613: 3 - A_1
+untangling: 3871, 3774: 3 - A_1
+core: Found 4 type 3's, made 0 changes
+core: Chi: 0.16326148078725397
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.16326148078725397
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.16326148078725397
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.16326148078725397
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.16326148078725397
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 6:
+core: Chi: 0.16326148078725397
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 3931, 1586: 6 - A_1
+core: Found 1 type 6's, made 0 changes
+core: Chi: 0.16326148078725397
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 1:
+core: Chi: 0.16326148078725397
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 79, 3844: 1 - A_1
+untangling: 79, 9: 1 - A_1
+untangling: 114, 3953: 1 - A_1
+untangling: 2249, 38: 1 - A_1
+untangling: 2520, 2727: 1 - A_1
+untangling: 2613, 268: 1 - A_1
+untangling: 3712, 32: 1 - A_1
+untangling: 3835, 258: 1 - A_1
+untangling: 3922, 295: 1 - A_1
+untangling: 3932, 634: 1 - A_1
+core: Found 10 type 1's, made 0 changes
+core: Chi: 0.16326148078725397
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 2:
+core: Chi: 0.16326148078725397
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 2's, made 0 changes
+core: Chi: 0.16326148078725397
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 3:
+core: Chi: 0.16326148078725397
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 795, 29: 3 - A_1
+untangling: 3696, 3868: 3 - A_1
+untangling: 3774, 2613: 3 - A_1
+untangling: 3871, 3774: 3 - A_1
+core: Found 4 type 3's, made 0 changes
+core: Chi: 0.16326148078725397
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 4:
+core: Chi: 0.16326148078725397
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 4's, made 0 changes
+core: Chi: 0.16326148078725397
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 5:
+core: Chi: 0.16326148078725397
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Found 0 type 5's, made 0 changes
+core: Chi: 0.16326148078725397
+core: repeating...
+core: No changes made, continuing...
+core: Looking for type 6:
+core: Chi: 0.16326148078725397
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+untangling: 3931, 1586: 6 - A_1
+core: Found 1 type 6's, made 0 changes
+core: Chi: 0.16326148078725397
+core: repeating...
+core: No changes made, continuing...
+core: Looking for intersections
+graph: Mapping friends..
+graph: friends mapped!
+core: Found 0 intersections
+core: 0 literal intersections still remain
+core: Weak untangling complete
+core: Finding particle with legacy method....
+graph: All flags reset!
+graph: All flags reset!
+core: Found particle.
+core: Running experimental level definition algorithm....
+graph: All flags reset!
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Levels set.
+core: Adding edges to graph...
+core: Edges added.
+core: Looking for intersections
+graph: Mapping friends..
+graph: friends mapped!
+core: Found 0 intersections
+core: 0 literal intersections still remain
+core: Sorting neighbours...
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Neighbours sorted
+core: Summarizing stats.
+core: Summarizing stats...
+core: Collected stats.
+core: Column characterization complete.
+GUI: Permute mode is on!
+GUI: Permute mode is off!
+GUI: Permute mode is on!
+GUI: Permute mode is off!
+GUI: Permute mode is on!
+GUI: Permute mode is off!
+GUI: Permute mode is on!
+GUI: Permute mode is off!
+GUI: Permute mode is on!
+GUI: Permute mode is off!
+GUI: Permute mode is on!
+GUI: Permute mode is off!
+GUI: Permute mode is on!
+GUI: Permute mode is off!
+GUI: Permute mode is on!
+GUI: Permute mode is off!
+GUI: Permute mode is on!
+GUI: Permute mode is off!
+GUI: Permute mode is on!
+GUI: Permute mode is off!
+core: Running experimental level definition algorithm....
+graph: All flags reset!
+graph: Mapping subsets..
+graph: Mapping friends..
+graph: friends mapped!
+graph: Sorting subsets
+core: Levels set.
+core: Saved C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/haakon_040_control
+core: Running legacy level definition algorithm....
+graph: All flags reset!
+graph: All flags reset!
+core: Levels set.
+core: Saved C:/Users/haakot/OneDrive/NTNU/TFY4900 Master/Data_a/haakon_040_control

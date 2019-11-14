@@ -1,19 +1,20 @@
-# -*- mode: python ; coding: utf-8 -*-
+# -*- mode: python -*-
 
 import sys
+
 sys.setrecursionlimit(5000)
 
 block_cipher = None
 
 
 a = Analysis(['aacc.py'],
-             pathex=['F:\\AACC'],
+             pathex=['C:\\Users\\haakot\\AACC'],
              binaries=[],
              datas=[],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
-             excludes=['_gtkagg', '_tkagg', 'bsddb', 'curses', 'pywin.debugger', 'pywin.debugger.dbgcon', 'pywin.dialogs', 'tcl', 'Tkconstants', 'Tkinter'],
+             excludes=[],
              win_no_prefer_redirects=False,
              win_private_assemblies=False,
              cipher=block_cipher,
@@ -26,12 +27,10 @@ exe = EXE(pyz,
           a.zipfiles,
           a.datas,
           [],
-          name='aacc',
+          name='AutomAl 6000',
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
-          upx_exclude=[],
           runtime_tmpdir=None,
-          console=False,
-          icon='Docs/source/logo.ico')
+          console=True )
