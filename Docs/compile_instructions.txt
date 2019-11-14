@@ -1,17 +1,25 @@
 cd aacc
 
+pipenv shell
+
+test: python aacc.py
+
 pyi-makespec --onefile aacc.py
 
 edit aacc.spec with:
 
-'
-
 import sys
-
 sys.setrecursionlimit(5000)
 
-'
+before the blockchiper line, and in the excludes list, add:
 
-before the blockchiper line
+'_gtkagg', '_tkagg', 'bsddb', 'curses', 'pywin.debugger', 'pywin.debugger.dbgcon',
+'pywin.dialogs', 'tcl', 'Tkconstants', 'Tkinter'
+
+edit consol=True to False and add
+
+icon='Docs/source/logo.ico'
+
+as an element in the exe dict. Also edit name.
 
 pyinstaller --onefile aacc.spec

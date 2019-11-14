@@ -1,4 +1,4 @@
-# -*- mode: python -*-
+# -*- mode: python ; coding: utf-8 -*-
 
 import sys
 
@@ -8,13 +8,13 @@ block_cipher = None
 
 
 a = Analysis(['aacc.py'],
-             pathex=['C:\\Users\\haakot\\AACC'],
+             pathex=['F:\\AACC'],
              binaries=[],
              datas=[],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
-             excludes=[],
+             excludes=['_gtkagg', '_tkagg', 'bsddb', 'curses', 'pywin.debugger', 'pywin.debugger.dbgcon', 'pywin.dialogs', 'tcl', 'Tkconstants', 'Tkinter'],
              win_no_prefer_redirects=False,
              win_private_assemblies=False,
              cipher=block_cipher,
@@ -27,10 +27,12 @@ exe = EXE(pyz,
           a.zipfiles,
           a.datas,
           [],
-          name='AutomAl 6000',
+          name='AutomAl6000',
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
+          upx_exclude=[],
           runtime_tmpdir=None,
-          console=True )
+          console=True,
+          icon='Docs/source/logo.ico')
