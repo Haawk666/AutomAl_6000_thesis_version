@@ -352,6 +352,8 @@ class MainUI(QtWidgets.QMainWindow):
                 elif key == QtCore.Qt.Key_F4:
                     self.project_instance.graph.vertices[self.selected_column].flag_4 = not self.project_instance.graph.vertices[self.selected_column].flag_4
                     logger.info('vertex {}, flag 4 set to {}'.format(self.selected_column, self.project_instance.graph.vertices[self.selected_column].flag_4))
+                elif key == QtCore.Qt.Key_P:
+                    self.control_window.chb_perturb_mode.toggle()
             if self.tabs.currentIndex() == 4:
                 pass
             if self.tabs.currentIndex() == 5:
@@ -855,9 +857,7 @@ class MainUI(QtWidgets.QMainWindow):
     def btn_align_views_trigger(self):
         tab = self.tabs.currentIndex()
         coor = self.gv_list[tab].mapToScene(self.gv_list[tab].viewport().rect().center())
-        print(coor)
         coor_2 = 2 * coor
-        print(coor_2)
         transform = self.gv_list[tab].transform()
         for i, gv in enumerate(self.gv_list):
             if i in [0, 1, 2, 7, 8]:
@@ -1168,9 +1168,12 @@ class MainUI(QtWidgets.QMainWindow):
     def chb_set_perturb_mode_trigger(self, state):
         self.perturb_mode = state
         if not self.perturb_mode:
+            logger.info('Permute mode is off!')
             self.sys_message('Working...')
             self.selection_history = []
             self.sys_message('Ready.')
+        else:
+            logger.info('Permute mode is on!')
 
     def chb_graph_detail_trigger(self):
         if self.project_instance is not None:

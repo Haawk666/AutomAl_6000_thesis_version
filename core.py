@@ -325,7 +325,7 @@ class SuchSoftware:
         model_predictions = graph_op.base_stat_score(self.graph, i, get_individual_predictions=True)
         parameters, *_ = params.produce_params(calc=False)
 
-        blueshift = self.graph.produce_blueshift_sum(i, self.scale)
+        blueshift = self.graph.produce_blueshift_sum(i)
 
         string = 'Vertex summary: ----------\n' + \
                  '    Index: {}\n'.format(vertex.i) + \

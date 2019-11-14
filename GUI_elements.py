@@ -2072,15 +2072,23 @@ class DataExportWizard(QtWidgets.QDialog):
                               'species',
                               'peak gamma',
                               'average gamma',
+                              'normalized peak gamma',
+                              'normalized average gamma',
                               'real x',
                               'real y',
+                              'real z',
                               'spatial x',
                               'spatial y',
+                              'spatial z',
                               'image x',
                               'image y',
                               'level',
-                              'image height',
-                              'spatial height'])
+                              'alpha min',
+                              'alpha max',
+                              'theta min',
+                              'theta max',
+                              'theta average',
+                              'red-shift'])
 
         h_layout = QtWidgets.QHBoxLayout()
         v_layout_1 = QtWidgets.QVBoxLayout()

@@ -348,7 +348,7 @@ def weak_resolve(graph_obj, configs, classes, search_type, ui_obj=None, aggressi
             if class_ == 'A_1':
                 k = graph_obj.weak_preserve_edge(i, j)
                 if not k == -1:
-                    if graph_obj.real_projected_distance(i, k) < cut_off:
+                    if graph_obj.real_projected_distance(i, j) < cut_off:
                         if graph_obj.permute_j_k(j, k, i):
                             changes += 1
                             if ui_obj is not None:
@@ -357,7 +357,7 @@ def weak_resolve(graph_obj, configs, classes, search_type, ui_obj=None, aggressi
             elif class_ == 'B_1' or class_ == 'B_2':
                 k = graph_obj.weak_preserve_edge(i, j)
                 if not k == -1:
-                    if graph_obj.real_projected_distance(i, k) < cut_off:
+                    if graph_obj.real_projected_distance(i, j) < cut_off:
                         if graph_obj.permute_j_k(j, k, i):
                             changes += 1
                             if ui_obj is not None:
@@ -366,7 +366,7 @@ def weak_resolve(graph_obj, configs, classes, search_type, ui_obj=None, aggressi
             elif class_ == 'C_1':
                 k = graph_obj.weak_preserve_edge(i, j)
                 if not k == -1:
-                    if graph_obj.real_projected_distance(i, k) < cut_off:
+                    if graph_obj.real_projected_distance(i, j) < cut_off:
                         if graph_obj.permute_j_k(j, k, i):
                             changes += 1
                             if ui_obj is not None:

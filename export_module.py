@@ -52,23 +52,45 @@ class VertexExport:
 
                                             if vertex.level == 1:
                                                 image_height = instance.al_lattice_const / (2 * instance.scale)
+                                                spatial_height = instance.al_lattice_const / 2
                                             else:
                                                 image_height = 0
+                                                spatial_height = 0
+
+                                            alpha = instance.graph.produce_alpha_angles(vertex.i)
+                                            theta = instance.graph.produce_theta_angles(vertex.i)
+                                            if theta:
+                                                theta_min = min(theta)
+                                                theta_max = max(theta)
+                                                theta_avg = sum(theta) / len(theta)
+                                            else:
+                                                theta_min = 0
+                                                theta_max = 0
+                                                theta_avg = 0
+                                            redshift = instance.graph.produce_blueshift_sum(vertex.i)
 
                                             dict_ = {'id': self.num_vertices,
                                                      'index': vertex.i,
                                                      'species': vertex.species(),
                                                      'peak gamma': vertex.peak_gamma,
                                                      'average gamma': vertex.avg_gamma,
+                                                     'normalized peak gamma': vertex.normalized_peak_gamma,
+                                                     'normalized average gamma': vertex.normalized_avg_gamma,
                                                      'real x': vertex.real_coor_x,
                                                      'real y': vertex.real_coor_y,
+                                                     'real z': image_height,
                                                      'spatial x': vertex.spatial_coor_x,
                                                      'spatial y': vertex.spatial_coor_y,
+                                                     'spatial z': spatial_height,
                                                      'image x': vertex.im_coor_x,
                                                      'image y': vertex.im_coor_y,
                                                      'level': vertex.level,
-                                                     'image height': image_height,
-                                                     'spatial height': image_height * instance.scale}
+                                                     'alpha min': min(alpha),
+                                                     'alpha max': max(alpha),
+                                                     'theta min': theta_min,
+                                                     'theta max': theta_max,
+                                                     'theta average': theta_avg,
+                                                     'red-shift': redshift}
 
                                             self.data.append(dict_)
 
