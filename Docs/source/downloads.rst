@@ -6,7 +6,7 @@ Executable
 
 The program can be downloaded as an executable in a zip folder. See the **Installation** guide for further assistance.
 
-`AutomAl.zip <http://folk.ntnu.no/haakot/AACC/AutoAtom.zip>`_
+[TBA]
 
 HAADF-STEM validation data-set
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

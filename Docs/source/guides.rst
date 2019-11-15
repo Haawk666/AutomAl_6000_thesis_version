@@ -26,6 +26,12 @@ To install AutomAl 6000, simply follow the steps below.
     running, so be patient before clicking several times! In the future, a full-fledged installer is planned, which will
     eliminate this 'quirk'.
 
+Keyboard shortcuts
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Coming soon
+
+
 Project workflow with AutomAl's GUI
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

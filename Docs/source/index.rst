@@ -12,8 +12,7 @@ The general aim of the project is to build a software tool to aid in the analysi
 initially focused specifically around images of precipitates in the Al-Mg-Si-(Cu) 6xxx precipitation sequences.
 
 The software consists of core methodology and a functional GUI, is written in python with PyQt5 resources
-for the GUI, and is open-source. If you find the software provided by this project useful for your own
-scientific work, please consider citing our publication [TBA].
+for the GUI, and is open-source.
 
 To find out more about the underlying technology and methodology, take a look at the master thesis [TBA]
 To get started with AutomAl, check out the guides provided on this web-site, linked in the left content-bar.
