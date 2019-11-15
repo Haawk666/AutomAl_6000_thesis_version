@@ -1,8 +1,10 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 import sys
-
 sys.setrecursionlimit(5000)
+import distutils
+if distutils.distutils_path.endswith('__init__.py'):
+    distutils.distutils_path = os.path.dirname(distutils.distutils_path)
 
 block_cipher = None
 
@@ -35,4 +37,4 @@ exe = EXE(pyz,
           upx_exclude=[],
           runtime_tmpdir=None,
           console=True,
-          icon='Docs/source/logo.ico')
+          icon='Docs/source/logo.ico' )

@@ -10,6 +10,9 @@ edit aacc.spec with:
 
 import sys
 sys.setrecursionlimit(5000)
+import distutils
+if distutils.distutils_path.endswith('__init__.py'):
+    distutils.distutils_path = os.path.dirname(distutils.distutils_path)
 
 before the blockchiper line, and in the excludes list, add:
 
