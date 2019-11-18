@@ -2,7 +2,7 @@
 """General utility/convenience functions"""
 
 import numpy as np
-import scipy.optimize as opt
+# import scipy.optimize as opt
 from copy import deepcopy
 
 
@@ -345,31 +345,7 @@ def sort_neighbours(indices, distances, n):
 
 def gaussian_fit(mat, x_0, y_0, r):
     # outdated and not in use
-    size_of_section = (2 * r + 1)**2
-    size_of_circular_section = 529
-    temp_mat = np.zeros((2 * r + 1, 2 * r + 1), dtype=type(mat))
-    xy = np.zeros((2, size_of_circular_section), dtype=np.int)
-    zobs = np.zeros(size_of_circular_section, dtype=np.float64)
-    sigma = zobs
-    counter = 0
-    for x_i in range(x_0 - r, x_0 + r + 1):
-        for y_i in range(y_0 - r, y_0 + r + 1):
-            distance = np.sqrt((x_0 - x_i)**2 + (y_0 - y_i)**2)
-            # create "portrait" of column weighted as distance from centre to prevent "bleed" from neighbouring atoms
-            temp_mat[y_i - y_0 + r, x_i - x_0 + r] = mat[y_i, x_i]
-            # Prepare data-set for curve fitting that is circularly sampled around the proposed centre
-            if distance <= r:
-                xy[:, counter] = (x_i - x_0 + r, y_i - y_0 + r)
-                zobs[counter] = temp_mat[y_i - y_0 + r, x_i - x_0 + r]
-                sigma[counter] = (distance / r) * temp_mat[y_i - y_0 + r, x_i - x_0 + r] + 0.001
-                counter = counter + 1
-    guess = [temp_mat.max(), r, r, 0.0001, 0.0001, 0.0001, 0]
-    (params, uncert) = opt.curve_fit(gauss_func, xy, zobs, p0=guess, sigma=sigma, absolute_sigma=True, maxfev=6400)
-    mat = gen_gauss(params[0], np.floor(params[1]), np.floor(params[2]), 2 * r + 1, 2 * r + 1, params[3], params[4], params[5], params[6])
-    # Translate to coordinates of the real image:
-    x_fit = int(np.floor(params[1]) + x_0 - r)
-    y_fit = int(np.floor(params[2]) + y_0 - r)
-    return temp_mat, mat, params, uncert, x_fit, y_fit
+    pass
 
 
 def cm_fit(mat, x_0, y_0, r):

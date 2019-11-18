@@ -8,8 +8,8 @@ verify_ssl = true
 [packages]
 numpy = "*"
 pillow = "*"
-scipy = "*"
-matplotlib-pyplot = "*"
+pyqt5 = "*"
+pyinstaller = {file = "https://github.com/pyinstaller/pyinstaller/archive/develop.tar.gz"}
 
 [requires]
 python_version = "3.8"
