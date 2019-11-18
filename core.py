@@ -14,7 +14,7 @@ import numpy as np
 import dm3_lib as dm3
 import sys
 import pickle
-from matplotlib import pyplot as plt
+# from matplotlib import pyplot as plt
 import logging
 # Instantiate logger
 logger = logging.getLogger(__name__)
