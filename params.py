@@ -3,8 +3,8 @@ import core
 import utils
 # External imports:
 import numpy as np
-from matplotlib import pyplot as plt
-from matplotlib.gridspec import GridSpec
+# from matplotlib import pyplot as plt
+# from matplotlib.gridspec import GridSpec
 import logging
 # Instantiate logger
 logger = logging.getLogger(__name__)
@@ -139,80 +139,81 @@ def calculate_params(files, exclude_edges=True, exclude_matrix=False, exclude_pa
 
 
 def plot_pane(params, number_of_files, number_of_vertices):
-    logger.info('Generating plots...')
-
-    alpha = [
-        np.linspace(0.5, 2.5, 1000),
-        np.linspace(1.5, 4.5, 1000),
-        np.linspace(0.5, 2.5, 1000),
-        np.linspace(0.5, 3.5, 1000),
-        np.linspace(0.5, 2.5, 1000),
-        np.linspace(0, 1, 1000),
-        np.linspace(0, 0.8, 1000)
-    ]
-
-    fig = plt.figure(constrained_layout=True)
-    gs = GridSpec(3, 3, figure=fig)
-    ax = [
-        fig.add_subplot(gs[0, 0]),
-        fig.add_subplot(gs[0, 1]),
-        fig.add_subplot(gs[0, 2]),
-        fig.add_subplot(gs[1, 0]),
-        fig.add_subplot(gs[1, 1]),
-        fig.add_subplot(gs[1, 2]),
-        fig.add_subplot(gs[2, 1])
-    ]
-
-    for i, axis in enumerate(ax):
-        axis.plot(alpha[i], utils.normal_dist(alpha[i], params[0][i][0], params[0][i][1]), 'y',
-                  label='Cu ($\mu = ${:.2f}, $\sigma = ${:.2f})'.format(params[0][i][0], params[0][i][1]))
-        axis.plot(alpha[i], utils.normal_dist(alpha[i], params[1][i][0], params[1][i][1]), 'r',
-                  label='Si$_1$ ($\mu = ${:.2f}, $\sigma = ${:.2f})'.format(params[1][i][0], params[1][i][1]))
-        axis.plot(alpha[i], utils.normal_dist(alpha[i], params[2][i][0], params[2][i][1]), 'k',
-                  label='Si$_2$ ($\mu = ${:.2f}, $\sigma = ${:.2f})'.format(params[2][i][0], params[2][i][1]))
-        axis.plot(alpha[i], utils.normal_dist(alpha[i], params[3][i][0], params[3][i][1]), 'g',
-                  label='Al$_1$ ($\mu = ${:.2f}, $\sigma = ${:.2f})'.format(params[3][i][0], params[3][i][1]))
-        axis.plot(alpha[i], utils.normal_dist(alpha[i], params[4][i][0], params[4][i][1]), 'b',
-                  label='Al$_2$ ($\mu = ${:.2f}, $\sigma = ${:.2f})'.format(params[4][i][0], params[4][i][1]))
-        axis.plot(alpha[i], utils.normal_dist(alpha[i], params[5][i][0], params[5][i][1]), 'm',
-                  label='Mg$_1$ ($\mu = ${:.2f}, $\sigma = ${:.2f})'.format(params[5][i][0], params[5][i][1]))
-        axis.plot(alpha[i], utils.normal_dist(alpha[i], params[6][i][0], params[6][i][1]), 'c',
-                  label='Mg$_2$ ($\mu = ${:.2f}, $\sigma = ${:.2f})'.format(params[6][i][0], params[6][i][1]))
-
-    ax[0].set_title('Minimum alpha angles fitted density')
-    ax[0].set_xlabel('min angle (radians)')
-    ax[0].legend()
-
-    ax[1].set_title('Maximum alpha angles fitted density')
-    ax[1].set_xlabel('max angle (radians)')
-    ax[1].legend()
-
-    ax[2].set_title('Minimum theta angles fitted density')
-    ax[2].set_xlabel('min angle (radians)')
-    ax[2].legend()
-
-    ax[3].set_title('Maximum theta angles fitted density')
-    ax[3].set_xlabel('max angle (radians)')
-    ax[3].legend()
-
-    ax[4].set_title('Theta mean fitted density')
-    ax[4].set_xlabel('mean angle (radians)')
-    ax[4].legend()
-
-    ax[5].set_title('Normalized peak gamma fitted density')
-    ax[5].set_xlabel('peak gamma (1)')
-    ax[5].legend()
-
-    ax[6].set_title('Normalized average gamma fitted density')
-    ax[6].set_xlabel('average gamma (1)')
-    ax[6].legend()
-
-    fig.suptitle('98 parameter model fitted densities from {} images'.format(number_of_files))
-
-    logger.info(
-        'Plotted parameters over {} files and {} vertices!'.format(number_of_files, number_of_vertices))
-
-    plt.show()
+    pass
+    # logger.info('Generating plots...')
+    #
+    # alpha = [
+    #     np.linspace(0.5, 2.5, 1000),
+    #     np.linspace(1.5, 4.5, 1000),
+    #     np.linspace(0.5, 2.5, 1000),
+    #     np.linspace(0.5, 3.5, 1000),
+    #     np.linspace(0.5, 2.5, 1000),
+    #     np.linspace(0, 1, 1000),
+    #     np.linspace(0, 0.8, 1000)
+    # ]
+    #
+    # fig = plt.figure(constrained_layout=True)
+    # gs = GridSpec(3, 3, figure=fig)
+    # ax = [
+    #     fig.add_subplot(gs[0, 0]),
+    #     fig.add_subplot(gs[0, 1]),
+    #     fig.add_subplot(gs[0, 2]),
+    #     fig.add_subplot(gs[1, 0]),
+    #     fig.add_subplot(gs[1, 1]),
+    #     fig.add_subplot(gs[1, 2]),
+    #     fig.add_subplot(gs[2, 1])
+    # ]
+    #
+    # for i, axis in enumerate(ax):
+    #     axis.plot(alpha[i], utils.normal_dist(alpha[i], params[0][i][0], params[0][i][1]), 'y',
+    #               label='Cu ($\mu = ${:.2f}, $\sigma = ${:.2f})'.format(params[0][i][0], params[0][i][1]))
+    #     axis.plot(alpha[i], utils.normal_dist(alpha[i], params[1][i][0], params[1][i][1]), 'r',
+    #               label='Si$_1$ ($\mu = ${:.2f}, $\sigma = ${:.2f})'.format(params[1][i][0], params[1][i][1]))
+    #     axis.plot(alpha[i], utils.normal_dist(alpha[i], params[2][i][0], params[2][i][1]), 'k',
+    #               label='Si$_2$ ($\mu = ${:.2f}, $\sigma = ${:.2f})'.format(params[2][i][0], params[2][i][1]))
+    #     axis.plot(alpha[i], utils.normal_dist(alpha[i], params[3][i][0], params[3][i][1]), 'g',
+    #               label='Al$_1$ ($\mu = ${:.2f}, $\sigma = ${:.2f})'.format(params[3][i][0], params[3][i][1]))
+    #     axis.plot(alpha[i], utils.normal_dist(alpha[i], params[4][i][0], params[4][i][1]), 'b',
+    #               label='Al$_2$ ($\mu = ${:.2f}, $\sigma = ${:.2f})'.format(params[4][i][0], params[4][i][1]))
+    #     axis.plot(alpha[i], utils.normal_dist(alpha[i], params[5][i][0], params[5][i][1]), 'm',
+    #               label='Mg$_1$ ($\mu = ${:.2f}, $\sigma = ${:.2f})'.format(params[5][i][0], params[5][i][1]))
+    #     axis.plot(alpha[i], utils.normal_dist(alpha[i], params[6][i][0], params[6][i][1]), 'c',
+    #               label='Mg$_2$ ($\mu = ${:.2f}, $\sigma = ${:.2f})'.format(params[6][i][0], params[6][i][1]))
+    #
+    # ax[0].set_title('Minimum alpha angles fitted density')
+    # ax[0].set_xlabel('min angle (radians)')
+    # ax[0].legend()
+    #
+    # ax[1].set_title('Maximum alpha angles fitted density')
+    # ax[1].set_xlabel('max angle (radians)')
+    # ax[1].legend()
+    #
+    # ax[2].set_title('Minimum theta angles fitted density')
+    # ax[2].set_xlabel('min angle (radians)')
+    # ax[2].legend()
+    #
+    # ax[3].set_title('Maximum theta angles fitted density')
+    # ax[3].set_xlabel('max angle (radians)')
+    # ax[3].legend()
+    #
+    # ax[4].set_title('Theta mean fitted density')
+    # ax[4].set_xlabel('mean angle (radians)')
+    # ax[4].legend()
+    #
+    # ax[5].set_title('Normalized peak gamma fitted density')
+    # ax[5].set_xlabel('peak gamma (1)')
+    # ax[5].legend()
+    #
+    # ax[6].set_title('Normalized average gamma fitted density')
+    # ax[6].set_xlabel('average gamma (1)')
+    # ax[6].legend()
+    #
+    # fig.suptitle('98 parameter model fitted densities from {} images'.format(number_of_files))
+    #
+    # logger.info(
+    #     'Plotted parameters over {} files and {} vertices!'.format(number_of_files, number_of_vertices))
+    #
+    # plt.show()
 
 
 def produce_params(calc=False, files=None, scaled_model=False):

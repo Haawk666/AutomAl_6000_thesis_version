@@ -6,14 +6,11 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-pyqt5 = "*"
+numpy = "*"
 pillow = "*"
 scipy = "*"
-pyinstaller = "*"
 matplotlib = "*"
-sphinx-pdj-theme = "*"
-sphinx-rtd-theme = "*"
-distutils = "*"
+matplotlib-pyplot = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.8"
