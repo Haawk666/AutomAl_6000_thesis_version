@@ -1042,7 +1042,10 @@ class MainUI(QtWidgets.QMainWindow):
         raise IndexError
 
     def btn_make_plot_trigger(self):
-        GUI_elements.PlotWizard(ui_obj=self)
+        message = QtWidgets.QMessageBox()
+        message.setText('Not available in this version!')
+        message.exec_()
+        # GUI_elements.PlotWizard(ui_obj=self)
 
     def btn_print_distances_trigger(self):
         si_radii = core.SuchSoftware.si_radii
@@ -1116,7 +1119,10 @@ class MainUI(QtWidgets.QMainWindow):
                     self.sys_message('Ready')
 
     def btn_pca_trigger(self):
-        GUI_elements.PcaWizard(ui_obj=self)
+        message = QtWidgets.QMessageBox()
+        message.setText('Not available in this version..')
+        message.exec_()
+        # GUI_elements.PcaWizard(ui_obj=self)
 
     def btn_save_log_trigger(self):
         filename = QtWidgets.QFileDialog.getSaveFileName(self, 'Save log-file', '')
