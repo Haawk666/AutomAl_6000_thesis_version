@@ -21,3 +21,4 @@ AutomAl6000.exe
 build/
 dist/
 config.ini
+Pipfile.lock
