@@ -18,6 +18,7 @@ class Vertex:
 
         # Some properties
         self.r = r
+        self.scale = scale
         self.peak_gamma = peak_gamma
         self.avg_gamma = avg_gamma
         self.normalized_peak_gamma = peak_gamma
@@ -49,14 +50,35 @@ class Vertex:
         self.flag_9 = False
 
         # Self-analysis
-        self.probability_vector = []
+        self.probability_vector = [0, 0, 0, 0, 0, 0, 1]
         self.n = 3
 
         # Local graph mapping
         self.district = []
         self.out_neighbourhood = []
         self.in_neighbourhood = []
+        self.neighbourhood = []
+        self.anti_neighbourhood = []
         self.partners = []
         self.anti_partners = []
+
+    def __str__(self):
+        im_pos = self.im_pos()
+        spatial_pos = self.spatial_pos()
+        string = 'Vertex {}:\n'.format(self.i)
+        string += '    real image position (x, y) = ({}, {})\n'.format(im_pos[0], im_pos[1])
+        string += '    pixel image position (x, y) = ({}, {})\n'.format(np.floor(im_pos[0]), np.floor(im_pos[1]))
+        string += '    spatial relative position in pm (x, y) = ({}, {})\n'.format(spatial_pos[0], spatial_pos[1])
+        string += '    peak gamma = {}\n'.format(self.peak_gamma)
+        string += '    average gamma = {}\n'.format(self.avg_gamma)
+        string += '    species: {}'.format(self.atomic_species)
+        return string
+
+    def im_pos(self):
+        return self.im_coor_x, self.im_coor_y, self.im_coor_z
+
+    def spatial_pos(self):
+        return self.spatial_coor_x, self.spatial_coor_y, self.spatial_coor_z
+
 
 
