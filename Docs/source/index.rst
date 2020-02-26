@@ -20,6 +20,8 @@ Also consider checking out the 'about' page and the further-work page to learn m
 and future road-map for the project. The blog on this page also gives regular updates on the work that is currently
 actively ongoing. For other questions, send an email to: haakot@stud.ntnu.no.
 
+This web-page is currently under construction.
+
 
 .. toctree::
    :maxdepth: 2
