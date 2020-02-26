@@ -29,7 +29,7 @@ actively ongoing. For other questions, send an email to: haakot@stud.ntnu.no.
    downloads
    guides
    blog
-   road_map
+   project
    doc
    links
    about
