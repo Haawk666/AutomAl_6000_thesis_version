@@ -13,5 +13,5 @@ Notes on this version:
 * I had to disable the plotting and pca module, because matplotlibs's dll's were incurring DLL-hell at build-time. I will try to resolve this for future versions.
 * This is not considered a 'public' version! Please see the disclaimers in the slides..
 
-- Haakon
+Haakon
 
