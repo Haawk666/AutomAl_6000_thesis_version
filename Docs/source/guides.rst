@@ -51,7 +51,7 @@ Z, X                Move left/right between tabs in the central widget
 \+                  Toggle currently selected column z-height
 P                   Enable move (Enter to accept, P to reset)
 R                   Print details about currently selected column
-=================   =================================================   =====================================================
+=================   =====================================================   =====================================================
 
 Project workflow with AutomAl's GUI
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
