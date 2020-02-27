@@ -400,9 +400,6 @@ class AtomicGraph:
 
     @staticmethod
     def rebase(corners, next_, j, append=True):
-
-        logger.debug('Rebasing!')
-
         for k, corner in enumerate(corners):
             if corner == next_:
                 del corners[k + 1:]
