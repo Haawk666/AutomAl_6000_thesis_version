@@ -22,4 +22,5 @@ build/
 dist/
 config.ini
 Pipfile.lock
+Pipfile
 aacc.spec
