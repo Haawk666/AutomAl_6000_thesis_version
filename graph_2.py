@@ -205,6 +205,7 @@ class AtomicGraph:
 
         # Stats
         self.chi = 0
+        self.num_void_vertices = 0
         self.order = 0
         self.size = 0
         self.anti_size = 0
@@ -260,6 +261,7 @@ class AtomicGraph:
 
         # Remap district sets all over the graph
         self.map_districts()
+        self.summarize_stats()
 
     def get_vertex_objects_from_indices(self, vertex_indices):
         vertices = []
@@ -289,6 +291,13 @@ class AtomicGraph:
 
         return projected_separation
 
+    def get_adjacency_matrix(self):
+        self.summarize_stats()
+        M = np.zeros(self.order - 1, self.order - 1)
+        for x in range(0, self.order):
+            for y in range(0, self.order):
+                pass
+
     def get_spatial_district(self, i, n=8, exclude=None):
         projected_separations = []
         indices = []
@@ -312,6 +321,116 @@ class AtomicGraph:
             projected_separations[min_index] = max(projected_separations) + 5
 
         return district
+
+    def get_column_centered_subgraph(self, i, order=1):
+        subgraph = []
+        for neighbour in self.vertices[i].neighbours:
+            corners, angles, vectors = self.get_mesh_centered_subgraph(i, neighbour)
+            mesh = [corners, angles, vectors]
+            subgraph.append(mesh)
+
+        return subgraph
+
+    def get_arc_centered_subgraph(self, i, j, order=1):
+        mesh_1_corners, mesh_1_angles, mesh_1_vectors = self.get_mesh_centered_subgraph(i, j)
+        mesh_2_corners, mesh_2_angles, mesh_2_vectors = self.get_mesh_centered_subgraph(j, i)
+
+        return mesh_1_corners, mesh_2_corners, mesh_1_angles, mesh_2_angles, mesh_1_vectors, mesh_2_vectors
+
+    def get_mesh_centered_subgraph(self, i, j, order=0):
+
+        corners = [i, j]
+        counter = 0
+        backup_counter = 0
+        stop = False
+
+        while not stop:
+
+            angle, next_index = self.angle_sort(i, j)
+
+            if next_index == corners[0] or counter > 14:
+                _, nextnext = self.angle_sort(j, next_index)
+                if not nextnext == corners[1]:
+                    corners, i, j = self.rebase(corners, nextnext, next_index, append=False)
+                stop = True
+
+            elif next_index in corners:
+                corners, i, j = self.rebase(corners, next_index, j)
+                counter = len(corners) - 2
+
+            else:
+                corners.append(next_index)
+                counter += 1
+                i, j = j, next_index
+
+            backup_counter += 1
+
+            if backup_counter > 25:
+                logger.warning('Emergency stop!')
+                stop = True
+
+        angles = []
+        vectors = []
+
+        for m, corner in enumerate(corners):
+
+            pivot = self.vertices[corner].real_coor()
+            if m == 0:
+                p1 = self.vertices[corners[len(corners) - 1]].real_coor()
+                p2 = self.vertices[corners[m + 1]].real_coor()
+            elif m == len(corners) - 1:
+                p1 = self.vertices[corners[m - 1]].real_coor()
+                p2 = self.vertices[corners[0]].real_coor()
+            else:
+                p1 = self.vertices[corners[m - 1]].real_coor()
+                p2 = self.vertices[corners[m + 1]].real_coor()
+
+            angle = utils.find_angle_from_points(p1, p2, pivot)
+            theta = angle / 2
+            vector = (p1[0] - pivot[0], p1[1] - pivot[1])
+            length = utils.vector_magnitude(vector)
+            vector = (vector[0] / length, vector[1] / length)
+            vector = (vector[0] * np.cos(theta) + vector[1] * np.sin(theta),
+                      -vector[0] * np.sin(theta) + vector[1] * np.cos(theta))
+
+            angles.append(angle)
+            vectors.append(vector)
+
+        return corners, angles, vectors
+
+    @staticmethod
+    def rebase(corners, next_, j, append=True):
+
+        logger.debug('Rebasing!')
+
+        for k, corner in enumerate(corners):
+            if corner == next_:
+                del corners[k + 1:]
+                if append:
+                    corners.append(j)
+                break
+        return corners, next_, j
+
+    def angle_sort(self, i, j):
+
+        min_angle = 300
+        next_index = -1
+        p1 = self.vertices[i].im_pos()
+        pivot = self.vertices[j].im_pos()
+
+        search_list = self.vertices[j].neighbourhood
+
+        for k in search_list:
+            if not k == i:
+                p2 = self.vertices[k].im_pos()
+                alpha = utils.find_angle_from_points(p1[:1], p2[:1], pivot[:1])
+                if alpha < min_angle:
+                    min_angle = alpha
+                    next_index = k
+
+        logger.debug('Found next: {}'.format(next_index))
+
+        return min_angle, next_index
 
     def map_district(self, i, search_extended_district=False):
         vertex = self.vertices[i]
@@ -366,7 +485,11 @@ class AtomicGraph:
         self.map_districts()
 
         # Calc order
-        self.order = len(self.vertices)
+        self.num_void_vertices = 0
+        for vertex in self.vertices:
+            if vertex.void:
+                self.num_void_vertices += 1
+        self.order = len(self.vertices) - self.num_void_vertices
 
         # Calc size
         self.size = 0

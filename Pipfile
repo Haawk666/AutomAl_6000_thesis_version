@@ -9,6 +9,7 @@ verify_ssl = true
 numpy = "*"
 pillow = "*"
 pyqt5 = "*"
+scipy = "*"
 
 [requires]
-python_version = "3.8"
+python_version = "3.7"
