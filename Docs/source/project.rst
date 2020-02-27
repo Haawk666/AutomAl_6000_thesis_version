@@ -34,6 +34,9 @@ Easier and more flexible manual column manipulation
 Export for the .svg file format
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
+Tab-view locked align functionality
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
 
 
 

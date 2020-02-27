@@ -29,8 +29,29 @@ To install AutomAl 6000, simply follow the steps below.
 Keyboard shortcuts
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Coming soon
+These key-bindigs will be applicable from version Alpha 1.1..
 
+=================   =====================================================   =====================================================
+Key                 Function                                                Alternate function
+=================   =====================================================   =====================================================
+W, A, S, D          Move the central viewport                               Move column by pixel increments (if 'move' enabled)
+Space-bar           Toggle permute mode
+E                   Align views to current viewport
+Q                   Zoom in and centre on currently selected column
+Z, X                Move left/right between tabs in the central widget
+1                   Set currently selected column to 'Si'
+2                   Set currently selected column to 'Cu'
+3                   Set currently selected column to 'Al'
+4                   Set currently selected column to 'Mg'
+5
+6
+7
+8
+9
+\+                  Toggle currently selected column z-height
+P                   Enable move (Enter to accept, P to reset)
+R                   Print details about currently selected column
+=================   =================================================   =====================================================
 
 Project workflow with AutomAl's GUI
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
