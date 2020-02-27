@@ -15,7 +15,7 @@ class Vertex:
     al_lattice_const = 404.95
 
     def __init__(self, index, im_coor_x, im_coor_y, r, peak_gamma, avg_gamma, scale,
-                 level=0, atomic_species='Un', species_index=6):
+                 level=0, atomic_species='Un', species_index=6, void=False):
 
         # Index
         self.i = index
@@ -41,6 +41,7 @@ class Vertex:
         self.is_edge_column = False
         self.is_set_by_user = False
         self.show_in_overlay = True
+        self.void = void
         self.flag_1 = False
         self.flag_2 = False
         self.flag_3 = False
@@ -167,6 +168,20 @@ class Vertex:
             self.district[pos_j], self.district[pos_k] = self.district[pos_k], self.district[pos_j]
             return True
 
+    def permute_pos_j_pos_k(self, pos_j, pos_k):
+        self.district[pos_j], self.district[pos_k] = self.district[pos_k], self.district[pos_j]
+        return True
+
+    def shift_pos_j_pos_k(self, pos_j, pos_k):
+        if pos_k == len(self.district) - 1 or pos_k == -1:
+            new_district = self.district[:pos_j - 1] + self.district[pos_j + 1:pos_k] +\
+                           self.district[pos_j]
+        else:
+            new_district = self.district[:pos_j - 1] + self.district[pos_j + 1:pos_k] + \
+                           self.district[pos_j] + self.district[pos_k + 1:-1]
+        self.district = new_district
+        return True
+
 
 class AtomicGraph:
 
@@ -229,11 +244,22 @@ class AtomicGraph:
         # Find all vertices that have i in its district and re_write their districts:
         for vertex in self.vertices:
             if i in vertex.district:
-                new_district = []
+                vertex.shift_pos_j_pos_k(vertex.district.index(i), -1)
+                new_district = self.get_spatial_district(vertex.i, exclude=[i])
+                for new_citizen in new_district:
+                    if new_citizen not in vertex.district:
+                        vertex.district[-1] = new_citizen
+                        break
 
-                all_distances = []
-                sorted_indices = []
-                sorted_distances = []
+        # Replace vertex with void vertex
+        new_vertex = Vertex(i, 0, 0, self.vertices[i].r, self.vertices[i].peak_gamma, self.vertices[i].avg_gamma, self.scale, void=True)
+        new_vertex.is_edge_column = True
+        new_vertex.show_in_overlay = False
+        new_vertex.is_set_by_user = True
+        self.vertices[i] = new_vertex
+
+        # Remap district sets all over the graph
+        self.map_districts()
 
     def get_vertex_objects_from_indices(self, vertex_indices):
         vertices = []
@@ -248,10 +274,44 @@ class AtomicGraph:
         pass
 
     def get_separation(self, i, j):
-        pass
+        pos_i = self.vertices[i].spatial_pos()
+        pos_j = self.vertices[j].spatial_pos()
+
+        separation = np.sqrt((pos_i[0] - pos_j[0]) ** 2 + (pos_i[1] - pos_j[1]) ** 2 + (pos_i[2] - pos_j[2]) ** 2)
+
+        return separation
 
     def get_projected_separation(self, i, j):
-        pass
+        pos_i = self.vertices[i].spatial_pos()
+        pos_j = self.vertices[j].spatial_pos()
+
+        projected_separation = np.sqrt((pos_i[0] - pos_j[0]) ** 2 + (pos_i[1] - pos_j[1]) ** 2)
+
+        return projected_separation
+
+    def get_spatial_district(self, i, n=8, exclude=None):
+        projected_separations = []
+        indices = []
+        for vertex in self.vertices:
+            if not vertex.i == i and not vertex.void:
+                if exclude:
+                    if vertex.i not in exclude:
+                        projected_separation = self.get_projected_separation(i, vertex.i)
+                        projected_separations.append(projected_separation)
+                        indices.append(vertex.i)
+                else:
+                    projected_separation = self.get_projected_separation(i, vertex.i)
+                    projected_separations.append(projected_separation)
+                    indices.append(vertex.i)
+
+        district = []
+
+        for k in range(0, n):
+            min_index = projected_separations.index(min(projected_separations))
+            district.append(indices[min_index])
+            projected_separations[min_index] = max(projected_separations) + 5
+
+        return district
 
     def map_district(self, i, search_extended_district=False):
         vertex = self.vertices[i]
