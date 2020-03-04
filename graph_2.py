@@ -269,6 +269,13 @@ class AtomicGraph:
             vertices.append(self.vertices[index])
         return vertices
 
+    def get_only_non_void_vertex_indices(self):
+        non_void = []
+        for vertex in self.vertices:
+            if not vertex.void:
+                non_void.append(vertex.i)
+        return non_void
+
     def get_alpha_angles(self, i):
         pass
 
@@ -294,6 +301,7 @@ class AtomicGraph:
     def get_adjacency_matrix(self):
         self.summarize_stats()
         M = np.zeros(self.order - 1, self.order - 1)
+        vertices = self.get_vertex_objects_from_indices(self.get_only_non_void_vertex_indices())
         for x in range(0, self.order):
             for y in range(0, self.order):
                 pass
@@ -431,44 +439,46 @@ class AtomicGraph:
 
     def map_district(self, i, search_extended_district=False):
         vertex = self.vertices[i]
-        # Determine out-neighbourhood
-        vertex.out_neighbourhood = vertex.district[:vertex.n]
 
-        # determine in-neighbourhood
-        vertex.in_neighbourhood = []
-        if not search_extended_district:
-            for co_citizen in self.get_vertex_objects_from_indices(vertex.district):
-                if i in co_citizen.district[:co_citizen.n]:
-                    vertex.in_neighbourhood.append(co_citizen.i)
-        else:
-            for co_citizen in self.vertices:
-                if i in co_citizen.district[:co_citizen.n]:
-                    vertex.in_neighbourhood.append(co_citizen.i)
+        if not vertex.void:
+            # Determine out-neighbourhood
+            vertex.out_neighbourhood = vertex.district[:vertex.n]
 
-        # Determine neighbourhood
-        vertex.neighbourhood = vertex.out_neighbourhood
-        for in_neighbour in vertex.in_neighbourhood:
-            if in_neighbour not in vertex.neighbourhood:
-                vertex.neighbourhood.append(in_neighbour)
-
-        # Determine anti-neighbourhood
-        vertex.anti_neighbourhood = []
-        for co_citizen in vertex.district:
-            if co_citizen not in vertex.neighbourhood:
-                vertex.anti_neighbourhood.append(co_citizen)
-
-        # Determine partners and anti-partners
-        vertex.partners = []
-        vertex.anti_partners = []
-        for neighbour in vertex.neighbourhood:
-            if neighbour in vertex.in_neighbourhood and neighbour in vertex.out_neighbourhood:
-                vertex.partners.append(neighbour)
+            # determine in-neighbourhood
+            vertex.in_neighbourhood = []
+            if not search_extended_district:
+                for co_citizen in self.get_vertex_objects_from_indices(vertex.district):
+                    if i in co_citizen.district[:co_citizen.n]:
+                        vertex.in_neighbourhood.append(co_citizen.i)
             else:
-                vertex.anti_partners.append(neighbour)
+                for co_citizen in self.vertices:
+                    if i in co_citizen.district[:co_citizen.n]:
+                        vertex.in_neighbourhood.append(co_citizen.i)
 
-        vertex.in_degree = len(vertex.in_neighbourhood)
-        vertex.out_degree = len(vertex.out_neighbourhood)
-        vertex.degree = len(vertex.neighbourhood)
+            # Determine neighbourhood
+            vertex.neighbourhood = vertex.out_neighbourhood
+            for in_neighbour in vertex.in_neighbourhood:
+                if in_neighbour not in vertex.neighbourhood:
+                    vertex.neighbourhood.append(in_neighbour)
+
+            # Determine anti-neighbourhood
+            vertex.anti_neighbourhood = []
+            for co_citizen in vertex.district:
+                if co_citizen not in vertex.neighbourhood:
+                    vertex.anti_neighbourhood.append(co_citizen)
+
+            # Determine partners and anti-partners
+            vertex.partners = []
+            vertex.anti_partners = []
+            for neighbour in vertex.neighbourhood:
+                if neighbour in vertex.in_neighbourhood and neighbour in vertex.out_neighbourhood:
+                    vertex.partners.append(neighbour)
+                else:
+                    vertex.anti_partners.append(neighbour)
+
+            vertex.in_degree = len(vertex.in_neighbourhood)
+            vertex.out_degree = len(vertex.out_neighbourhood)
+            vertex.degree = len(vertex.neighbourhood)
 
     def map_districts(self, search_extended_district=False):
         for i in self.vertex_indices:
