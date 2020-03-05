@@ -301,7 +301,6 @@ class AtomicGraph:
     def get_adjacency_matrix(self):
         self.summarize_stats()
         M = np.zeros(self.order - 1, self.order - 1)
-        vertices = self.get_vertex_objects_from_indices(self.get_only_non_void_vertex_indices())
         for x in range(0, self.order):
             for y in range(0, self.order):
                 pass
