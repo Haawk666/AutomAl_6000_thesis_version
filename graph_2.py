@@ -207,6 +207,7 @@ class AtomicGraph:
         self.chi = 0
         self.num_void_vertices = 0
         self.order = 0
+        self.reduced_order = 0
         self.size = 0
         self.anti_size = 0
         self.avg_degree = 0
@@ -303,7 +304,26 @@ class AtomicGraph:
         M = np.zeros(self.order - 1, self.order - 1)
         for x in range(0, self.order):
             for y in range(0, self.order):
-                pass
+                if x in self.vertices[y].out_neighbourhood:
+                    M[y, x] = 1
+                else:
+                    M[y, x] = 0
+
+        return M
+
+    def get_reduced_adjacency_matrix(self):
+        self.summarize_stats()
+        M = np.zeros(self.reduced_order - 1, self.reduced_order - 1)
+        for x in range(0, self.reduced_order):
+            if not self.vertices[x].void:
+                for y in range(0, self.reduced_order):
+                    if not self.vertices[y].void:
+                        if x in self.vertices[y].out_neighbourhood:
+                            M[y, x] = 1
+                        else:
+                            M[y, x] = 0
+
+        return M
 
     def get_spatial_district(self, i, n=8, exclude=None):
         projected_separations = []
@@ -495,7 +515,8 @@ class AtomicGraph:
         for vertex in self.vertices:
             if vertex.void:
                 self.num_void_vertices += 1
-        self.order = len(self.vertices) - self.num_void_vertices
+        self.order = len(self.vertices)
+        self.reduced_order = self.order - self.num_void_vertices
 
         # Calc size
         self.size = 0
