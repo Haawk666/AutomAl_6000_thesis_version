@@ -236,6 +236,10 @@ def convert(obj, old_version, version):
         obj.graph.scale = obj.scale
         fresh_obj = obj
 
+    elif old_version == [0, 0, 10]:
+        # Updated graph module:
+
+
     else:
         fresh_obj = None
 

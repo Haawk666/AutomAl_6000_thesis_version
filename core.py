@@ -2,7 +2,7 @@
 
 # Program imports:
 import mat_op
-import graph
+import graph_2
 import utils
 import graph_op
 import compatibility
@@ -98,7 +98,7 @@ class SuchSoftware:
     """
 
     # Version
-    version = [0, 0, 10]
+    version = [0, 0, 11]
 
     # Number of elements in the probability vectors
     num_selections = 7
@@ -242,7 +242,7 @@ class SuchSoftware:
         self.overhead = int(6 * (self.r / 10))
 
         # Initialize an empty graph
-        self.graph = graph.AtomicGraph(self.scale, map_size=self.map_size)
+        self.graph = graph_2.AtomicGraph(self.scale)
 
         logger.info('Generated instance from {}'.format(filename_full))
 
@@ -304,13 +304,13 @@ class SuchSoftware:
         :rtype: string or None
 
         """
-        self.graph.map_friends()
+        self.graph.map_districts()
         vertex = self.graph.vertices[i]
 
-        alpha = self.graph.produce_alpha_angles(i)
+        alpha = self.graph.get_alpha_angles(i)
         alpha_min = min(alpha)
         alpha_max = max(alpha)
-        theta = self.graph.produce_theta_angles(i, exclude_angles_from_inconsistent_meshes=True)
+        theta = self.graph.get_theta_angles(i)
         if theta:
             theta_min = min(theta)
             theta_max = max(theta)
@@ -325,16 +325,14 @@ class SuchSoftware:
         model_predictions = graph_op.base_stat_score(self.graph, i, get_individual_predictions=True)
         parameters, *_ = params.produce_params(calc=False)
 
-        blueshift = self.graph.produce_blueshift_sum(i)
+        blueshift = self.graph.get_redshift_sum(i)
 
         string = 'Vertex summary: ----------\n' + \
                  '    Index: {}\n'.format(vertex.i) + \
                  '    Image pos: ({}, {})\n'.format(vertex.im_coor_x, vertex.im_coor_y) + \
-                 '    Real pos: ({}, {})\n'.format(vertex.real_coor_x, vertex.real_coor_y) + \
-                 '    Atomic Species: {}\n'.format(vertex.species()) + \
-                 '    Probability vector: {}\n'.format(vertex.prob_vector.tolist()) + \
-                 '    Partner vector: {}\n'.format(vertex.partners()) + \
-                 '    Friendly vector: {}\n'.format(vertex.friendly_indices) + \
+                 '    Real pos: ({}, {})\n'.format(vertex.spatial_coor_x, vertex.spatial_coor_y) + \
+                 '    Atomic Species: {}\n'.format(vertex.atomic_species) + \
+                 '    Probability vector: {}\n'.format(vertex.probability_vector) + \
                  '    Model parameters: ------------\n' + \
                  '        Alpha min: {}\n            Prediction: {}\n            {}\n'.format(alpha_min, model_predictions[1], model_predictions[1].index(max(model_predictions[1]))) + \
                  '        Alpha max: {}\n            Prediction: {}\n            {}\n'.format(alpha_max, model_predictions[2], model_predictions[2].index(max(model_predictions[2]))) + \
@@ -350,7 +348,7 @@ class SuchSoftware:
                  '    Is set by user: {}\n'.format(vertex.set_by_user) + \
                  '    Level: {}\n'.format(vertex.level) + \
                  '    Anti-level: {}\n'.format(vertex.anti_level()) + \
-                 '    Summed blueshift: {}\n'.format(blueshift) + \
+                 '    Summed redshift: {}\n'.format(blueshift) + \
                  '    Flag 1: {}\n'.format(vertex.flag_1) + \
                  '    Flag 2: {}\n'.format(vertex.flag_2) + \
                  '    Flag 3: {}\n'.format(vertex.flag_3) + \
@@ -488,13 +486,8 @@ class SuchSoftware:
 
             self.search_mat = mat_op.delete_pixels(self.search_mat, x_fit_pix, y_fit_pix, self.r + self.overhead)
 
-            vertex = graph.Vertex(counter, x_fit_real_coor, y_fit_real_coor, self.r, max_val, 0,
-                                  self.alloy_mat,
-                                  num_selections=SuchSoftware.num_selections,
-                                  species_strings=SuchSoftware.species_strings,
-                                  certainty_threshold=self.certainty_threshold,
-                                  scale=self.scale)
-            vertex.reset_prob_vector(bias=6)
+            vertex = graph_2.Vertex(counter, x_fit_real_coor, y_fit_real_coor, self.r, max_val, 0, self.scale)
+            vertex.reset_probability_vector(bias=6)
             self.graph.add_vertex(vertex)
 
             self.column_centre_mat[y_fit_real_coor_pix, x_fit_real_coor_pix, 0] = 1
@@ -558,7 +551,7 @@ class SuchSoftware:
 
                     if self.column_centre_mat[y, x, 0] == 1:
                         j = self.column_centre_mat[y, x, 1]
-                        dist = self.graph.projected_distance(i, j)
+                        dist = self.graph.get_projected_separation(i, j)
                         if num_found >= n:
                             if dist < distances.max():
                                 ind = distances.argmax()
@@ -606,8 +599,8 @@ class SuchSoftware:
 
         for y in range(0, self.num_columns):
 
-            x_coor = self.graph.vertices[y].real_coor_x
-            y_coor = self.graph.vertices[y].real_coor_y
+            x_coor = self.graph.vertices[y].spatial_coor_x
+            y_coor = self.graph.vertices[y].spatial_coor_y
             margin = 6 * self.r
 
             if x_coor < margin or x_coor > self.im_width - margin - 1 or y_coor < margin or y_coor > self.im_height - margin - 1:

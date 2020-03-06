@@ -67,7 +67,8 @@ class Vertex:
         self.theta_angle_variance = []
         self.normalized_peak_gamma = peak_gamma
         self.normalized_avg_gamma = avg_gamma
-        self.avg_redshift = 0
+        self.redshift_sum = 0
+        self.redshift_variance = 0
 
         # Local graph mapping
         self.district = []
@@ -108,7 +109,7 @@ class Vertex:
         self.probability_vector = [1, 1, 1, 1, 1, 1, 1]
         if bias == -1:
             self.probability_vector[6] = 1.1
-        elif bias in [0, 1, 2, 3, 4, 5]:
+        elif bias in [0, 1, 2, 3, 4, 5, 6]:
             self.probability_vector[bias] = 1.1
         self.normalize_probability_vector()
         self.determine_species_from_probability_vector()
@@ -119,6 +120,7 @@ class Vertex:
         self.n = Vertex.species_symmetry[self.h_index]
 
     def determine_species_from_h_index(self):
+
         self.probability_vector[self.h_index] = max(self.probability_vector) + 0.3
         self.normalize_probability_vector()
         self.atomic_species = Vertex.species_strings[self.h_index]
@@ -281,6 +283,9 @@ class AtomicGraph:
         pass
 
     def get_theta_angles(self, i):
+        pass
+
+    def get_redshift_sum(self, i):
         pass
 
     def get_separation(self, i, j):
@@ -502,9 +507,6 @@ class AtomicGraph:
     def map_districts(self, search_extended_district=False):
         for i in self.vertex_indices:
             self.map_district(i, search_extended_district=search_extended_district)
-
-    def calc_redshift(self, i):
-        pass
 
     def summarize_stats(self):
 
