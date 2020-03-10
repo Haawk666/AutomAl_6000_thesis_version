@@ -22,6 +22,7 @@ class Vertex:
 
         # Some properties
         self.r = r
+        self.level = level
         self.scale = scale
         self.peak_gamma = peak_gamma
         self.avg_gamma = avg_gamma
@@ -56,7 +57,6 @@ class Vertex:
         self.probability_vector = [0, 0, 0, 0, 0, 0, 1]
         self.analysis_vector = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
         self.n = 3
-        self.h_index = 6
 
         # Graph parameters
         self.in_degree = 0
@@ -79,7 +79,7 @@ class Vertex:
         self.partners = []
         self.anti_partners = []
 
-        self.reset_probability_vector()
+        self.determine_species_from_species_index()
 
     def __str__(self):
         return self.report()
@@ -115,36 +115,32 @@ class Vertex:
         self.determine_species_from_probability_vector()
 
     def determine_species_from_probability_vector(self):
-        self.h_index = self.probability_vector.index(max(self.probability_vector))
-        self.atomic_species = Vertex.species_strings[self.h_index]
-        self.n = Vertex.species_symmetry[self.h_index]
+        self.species_index = self.probability_vector.index(max(self.probability_vector))
+        self.atomic_species = Vertex.species_strings[self.species_index]
+        self.n = Vertex.species_symmetry[self.species_index]
 
-    def determine_species_from_h_index(self):
-
-        self.probability_vector[self.h_index] = max(self.probability_vector) + 0.3
-        self.normalize_probability_vector()
-        self.atomic_species = Vertex.species_strings[self.h_index]
-        self.n = Vertex.species_symmetry[self.h_index]
+    def determine_species_from_species_index(self):
+        self.reset_probability_vector(bias=self.species_index)
 
     def increment_h(self):
-        if self.h_index == 5 or self.h_index == 6:
+        if self.species_index == 5 or self.species_index == 6:
             return False
         else:
-            self.h_index += 1
-            self.determine_species_from_h_index()
+            self.species_index += 1
+            self.determine_species_from_species_index()
             return True
 
     def decrement_h(self):
-        if self.h_index == 0:
+        if self.species_index == 0:
             return False
         else:
-            self.h_index -= 1
-            self.determine_species_from_h_index()
+            self.species_index -= 1
+            self.determine_species_from_species_index()
             return True
 
-    def set_species_by_h_index(self, h_index):
-        self.h_index = h_index
-        self.determine_species_from_h_index()
+    def set_species_by_species_index(self, species_index):
+        self.species_index = species_index
+        self.determine_species_from_species_index()
 
     def permute_j_k(self, j, k):
         if j == k:
@@ -184,10 +180,17 @@ class Vertex:
         self.district = new_district
         return True
 
+    def partner_query(self, j):
+        if j in self.district[:self.n - 1]:
+            return True
+        else:
+            return False
+
 
 class AtomicGraph:
 
     species_strings = ['Si', 'Cu', 'Zn', 'Al', 'Ag', 'Mg', 'Un']
+    atomic_radii = [117.5, 127.81, 133.25, 143.0, 144.5, 160.0, 200.0]
     species_symmetry = [3, 3, 3, 4, 4, 5, 3]
     al_lattice_const = 404.95
 
@@ -199,6 +202,8 @@ class AtomicGraph:
         self.arc_indices = []
         self.anti_arcs = []
         self.anti_arc_indices = []
+        self.meshes = []
+        self.mesh_indices = []
 
         self.particle_boarder_indices = []
 
@@ -288,9 +293,25 @@ class AtomicGraph:
     def get_redshift_sum(self, i):
         pass
 
-    def get_separation(self, i, j):
+    def get_image_seperation(self, i, j):
+        pos_i = self.vertices[i].im_pos()
+        pos_j = self.vertices[j].im_pos()
+
+        separation = np.sqrt((pos_i[0] - pos_j[0]) ** 2 + (pos_i[1] - pos_j[1]) ** 2 + (pos_i[2] - pos_j[2]) ** 2)
+
+        return separation
+
+    def get_projected_image_separation(self, i, j):
         pos_i = self.vertices[i].spatial_pos()
         pos_j = self.vertices[j].spatial_pos()
+
+        projected_separation = np.sqrt((pos_i[0] - pos_j[0]) ** 2 + (pos_i[1] - pos_j[1]) ** 2)
+
+        return projected_separation
+
+    def get_separation(self, i, j):
+        pos_i = self.vertices[i].im_pos()
+        pos_j = self.vertices[j].im_pos()
 
         separation = np.sqrt((pos_i[0] - pos_j[0]) ** 2 + (pos_i[1] - pos_j[1]) ** 2 + (pos_i[2] - pos_j[2]) ** 2)
 
@@ -303,6 +324,11 @@ class AtomicGraph:
         projected_separation = np.sqrt((pos_i[0] - pos_j[0]) ** 2 + (pos_i[1] - pos_j[1]) ** 2)
 
         return projected_separation
+
+    def get_hard_sphere_separation(self, i, j):
+        radii_1 = self.atomic_radii[self.vertices[i].species_index]
+        radii_2 = self.atomic_radii[self.vertices[j].species_index]
+        return radii_1 + radii_2
 
     def get_adjacency_matrix(self):
         self.summarize_stats()
@@ -353,6 +379,9 @@ class AtomicGraph:
             projected_separations[min_index] = max(projected_separations) + 5
 
         return district
+
+    def get_induced_subgraph(self, vertex_indices):
+        pass
 
     def get_column_centered_subgraph(self, i, order=1):
         subgraph = []
@@ -461,6 +490,25 @@ class AtomicGraph:
 
         return min_angle, next_index
 
+    def invert_levels(self):
+        for vertex in self.vertices:
+            if vertex.level == 0:
+                vertex.level = 1
+            else:
+                vertex.level = 0
+
+    def reset_all_flags(self):
+        for vertex in self.vertices:
+            vertex.flag_1 = False
+            vertex.flag_2 = False
+            vertex.flag_3 = False
+            vertex.flag_4 = False
+            vertex.flag_5 = False
+            vertex.flag_6 = False
+            vertex.flag_7 = False
+            vertex.flag_8 = False
+        logger.info('All flags reset!')
+
     def map_district(self, i, search_extended_district=False):
         vertex = self.vertices[i]
 
@@ -507,6 +555,65 @@ class AtomicGraph:
     def map_districts(self, search_extended_district=False):
         for i in self.vertex_indices:
             self.map_district(i, search_extended_district=search_extended_district)
+
+    def map_meshes(self, i):
+        """Automatically generate a connected relational map of all meshes in graph.
+
+        The index of a mesh is temporarily indexed during the mapping by the following algorithm: Take the indices of
+        its corners, and circularly pertub them such that the lowest index comes first. After the mapping is complete,
+        these indices are replaced by the integers 0 to the number of meshes.
+
+        :param i: Index of starting vertex.
+        :type i: int
+
+        """
+
+        logger.info('Mapping meshes..')
+        self.meshes = []
+        self.mesh_indices = []
+        self.map_districts()
+        sub_graph_0 = self.get_atomic_configuration(i)
+        mesh_0 = sub_graph_0.meshes[0]
+        mesh_0.mesh_index = self.determine_temp_index(mesh_0)
+        mesh_0.calc_cm()
+
+        self.meshes.append(mesh_0)
+        self.mesh_indices.append(mesh_0.mesh_index)
+
+        sys.setrecursionlimit(5000)
+        self.walk_mesh_edges(mesh_0)
+
+        new_indices = [i for i in range(0, len(self.mesh_indices))]
+
+        for k, mesh in enumerate(self.meshes):
+            for j, neighbour in enumerate(mesh.surrounding_meshes):
+                mesh.surrounding_meshes[j] = self.mesh_indices.index(neighbour)
+            mesh.mesh_index = self.mesh_indices.index(mesh.mesh_index)
+
+        self.mesh_indices = new_indices
+        logger.info('Meshes mapped!')
+
+    def walk_mesh_edges(self, mesh):
+
+        for k, corner in enumerate(vertex.i for vertex in mesh.vertices):
+            new_mesh = self.find_mesh(corner, mesh.vertices[k - 1].i, return_mesh=True, use_friends=True)
+            has_edge_columns = False
+            for vertex in new_mesh.vertices:
+                if vertex.is_edge_column:
+                    has_edge_columns = True
+            if not has_edge_columns:
+                tmp_index = self.determine_temp_index(new_mesh)
+                mesh.surrounding_meshes.append(tmp_index)
+                if tmp_index not in self.mesh_indices:
+                    new_mesh.mesh_index = tmp_index
+                    new_mesh.calc_cm()
+                    self.meshes.append(new_mesh)
+                    self.mesh_indices.append(tmp_index)
+                    self.walk_mesh_edges(new_mesh)
+
+    @staticmethod
+    def determine_temp_index(mesh):
+        return utils.make_int_from_list(utils.cyclic_sort(mesh.vertex_indices))
 
     def summarize_stats(self):
 

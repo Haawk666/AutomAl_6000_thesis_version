@@ -7,7 +7,7 @@
 
 """
 
-
+import graph_2
 import logging
 # Instantiate logger
 logger = logging.getLogger(__name__)
@@ -69,6 +69,24 @@ def convert(obj, old_version, version):
         obj.graph.meshes = []
         obj.graph.mesh_indices = []
         obj.graph.scale = obj.scale
+        # Updated graph module:
+        old_graph = obj.graph
+        new_graph = graph_2.AtomicGraph(obj.scale)
+        for vertex in old_graph.vertices:
+            new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r,
+                                        vertex.peak_gamma,
+                                        vertex.avg_gamma, obj.scale, level=vertex.level,
+                                        species_index=vertex.h_index)
+            new_vertex.district = vertex.neighbour_indices
+            new_vertex.normalized_avg_gamma = vertex.normalized_avg_gamma
+            new_vertex.normalized_peak_gamma = vertex.normalized_peak_gamma
+            new_vertex.is_in_precipitate = vertex.is_in_precipitate
+            new_vertex.is_edge_column = vertex.is_edge_column
+            new_vertex.is_set_by_user = vertex.set_by_user
+            new_graph.add_vertex(new_vertex)
+        new_graph.map_districts()
+        new_graph.summarize_stats()
+        obj.graph = new_graph
         fresh_obj = obj
 
     elif old_version == [0, 0, 1]:
@@ -106,6 +124,24 @@ def convert(obj, old_version, version):
         obj.graph.meshes = []
         obj.graph.mesh_indices = []
         obj.graph.scale = obj.scale
+        # Updated graph module:
+        old_graph = obj.graph
+        new_graph = graph_2.AtomicGraph(obj.scale)
+        for vertex in old_graph.vertices:
+            new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r,
+                                        vertex.peak_gamma,
+                                        vertex.avg_gamma, obj.scale, level=vertex.level,
+                                        species_index=vertex.h_index)
+            new_vertex.district = vertex.neighbour_indices
+            new_vertex.normalized_avg_gamma = vertex.normalized_avg_gamma
+            new_vertex.normalized_peak_gamma = vertex.normalized_peak_gamma
+            new_vertex.is_in_precipitate = vertex.is_in_precipitate
+            new_vertex.is_edge_column = vertex.is_edge_column
+            new_vertex.is_set_by_user = vertex.set_by_user
+            new_graph.add_vertex(new_vertex)
+        new_graph.map_districts()
+        new_graph.summarize_stats()
+        obj.graph = new_graph
         fresh_obj = obj
 
     elif old_version == [0, 0, 2]:
@@ -133,6 +169,24 @@ def convert(obj, old_version, version):
         obj.graph.meshes = []
         obj.graph.mesh_indices = []
         obj.graph.scale = obj.scale
+        # Updated graph module:
+        old_graph = obj.graph
+        new_graph = graph_2.AtomicGraph(obj.scale)
+        for vertex in old_graph.vertices:
+            new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r,
+                                        vertex.peak_gamma,
+                                        vertex.avg_gamma, obj.scale, level=vertex.level,
+                                        species_index=vertex.h_index)
+            new_vertex.district = vertex.neighbour_indices
+            new_vertex.normalized_avg_gamma = vertex.normalized_avg_gamma
+            new_vertex.normalized_peak_gamma = vertex.normalized_peak_gamma
+            new_vertex.is_in_precipitate = vertex.is_in_precipitate
+            new_vertex.is_edge_column = vertex.is_edge_column
+            new_vertex.is_set_by_user = vertex.set_by_user
+            new_graph.add_vertex(new_vertex)
+        new_graph.map_districts()
+        new_graph.summarize_stats()
+        obj.graph = new_graph
         fresh_obj = obj
 
     elif old_version == [0, 0, 3]:
@@ -154,6 +208,24 @@ def convert(obj, old_version, version):
         obj.graph.meshes = []
         obj.graph.mesh_indices = []
         obj.graph.scale = obj.scale
+        # Updated graph module:
+        old_graph = obj.graph
+        new_graph = graph_2.AtomicGraph(obj.scale)
+        for vertex in old_graph.vertices:
+            new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r,
+                                        vertex.peak_gamma,
+                                        vertex.avg_gamma, obj.scale, level=vertex.level,
+                                        species_index=vertex.h_index)
+            new_vertex.district = vertex.neighbour_indices
+            new_vertex.normalized_avg_gamma = vertex.normalized_avg_gamma
+            new_vertex.normalized_peak_gamma = vertex.normalized_peak_gamma
+            new_vertex.is_in_precipitate = vertex.is_in_precipitate
+            new_vertex.is_edge_column = vertex.is_edge_column
+            new_vertex.is_set_by_user = vertex.set_by_user
+            new_graph.add_vertex(new_vertex)
+        new_graph.map_districts()
+        new_graph.summarize_stats()
+        obj.graph = new_graph
         fresh_obj = obj
 
     elif old_version == [0, 0, 4]:
@@ -173,6 +245,24 @@ def convert(obj, old_version, version):
         obj.graph.meshes = []
         obj.graph.mesh_indices = []
         obj.graph.scale = obj.scale
+        # Updated graph module:
+        old_graph = obj.graph
+        new_graph = graph_2.AtomicGraph(obj.scale)
+        for vertex in old_graph.vertices:
+            new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r,
+                                        vertex.peak_gamma,
+                                        vertex.avg_gamma, obj.scale, level=vertex.level,
+                                        species_index=vertex.h_index)
+            new_vertex.district = vertex.neighbour_indices
+            new_vertex.normalized_avg_gamma = vertex.normalized_avg_gamma
+            new_vertex.normalized_peak_gamma = vertex.normalized_peak_gamma
+            new_vertex.is_in_precipitate = vertex.is_in_precipitate
+            new_vertex.is_edge_column = vertex.is_edge_column
+            new_vertex.is_set_by_user = vertex.set_by_user
+            new_graph.add_vertex(new_vertex)
+        new_graph.map_districts()
+        new_graph.summarize_stats()
+        obj.graph = new_graph
         fresh_obj = obj
 
     elif old_version == [0, 0, 5]:
@@ -190,6 +280,24 @@ def convert(obj, old_version, version):
         obj.graph.meshes = []
         obj.graph.mesh_indices = []
         obj.graph.scale = obj.scale
+        # Updated graph module:
+        old_graph = obj.graph
+        new_graph = graph_2.AtomicGraph(obj.scale)
+        for vertex in old_graph.vertices:
+            new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r,
+                                        vertex.peak_gamma,
+                                        vertex.avg_gamma, obj.scale, level=vertex.level,
+                                        species_index=vertex.h_index)
+            new_vertex.district = vertex.neighbour_indices
+            new_vertex.normalized_avg_gamma = vertex.normalized_avg_gamma
+            new_vertex.normalized_peak_gamma = vertex.normalized_peak_gamma
+            new_vertex.is_in_precipitate = vertex.is_in_precipitate
+            new_vertex.is_edge_column = vertex.is_edge_column
+            new_vertex.is_set_by_user = vertex.set_by_user
+            new_graph.add_vertex(new_vertex)
+        new_graph.map_districts()
+        new_graph.summarize_stats()
+        obj.graph = new_graph
         fresh_obj = obj
 
     elif old_version == [0, 0, 6]:
@@ -205,6 +313,24 @@ def convert(obj, old_version, version):
         obj.graph.meshes = []
         obj.graph.mesh_indices = []
         obj.graph.scale = obj.scale
+        # Updated graph module:
+        old_graph = obj.graph
+        new_graph = graph_2.AtomicGraph(obj.scale)
+        for vertex in old_graph.vertices:
+            new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r,
+                                        vertex.peak_gamma,
+                                        vertex.avg_gamma, obj.scale, level=vertex.level,
+                                        species_index=vertex.h_index)
+            new_vertex.district = vertex.neighbour_indices
+            new_vertex.normalized_avg_gamma = vertex.normalized_avg_gamma
+            new_vertex.normalized_peak_gamma = vertex.normalized_peak_gamma
+            new_vertex.is_in_precipitate = vertex.is_in_precipitate
+            new_vertex.is_edge_column = vertex.is_edge_column
+            new_vertex.is_set_by_user = vertex.set_by_user
+            new_graph.add_vertex(new_vertex)
+        new_graph.map_districts()
+        new_graph.summarize_stats()
+        obj.graph = new_graph
         fresh_obj = obj
 
     elif old_version == [0, 0, 7]:
@@ -218,6 +344,24 @@ def convert(obj, old_version, version):
             vertex.anti_friend_indices = []
             vertex.friend_indices = []
             vertex.outsider_indices = []
+        # Updated graph module:
+        old_graph = obj.graph
+        new_graph = graph_2.AtomicGraph(obj.scale)
+        for vertex in old_graph.vertices:
+            new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r,
+                                        vertex.peak_gamma,
+                                        vertex.avg_gamma, obj.scale, level=vertex.level,
+                                        species_index=vertex.h_index)
+            new_vertex.district = vertex.neighbour_indices
+            new_vertex.normalized_avg_gamma = vertex.normalized_avg_gamma
+            new_vertex.normalized_peak_gamma = vertex.normalized_peak_gamma
+            new_vertex.is_in_precipitate = vertex.is_in_precipitate
+            new_vertex.is_edge_column = vertex.is_edge_column
+            new_vertex.is_set_by_user = vertex.set_by_user
+            new_graph.add_vertex(new_vertex)
+        new_graph.map_districts()
+        new_graph.summarize_stats()
+        obj.graph = new_graph
         fresh_obj = obj
 
     elif old_version == [0, 0, 8]:
@@ -230,15 +374,64 @@ def convert(obj, old_version, version):
             vertex.anti_friend_indices = []
             vertex.friend_indices = []
             vertex.outsider_indices = []
+        # Updated graph module:
+        old_graph = obj.graph
+        new_graph = graph_2.AtomicGraph(obj.scale)
+        for vertex in old_graph.vertices:
+            new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r,
+                                        vertex.peak_gamma,
+                                        vertex.avg_gamma, obj.scale, level=vertex.level,
+                                        species_index=vertex.h_index)
+            new_vertex.district = vertex.neighbour_indices
+            new_vertex.normalized_avg_gamma = vertex.normalized_avg_gamma
+            new_vertex.normalized_peak_gamma = vertex.normalized_peak_gamma
+            new_vertex.is_in_precipitate = vertex.is_in_precipitate
+            new_vertex.is_edge_column = vertex.is_edge_column
+            new_vertex.is_set_by_user = vertex.set_by_user
+            new_graph.add_vertex(new_vertex)
+        new_graph.map_districts()
+        new_graph.summarize_stats()
+        obj.graph = new_graph
         fresh_obj = obj
 
     elif old_version == [0, 0, 9]:
         obj.graph.scale = obj.scale
+        # Updated graph module:
+        old_graph = obj.graph
+        new_graph = graph_2.AtomicGraph(obj.scale)
+        for vertex in old_graph.vertices:
+            new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r, vertex.peak_gamma,
+                                        vertex.avg_gamma, obj.scale, level=vertex.level, species_index=vertex.h_index)
+            new_vertex.district = vertex.neighbour_indices
+            new_vertex.normalized_avg_gamma = vertex.normalized_avg_gamma
+            new_vertex.normalized_peak_gamma = vertex.normalized_peak_gamma
+            new_vertex.is_in_precipitate = vertex.is_in_precipitate
+            new_vertex.is_edge_column = vertex.is_edge_column
+            new_vertex.is_set_by_user = vertex.set_by_user
+            new_graph.add_vertex(new_vertex)
+        new_graph.map_districts()
+        new_graph.summarize_stats()
+        obj.graph = new_graph
         fresh_obj = obj
 
     elif old_version == [0, 0, 10]:
         # Updated graph module:
-
+        old_graph = obj.graph
+        new_graph = graph_2.AtomicGraph(obj.scale)
+        for vertex in old_graph.vertices:
+            new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r, vertex.peak_gamma,
+                                        vertex.avg_gamma, obj.scale, level=vertex.level, species_index=vertex.h_index)
+            new_vertex.district = vertex.neighbour_indices
+            new_vertex.normalized_avg_gamma = vertex.normalized_avg_gamma
+            new_vertex.normalized_peak_gamma = vertex.normalized_peak_gamma
+            new_vertex.is_in_precipitate = vertex.is_in_precipitate
+            new_vertex.is_edge_column = vertex.is_edge_column
+            new_vertex.is_set_by_user = vertex.set_by_user
+            new_graph.add_vertex(new_vertex)
+        new_graph.map_districts()
+        new_graph.summarize_stats()
+        obj.graph = new_graph
+        fresh_obj = obj
 
     else:
         fresh_obj = None

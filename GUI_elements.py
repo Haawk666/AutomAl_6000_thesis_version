@@ -215,9 +215,9 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
 
         for vertex_a in self.ui_obj.project_instance.graph.vertices:
             inner_edges = []
-            for n, vertex_b in enumerate(self.ui_obj.project_instance.graph.get_neighbours(vertex_a.i)):
-                p1 = vertex_a.real_coor()
-                p2 = vertex_b.real_coor()
+            for n, vertex_b in enumerate(self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(vertex_a.district)):
+                p1 = vertex_a.im_pos()
+                p2 = vertex_b.im_pos()
                 consistent = vertex_b.partner_query(vertex_a.i)
                 if vertex_a.level == vertex_b.level:
                     dislocation = True
@@ -229,7 +229,7 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
                                                                dislocation=dislocation,
                                                                chb=self.ui_obj.control_window.chb_graph))
                 self.addItem(inner_edges[-1])
-                if n >= vertex_a.n():
+                if n >= vertex_a.n:
                     inner_edges[-1].hide()
             self.edges.append(inner_edges)
 

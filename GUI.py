@@ -25,7 +25,7 @@ class MainUI(QtWidgets.QMainWindow):
     def __init__(self, *args, settings_file=None):
         super().__init__(*args)
 
-        self.version = [0, 0, 1]
+        self.version = [0, 0, 2]
         self.config = settings_file
 
         # Initialize in an 'empty state'
@@ -152,7 +152,7 @@ class MainUI(QtWidgets.QMainWindow):
         """Set atomic species of selected column"""
         if self.project_instance is not None and not self.selected_column == -1:
             # Update relevant graphics:
-            self.project_instance.graph.vertices[self.selected_column].force_species(h)
+            self.project_instance.graph.vertices[self.selected_column].set_species_by_species_index(h)
             self.gs_overlay_composition.interactive_overlay_objects[self.selected_column].set_style()
             self.gs_atomic_graph.redraw_neighbourhood(self.selected_column)
             # Update control window info:
@@ -161,7 +161,7 @@ class MainUI(QtWidgets.QMainWindow):
             self.control_window.lbl_confidence.setText(
                 'Confidence: ' + str(self.project_instance.graph.vertices[self.selected_column].confidence))
             self.control_window.draw_histogram()
-            self.control_window.lbl_prob_vector.setText('Probability vector: {}'.format(self.project_instance.graph.vertices[self.selected_column].prob_vector))
+            self.control_window.lbl_prob_vector.setText('Probability vector: {}'.format(self.project_instance.graph.vertices[self.selected_column].probability_vector))
 
     def set_level(self, level):
         """Set level of selected column"""
@@ -282,9 +282,9 @@ class MainUI(QtWidgets.QMainWindow):
                 else:
                     self.selection_history.append(self.selected_column)
             if self.control_window.chb_enable_ruler.isChecked():
-                projected_distance = self.project_instance.graph.real_projected_distance(self.selected_column, self.previous_selected_column)
-                spatial_distance = self.project_instance.graph.real_distance(self.selected_column, self.previous_selected_column)
-                expected_hard_sphere_distance = self.project_instance.graph.get_hard_sphere_distance(self.selected_column, self.previous_selected_column)
+                projected_distance = self.project_instance.graph.get_projected_separation(self.selected_column, self.previous_selected_column)
+                spatial_distance = self.project_instance.graph.get_separation(self.selected_column, self.previous_selected_column)
+                expected_hard_sphere_distance = self.project_instance.graph.get_hard_sphere_separation(self.selected_column, self.previous_selected_column)
                 string = 'Distance between vertex {} and {}\n' \
                          '    Projected distance: {} pm\n' \
                          '    Spatial distance: {} pm\n' \
@@ -639,12 +639,12 @@ class MainUI(QtWidgets.QMainWindow):
                 symmetry_deviations = 0
                 deviation_indices = []
                 for vertex, control_vertex in zip(self.project_instance.graph.vertices, self.control_instance.graph.vertices):
-                    if vertex.h_index == control_vertex.h_index:
+                    if vertex.species_index == control_vertex.species_index:
                         pass
-                    elif vertex.h_index == 0 and control_vertex.h_index == 1:
+                    elif vertex.species_index == 0 and control_vertex.species_index == 1:
                         deviations += 1
                         deviation_indices.append(vertex.i)
-                    elif vertex.h_index == 1 and control_vertex.h_index == 0:
+                    elif vertex.species_index == 1 and control_vertex.species_index == 0:
                         deviations += 1
                         deviation_indices.append(vertex.i)
                     else:
@@ -841,10 +841,8 @@ class MainUI(QtWidgets.QMainWindow):
         if self.project_instance is not None:
             x = self.gs_atomic_positions.interactive_position_objects[self.selected_column].x() + self.project_instance.r
             y = self.gs_atomic_positions.interactive_position_objects[self.selected_column].y() + self.project_instance.r
-            self.project_instance.graph.vertices[self.selected_column].real_coor_x = x
-            self.project_instance.graph.vertices[self.selected_column].real_coor_y = y
-            self.project_instance.graph.vertices[self.selected_column].im_coor_x = int(np.floor(x))
-            self.project_instance.graph.vertices[self.selected_column].im_coor_y = int(np.floor(y))
+            self.project_instance.graph.vertices[self.selected_column].im_coor_x = x
+            self.project_instance.graph.vertices[self.selected_column].im_coor_y = y
             self.control_window.mode_move(False)
             self.update_central_widget()
 

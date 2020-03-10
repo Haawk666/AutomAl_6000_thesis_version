@@ -41,7 +41,7 @@ class InteractiveColumn(QtWidgets.QGraphicsEllipseItem):
         self.i = i
         self.scale_factor = scale_factor
         self.vertex = self.ui_obj.project_instance.graph.vertices[self.i]
-        self.center_coor = self.vertex.real_coor()
+        self.center_coor = self.vertex.im_pos()
         self.center_coor = scale_factor * self.center_coor[0] - np.round(self.r / 2), scale_factor * self.center_coor[1] - np.round(self.r / 2)
 
         super().__init__(0, 0, self.r, self.r)
@@ -120,31 +120,31 @@ class InteractiveOverlayColumn(InteractiveColumn):
             self.setBrush(self.brush_selected)
         else:
             self.setBrush(self.brush_black)
-            if self.vertex.h_index == 0:
+            if self.vertex.species_index == 0:
                 self.setPen(self.pen_si)
                 if self.vertex.level == 0:
                     self.setBrush(self.brush_si)
-            elif self.vertex.h_index == 1:
+            elif self.vertex.species_index == 1:
                 self.setPen(self.pen_cu)
                 if self.vertex.level == 0:
                     self.setBrush(self.brush_cu)
-            elif self.vertex.h_index == 2:
+            elif self.vertex.species_index == 2:
                 self.setPen(self.pen_zn)
                 if self.vertex.level == 0:
                     self.setBrush(self.brush_zn)
-            elif self.vertex.h_index == 3:
+            elif self.vertex.species_index == 3:
                 self.setPen(self.pen_al)
                 if self.vertex.level == 0:
                     self.setBrush(self.brush_al)
-            elif self.vertex.h_index == 4:
+            elif self.vertex.species_index == 4:
                 self.setPen(self.pen_ag)
                 if self.vertex.level == 0:
                     self.setBrush(self.brush_ag)
-            elif self.vertex.h_index == 5:
+            elif self.vertex.species_index == 5:
                 self.setPen(self.pen_mg)
                 if self.vertex.level == 0:
                     self.setBrush(self.brush_mg)
-            elif self.vertex.h_index == 6:
+            elif self.vertex.species_index == 6:
                 self.setPen(self.pen_un)
                 if self.vertex.level == 0:
                     self.setBrush(self.brush_un)
