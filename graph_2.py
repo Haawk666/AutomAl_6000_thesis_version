@@ -560,7 +560,7 @@ class AtomicGraph:
         """Automatically generate a connected relational map of all meshes in graph.
 
         The index of a mesh is temporarily indexed during the mapping by the following algorithm: Take the indices of
-        its corners, and circularly pertub them such that the lowest index comes first. After the mapping is complete,
+        its corners, and circularly permute them such that the lowest index comes first. After the mapping is complete,
         these indices are replaced by the integers 0 to the number of meshes.
 
         :param i: Index of starting vertex.
@@ -572,8 +572,8 @@ class AtomicGraph:
         self.meshes = []
         self.mesh_indices = []
         self.map_districts()
-        sub_graph_0 = self.get_atomic_configuration(i)
-        mesh_0 = sub_graph_0.meshes[0]
+        sub_graph_0 = self.get_column_centered_subgraph(i)
+        mesh_0 = sub_graph_0[0]
         mesh_0.mesh_index = self.determine_temp_index(mesh_0)
         mesh_0.calc_cm()
 
@@ -652,7 +652,145 @@ class AtomicGraph:
         # Calc redshifts
 
 
+class Mesh:
 
+    def __init__(self, mesh_index, vertices):
+
+        self.mesh_index = mesh_index
+        self.vertices = vertices
+        self.vertex_indices = []
+        self.edges = []
+        self.angles = []
+        self.angle_vectors = []
+        self.surrounding_meshes = []
+
+        self.is_enclosed = True
+        self.is_consistent = True
+        self.num_corners = 0
+        self.num_edges = 0
+        self.cm = (0, 0)
+
+        for vertex in self.vertices:
+            self.vertex_indices.append(vertex.i)
+        for vertex in self.vertices:
+            for out_neighbour in vertex.out_neighbourhood:
+                if out_neighbour in self.vertex_indices:
+                    self.edges.append((vertex.i, out_neighbour))
+        self.calc_cm()
+
+    def __str__(self):
+
+        string = ''
+
+        for k, index in enumerate(self.vertex_indices):
+
+            if self.vertices[utils.circularize_next_index(k + 1, len(self.vertices) - 1)].partner_query(k):
+                end_left = '<'
+            else:
+                end_left = ''
+
+            if self.vertices[k].partner_query(utils.circularize_next_index(k + 1, len(self.vertices) - 1)):
+                end_right = '>'
+            else:
+                end_right = ''
+
+            string += '{} {}-{} '.format(index, end_left, end_right)
+
+        return string
+
+    def __eq__(self, other):
+        return utils.is_circularly_identical(self.vertex_indices, other.vertex_indices)
+
+    def calc_cm(self):
+        x_fit = 0
+        y_fit = 0
+        mass = len(self.vertices)
+        for corner in self.vertices:
+            x_fit += corner.real_coor_x
+            y_fit += corner.real_coor_y
+        x_fit = x_fit / mass
+        y_fit = y_fit / mass
+        self.cm = (x_fit, y_fit)
+
+    def test_sidedness(self):
+        if not self.num_corners == 4:
+            return False
+        else:
+            return True
+
+    def get_ind_from_mother(self, i):
+
+        for index, mother_index in enumerate(self.vertex_indices):
+            if mother_index == i:
+                sub_index = index
+                break
+        else:
+            sub_index = -1
+        return sub_index
+
+    @staticmethod
+    def neighbour_test(mesh_1, mesh_2):
+
+        found = 0
+        edge = []
+
+        for corner in mesh_1.vertex_indices:
+
+            if corner in mesh_2.vertex_indices:
+                found += 1
+                edge.append(corner)
+
+            if found == 2:
+                break
+
+        else:
+
+            return False
+
+        assure_edge = True
+
+        for k, corner in enumerate(mesh_1.vertex_indices):
+            k_max = len(mesh_1.vertex_indices) - 1
+
+            if corner == edge[0]:
+
+                if mesh_1.vertex_indices[utils.circularize_next_index(k - 1, k_max)] == edge[1] or \
+                        mesh_1.vertex_indices[utils.circularize_next_index(k + 1, k_max) == edge[1]]:
+                    pass
+                else:
+                    assure_edge = False
+
+            elif corner == edge[1]:
+
+                if mesh_1.vertex_indices[utils.circularize_next_index(k - 1, k_max)] == edge[0] or \
+                        mesh_1.vertex_indices[utils.circularize_next_index(k + 1, k_max) == edge[0]]:
+                    pass
+                else:
+                    assure_edge = False
+
+        for k, corner in enumerate(mesh_2.vertex_indices):
+            k_max = len(mesh_2.vertex_indices) - 1
+
+            if corner == edge[0]:
+
+                if mesh_2.vertex_indices[utils.circularize_next_index(k - 1, k_max)] == edge[1] or \
+                        mesh_2.vertex_indices[utils.circularize_next_index(k + 1, k_max) == edge[1]]:
+                    pass
+                else:
+                    assure_edge = False
+
+            elif corner == edge[1]:
+
+                if mesh_2.vertex_indices[utils.circularize_next_index(k - 1, k_max)] == edge[0] or \
+                        mesh_2.vertex_indices[utils.circularize_next_index(k + 1, k_max) == edge[0]]:
+                    pass
+                else:
+                    assure_edge = False
+
+        if assure_edge:
+            return True, edge
+        else:
+            return False, edge
 
 
 
