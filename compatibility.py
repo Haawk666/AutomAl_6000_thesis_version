@@ -73,18 +73,28 @@ def convert(obj, old_version, version):
         old_graph = obj.graph
         new_graph = graph_2.AtomicGraph(obj.scale)
         for vertex in old_graph.vertices:
-            new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r,
-                                        vertex.peak_gamma,
-                                        vertex.avg_gamma, obj.scale, level=vertex.level,
-                                        species_index=vertex.h_index)
+            new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r, vertex.peak_gamma,
+                                        vertex.avg_gamma, obj.scale, level=vertex.level, species_index=vertex.h_index)
             new_vertex.district = vertex.neighbour_indices
-            new_vertex.normalized_avg_gamma = vertex.normalized_avg_gamma
-            new_vertex.normalized_peak_gamma = vertex.normalized_peak_gamma
             new_vertex.is_in_precipitate = vertex.is_in_precipitate
             new_vertex.is_edge_column = vertex.is_edge_column
             new_vertex.is_set_by_user = vertex.set_by_user
+            new_vertex.show_in_overlay = vertex.show_in_overlay
+            new_vertex.flag_1 = False
+            new_vertex.flag_2 = False
+            new_vertex.flag_3 = False
+            new_vertex.flag_4 = False
+            new_vertex.flag_5 = False
+            new_vertex.flag_6 = False
+            new_vertex.flag_7 = False
+            new_vertex.flag_8 = False
+            new_vertex.flag_9 = False
+
+            new_vertex.probability_vector = vertex.prob_vector.tolist()
+
             new_graph.add_vertex(new_vertex)
         new_graph.map_districts()
+        new_graph.calc_all_parameters()
         new_graph.summarize_stats()
         obj.graph = new_graph
         fresh_obj = obj
@@ -128,18 +138,28 @@ def convert(obj, old_version, version):
         old_graph = obj.graph
         new_graph = graph_2.AtomicGraph(obj.scale)
         for vertex in old_graph.vertices:
-            new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r,
-                                        vertex.peak_gamma,
-                                        vertex.avg_gamma, obj.scale, level=vertex.level,
-                                        species_index=vertex.h_index)
+            new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r, vertex.peak_gamma,
+                                        vertex.avg_gamma, obj.scale, level=vertex.level, species_index=vertex.h_index)
             new_vertex.district = vertex.neighbour_indices
-            new_vertex.normalized_avg_gamma = vertex.normalized_avg_gamma
-            new_vertex.normalized_peak_gamma = vertex.normalized_peak_gamma
             new_vertex.is_in_precipitate = vertex.is_in_precipitate
             new_vertex.is_edge_column = vertex.is_edge_column
             new_vertex.is_set_by_user = vertex.set_by_user
+            new_vertex.show_in_overlay = vertex.show_in_overlay
+            new_vertex.flag_1 = False
+            new_vertex.flag_2 = False
+            new_vertex.flag_3 = False
+            new_vertex.flag_4 = False
+            new_vertex.flag_5 = False
+            new_vertex.flag_6 = False
+            new_vertex.flag_7 = False
+            new_vertex.flag_8 = False
+            new_vertex.flag_9 = False
+
+            new_vertex.probability_vector = vertex.prob_vector.tolist()
+
             new_graph.add_vertex(new_vertex)
         new_graph.map_districts()
+        new_graph.calc_all_parameters()
         new_graph.summarize_stats()
         obj.graph = new_graph
         fresh_obj = obj
@@ -173,18 +193,28 @@ def convert(obj, old_version, version):
         old_graph = obj.graph
         new_graph = graph_2.AtomicGraph(obj.scale)
         for vertex in old_graph.vertices:
-            new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r,
-                                        vertex.peak_gamma,
-                                        vertex.avg_gamma, obj.scale, level=vertex.level,
-                                        species_index=vertex.h_index)
+            new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r, vertex.peak_gamma,
+                                        vertex.avg_gamma, obj.scale, level=vertex.level, species_index=vertex.h_index)
             new_vertex.district = vertex.neighbour_indices
-            new_vertex.normalized_avg_gamma = vertex.normalized_avg_gamma
-            new_vertex.normalized_peak_gamma = vertex.normalized_peak_gamma
             new_vertex.is_in_precipitate = vertex.is_in_precipitate
             new_vertex.is_edge_column = vertex.is_edge_column
             new_vertex.is_set_by_user = vertex.set_by_user
+            new_vertex.show_in_overlay = vertex.show_in_overlay
+            new_vertex.flag_1 = False
+            new_vertex.flag_2 = False
+            new_vertex.flag_3 = False
+            new_vertex.flag_4 = False
+            new_vertex.flag_5 = False
+            new_vertex.flag_6 = False
+            new_vertex.flag_7 = False
+            new_vertex.flag_8 = False
+            new_vertex.flag_9 = False
+
+            new_vertex.probability_vector = vertex.prob_vector.tolist()
+
             new_graph.add_vertex(new_vertex)
         new_graph.map_districts()
+        new_graph.calc_all_parameters()
         new_graph.summarize_stats()
         obj.graph = new_graph
         fresh_obj = obj
@@ -212,18 +242,28 @@ def convert(obj, old_version, version):
         old_graph = obj.graph
         new_graph = graph_2.AtomicGraph(obj.scale)
         for vertex in old_graph.vertices:
-            new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r,
-                                        vertex.peak_gamma,
-                                        vertex.avg_gamma, obj.scale, level=vertex.level,
-                                        species_index=vertex.h_index)
+            new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r, vertex.peak_gamma,
+                                        vertex.avg_gamma, obj.scale, level=vertex.level, species_index=vertex.h_index)
             new_vertex.district = vertex.neighbour_indices
-            new_vertex.normalized_avg_gamma = vertex.normalized_avg_gamma
-            new_vertex.normalized_peak_gamma = vertex.normalized_peak_gamma
             new_vertex.is_in_precipitate = vertex.is_in_precipitate
             new_vertex.is_edge_column = vertex.is_edge_column
             new_vertex.is_set_by_user = vertex.set_by_user
+            new_vertex.show_in_overlay = vertex.show_in_overlay
+            new_vertex.flag_1 = False
+            new_vertex.flag_2 = False
+            new_vertex.flag_3 = False
+            new_vertex.flag_4 = False
+            new_vertex.flag_5 = False
+            new_vertex.flag_6 = False
+            new_vertex.flag_7 = False
+            new_vertex.flag_8 = False
+            new_vertex.flag_9 = False
+
+            new_vertex.probability_vector = vertex.prob_vector.tolist()
+
             new_graph.add_vertex(new_vertex)
         new_graph.map_districts()
+        new_graph.calc_all_parameters()
         new_graph.summarize_stats()
         obj.graph = new_graph
         fresh_obj = obj
@@ -249,18 +289,28 @@ def convert(obj, old_version, version):
         old_graph = obj.graph
         new_graph = graph_2.AtomicGraph(obj.scale)
         for vertex in old_graph.vertices:
-            new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r,
-                                        vertex.peak_gamma,
-                                        vertex.avg_gamma, obj.scale, level=vertex.level,
-                                        species_index=vertex.h_index)
+            new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r, vertex.peak_gamma,
+                                        vertex.avg_gamma, obj.scale, level=vertex.level, species_index=vertex.h_index)
             new_vertex.district = vertex.neighbour_indices
-            new_vertex.normalized_avg_gamma = vertex.normalized_avg_gamma
-            new_vertex.normalized_peak_gamma = vertex.normalized_peak_gamma
             new_vertex.is_in_precipitate = vertex.is_in_precipitate
             new_vertex.is_edge_column = vertex.is_edge_column
             new_vertex.is_set_by_user = vertex.set_by_user
+            new_vertex.show_in_overlay = vertex.show_in_overlay
+            new_vertex.flag_1 = False
+            new_vertex.flag_2 = False
+            new_vertex.flag_3 = False
+            new_vertex.flag_4 = False
+            new_vertex.flag_5 = False
+            new_vertex.flag_6 = False
+            new_vertex.flag_7 = False
+            new_vertex.flag_8 = False
+            new_vertex.flag_9 = False
+
+            new_vertex.probability_vector = vertex.prob_vector.tolist()
+
             new_graph.add_vertex(new_vertex)
         new_graph.map_districts()
+        new_graph.calc_all_parameters()
         new_graph.summarize_stats()
         obj.graph = new_graph
         fresh_obj = obj
@@ -284,18 +334,28 @@ def convert(obj, old_version, version):
         old_graph = obj.graph
         new_graph = graph_2.AtomicGraph(obj.scale)
         for vertex in old_graph.vertices:
-            new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r,
-                                        vertex.peak_gamma,
-                                        vertex.avg_gamma, obj.scale, level=vertex.level,
-                                        species_index=vertex.h_index)
+            new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r, vertex.peak_gamma,
+                                        vertex.avg_gamma, obj.scale, level=vertex.level, species_index=vertex.h_index)
             new_vertex.district = vertex.neighbour_indices
-            new_vertex.normalized_avg_gamma = vertex.normalized_avg_gamma
-            new_vertex.normalized_peak_gamma = vertex.normalized_peak_gamma
             new_vertex.is_in_precipitate = vertex.is_in_precipitate
             new_vertex.is_edge_column = vertex.is_edge_column
             new_vertex.is_set_by_user = vertex.set_by_user
+            new_vertex.show_in_overlay = vertex.show_in_overlay
+            new_vertex.flag_1 = False
+            new_vertex.flag_2 = False
+            new_vertex.flag_3 = False
+            new_vertex.flag_4 = False
+            new_vertex.flag_5 = False
+            new_vertex.flag_6 = False
+            new_vertex.flag_7 = False
+            new_vertex.flag_8 = False
+            new_vertex.flag_9 = False
+
+            new_vertex.probability_vector = vertex.prob_vector.tolist()
+
             new_graph.add_vertex(new_vertex)
         new_graph.map_districts()
+        new_graph.calc_all_parameters()
         new_graph.summarize_stats()
         obj.graph = new_graph
         fresh_obj = obj
@@ -317,18 +377,28 @@ def convert(obj, old_version, version):
         old_graph = obj.graph
         new_graph = graph_2.AtomicGraph(obj.scale)
         for vertex in old_graph.vertices:
-            new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r,
-                                        vertex.peak_gamma,
-                                        vertex.avg_gamma, obj.scale, level=vertex.level,
-                                        species_index=vertex.h_index)
+            new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r, vertex.peak_gamma,
+                                        vertex.avg_gamma, obj.scale, level=vertex.level, species_index=vertex.h_index)
             new_vertex.district = vertex.neighbour_indices
-            new_vertex.normalized_avg_gamma = vertex.normalized_avg_gamma
-            new_vertex.normalized_peak_gamma = vertex.normalized_peak_gamma
             new_vertex.is_in_precipitate = vertex.is_in_precipitate
             new_vertex.is_edge_column = vertex.is_edge_column
             new_vertex.is_set_by_user = vertex.set_by_user
+            new_vertex.show_in_overlay = vertex.show_in_overlay
+            new_vertex.flag_1 = False
+            new_vertex.flag_2 = False
+            new_vertex.flag_3 = False
+            new_vertex.flag_4 = False
+            new_vertex.flag_5 = False
+            new_vertex.flag_6 = False
+            new_vertex.flag_7 = False
+            new_vertex.flag_8 = False
+            new_vertex.flag_9 = False
+
+            new_vertex.probability_vector = vertex.prob_vector.tolist()
+
             new_graph.add_vertex(new_vertex)
         new_graph.map_districts()
+        new_graph.calc_all_parameters()
         new_graph.summarize_stats()
         obj.graph = new_graph
         fresh_obj = obj
@@ -348,18 +418,28 @@ def convert(obj, old_version, version):
         old_graph = obj.graph
         new_graph = graph_2.AtomicGraph(obj.scale)
         for vertex in old_graph.vertices:
-            new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r,
-                                        vertex.peak_gamma,
-                                        vertex.avg_gamma, obj.scale, level=vertex.level,
-                                        species_index=vertex.h_index)
+            new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r, vertex.peak_gamma,
+                                        vertex.avg_gamma, obj.scale, level=vertex.level, species_index=vertex.h_index)
             new_vertex.district = vertex.neighbour_indices
-            new_vertex.normalized_avg_gamma = vertex.normalized_avg_gamma
-            new_vertex.normalized_peak_gamma = vertex.normalized_peak_gamma
             new_vertex.is_in_precipitate = vertex.is_in_precipitate
             new_vertex.is_edge_column = vertex.is_edge_column
             new_vertex.is_set_by_user = vertex.set_by_user
+            new_vertex.show_in_overlay = vertex.show_in_overlay
+            new_vertex.flag_1 = False
+            new_vertex.flag_2 = False
+            new_vertex.flag_3 = False
+            new_vertex.flag_4 = False
+            new_vertex.flag_5 = False
+            new_vertex.flag_6 = False
+            new_vertex.flag_7 = False
+            new_vertex.flag_8 = False
+            new_vertex.flag_9 = False
+
+            new_vertex.probability_vector = vertex.prob_vector.tolist()
+
             new_graph.add_vertex(new_vertex)
         new_graph.map_districts()
+        new_graph.calc_all_parameters()
         new_graph.summarize_stats()
         obj.graph = new_graph
         fresh_obj = obj
@@ -378,18 +458,28 @@ def convert(obj, old_version, version):
         old_graph = obj.graph
         new_graph = graph_2.AtomicGraph(obj.scale)
         for vertex in old_graph.vertices:
-            new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r,
-                                        vertex.peak_gamma,
-                                        vertex.avg_gamma, obj.scale, level=vertex.level,
-                                        species_index=vertex.h_index)
+            new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r, vertex.peak_gamma,
+                                        vertex.avg_gamma, obj.scale, level=vertex.level, species_index=vertex.h_index)
             new_vertex.district = vertex.neighbour_indices
-            new_vertex.normalized_avg_gamma = vertex.normalized_avg_gamma
-            new_vertex.normalized_peak_gamma = vertex.normalized_peak_gamma
             new_vertex.is_in_precipitate = vertex.is_in_precipitate
             new_vertex.is_edge_column = vertex.is_edge_column
             new_vertex.is_set_by_user = vertex.set_by_user
+            new_vertex.show_in_overlay = vertex.show_in_overlay
+            new_vertex.flag_1 = False
+            new_vertex.flag_2 = False
+            new_vertex.flag_3 = False
+            new_vertex.flag_4 = False
+            new_vertex.flag_5 = False
+            new_vertex.flag_6 = False
+            new_vertex.flag_7 = False
+            new_vertex.flag_8 = False
+            new_vertex.flag_9 = False
+
+            new_vertex.probability_vector = vertex.prob_vector.tolist()
+
             new_graph.add_vertex(new_vertex)
         new_graph.map_districts()
+        new_graph.calc_all_parameters()
         new_graph.summarize_stats()
         obj.graph = new_graph
         fresh_obj = obj
@@ -403,11 +493,22 @@ def convert(obj, old_version, version):
             new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r, vertex.peak_gamma,
                                         vertex.avg_gamma, obj.scale, level=vertex.level, species_index=vertex.h_index)
             new_vertex.district = vertex.neighbour_indices
-            new_vertex.normalized_avg_gamma = vertex.normalized_avg_gamma
-            new_vertex.normalized_peak_gamma = vertex.normalized_peak_gamma
             new_vertex.is_in_precipitate = vertex.is_in_precipitate
             new_vertex.is_edge_column = vertex.is_edge_column
             new_vertex.is_set_by_user = vertex.set_by_user
+            new_vertex.show_in_overlay = vertex.show_in_overlay
+            new_vertex.flag_1 = False
+            new_vertex.flag_2 = False
+            new_vertex.flag_3 = False
+            new_vertex.flag_4 = False
+            new_vertex.flag_5 = False
+            new_vertex.flag_6 = False
+            new_vertex.flag_7 = False
+            new_vertex.flag_8 = False
+            new_vertex.flag_9 = False
+
+            new_vertex.probability_vector = vertex.prob_vector.tolist()
+
             new_graph.add_vertex(new_vertex)
         new_graph.map_districts()
         new_graph.summarize_stats()
@@ -422,13 +523,25 @@ def convert(obj, old_version, version):
             new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r, vertex.peak_gamma,
                                         vertex.avg_gamma, obj.scale, level=vertex.level, species_index=vertex.h_index)
             new_vertex.district = vertex.neighbour_indices
-            new_vertex.normalized_avg_gamma = vertex.normalized_avg_gamma
-            new_vertex.normalized_peak_gamma = vertex.normalized_peak_gamma
             new_vertex.is_in_precipitate = vertex.is_in_precipitate
             new_vertex.is_edge_column = vertex.is_edge_column
             new_vertex.is_set_by_user = vertex.set_by_user
+            new_vertex.show_in_overlay = vertex.show_in_overlay
+            new_vertex.flag_1 = False
+            new_vertex.flag_2 = False
+            new_vertex.flag_3 = False
+            new_vertex.flag_4 = False
+            new_vertex.flag_5 = False
+            new_vertex.flag_6 = False
+            new_vertex.flag_7 = False
+            new_vertex.flag_8 = False
+            new_vertex.flag_9 = False
+
+            new_vertex.probability_vector = vertex.prob_vector.tolist()
+
             new_graph.add_vertex(new_vertex)
         new_graph.map_districts()
+        new_graph.calc_all_parameters()
         new_graph.summarize_stats()
         obj.graph = new_graph
         fresh_obj = obj

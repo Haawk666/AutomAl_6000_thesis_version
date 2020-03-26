@@ -1323,13 +1323,13 @@ class ControlWindow(QtWidgets.QWidget):
 
         if not self.ui_obj.selected_column == -1:
 
-            si_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].prob_vector[0])
-            cu_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].prob_vector[1])
-            zn_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].prob_vector[2])
-            al_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].prob_vector[3])
-            ag_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].prob_vector[4])
-            mg_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].prob_vector[5])
-            un_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].prob_vector[6])
+            si_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].probability_vector[0])
+            cu_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].probability_vector[1])
+            zn_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].probability_vector[2])
+            al_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].probability_vector[3])
+            ag_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].probability_vector[4])
+            mg_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].probability_vector[5])
+            un_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].probability_vector[6])
 
         else:
 
@@ -1512,22 +1512,16 @@ class ControlWindow(QtWidgets.QWidget):
             self.lbl_column_y_pos.setText('y: {}'.format(vertex.im_coor_y))
             self.lbl_column_peak_gamma.setText('Peak gamma: {}'.format(vertex.peak_gamma))
             self.lbl_column_avg_gamma.setText('Avg gamma: {}'.format(vertex.avg_gamma))
-            self.lbl_column_species.setText('Atomic species: {}'.format(vertex.species()))
+            self.lbl_column_species.setText('Atomic species: {}'.format(vertex.atomic_species))
             self.lbl_column_level.setText('Level: {}'.format(vertex.level))
-            self.lbl_confidence.setText('Confidence: {}'.format(vertex.confidence))
-            self.lbl_symmetry_confidence.setText('Symmetry confidence: {}'.format(vertex.symmetry_confidence))
-            self.lbl_level_confidence.setText('Level confidence: {}'.format(vertex.level_confidence))
-            self.lbl_neighbours.setText('Nearest neighbours: {}'.format(vertex.neighbour_indices))
-            if not vertex.neighbour_indices == []:
-                *_, variance = self.ui_obj.project_instance.graph.calc_central_angle_variance(self.ui_obj.selected_column)
-                alpha_max, alpha_min = graph_op.base_angle_score(self.ui_obj.project_instance.graph, i, apply=False)
-                self.lbl_central_variance.setText('Central angle variance: {}'.format(variance))
-                self.lbl_alpha_max = QtWidgets.QLabel('Alpha max: {}'.format(alpha_max))
-                self.lbl_alpha_min = QtWidgets.QLabel('Alpha min: {}'.format(alpha_min))
-            else:
-                self.lbl_central_variance.setText('Central angle variance: ')
-                self.lbl_alpha_max = QtWidgets.QLabel('Alpha max: ')
-                self.lbl_alpha_min = QtWidgets.QLabel('Alpha min: ')
+            self.lbl_confidence.setText('Confidence: VOID')
+            self.lbl_symmetry_confidence.setText('Symmetry confidence: VOID')
+            self.lbl_level_confidence.setText('Level confidence: VOID')
+            self.lbl_neighbours.setText('Nearest neighbours: {}'.format(vertex.district))
+
+            self.lbl_central_variance.setText('Central angle variance: {}'.format(vertex.theta_angle_variance))
+            self.lbl_alpha_max = QtWidgets.QLabel('Alpha max: {}'.format(vertex.alpha_max))
+            self.lbl_alpha_min = QtWidgets.QLabel('Alpha min: {}'.format(vertex.alpha_min))
 
             self.btn_new.setDisabled(False)
             self.btn_deselect.setDisabled(False)
@@ -1605,10 +1599,10 @@ class ControlWindow(QtWidgets.QWidget):
                 self.select_column()
 
             self.lbl_chi.setText('Chi: {}'.format(self.ui_obj.project_instance.graph.chi))
-            self.lbl_avg_species_confidence.setText('Average species confidence: {}'.format(self.ui_obj.project_instance.graph.avg_species_confidence))
-            self.lbl_avg_symmetry_confidence.setText('Average symmetry confidence: {}'.format(self.ui_obj.project_instance.graph.avg_symmetry_confidence))
-            self.lbl_avg_level_confidence.setText('Average level confidence: {}'.format(self.ui_obj.project_instance.graph.avg_level_confidence))
-            self.lbl_avg_variance.setText('Average angle variance: {}'.format(self.ui_obj.project_instance.graph.avg_central_variance))
+            self.lbl_avg_species_confidence.setText('Average species confidence: VOID')
+            self.lbl_avg_symmetry_confidence.setText('Average symmetry confidence: VOID')
+            self.lbl_avg_level_confidence.setText('Average level confidence: VOID')
+            self.lbl_avg_variance.setText('Average angle variance: VOID')
 
         else:
 

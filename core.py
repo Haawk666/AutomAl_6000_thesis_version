@@ -620,19 +620,7 @@ class SuchSoftware:
         :code:`self.graph.vertices[i].normalized_avg_gamma` fields.
 
         """
-        peak_gammas = []
-        avg_gammas = []
-        for vertex in self.graph.vertices:
-            if not vertex.is_in_precipitate and vertex.h_index == 3:
-                peak_gammas.append(vertex.peak_gamma)
-                avg_gammas.append(vertex.avg_gamma)
-        peak_mean = utils.mean_val(peak_gammas)
-        avg_mean = utils.mean_val(avg_gammas)
-        peak_mean_diff = peak_mean - 0.3
-        avg_mean_diff = avg_mean - 0.3
-        for vertex in self.graph.vertices:
-            vertex.normalized_peak_gamma = vertex.peak_gamma - peak_mean_diff
-            vertex.normalized_avg_gamma = vertex.avg_gamma - avg_mean_diff
+        self.graph.calc_normalized_gamma()
 
     def column_characterization(self, starting_index, search_type=0, ui_obj=None):
         """Column characterization algorithm.

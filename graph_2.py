@@ -63,11 +63,15 @@ class Vertex:
         self.out_degree = 0
         self.degree = 0
         self.alpha_angles = []
+        self.alpha_max = 0
+        self.alpha_min = 0
         self.theta_angles = []
-        self.theta_angle_variance = []
+        self.theta_max = 0
+        self.theta_min = 0
+        self.theta_angle_variance = 0
         self.normalized_peak_gamma = peak_gamma
         self.normalized_avg_gamma = avg_gamma
-        self.redshift_sum = 0
+        self.redshift = 0
         self.redshift_variance = 0
 
         # Local graph mapping
@@ -285,13 +289,15 @@ class AtomicGraph:
         return non_void
 
     def get_alpha_angles(self, i):
-        pass
+        return None
 
     def get_theta_angles(self, i):
-        pass
+        return None
 
-    def get_redshift_sum(self, i):
-        pass
+    def get_redshift(self, i, j):
+        hard_sphere_separation = self.get_hard_sphere_separation(i, j)
+        actual_separation = self.get_separation(i, j)
+        return hard_sphere_separation - actual_separation
 
     def get_image_seperation(self, i, j):
         pos_i = self.vertices[i].im_pos()
@@ -556,6 +562,60 @@ class AtomicGraph:
         for i in self.vertex_indices:
             self.map_district(i, search_extended_district=search_extended_district)
 
+    def calc_vertex_parameters(self, i):
+        vertex = self.vertices[i]
+        vertex.in_degree = len(vertex.in_neighbourhood)
+        vertex.out_degree = len(vertex.out_neighbourhood)
+        vertex.degree = vertex.in_degree + vertex.out_degree
+        vertex.alpha_angles = self.get_alpha_angles(i)
+        if vertex.alpha_angles is not None:
+            vertex.alpha_max = max(vertex.alpha_angles)
+            vertex.alpha_min = min(vertex.alpha_angles)
+        else:
+            vertex.alpha_max = 0
+            vertex.alpha_min = 0
+        vertex.theta_angles = self.get_theta_angles(i)
+        if vertex.theta_angles is not None:
+            vertex.theta_max = max(vertex.theta_angles)
+            vertex.theta_min = min(vertex.theta_angles)
+            vertex.theta_angle_variance = utils.variance(vertex.theta_angles)
+        else:
+            vertex.theta_max = 0
+            vertex.theta_min = 0
+            vertex.theta_angle_variance = 0
+
+    def calc_normalized_gamma(self):
+        peak_gammas = []
+        avg_gammas = []
+        for vertex in self.vertices:
+            if not vertex.void:
+                if not vertex.is_in_precipitate and vertex.h_index == 3:
+                    peak_gammas.append(vertex.peak_gamma)
+                    avg_gammas.append(vertex.avg_gamma)
+        peak_mean = utils.mean_val(peak_gammas)
+        avg_mean = utils.mean_val(avg_gammas)
+        peak_mean_diff = peak_mean - 0.3
+        avg_mean_diff = avg_mean - 0.3
+        for vertex in self.vertices:
+            vertex.normalized_peak_gamma = vertex.peak_gamma - peak_mean_diff
+            vertex.normalized_avg_gamma = vertex.avg_gamma - avg_mean_diff
+
+    def calc_redshifts(self):
+        anti_graph = AntiGraph(self)
+        for vertex in self.vertices:
+            vertex.redshift = 0
+            for partner in vertex.partners:
+                vertex.redshift += self.get_redshift(vertex.i, partner.i)
+            for partner in anti_graph.vertices[vertex.i].partners:
+                vertex.redshift += self.get_redshift(vertex.i, partner.i)
+
+    def calc_all_parameters(self):
+        for vertex in self.vertices:
+            if not vertex.void:
+                self.calc_vertex_parameters(vertex.i)
+        self.calc_normalized_gamma()
+        self.calc_redshifts()
+
     def map_meshes(self, i):
         """Automatically generate a connected relational map of all meshes in graph.
 
@@ -650,6 +710,30 @@ class AtomicGraph:
         self.avg_degree = degrees / counted_columns
 
         # Calc redshifts
+
+
+class AntiGraph:
+
+    def __init__(self, graph):
+
+        self.graph = graph
+        self.vertices = copy.deepcopy(graph.vertices)
+        self.vertex_indices = copy.deepcopy(graph.vertex_indices)
+
+        self.build()
+
+    def build(self):
+        for i, vertex in enumerate(self.graph.vertices):
+            if not vertex.is_edge_column and not vertex.void:
+                sub_graph = self.graph.get_atomic_configuration(vertex.i)
+                for mesh in sub_graph.meshes:
+                    self.vertices[i].permute_j_k(mesh.vertex_indices[1], mesh.vertex_indices[2])
+                self.vertices[i].partners()
+        self.graph = AtomicGraph(self.graph.scale)
+        for vertex in self.vertices:
+            self.graph.add_vertex(vertex)
+        self.graph.map_districts()
+        self.graph.summarize_stats()
 
 
 class Mesh:

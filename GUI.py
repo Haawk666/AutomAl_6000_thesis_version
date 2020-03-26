@@ -975,7 +975,7 @@ class MainUI(QtWidgets.QMainWindow):
     def btn_gen_sub_graph(self):
         if self.project_instance is not None:
             if self.project_instance.num_columns > 0:
-                if len(self.project_instance.graph.vertices[0].neighbour_indices) > 0:
+                if len(self.project_instance.graph.vertices[0].district) > 0:
                     if not self.selected_column == -1:
                         self.project_instance.graph.map_friends()
                         sub_graph = self.project_instance.graph.get_atomic_configuration(self.selected_column, use_friends=True)
