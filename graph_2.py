@@ -686,7 +686,7 @@ class AtomicGraph:
     def calc_redshifts(self):
         anti_graph = AntiGraph(self)
         for vertex in self.vertices:
-            vertex.redshift = 0
+            vertex.redshift = 0  # eh
             for partner in vertex.partners:
                 vertex.redshift += self.get_redshift(vertex.i, partner.i)
             for partner in anti_graph.vertices[vertex.i].partners:
