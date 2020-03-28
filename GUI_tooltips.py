@@ -42,6 +42,7 @@ btn_delete = 'Not implemented'
 btn_print_details = 'Print a summary of vertex details to the terminal window'
 btn_snap = 'Snap the view to the selected column'
 btn_sub = 'Generate 1. order sub-graph seeded on the currently selected column'
+btn_refresh_graph = 'Recalculate graph parameters and update vertex properties'
 btn_refresh_mesh = 'Update internal mesh information and graphical representations'
 btn_deselect = 'Deselect any columns'
 btn_new = 'Not implemented'
@@ -131,6 +132,7 @@ control_window_btn_list = [btn_show_stats,
                            btn_print_details,
                            btn_snap,
                            btn_sub,
+                           btn_refresh_graph,
                            btn_refresh_mesh,
                            btn_deselect,
                            btn_new,

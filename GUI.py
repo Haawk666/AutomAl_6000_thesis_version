@@ -152,7 +152,7 @@ class MainUI(QtWidgets.QMainWindow):
         """Set atomic species of selected column"""
         if self.project_instance is not None and not self.selected_column == -1:
             # Update relevant graphics:
-            self.project_instance.graph.vertices[self.selected_column].set_species_by_species_index(h)
+            self.project_instance.graph.vertices[self.selected_column].set_species_from_species_index(h)
             self.gs_overlay_composition.interactive_overlay_objects[self.selected_column].set_style()
             self.gs_atomic_graph.redraw_neighbourhood(self.selected_column)
             # Update control window info:
@@ -977,11 +977,14 @@ class MainUI(QtWidgets.QMainWindow):
             if self.project_instance.num_columns > 0:
                 if len(self.project_instance.graph.vertices[0].district) > 0:
                     if not self.selected_column == -1:
-                        self.project_instance.graph.map_friends()
-                        sub_graph = self.project_instance.graph.get_atomic_configuration(self.selected_column, use_friends=True)
+                        self.project_instance.graph.map_districts()
+                        sub_graph = self.project_instance.graph.get_column_centered_subgraph(self.selected_column)
                         self.gs_atomic_sub_graph = GUI_elements.AtomicSubGraph(ui_obj=self, sub_graph=sub_graph, scale_factor=4)
                         self.gv_atomic_sub_graph.setScene(self.gs_atomic_sub_graph)
                         self.tabs.setCurrentIndex(4)
+
+    def btn_refresh_graph_trigger(self):
+        self.project_instance.graph.refresh_graph()
 
     def btn_refresh_mesh_trigger(self):
         if self.project_instance is not None and \

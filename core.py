@@ -293,66 +293,7 @@ class SuchSoftware:
             return None
 
     def vertex_report(self, i, supress_log=False):
-        """Summarize some properties of a particular vertex *i*.
-
-        :param i: Index of the vertex in interest.
-        :param supress_log: (Optional, default=False) If False, will send its result to the module-level logger and
-            return None, if True, will return the result as string.
-        :type i: int
-        :type supress_log: bool
-        :return: Summary string or None
-        :rtype: string or None
-
-        """
-        self.graph.map_districts()
-        vertex = self.graph.vertices[i]
-
-        alpha = self.graph.get_alpha_angles(i)
-        alpha_min = min(alpha)
-        alpha_max = max(alpha)
-        theta = self.graph.get_theta_angles(i)
-        if theta:
-            theta_min = min(theta)
-            theta_max = max(theta)
-            theta_avg = sum(theta) / len(theta)
-        else:
-            theta_min = 0
-            theta_max = 0
-            theta_avg = 0
-        normalized_peak_gamma = self.graph.vertices[i].normalized_peak_gamma
-        normalized_avg_gamma = self.graph.vertices[i].normalized_avg_gamma
-
-        model_predictions = graph_op.base_stat_score(self.graph, i, get_individual_predictions=True)
-        parameters, *_ = params.produce_params(calc=False)
-
-        blueshift = self.graph.get_redshift_sum(i)
-
-        string = 'Vertex summary: ----------\n' + \
-                 '    Index: {}\n'.format(vertex.i) + \
-                 '    Image pos: ({}, {})\n'.format(vertex.im_coor_x, vertex.im_coor_y) + \
-                 '    Real pos: ({}, {})\n'.format(vertex.spatial_coor_x, vertex.spatial_coor_y) + \
-                 '    Atomic Species: {}\n'.format(vertex.atomic_species) + \
-                 '    Probability vector: {}\n'.format(vertex.probability_vector) + \
-                 '    Model parameters: ------------\n' + \
-                 '        Alpha min: {}\n            Prediction: {}\n            {}\n'.format(alpha_min, model_predictions[1], model_predictions[1].index(max(model_predictions[1]))) + \
-                 '        Alpha max: {}\n            Prediction: {}\n            {}\n'.format(alpha_max, model_predictions[2], model_predictions[2].index(max(model_predictions[2]))) + \
-                 '        Theta min: {}\n            Prediction: {}\n            {}\n'.format(theta_min, model_predictions[3], model_predictions[3].index(max(model_predictions[3]))) + \
-                 '        Theta max: {}\n            Prediction: {}\n            {}\n'.format(theta_max, model_predictions[4], model_predictions[4].index(max(model_predictions[4]))) + \
-                 '        Theta avg: {}\n            Prediction: {}\n            {}\n'.format(theta_avg, model_predictions[5], model_predictions[5].index(max(model_predictions[5]))) + \
-                 '        Norm peak gamma: {}\n            Prediction: {}\n            {}\n'.format(normalized_peak_gamma, model_predictions[6], model_predictions[6].index(max(model_predictions[6]))) + \
-                 '        Norm avg gamma: {}\n            Prediction: {}\n            {}\n'.format(normalized_avg_gamma, model_predictions[7], model_predictions[7].index(max(model_predictions[7]))) + \
-                 '        Product prediction: {}\n            {}\n'.format(model_predictions[8], model_predictions[8].index(max(model_predictions[8]))) + \
-                 '        Weighted product prediction: {}\n            {}\n'.format(model_predictions[9], model_predictions[9].index(max(model_predictions[8]))) + \
-                 '        Model prediction: {}\n            {}\n'.format(model_predictions[0], model_predictions[0].index(max(model_predictions[0]))) + \
-                 '    Is edge column: {}\n'.format(vertex.is_edge_column) + \
-                 '    Is set by user: {}\n'.format(vertex.set_by_user) + \
-                 '    Level: {}\n'.format(vertex.level) + \
-                 '    Anti-level: {}\n'.format(vertex.anti_level()) + \
-                 '    Summed redshift: {}\n'.format(blueshift) + \
-                 '    Flag 1: {}\n'.format(vertex.flag_1) + \
-                 '    Flag 2: {}\n'.format(vertex.flag_2) + \
-                 '    Flag 3: {}\n'.format(vertex.flag_3) + \
-                 '    Flag 4: {}'.format(vertex.flag_4)
+        string = self.graph.vertices[i].report()
         if supress_log:
             return string
         else:

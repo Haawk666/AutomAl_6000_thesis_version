@@ -272,7 +272,7 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
 
     def redraw_neighbourhood(self, i):
         self.redraw_star(i)
-        for neighbours in self.ui_obj.project_instance.graph.vertices[i].neighbour_indices:
+        for neighbours in self.ui_obj.project_instance.graph.vertices[i].district:
             self.redraw_star(neighbours)
 
 
@@ -979,6 +979,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_print_details = GUI_custom_components.SmallButton('Print', self, trigger_func=self.ui_obj.btn_print_details_trigger)
         self.btn_snap = GUI_custom_components.SmallButton('Show', self, trigger_func=self.ui_obj.btn_snap_trigger)
         self.btn_sub = GUI_custom_components.MediumButton('Build sub-graph', self, trigger_func=self.ui_obj.btn_gen_sub_graph)
+        self.btn_refresh_graph = GUI_custom_components.MediumButton('Refresh', self, trigger_func=self.ui_obj.btn_refresh_graph_trigger)
         self.btn_refresh_mesh = GUI_custom_components.MediumButton('Refresh mesh', self, trigger_func=self.ui_obj.btn_refresh_mesh_trigger)
         self.btn_deselect = GUI_custom_components.SmallButton('Deselect', self, trigger_func=self.ui_obj.btn_deselect_trigger)
         self.btn_new = GUI_custom_components.SmallButton('New', self, trigger_func=self.ui_obj.btn_new_column_trigger)
@@ -1040,6 +1041,7 @@ class ControlWindow(QtWidgets.QWidget):
         btn_overlay_btns_layout.addStretch()
 
         btn_graph_btns_layout = QtWidgets.QHBoxLayout()
+        btn_graph_btns_layout.addWidget(self.btn_refresh_graph)
         btn_graph_btns_layout.addWidget(self.btn_print_distances)
         btn_graph_btns_layout.addWidget(self.btn_refresh_mesh)
         btn_graph_btns_layout.addStretch()
@@ -1226,6 +1228,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_list.append(self.btn_print_details)
         self.btn_list.append(self.btn_snap)
         self.btn_list.append(self.btn_sub)
+        self.btn_list.append(self.btn_refresh_graph)
         self.btn_list.append(self.btn_refresh_mesh)
         self.btn_list.append(self.btn_deselect)
         self.btn_list.append(self.btn_new)
