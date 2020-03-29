@@ -373,6 +373,17 @@ class AtomicGraph:
         self.map_districts()
         self.summarize_stats()
 
+    def get_arc(self, i, j):
+        result = None
+        for arc in self.arcs:
+            if arc.vertex_a.i == i and arc.vertex_b.i == j:
+                result = arc
+                break
+        else:
+            if j in self.vertices[i].out_neighbourhood:
+                result = Arc(0, self.vertices[i], self.vertices[j])
+        return result
+
     def get_vertex_objects_from_indices(self, vertex_indices):
         vertices = []
         for index in vertex_indices:
