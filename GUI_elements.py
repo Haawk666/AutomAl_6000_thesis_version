@@ -3120,5 +3120,3 @@ class PcaWizard(QtWidgets.QDialog):
     def btn_cancel_trigger(self):
         self.close()
 
-
-
