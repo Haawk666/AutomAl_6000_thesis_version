@@ -1103,7 +1103,7 @@ class MainUI(QtWidgets.QMainWindow):
     def btn_build_anti_graph_trigger(self):
         if self.project_instance is not None:
             if self.project_instance.num_columns > 0:
-                if len(self.project_instance.graph.vertices[0].neighbour_indices) > 0:
+                if len(self.project_instance.graph.vertices[0].district) > 0:
                     self.sys_message('Working...')
                     anti_graph = self.project_instance.graph.get_anti_graph()
                     self.gs_anti_graph = GUI_elements.AntiGraph(ui_obj=self, scale_factor=2, graph=anti_graph)
@@ -1114,7 +1114,7 @@ class MainUI(QtWidgets.QMainWindow):
     def btn_build_info_graph_trigger(self):
         if self.project_instance is not None:
             if self.project_instance.num_columns > 0:
-                if len(self.project_instance.graph.vertices[0].neighbour_indices) > 0:
+                if len(self.project_instance.graph.vertices[0].district) > 0:
                     self.sys_message('Working...')
                     self.gs_info_graph = GUI_elements.InfoGraph(ui_obj=self, scale_factor=2)
                     self.gv_info_graph.setScene(self.gs_info_graph)

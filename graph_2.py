@@ -242,6 +242,53 @@ class Vertex:
             return False
 
 
+class Arc:
+
+    species_strings = ['Si', 'Cu', 'Zn', 'Al', 'Ag', 'Mg', 'Un']
+    atomic_radii = [117.5, 127.81, 133.25, 143.0, 144.5, 160.0, 200.0]
+    species_symmetry = [3, 3, 3, 4, 4, 5, 3]
+    al_lattice_const = 404.95
+
+    def __init__(self, j, vertex_a, vertex_b):
+
+        self.j = j
+        self.vertex_a = vertex_a
+        self.vertex_b = vertex_b
+
+        if vertex_a.i in vertex_b.out_neighbourhood:
+            self.is_reciprocated = True
+        else:
+            self.is_reciprocated = False
+
+        if vertex_a.level == vertex_b.level:
+            self.is_same_plane = True
+        else:
+            self.is_same_plane = False
+
+        self.im_separation = 0
+        self.im_projected_separation = 0
+        self.spatial_separation = 0
+        self.spatial_projected_separation = 0
+        self.hard_sphere_separation = 0
+        self.redshift = 0
+
+        self.calc_properties()
+
+    def calc_properties(self):
+        pos_i = self.vertex_a.im_pos()
+        pos_j = self.vertex_b.im_pos()
+        self.im_separation = np.sqrt((pos_i[0] - pos_j[0]) ** 2 + (pos_i[1] - pos_j[1]) ** 2 + (pos_i[2] - pos_j[2]) ** 2)
+        self.im_projected_separation = np.sqrt((pos_i[0] - pos_j[0]) ** 2 + (pos_i[1] - pos_j[1]) ** 2)
+        pos_i = self.vertex_a.spatial_pos()
+        pos_j = self.vertex_b.spatial_pos()
+        self.spatial_separation = np.sqrt((pos_i[0] - pos_j[0]) ** 2 + (pos_i[1] - pos_j[1]) ** 2 + (pos_i[2] - pos_j[2]) ** 2)
+        self.spatial_projected_separation = np.sqrt((pos_i[0] - pos_j[0]) ** 2 + (pos_i[1] - pos_j[1]) ** 2)
+        radii_1 = self.atomic_radii[self.vertex_a.species_index]
+        radii_2 = self.atomic_radii[self.vertex_b.species_index]
+        self.hard_sphere_separation = radii_1 + radii_2
+        self.redshift = self.hard_sphere_separation - self.spatial_separation
+
+
 class AtomicGraph:
 
     species_strings = ['Si', 'Cu', 'Zn', 'Al', 'Ag', 'Mg', 'Un']
@@ -390,7 +437,7 @@ class AtomicGraph:
         actual_separation = self.get_separation(i, j)
         return hard_sphere_separation - actual_separation
 
-    def get_image_seperation(self, i, j):
+    def get_image_separation(self, i, j):
         pos_i = self.vertices[i].im_pos()
         pos_j = self.vertices[j].im_pos()
         separation = np.sqrt((pos_i[0] - pos_j[0]) ** 2 + (pos_i[1] - pos_j[1]) ** 2 + (pos_i[2] - pos_j[2]) ** 2)
@@ -403,8 +450,8 @@ class AtomicGraph:
         return projected_separation
 
     def get_separation(self, i, j):
-        pos_i = self.vertices[i].im_pos()
-        pos_j = self.vertices[j].im_pos()
+        pos_i = self.vertices[i].spatial_pos()
+        pos_j = self.vertices[j].spatial_pos()
         separation = np.sqrt((pos_i[0] - pos_j[0]) ** 2 + (pos_i[1] - pos_j[1]) ** 2 + (pos_i[2] - pos_j[2]) ** 2)
         return separation
 
@@ -642,8 +689,10 @@ class AtomicGraph:
             vertex.degree = len(vertex.neighbourhood)
 
     def map_districts(self, search_extended_district=False):
+        logger.info('Mapping all districts')
         for i in self.vertex_indices:
             self.map_district(i, search_extended_district=search_extended_district)
+        logger.info('District mapping complete!')
 
     def calc_vertex_parameters(self, i):
         vertex = self.vertices[i]
@@ -686,25 +735,44 @@ class AtomicGraph:
     def calc_redshifts(self):
         anti_graph = AntiGraph(self)
         for vertex in self.vertices:
-            vertex.redshift = 0  # eh
+            vertex.redshift = 0
             for partner in vertex.partners:
-                vertex.redshift += self.get_redshift(vertex.i, partner.i)
+                vertex.redshift += self.get_redshift(vertex.i, partner)
             for partner in anti_graph.vertices[vertex.i].partners:
-                vertex.redshift += self.get_redshift(vertex.i, partner.i)
+                vertex.redshift += self.get_redshift(vertex.i, partner)
 
     def calc_all_parameters(self):
+        logger.info('Recalulating all graph parameters')
         for vertex in self.vertices:
             if not vertex.void:
                 self.calc_vertex_parameters(vertex.i)
+                print(vertex.i)
+        logger.info('Normalizing gamma')
         self.calc_normalized_gamma()
+        logger.info('Calculating redshifts')
         self.calc_redshifts()
+        logger.info('Graph parameters recalculated!')
 
     def refresh_graph(self):
         logger.info('Recalculating graph properties...')
         self.map_districts()
         self.calc_all_parameters()
+        self.map_meshes(0)
         self.summarize_stats()
         logger.info('Recalculation complete')
+
+    def map_arcs(self):
+        logger.info('Mapping arcs')
+        self.arcs = []
+        self.size = 0
+        for vertex in self.vertices:
+            if not vertex.void:
+                for out_neighbour in self.get_vertex_objects_from_indices(vertex.out_neighbourhood):
+                    if not out_neighbour.void:
+                        arc = Arc(len(self.arcs), vertex, out_neighbour)
+                        self.arcs.append(arc)
+                        self.size += 1
+        logger.info('Arcs mapped')
 
     def map_meshes(self, i):
         """Automatically generate a connected relational map of all meshes in graph.
@@ -717,7 +785,6 @@ class AtomicGraph:
         :type i: int
 
         """
-
         logger.info('Mapping meshes..')
         self.meshes = []
         self.mesh_indices = []
@@ -764,7 +831,7 @@ class AtomicGraph:
         return utils.make_int_from_list(utils.cyclic_sort(mesh.vertex_indices))
 
     def summarize_stats(self):
-        self.map_districts()
+        logger.info('Summarizing stats')
 
         # Calc order
         self.num_void_vertices = 0
@@ -796,131 +863,7 @@ class AtomicGraph:
                 counted_columns += 1
         self.avg_degree = degrees / counted_columns
 
-        # Calc redshifts
-
-
-class SubGraph:
-
-    def __init__(self):
-        self.vertices = []
-        self.vertex_indices = []
-        self.arcs = []
-        self.meshes = []
-
-        self.num_vertices = 0
-        self.num_arcs = 0
-        self.num_meshes = 0
-
-    def finalize_init(self):
-        self.redraw_edges()
-        self.sort_meshes()
-        self.summarize_stats()
-
-    def summarize_stats(self):
-        self.num_vertices = len(self.vertices)
-        self.num_arcs = len(self.arcs)
-        self.num_meshes = len(self.meshes)
-
-    def sort_meshes(self):
-        new_list = []
-        for mesh in self.meshes:
-            if mesh.vertex_indices[1] == self.vertices[0].out_neighbourhood[0]:
-                new_list.append(mesh)
-                break
-        closed = False
-        if len(self.meshes) == 0:
-            closed = True
-        while not closed:
-            for mesh in self.meshes:
-                if mesh.vertex_indices[1] ==\
-                        new_list[-1].vertex_indices[-1]:
-                    new_list.append(mesh)
-
-                    if new_list[-1].vertex_indices[-1] ==\
-                            new_list[0].vertex_indices[1]:
-                        closed = True
-                    break
-        if len(new_list) == len(self.meshes):
-            self.meshes = new_list
-
-    def add_vertex(self, vertex):
-        self.vertices.append(vertex)
-        self.vertex_indices.append(vertex.i)
-        self.num_vertices += 1
-
-    def add_mesh(self, mesh):
-        self.meshes.append(mesh)
-        self.num_meshes += 1
-        for vertex in self.meshes[-1].vertices:
-            if vertex.i not in self.vertex_indices:
-                self.add_vertex(vertex)
-
-    def get_ind_from_mother(self, i):
-        for index, mother_index in enumerate(self.vertex_indices):
-            if mother_index == i:
-                sub_index = index
-                break
-        else:
-            sub_index = -1
-        return sub_index
-
-    def remove_vertex(self, vertex_index):
-        raise NotImplemented
-
-    def increase_h(self, i):
-        i = self.get_ind_from_mother(i)
-        if not i == -1:
-            changed = self.vertices[i].increment_species_index()
-        else:
-            changed = False
-        return changed
-
-    def decrease_h(self, i):
-        i = self.get_ind_from_mother(i)
-        if not i == -1:
-            changed = self.vertices[i].decrement_species_index()
-        else:
-            changed = False
-        return changed
-
-    def add_arc(self, vertex_a, vertex_b):
-        self.arcs.append((vertex_a.i, vertex_b.i))
-        self.num_arcs += 1
-
-    def remove_arcs(self, arc_index):
-        raise NotImplemented
-
-    def redraw_edges(self):
-        self.arcs = []
-        self.num_arcs = 0
-        for vertex in self.vertices:
-            for out_neighbour in vertex.out_neighbourhood:
-                if out_neighbour in self.vertex_indices:
-                    self.add_arc(vertex, self.vertices[self.get_ind_from_mother(out_neighbour)])
-
-
-class AntiGraph:
-
-    def __init__(self, graph):
-
-        self.graph = graph
-        self.vertices = copy.deepcopy(graph.vertices)
-        self.vertex_indices = copy.deepcopy(graph.vertex_indices)
-
-        self.build()
-
-    def build(self):
-        for i, vertex in enumerate(self.graph.vertices):
-            if not vertex.is_edge_column and not vertex.void:
-                sub_graph = self.graph.get_column_centered_subgraph(vertex.i)
-                for mesh in sub_graph.meshes:
-                    self.vertices[i].permute_j_k(mesh.vertex_indices[1], mesh.vertex_indices[2])
-                self.vertices[i].partners()
-        self.graph = AtomicGraph(self.graph.scale)
-        for vertex in self.vertices:
-            self.graph.add_vertex(vertex)
-        self.graph.map_districts()
-        self.graph.summarize_stats()
+        logger.info('Stat summary complete!')
 
 
 class Mesh:
@@ -1066,15 +1009,146 @@ class Mesh:
             return False, edge
 
 
+class SubGraph:
+
+    def __init__(self):
+        self.vertices = []
+        self.vertex_indices = []
+        self.arcs = []
+        self.meshes = []
+
+        self.num_vertices = 0
+        self.num_arcs = 0
+        self.num_meshes = 0
+
+    def finalize_init(self):
+        self.redraw_edges()
+        self.sort_meshes()
+        self.summarize_stats()
+
+    def summarize_stats(self):
+        self.num_vertices = len(self.vertices)
+        self.num_arcs = len(self.arcs)
+        self.num_meshes = len(self.meshes)
+
+    def sort_meshes(self):
+        new_list = []
+        for mesh in self.meshes:
+            if mesh.vertex_indices[1] == self.vertices[0].out_neighbourhood[0]:
+                new_list.append(mesh)
+                break
+        closed = False
+        if len(self.meshes) == 0:
+            closed = True
+        backup_counter = 0
+        while not closed:
+            for mesh in self.meshes:
+                if mesh.vertex_indices[1] ==\
+                        new_list[-1].vertex_indices[-1]:
+                    new_list.append(mesh)
+
+                    if new_list[-1].vertex_indices[-1] ==\
+                            new_list[0].vertex_indices[1]:
+                        closed = True
+                    break
+            backup_counter += 1
+            if backup_counter > 26:
+                break
+        if len(new_list) == len(self.meshes) and closed:
+            self.meshes = new_list
+
+    def add_vertex(self, vertex):
+        self.vertices.append(vertex)
+        self.vertex_indices.append(vertex.i)
+        self.num_vertices += 1
+
+    def add_mesh(self, mesh):
+        self.meshes.append(mesh)
+        self.num_meshes += 1
+        for vertex in self.meshes[-1].vertices:
+            if vertex.i not in self.vertex_indices:
+                self.add_vertex(vertex)
+
+    def get_ind_from_mother(self, i):
+        for index, mother_index in enumerate(self.vertex_indices):
+            if mother_index == i:
+                sub_index = index
+                break
+        else:
+            sub_index = -1
+        return sub_index
+
+    def remove_vertex(self, vertex_index):
+        raise NotImplemented
+
+    def increase_h(self, i):
+        i = self.get_ind_from_mother(i)
+        if not i == -1:
+            changed = self.vertices[i].increment_species_index()
+        else:
+            changed = False
+        return changed
+
+    def decrease_h(self, i):
+        i = self.get_ind_from_mother(i)
+        if not i == -1:
+            changed = self.vertices[i].decrement_species_index()
+        else:
+            changed = False
+        return changed
+
+    def add_arc(self, j, vertex_a, vertex_b):
+        arc = Arc(j, vertex_a, vertex_b)
+        self.arcs.append(arc)
+        self.num_arcs += 1
+
+    def remove_arcs(self, arc_index):
+        raise NotImplemented
+
+    def redraw_edges(self):
+        self.arcs = []
+        self.num_arcs = 0
+        for vertex in self.vertices:
+            for out_neighbour in vertex.out_neighbourhood:
+                if out_neighbour in self.vertex_indices:
+                    self.add_arc(self.num_arcs, vertex, self.vertices[self.get_ind_from_mother(out_neighbour)])
 
 
+class AntiGraph:
 
+    def __init__(self, graph):
 
+        self.graph = graph
+        self.vertices = copy.deepcopy(graph.vertices)
+        self.vertex_indices = copy.deepcopy(graph.vertex_indices)
+        self.arcs = []
+        self.size = 0
 
+        self.build()
 
+    def build(self):
+        for i, vertex in enumerate(self.graph.vertices):
+            if not vertex.is_edge_column and not vertex.void:
+                sub_graph = self.graph.get_column_centered_subgraph(vertex.i)
+                for mesh in sub_graph.meshes:
+                    self.vertices[i].permute_j_k(mesh.vertex_indices[1], mesh.vertex_indices[2])
+        self.graph = AtomicGraph(self.graph.scale)
+        for vertex in self.vertices:
+            self.graph.add_vertex(vertex)
+        self.graph.map_districts()
+        self.graph.summarize_stats()
 
-
-
-
+    def map_arcs(self):
+        logger.info('Mapping arcs')
+        self.arcs = []
+        self.size = 0
+        for vertex in self.vertices:
+            if not vertex.void:
+                for out_neighbour in self.graph.get_vertex_objects_from_indices(vertex.out_neighbourhood):
+                    if not out_neighbour.void:
+                        arc = Arc(len(self.arcs), vertex, out_neighbour)
+                        self.arcs.append(arc)
+                        self.size += 1
+        logger.info('Arcs mapped')
 
 

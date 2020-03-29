@@ -464,11 +464,11 @@ class AtomicSubGraph(QtWidgets.QGraphicsScene):
 
     def re_draw_edges(self):
         """Redraws all edge elements."""
-        for edge in self.sub_graph.edges:
+        for edge in self.sub_graph.arcs:
             consistent = edge.is_reciprocated
-            dislocation = not edge.is_legal_levels
-            p1 = edge.vertex_a.real_coor()
-            p2 = edge.vertex_b.real_coor()
+            dislocation = edge.is_same_plane
+            p1 = edge.vertex_a.im_pos()
+            p2 = edge.vertex_b.im_pos()
             self.edges.append(GUI_custom_components.Arrow(i=edge.vertex_a.i, j=edge.vertex_b.i, p1=p1, p2=p2, r=self.ui_obj.project_instance.r, scale_factor=self.scale_factor, consistent=consistent, dislocation=dislocation))
             self.addItem(self.edges[-1])
 
@@ -477,7 +477,7 @@ class AtomicSubGraph(QtWidgets.QGraphicsScene):
         self.report += 'Sub-graph centered on vertex {}:----------\n'.format(self.sub_graph.vertex_indices[0])
         for m, mesh in enumerate(self.sub_graph.meshes):
             self.report += 'Mesh {}:\n'.format(m)
-            self.report += '    Is consistent: {}\n'.format(str(mesh.test_consistency()))
+            self.report += '    Number of corners: {}\n'.format(str(mesh.num_corners))
             self.report += '    Sum of angles: {}\n'.format(str(sum(mesh.angles)))
             self.report += '    Variance of angles: {}\n'.format(utils.variance(mesh.angles))
             self.report += '    Symmetry prob vector from central angle: {}\n'.format(str([0, 0, 0]))
@@ -485,7 +485,8 @@ class AtomicSubGraph(QtWidgets.QGraphicsScene):
             self.report += '    Angles:\n'
             for i, corner in enumerate(mesh.vertices):
                 self.report += '        a{}{} = {}\n'.format(m, i, mesh.angles[i])
-                p1 = corner.real_coor()
+                p1 = corner.im_pos()
+                p1 = (p1[0], p1[1])
                 p2 = (p1[0] + 0.5 * corner.r * mesh.angle_vectors[i][0], p1[1] + 0.5 * corner.r * mesh.angle_vectors[i][1])
 
                 if angle_vectors:
@@ -537,17 +538,17 @@ class AntiGraph(QtWidgets.QGraphicsScene):
 
     def re_draw_edges(self):
         """Redraws all edge elements."""
-        self.graph.redraw_edges()
+        self.graph.map_arcs()
         for edge_item in self.edges:
             self.removeItem(edge_item)
         self.edges = []
-        for edge in self.graph.edges:
-            p1 = edge.vertex_a.real_coor()
-            p2 = edge.vertex_b.real_coor()
-            real_distance = self.ui_obj.project_instance.graph.real_distance(edge.vertex_a.i, edge.vertex_b.i,
-                                                                             self.ui_obj.project_instance.scale)
-            hard_sphere_distance = self.ui_obj.project_instance.graph.get_hard_sphere_distance(edge.vertex_a.i,
-                                                                                               edge.vertex_b.i)
+        for edge in self.graph.arcs:
+            p1 = edge.vertex_a.im_pos()
+            p1 = (p1[0], p1[1])
+            p2 = edge.vertex_b.im_pos()
+            p2 = (p2[0], p2[1])
+            real_distance = edge.spatial_separation
+            hard_sphere_distance = edge.hard_sphere_separation
             max_shift = 70
             if hard_sphere_distance > real_distance:
                 if hard_sphere_distance - real_distance > max_shift:
@@ -580,7 +581,7 @@ class AntiGraph(QtWidgets.QGraphicsScene):
                     self.interactive_vertex_objects[vertex.i].show()
                 else:
                     self.interactive_vertex_objects[vertex.i].hide()
-        for m, edge in enumerate(self.graph.edges):
+        for m, edge in enumerate(self.graph.arcs):
             if edge.vertex_a.level == 0 and edge.vertex_b.level == 0:
                 if on:
                     self.edges[m].show()
@@ -594,7 +595,7 @@ class AntiGraph(QtWidgets.QGraphicsScene):
                     self.interactive_vertex_objects[vertex.i].show()
                 else:
                     self.interactive_vertex_objects[vertex.i].hide()
-        for m, edge in enumerate(self.graph.edges):
+        for m, edge in enumerate(self.graph.arcs):
             if edge.vertex_a.level == 1 and edge.vertex_b.level == 1:
                 if on:
                     self.edges[m].show()
