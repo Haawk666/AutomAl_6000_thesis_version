@@ -328,12 +328,10 @@ class AtomicGraph:
         return self.report()
 
     def report(self):
-        self.summarize_stats()
         string = 'Atomic Graph summary:\n'
         string += '    Scale: {}\n'.format(self.scale)
         string += '    Order: {}\n'.format(self.order)
         string += '    Size: {}\n'.format(self.size)
-        string += '    Anti-size: {}\n'.format(self.anti_size)
         string += '    Chi: {}\n'.format(self.chi)
         string += '    Average degree: {}\n'.format(self.avg_degree)
         string += '    Matrix redshift: {}\n'.format(self.matrix_redshift)
@@ -381,7 +379,7 @@ class AtomicGraph:
                 break
         else:
             if j in self.vertices[i].out_neighbourhood:
-                result = Arc(0, self.vertices[i], self.vertices[j])
+                result = Arc(-1, self.vertices[i], self.vertices[j])
         return result
 
     def get_vertex_objects_from_indices(self, vertex_indices):
@@ -744,33 +742,36 @@ class AtomicGraph:
             vertex.normalized_avg_gamma = vertex.avg_gamma - avg_mean_diff
 
     def calc_redshifts(self):
+        self.total_redshift = 0
+        self.matrix_redshift = 0
+        self.particle_redshift = 0
         anti_graph = AntiGraph(self)
         for vertex in self.vertices:
-            vertex.redshift = 0
-            for partner in vertex.partners:
-                vertex.redshift += self.get_redshift(vertex.i, partner)
-            for partner in anti_graph.vertices[vertex.i].partners:
-                vertex.redshift += self.get_redshift(vertex.i, partner)
+            if not vertex.is_edge_column and not vertex.void:
+                vertex.redshift = 0
+                for partner in vertex.partners:
+                    vertex.redshift += self.get_redshift(vertex.i, partner)
+                for partner in anti_graph.vertices[vertex.i].partners:
+                    vertex.redshift += self.get_redshift(vertex.i, partner)
+                self.total_redshift += vertex.redshift
+                if vertex.is_in_precipitate:
+                    self.particle_redshift += vertex.redshift
+                else:
+                    self.matrix_redshift += vertex.redshift
 
     def calc_all_parameters(self):
-        logger.info('Recalulating all graph parameters')
         for vertex in self.vertices:
             if not vertex.void:
                 self.calc_vertex_parameters(vertex.i)
                 print(vertex.i)
-        logger.info('Normalizing gamma')
         self.calc_normalized_gamma()
-        logger.info('Calculating redshifts')
         self.calc_redshifts()
-        logger.info('Graph parameters recalculated!')
 
     def refresh_graph(self):
-        logger.info('Recalculating graph properties...')
         self.map_districts()
         self.calc_all_parameters()
         self.map_meshes(0)
         self.summarize_stats()
-        logger.info('Recalculation complete')
 
     def map_arcs(self):
         logger.info('Mapping arcs')
@@ -869,7 +870,7 @@ class AtomicGraph:
         counted_columns = 0
         degrees = 0
         for vertex in self.vertices:
-            if not vertex.is_edge_column:
+            if not vertex.is_edge_column and not vertex.void:
                 degrees += vertex.degree
                 counted_columns += 1
         self.avg_degree = degrees / counted_columns

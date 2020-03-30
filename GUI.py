@@ -848,7 +848,8 @@ class MainUI(QtWidgets.QMainWindow):
 
     def btn_show_stats_trigger(self):
         if self.project_instance is not None:
-            self.project_instance.stats_summary()
+            self.project_instance.summarize_stats()
+            self.project_instance.report(supress_log=False)
 
     def btn_view_image_title_trigger(self):
         self.menu_view_image_title_trigger()
@@ -947,7 +948,12 @@ class MainUI(QtWidgets.QMainWindow):
         self.menu_invert_precipitate_columns_trigger()
 
     def btn_delete_trigger(self):
-        pass
+        if self.project_instance is not None and not self.selected_column == -1:
+            ok_pressed = QtWidgets.QMessageBox.question(self, 'Confirm', 'Are you sure you wish to delete this column?', QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No, QtWidgets.QMessageBox.No)
+            if ok_pressed == QtWidgets.QMessageBox.Yes:
+                self.sys_message('Working...')
+                self.project_instance.graph.remove_vertex(self.selected_column)
+                self.sys_message('Ready.')
 
     def btn_print_details_trigger(self):
         if self.project_instance is not None and not self.selected_column == -1:
@@ -984,7 +990,9 @@ class MainUI(QtWidgets.QMainWindow):
                         self.tabs.setCurrentIndex(4)
 
     def btn_refresh_graph_trigger(self):
+        self.sys_message('Working...')
         self.project_instance.graph.refresh_graph()
+        self.sys_message('Ready.')
 
     def btn_refresh_mesh_trigger(self):
         if self.project_instance is not None and \
@@ -1324,4 +1332,25 @@ class MainUI(QtWidgets.QMainWindow):
 
     def chb_placeholder_trigger(self):
         pass
+
+    def chb_0_plane_trigger(self, state):
+        if self.project_instance is not None and self.project_instance.num_columns > 0:
+            self.sys_message('Working...')
+            for vertex in self.project_instance.graph.vertices:
+                if vertex.level == 0:
+                    vertex.show_in_overlay = state
+            for graphic_item in self.gs_overlay_composition.interactive_overlay_objects:
+                graphic_item.set_style()
+            self.sys_message('Ready.')
+
+    def chb_1_plane_trigger(self, state):
+        if self.project_instance is not None and self.project_instance.num_columns > 0:
+            self.sys_message('Working...')
+            for vertex in self.project_instance.graph.vertices:
+                if vertex.level == 1:
+                    vertex.show_in_overlay = state
+            for graphic_item in self.gs_overlay_composition.interactive_overlay_objects:
+                graphic_item.set_style()
+            self.sys_message('Ready.')
+
 

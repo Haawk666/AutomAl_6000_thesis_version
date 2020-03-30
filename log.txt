@@ -11,226 +11,119 @@ graph_2: Summarizing stats
 graph_2: Stat summary complete!
 core: Conversion successful!
 core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/008_control
+core: Summarizing stats...
+graph_2: Mapping all districts
+graph_2: District mapping complete!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
+graph_2: Emergency stop!
 graph_2: Mapping all districts
 graph_2: District mapping complete!
 graph_2: Summarizing stats
 graph_2: Stat summary complete!
-graph_2: Mapping arcs
-graph_2: Arcs mapped
-GUI: Got anti-graph!
-core: Vertex 2274:
-    General:
-        Image position (x, y) = (261.017, 384.113)
-        Pixel position (x, y) = (261, 384)
-        Spatial relative position in pm (x, y, z) = (2456.572, 3615.099, 0.000)
-        Peak gamma = 0.2922
-        Average gamma = 0.2041
-        Atomic species: Mg
-        Species index: 5
-        Symmetry: 5
-    Analysis:
-        Probability vector: [ 0.000 0.000 0.000 0.013 0.000 0.987 0.000 ]
-    Graph parameters:
-        In-degree: 5
-        Out-degree: 5
-        Degree: 5
-        Alpha angles: [ ]
-            Max: 0.000
-            Min: 0.000
-        Theta angles: [ ]
-            Max: 0.000
-            Min: 0.000
-            Variance: 0.000
-        Normalized peak gamma: 0.292
-        Normalized average gamma: 0.204
-        Redshift: 0.000
-    Local graph mapping:
-        District: [1557, 2329, 1423, 2264, 2328, 2011, 2254, 2152]
-        In-neighbourhood: [1557, 2329, 1423, 2264, 2328]
-        Out-neighbourhood: [1557, 2329, 1423, 2264, 2328]
-        Neighbourhood: [1557, 2329, 1423, 2264, 2328]
-        Anti-Neighbourhood: [2011, 2254, 2152]
-        Partners: [1557, 2329, 1423, 2264, 2328]
-        Anti-partners: []
-    Settings:
-        Is in precipitate: True
-        Is edge column: False
-        Is set by user: False
-        Show in overlay: True
-        Is void: False
-        Flag 1: False
-        Flag 2: False
-        Flag 3: False
-        Flag 4: False
-        Flag 5: False
-        Flag 6: False
-        Flag 7: False
-        Flag 8: False
-        Flag 9: False
-
-graph_2: Recalculating graph properties...
-graph_2: Mapping all districts
-graph_2: District mapping complete!
-graph_2: Recalulating all graph parameters
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Emergency stop!
-graph_2: Normalizing gamma
-graph_2: Calculating redshifts
-graph_2: Mapping all districts
-graph_2: District mapping complete!
-graph_2: Summarizing stats
-graph_2: Stat summary complete!
-graph_2: Graph parameters recalculated!
 graph_2: Mapping meshes..
 graph_2: Mapping all districts
 graph_2: District mapping complete!
 graph_2: Meshes mapped!
 graph_2: Summarizing stats
 graph_2: Stat summary complete!
-graph_2: Recalculation complete
-core: Vertex 2274:
+core: Collected stats.
+core: Project summary:
+    A    t    o    m    i    c         G    r    a    p    h         s    u    m    m    a    r    y    :    
+                        S    c    a    l    e    :         9    .    4    1    1    5    4    3    6    0    7    7    1    1    7    9    2    
+                        O    r    d    e    r    :         2    3    6    8    
+                        S    i    z    e    :         9    6    5    6    
+                        C    h    i    :         0    .    3    7    2    6    1    8    0    6    1    3    0    9    0    3    0    6    3    
+                        A    v    e    r    a    g    e         d    e    g    r    e    e    :         4    .    0    
+                        M    a    t    r    i    x         r    e    d    s    h    i    f    t    :         2    5    2    7    5    .    5    0    9    6    4    3    8    4    4    0    4    5    
+                        P    a    r    t    i    c    l    e         r    e    d    s    h    i    f    t    :         -    1    9    5    3    4    .    8    7    7    4    9    0    2    8    2    8    4    8    
+                        T    o    t    a    l         r    e    d    s    h    i    f    t    :         5    7    4    0    .    6    3    2    1    5    3    5    6    1    1    7    1    
     General:
-        Image position (x, y) = (261.017, 384.113)
-        Pixel position (x, y) = (261, 384)
-        Spatial relative position in pm (x, y, z) = (2456.572, 3615.099, 0.000)
-        Peak gamma = 0.2922
-        Average gamma = 0.2041
-        Atomic species: Mg
-        Species index: 5
-        Symmetry: 5
-    Analysis:
-        Probability vector: [ 0.000 0.000 0.000 0.013 0.000 0.987 0.000 ]
-    Graph parameters:
-        In-degree: 5
-        Out-degree: 5
-        Degree: 5
-        Alpha angles: [ 3.091 2.155 1.037 ]
-            Max: 3.091
-            Min: 1.037
-        Theta angles: [ 1.163 1.929 1.145 1.010 1.037 ]
-            Max: 1.929
-            Min: 1.010
-            Variance: 0.146
-        Normalized peak gamma: 0.210
-        Normalized average gamma: 0.246
-        Redshift: -277.833
-    Local graph mapping:
-        District: [1557, 2329, 1423, 2264, 2328, 2011, 2254, 2152]
-        In-neighbourhood: [1557, 2329, 1423, 2264, 2328]
-        Out-neighbourhood: [1557, 2329, 1423, 2264, 2328]
-        Neighbourhood: [1557, 2329, 1423, 2264, 2328]
-        Anti-Neighbourhood: [2011, 2254, 2152]
-        Partners: [1557, 2329, 1423, 2264, 2328]
-        Anti-partners: []
-    Settings:
-        Is in precipitate: True
-        Is edge column: False
-        Is set by user: False
-        Show in overlay: True
-        Is void: False
-        Flag 1: False
-        Flag 2: False
-        Flag 3: False
-        Flag 4: False
-        Flag 5: False
-        Flag 6: False
-        Flag 7: False
-        Flag 8: False
-        Flag 9: False
+        Number of columns: 2368
+        Number of particle columns: 331
+    Intensities:
+        Average peak intensity: 0.29345553579136124
+        Average average intensity: 0.20108790269385937
+        Average Si peak intensity: 0.4063136241374872
+        Average Cu peak intensity: 0.7881292634540134
+        Average Zn peak intensity: 0.0
+        Average Al peak intensity: 0.38922797064474496
+        Average Ag peak intensity: 0.0
+        Average Mg peak intensity: 0.30266016485199093
+        Average Un peak intensity: 0.0
 
-core: Vertex 2274:
-    General:
-        Image position (x, y) = (261.017, 384.113)
-        Pixel position (x, y) = (261, 384)
-        Spatial relative position in pm (x, y, z) = (2456.572, 3615.099, 0.000)
-        Peak gamma = 0.2922
-        Average gamma = 0.2041
-        Atomic species: Mg
-        Species index: 5
-        Symmetry: 5
-    Analysis:
-        Probability vector: [ 0.000 0.000 0.000 0.013 0.000 0.987 0.000 ]
-    Graph parameters:
-        In-degree: 5
-        Out-degree: 5
-        Degree: 5
-        Alpha angles: [ 3.091 2.155 1.037 ]
-            Max: 3.091
-            Min: 1.037
-        Theta angles: [ 1.163 1.929 1.145 1.010 1.037 ]
-            Max: 1.929
-            Min: 1.010
-            Variance: 0.146
-        Normalized peak gamma: 0.210
-        Normalized average gamma: 0.246
-        Redshift: -277.833
-    Local graph mapping:
-        District: [1557, 2329, 1423, 2264, 2328, 2011, 2254, 2152]
-        In-neighbourhood: [1557, 2329, 1423, 2264, 2328]
-        Out-neighbourhood: [1557, 2329, 1423, 2264, 2328]
-        Neighbourhood: [1557, 2329, 1423, 2264, 2328]
-        Anti-Neighbourhood: [2011, 2254, 2152]
-        Partners: [1557, 2329, 1423, 2264, 2328]
-        Anti-partners: []
-    Settings:
-        Is in precipitate: True
-        Is edge column: False
-        Is set by user: False
-        Show in overlay: True
-        Is void: False
-        Flag 1: False
-        Flag 2: False
-        Flag 3: False
-        Flag 4: False
-        Flag 5: False
-        Flag 6: False
-        Flag 7: False
-        Flag 8: False
-        Flag 9: False
+        Average Si average intensity: 0.2673727399760939
+        Average Cu average intensity: 0.5213407715424448
+        Average Zn average intensity: 0.0
+        Average Al average intensity: 0.2676368935385964
+        Average Ag average intensity: 0.0
+        Average Mg average intensity: 0.20767620439495926
+        Average Un average intensity: 0.0
+    Image composition:
+        Number of Si-columns: 117
+        Number of Cu-columns: 9
+        Number of Al-columns: 1547
+        Number of Mg-columns: 126
+        Number of Un-columns: 0
+        Number percentage of Si: 0.049408783783783786
+        Number percentage of Cu: 0.003800675675675676
+        Number percentage of Al: 0.653293918918919
+        Number percentage of Mg: 0.05320945945945946
+        Number percentage of Un: 0.0
+    Paticle composition:
+        Number of precipitate Si-columns: 115
+        Number of precipitate Cu-columns: 9
+        Number of precipitate Al-columns: 82
+        Number of precipitate Mg-columns: 125
+        Number of precipitate Un-columns: 0
+        Number percentage of precipitate Si: 0.3474320241691843
+        Number percentage of precipitate Cu: 0.027190332326283987
+        Number percentage of precipitate Al: 0.24773413897280966
+        Number percentage of precipitate Mg: 0.3776435045317221
+        Number percentage of precipitate Un: 0.0

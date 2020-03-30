@@ -838,6 +838,8 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_neighbours = QtWidgets.QCheckBox('Neighbour path')
         self.chb_legend = QtWidgets.QCheckBox('Legend')
         self.chb_scalebar = QtWidgets.QCheckBox('Scalebar')
+        self.chb_0_plane = QtWidgets.QCheckBox('0 Plane')
+        self.chb_1_plane = QtWidgets.QCheckBox('1/2 Plane')
 
         overlay_layout_left = QtWidgets.QVBoxLayout()
         overlay_layout_left.addWidget(self.chb_raw_image)
@@ -850,6 +852,7 @@ class ControlWindow(QtWidgets.QWidget):
         overlay_layout_left.addWidget(self.chb_un_columns)
         overlay_layout_left.addWidget(self.chb_ag_network)
         overlay_layout_left.addWidget(self.chb_legend)
+        overlay_layout_left.addWidget(self.chb_scalebar)
 
         overlay_layout_right = QtWidgets.QVBoxLayout()
         overlay_layout_right.addWidget(self.chb_black_background)
@@ -861,7 +864,8 @@ class ControlWindow(QtWidgets.QWidget):
         overlay_layout_right.addWidget(self.chb_particle)
         overlay_layout_right.addWidget(self.chb_columns)
         overlay_layout_right.addWidget(self.chb_neighbours)
-        overlay_layout_right.addWidget(self.chb_scalebar)
+        overlay_layout_right.addWidget(self.chb_0_plane)
+        overlay_layout_right.addWidget(self.chb_1_plane)
 
         overlay_layout = QtWidgets.QHBoxLayout()
         overlay_layout.addLayout(overlay_layout_left)
@@ -904,6 +908,8 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_neighbours.setChecked(False)
         self.chb_legend.setChecked(True)
         self.chb_scalebar.setChecked(True)
+        self.chb_0_plane.setChecked(True)
+        self.chb_1_plane.setChecked(True)
 
         self.chb_toggle_positions.toggled.connect(self.ui_obj.chb_toggle_positions_trigger)
 
@@ -940,6 +946,8 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_neighbours.toggled.connect(self.ui_obj.chb_placeholder_trigger)
         self.chb_legend.toggled.connect(self.ui_obj.chb_placeholder_trigger)
         self.chb_scalebar.toggled.connect(self.ui_obj.chb_scale_bar_trigger)
+        self.chb_0_plane.toggled.connect(self.ui_obj.chb_0_plane_trigger)
+        self.chb_1_plane.toggled.connect(self.ui_obj.chb_1_plane_trigger)
 
         # The Set values buttons
         self.btn_set_threshold_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_threshold_trigger, label=self.lbl_detection_threshold)
@@ -1274,6 +1282,8 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_list.append(self.chb_neighbours)
         self.chb_list.append(self.chb_legend)
         self.chb_list.append(self.chb_scalebar)
+        self.chb_list.append(self.chb_0_plane)
+        self.chb_list.append(self.chb_1_plane)
 
         # Set tooltips:
         self.mode_tooltip(self.ui_obj.menu.toggle_tooltips_action.isChecked())

@@ -255,7 +255,72 @@ class SuchSoftware:
         self.dist_8_std = 0
 
     def __str__(self):
-        return self.stats_summary(supress_log=True)
+        return self.report()
+
+    def report(self, supress_log=True):
+        """Build a string representation of current statistical summary and store it in self.stats_string.
+
+        """
+
+        string = 'Project summary:\n'
+        for line in self.graph.report():
+            string += '    ' + line
+        string += '    General:\n'
+        string += '        Number of columns: {}\n'.format(self.num_columns)
+        string += '        Number of particle columns: {}\n'.format(self.num_precipitate_columns)
+        string += '    Intensities:\n'
+        string += '        Average peak intensity: {}\n'.format(self.avg_peak_gamma)
+        string += '        Average average intensity: {}\n'.format(self.avg_avg_gamma)
+        string += '        Average Si peak intensity: {}\n'.format(self.avg_si_peak_gamma)
+        string += '        Average Cu peak intensity: {}\n'.format(self.avg_cu_peak_gamma)
+        string += '        Average Zn peak intensity: {}\n'.format(self.avg_zn_peak_gamma)
+        string += '        Average Al peak intensity: {}\n'.format(self.avg_al_peak_gamma)
+        string += '        Average Ag peak intensity: {}\n'.format(self.avg_ag_peak_gamma)
+        string += '        Average Mg peak intensity: {}\n'.format(self.avg_mg_peak_gamma)
+        string += '        Average Un peak intensity: {}\n\n'.format(self.avg_un_peak_gamma)
+        string += '        Average Si average intensity: {}\n'.format(self.avg_si_avg_gamma)
+        string += '        Average Cu average intensity: {}\n'.format(self.avg_cu_avg_gamma)
+        string += '        Average Zn average intensity: {}\n'.format(self.avg_zn_avg_gamma)
+        string += '        Average Al average intensity: {}\n'.format(self.avg_al_avg_gamma)
+        string += '        Average Ag average intensity: {}\n'.format(self.avg_ag_avg_gamma)
+        string += '        Average Mg average intensity: {}\n'.format(self.avg_mg_avg_gamma)
+        string += '        Average Un average intensity: {}\n'.format(self.avg_un_avg_gamma)
+        string += '    Image composition:\n'
+        string += '        Number of Si-columns: {}\n'.format(self.num_si)
+        string += '        Number of Cu-columns: {}\n'.format(self.num_cu)
+        # string += '        Number of Zn-columns: {}\n'.format(self.num_zn)
+        string += '        Number of Al-columns: {}\n'.format(self.num_al)
+        # string += '        Number of Ag-columns: {}\n'.format(self.num_ag)
+        string += '        Number of Mg-columns: {}\n'.format(self.num_mg)
+        string += '        Number of Un-columns: {}\n'.format(self.num_un)
+        string += '        Number percentage of Si: {}\n'.format(self.number_percentage_si)
+        string += '        Number percentage of Cu: {}\n'.format(self.number_percentage_cu)
+        # string += '        Number percentage of Zn: {}\n'.format(self.number_percentage_zn)
+        string += '        Number percentage of Al: {}\n'.format(self.number_percentage_al)
+        # string += '        Number percentage of Ag: {}\n'.format(self.number_percentage_ag)
+        string += '        Number percentage of Mg: {}\n'.format(self.number_percentage_mg)
+        string += '        Number percentage of Un: {}\n'.format(self.number_percentage_un)
+        string += '    Paticle composition:\n'
+        string += '        Number of precipitate Si-columns: {}\n'.format(self.num_precipitate_si)
+        string += '        Number of precipitate Cu-columns: {}\n'.format(self.num_precipitate_cu)
+        # string += '        Number of precipitate Zn-columns: {}\n'.format(self.num_precipitate_zn)
+        string += '        Number of precipitate Al-columns: {}\n'.format(self.num_precipitate_al)
+        # string += '        Number of precipitate Ag-columns: {}\n'.format(self.num_precipitate_ag)
+        string += '        Number of precipitate Mg-columns: {}\n'.format(self.num_precipitate_mg)
+        string += '        Number of precipitate Un-columns: {}\n'.format(self.num_precipitate_un)
+        string += '        Number percentage of precipitate Si: {}\n'.format(self.precipitate_number_percentage_si)
+        string += '        Number percentage of precipitate Cu: {}\n'.format(self.precipitate_number_percentage_cu)
+        # string += '        Number percentage of precipitate Zn: {}\n'.format(self.precipitate_number_percentage_zn)
+        string += '        Number percentage of precipitate Al: {}\n'.format(self.precipitate_number_percentage_al)
+        # string += '        Number percentage of precipitate Ag: {}\n'.format(self.precipitate_number_percentage_ag)
+        string += '        Number percentage of precipitate Mg: {}\n'.format(self.precipitate_number_percentage_mg)
+        string += '        Number percentage of precipitate Un: {}\n'.format(self.precipitate_number_percentage_un)
+
+        if supress_log:
+            return string
+        else:
+            logger.info(string)
+            return None
 
     def alloy_string(self):
         """Get a string representation of the currently active alloy matrix.
@@ -270,27 +335,6 @@ class SuchSoftware:
             return 'Alloy: Al-Mg-Si'
         else:
             return 'Alloy: Unknown'
-
-    def stats_summary(self, supress_log=False):
-        """Summarize some stats about the image-level data.
-
-        :param supress_log: (optional, default=False) If False, will send its result to the module-level logger and
-            return None, if True, will return the result as string.
-        :type supress_log: Bool
-
-        :return: a summary string or None
-        :rtype: string or None
-
-        """
-        self.summarize_stats()
-        string = 'Image summary: ----------\n'
-        for line in iter(self.stats_string.splitlines()):
-            string += '    ' + line + '\n'
-        if supress_log:
-            return string
-        else:
-            logger.info(string)
-            return None
 
     def vertex_report(self, i, supress_log=False):
         string = self.graph.vertices[i].report()
@@ -1091,14 +1135,10 @@ class SuchSoftware:
 
         logger.info('Summarizing stats...')
 
-        self.graph.summarize_stats()
+        self.graph.refresh_graph()
 
         self.avg_peak_gamma = 0
         self.avg_avg_gamma = 0
-
-        self.num_inconsistencies = 0
-        self.num_popular = 0
-        self.num_unpopular = 0
 
         self.number_percentage_si = 0.0
         self.number_percentage_cu = 0.0
@@ -1152,84 +1192,77 @@ class SuchSoftware:
 
         if self.num_columns > 0:
 
-            for x in range(0, self.num_columns):
+            for vertex in self.graph.vertices:
+                if not vertex.is_edge_column and not vertex.void:
 
-                self.avg_peak_gamma += self.graph.vertices[x].peak_gamma
-                self.avg_avg_gamma += self.graph.vertices[x].avg_gamma
+                    self.avg_peak_gamma += vertex.peak_gamma
+                    self.avg_avg_gamma += vertex.avg_gamma
 
-                if self.graph.vertices[x].is_unpopular and not self.graph.vertices[x].is_edge_column:
-                    self.num_unpopular += 1
-                    self.num_inconsistencies += 1
-
-                if self.graph.vertices[x].is_popular and not self.graph.vertices[x].is_edge_column:
-                    self.num_popular += 1
-                    self.num_inconsistencies += 1
-
-                if self.graph.vertices[x].h_index == 0:
-                    self.num_si += 1
-                    self.number_percentage_si += 1
-                    self.avg_si_peak_gamma += self.graph.vertices[x].peak_gamma
-                    self.avg_si_avg_gamma += self.graph.vertices[x].avg_gamma
-                    if self.graph.vertices[x].is_in_precipitate:
-                        self.num_precipitate_columns += 1
-                        self.num_precipitate_si += 1
-                        self.precipitate_number_percentage_si += 1
-                elif self.graph.vertices[x].h_index == 1:
-                    self.num_cu += 1
-                    self.number_percentage_cu += 1
-                    self.avg_cu_peak_gamma += self.graph.vertices[x].peak_gamma
-                    self.avg_cu_avg_gamma += self.graph.vertices[x].avg_gamma
-                    if self.graph.vertices[x].is_in_precipitate:
-                        self.num_precipitate_columns += 1
-                        self.num_precipitate_cu += 1
-                        self.precipitate_number_percentage_cu += 1
-                elif self.graph.vertices[x].h_index == 2:
-                    self.num_zn += 1
-                    self.number_percentage_zn += 1
-                    self.avg_zn_peak_gamma += self.graph.vertices[x].peak_gamma
-                    self.avg_zn_avg_gamma += self.graph.vertices[x].avg_gamma
-                    if self.graph.vertices[x].is_in_precipitate:
-                        self.num_precipitate_columns += 1
-                        self.num_precipitate_zn += 1
-                        self.precipitate_number_percentage_zn += 1
-                elif self.graph.vertices[x].h_index == 3:
-                    self.num_al += 1
-                    self.number_percentage_al += 1
-                    self.avg_al_peak_gamma += self.graph.vertices[x].peak_gamma
-                    self.avg_al_avg_gamma += self.graph.vertices[x].avg_gamma
-                    if self.graph.vertices[x].is_in_precipitate:
-                        self.num_precipitate_columns += 1
-                        self.num_precipitate_al += 1
-                        self.precipitate_number_percentage_al += 1
-                elif self.graph.vertices[x].h_index == 4:
-                    self.num_ag += 1
-                    self.number_percentage_ag += 1
-                    self.avg_ag_peak_gamma += self.graph.vertices[x].peak_gamma
-                    self.avg_ag_avg_gamma += self.graph.vertices[x].avg_gamma
-                    if self.graph.vertices[x].is_in_precipitate:
-                        self.num_precipitate_columns += 1
-                        self.num_precipitate_ag += 1
-                        self.precipitate_number_percentage_ag += 1
-                elif self.graph.vertices[x].h_index == 5:
-                    self.num_mg += 1
-                    self.number_percentage_mg += 1
-                    self.avg_mg_peak_gamma += self.graph.vertices[x].peak_gamma
-                    self.avg_mg_avg_gamma += self.graph.vertices[x].avg_gamma
-                    if self.graph.vertices[x].is_in_precipitate:
-                        self.num_precipitate_columns += 1
-                        self.num_precipitate_mg += 1
-                        self.precipitate_number_percentage_mg += 1
-                elif self.graph.vertices[x].h_index == 6:
-                    self.num_un += 1
-                    self.number_percentage_un += 1
-                    self.avg_un_peak_gamma += self.graph.vertices[x].peak_gamma
-                    self.avg_un_avg_gamma += self.graph.vertices[x].avg_gamma
-                    if self.graph.vertices[x].is_in_precipitate:
-                        self.num_precipitate_columns += 1
-                        self.num_precipitate_un += 1
-                        self.precipitate_number_percentage_un += 1
-                else:
-                    logger.warning('Unexpected behaviour in core.SuchSoftware.summarize_stats()')
+                    if vertex.species_index == 0:
+                        self.num_si += 1
+                        self.number_percentage_si += 1
+                        self.avg_si_peak_gamma += vertex.peak_gamma
+                        self.avg_si_avg_gamma += vertex.avg_gamma
+                        if vertex.is_in_precipitate:
+                            self.num_precipitate_columns += 1
+                            self.num_precipitate_si += 1
+                            self.precipitate_number_percentage_si += 1
+                    elif vertex.species_index == 1:
+                        self.num_cu += 1
+                        self.number_percentage_cu += 1
+                        self.avg_cu_peak_gamma += vertex.peak_gamma
+                        self.avg_cu_avg_gamma += vertex.avg_gamma
+                        if vertex.is_in_precipitate:
+                            self.num_precipitate_columns += 1
+                            self.num_precipitate_cu += 1
+                            self.precipitate_number_percentage_cu += 1
+                    elif vertex.species_index == 2:
+                        self.num_zn += 1
+                        self.number_percentage_zn += 1
+                        self.avg_zn_peak_gamma += vertex.peak_gamma
+                        self.avg_zn_avg_gamma += vertex.avg_gamma
+                        if vertex.is_in_precipitate:
+                            self.num_precipitate_columns += 1
+                            self.num_precipitate_zn += 1
+                            self.precipitate_number_percentage_zn += 1
+                    elif vertex.species_index == 3:
+                        self.num_al += 1
+                        self.number_percentage_al += 1
+                        self.avg_al_peak_gamma += vertex.peak_gamma
+                        self.avg_al_avg_gamma += vertex.avg_gamma
+                        if vertex.is_in_precipitate:
+                            self.num_precipitate_columns += 1
+                            self.num_precipitate_al += 1
+                            self.precipitate_number_percentage_al += 1
+                    elif vertex.species_index == 4:
+                        self.num_ag += 1
+                        self.number_percentage_ag += 1
+                        self.avg_ag_peak_gamma += vertex.peak_gamma
+                        self.avg_ag_avg_gamma += vertex.avg_gamma
+                        if vertex.is_in_precipitate:
+                            self.num_precipitate_columns += 1
+                            self.num_precipitate_ag += 1
+                            self.precipitate_number_percentage_ag += 1
+                    elif vertex.species_index == 5:
+                        self.num_mg += 1
+                        self.number_percentage_mg += 1
+                        self.avg_mg_peak_gamma += vertex.peak_gamma
+                        self.avg_mg_avg_gamma += vertex.avg_gamma
+                        if vertex.is_in_precipitate:
+                            self.num_precipitate_columns += 1
+                            self.num_precipitate_mg += 1
+                            self.precipitate_number_percentage_mg += 1
+                    elif vertex.species_index == 6:
+                        self.num_un += 1
+                        self.number_percentage_un += 1
+                        self.avg_un_peak_gamma += vertex.peak_gamma
+                        self.avg_un_avg_gamma += vertex.avg_gamma
+                        if vertex.is_in_precipitate:
+                            self.num_precipitate_columns += 1
+                            self.num_precipitate_un += 1
+                            self.precipitate_number_percentage_un += 1
+                    else:
+                        logger.warning('Unexpected behaviour in core.SuchSoftware.summarize_stats()')
 
             self.avg_peak_gamma = self.avg_peak_gamma / self.num_columns
             self.avg_avg_gamma = self.avg_avg_gamma / self.num_columns
@@ -1286,68 +1319,7 @@ class SuchSoftware:
                 self.precipitate_number_percentage_un =\
                     self.precipitate_number_percentage_un / self.num_precipitate_columns
 
-        self.build_stat_string()
-
         logger.info('Collected stats.')
-
-    def build_stat_string(self):
-        """Build a string representation of current statistical summary and store it in self.stats_string.
-
-        """
-
-        blueshifts = self.graph.calc_total_blueshift()
-
-        self.stats_string = ('Number of detected columns: ' + str(self.num_columns) + '\n'
-            'Number of detected precipitate columns: ' + str(self.num_precipitate_columns) + '\n\n'
-            'Number of inconsistencies: ' + str(self.num_inconsistencies) + '\n'
-            'Number of popular: ' + str(self.num_popular) + '\n'
-            'Number of unpopular: ' + str(self.num_unpopular) + '\n'
-            'Chi: ' + str(self.graph.chi) + '\n\n'
-            'Total blueshift: {}\nMatrix blueshift: {}\nParticle blueshift: {}\n\n'.format(blueshifts[0], blueshifts[1], blueshifts[2]) + \
-            'Average peak intensity: ' + str(self.avg_peak_gamma) + '\n'
-            'Average average intensity: ' + str(self.avg_avg_gamma) + '\n\n'
-            'Average Si peak intensity: ' + str(self.avg_si_peak_gamma) + '\n'
-            'Average Cu peak intensity: ' + str(self.avg_cu_peak_gamma) + '\n'
-            'Average Zn peak intensity: ' + str(self.avg_zn_peak_gamma) + '\n'
-            'Average Al peak intensity: ' + str(self.avg_al_peak_gamma) + '\n'
-            'Average Ag peak intensity: ' + str(self.avg_ag_peak_gamma) + '\n'
-            'Average Mg peak intensity: ' + str(self.avg_mg_peak_gamma) + '\n'
-            'Average Un peak intensity: ' + str(self.avg_un_peak_gamma) + '\n\n'
-            'Average Si average intensity: ' + str(self.avg_si_avg_gamma) + '\n'
-            'Average Cu average intensity: ' + str(self.avg_cu_avg_gamma) + '\n'
-            'Average Zn average intensity: ' + str(self.avg_zn_avg_gamma) + '\n'
-            'Average Al average intensity: ' + str(self.avg_al_avg_gamma) + '\n'
-            'Average Ag average intensity: ' + str(self.avg_ag_avg_gamma) + '\n'
-            'Average Mg average intensity: ' + str(self.avg_mg_avg_gamma) + '\n'
-            'Average Un average intensity: ' + str(self.avg_un_avg_gamma) + '\n\n'
-            'Number of Si-columns: ' + str(self.num_si) + '\n'
-            'Number of Cu-columns: ' + str(self.num_cu) + '\n'
-            'Number of Zn-columns: ' + str(self.num_zn) + '\n'
-            'Number of Al-columns: ' + str(self.num_al) + '\n'
-            'Number of Ag-columns: ' + str(self.num_ag) + '\n'
-            'Number of Mg-columns: ' + str(self.num_mg) + '\n'
-            'Number of Un-columns: ' + str(self.num_un) + '\n\n'
-            'Number procentage of Si: ' + str(self.number_percentage_si) + '\n'
-            'Number procentage of Cu: ' + str(self.number_percentage_cu) + '\n'
-            'Number procentage of Zn: ' + str(self.number_percentage_zn) + '\n'
-            'Number procentage of Al: ' + str(self.number_percentage_al) + '\n'
-            'Number procentage of Ag: ' + str(self.number_percentage_ag) + '\n'
-            'Number procentage of Mg: ' + str(self.number_percentage_mg) + '\n'
-            'Number procentage of Un: ' + str(self.number_percentage_un) + '\n\n'
-            'Number of precipitate Si-columns: ' + str(self.num_precipitate_si) + '\n'
-            'Number of precipitate Cu-columns: ' + str(self.num_precipitate_cu) + '\n'
-            'Number of precipitate Zn-columns: ' + str(self.num_precipitate_zn) + '\n'
-            'Number of precipitate Al-columns: ' + str(self.num_precipitate_al) + '\n'
-            'Number of precipitate Ag-columns: ' + str(self.num_precipitate_ag) + '\n'
-            'Number of precipitate Mg-columns: ' + str(self.num_precipitate_mg) + '\n'
-            'Number of precipitate Un-columns: ' + str(self.num_precipitate_un) + '\n\n'
-            'Number procentage of precipitate Si: ' + str(self.precipitate_number_percentage_si) + '\n'
-            'Number procentage of precipitate Cu: ' + str(self.precipitate_number_percentage_cu) + '\n'
-            'Number procentage of precipitate Zn: ' + str(self.precipitate_number_percentage_zn) + '\n'
-            'Number procentage of precipitate Al: ' + str(self.precipitate_number_percentage_al) + '\n'
-            'Number procentage of precipitate Ag: ' + str(self.precipitate_number_percentage_ag) + '\n'
-            'Number procentage of precipitate Mg: ' + str(self.precipitate_number_percentage_mg) + '\n'
-            'Number procentage of precipitate Un: ' + str(self.precipitate_number_percentage_un))
 
     def redraw_search_mat(self):
         """Redraw the search matrix.
@@ -1392,7 +1364,7 @@ class SuchSoftware:
         """Reset the graph.
 
         """
-        self.graph = graph.AtomicGraph()
+        self.graph = graph_2.AtomicGraph(self.scale)
         self.num_columns = 0
         self.redraw_centre_mat()
         self.redraw_circumference_mat()

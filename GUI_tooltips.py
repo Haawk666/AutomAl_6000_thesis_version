@@ -97,6 +97,8 @@ chb_al_mesh = 'Toggle Al-matrix'
 chb_neighbours = 'Toggle neighbour edges'
 chb_legend = 'Toggle legend'
 chb_scalebar = 'Toggle scalebar'
+chb_0_plane = 'Toggle all 0 plane columns'
+chb_1_plane = 'Toggle all 1/2 plane columns'
 
 control_window_set_list = [btn_set_threshold_layout,
                            btn_set_search_size_layout,
@@ -176,7 +178,9 @@ control_window_chb_list = [chb_toggle_positions,
                            chb_al_mesh,
                            chb_neighbours,
                            chb_legend,
-                           chb_scalebar]
+                           chb_scalebar,
+                           chb_0_plane,
+                           chb_1_plane]
 
 btn_save_log = 'Save the log contents to text-file.'
 btn_clear_log = 'Empty the contents of the log.'
