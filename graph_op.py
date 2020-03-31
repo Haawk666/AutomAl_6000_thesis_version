@@ -115,7 +115,7 @@ def base_stat_score(graph_obj, i, get_individual_predictions=False, scaled=True)
 
 def base_angle_score(graph_obj, i, apply=True):
 
-    alpha = graph_obj.produce_alpha_angles(i)
+    alpha = graph_obj.get_alpha_angles(i)
 
     if apply:
 

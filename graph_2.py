@@ -703,6 +703,37 @@ class AtomicGraph:
         for i in self.vertex_indices:
             self.map_district(i, search_extended_district=search_extended_district)
 
+    def find_intersections(self):
+
+        intersecting_segments = []
+
+        for a in self.vertices:
+            for b in [self.vertices[index] for index in a.out_neighbourhood]:
+                if not a.is_edge_column and not b.is_edge_column:
+                    for c in [self.vertices[index] for index in a.out_neighbourhood]:
+                        if not c.i == b.i:
+                            for d in [self.vertices[index] for index in c.out_neighbourhood]:
+                                intersects = utils.closed_segment_intersect(a.real_coor(), b.real_coor(),
+                                                                            c.real_coor(), d.real_coor())
+                                if intersects and (a.i, b.i, c.i, d.i) not in intersecting_segments and \
+                                        (c.i, d.i, a.i, b.i) not in intersecting_segments:
+                                    intersecting_segments.append((a.i, b.i, c.i, d.i))
+                    for c in [self.vertices[index] for index in a.out_neighbourhood]:
+                        for d in [self.vertices[index] for index in c.out_neighbourhood]:
+                            for e in [self.vertices[index] for index in d.out_neighbourhood]:
+                                intersects = utils.closed_segment_intersect(a.real_coor(), b.real_coor(),
+                                                                            d.real_coor(), e.real_coor())
+                                if intersects and (a.i, b.i, d.i, e.i) not in intersecting_segments and \
+                                        (d.i, e.i, a.i, b.i) not in intersecting_segments:
+                                    intersecting_segments.append((a.i, b.i, d.i, e.i))
+
+        return intersecting_segments
+
+    def terminate_intersections(self):
+
+        intersecting_segments = self.find_intersections()
+        pass
+
     def calc_vertex_parameters(self, i):
         vertex = self.vertices[i]
         vertex.in_degree = len(vertex.in_neighbourhood)

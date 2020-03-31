@@ -522,8 +522,8 @@ class SuchSoftware:
 
         """
 
-        x_0 = self.graph.vertices[i].im_coor_x
-        y_0 = self.graph.vertices[i].im_coor_y
+        x_0 = int(self.graph.vertices[i].im_coor_x)
+        y_0 = int(self.graph.vertices[i].im_coor_y)
 
         indices = np.ndarray([n], dtype=np.int)
         distances = np.ndarray([n], dtype=np.float64)
@@ -592,7 +592,7 @@ class SuchSoftware:
             if x_coor < margin or x_coor > self.im_width - margin - 1 or y_coor < margin or y_coor > self.im_height - margin - 1:
 
                 self.graph.vertices[y].is_edge_column = True
-                self.graph.vertices[y].reset_prob_vector(bias=3)
+                self.graph.vertices[y].reset_probability_vector(bias=3)
 
             else:
 
@@ -737,14 +737,14 @@ class SuchSoftware:
             self.redraw_centre_mat()
             self.redraw_circumference_mat()
             for i in range(0, self.num_columns):
-                self.graph.vertices[i].neighbour_indices, _ = self.find_nearest(i, self.map_size)
+                self.graph.vertices[i].district, _ = self.find_nearest(i, self.map_size)
             self.find_edge_columns()
             logger.info('Spatial mapping complete.')
 
         elif search_type == 4:
             # redraw edges
             logger.info('Adding edges to graph...')
-            self.graph.redraw_edges()
+            self.graph.map_arcs()
             logger.info('Edges added.')
 
         elif search_type == 5:
@@ -764,7 +764,7 @@ class SuchSoftware:
             # Experimental level determination
             logger.info('Running experimental level definition algorithm....')
             self.graph.reset_all_flags()
-            self.graph.sort_all_subsets_by_distance()
+            self.graph.map_districts()
             graph_op.naive_determine_z(self.graph, starting_index, self.graph.vertices[starting_index].level)
             graph_op.revise_z(self.graph)
             graph_op.revise_z(self.graph)
@@ -787,7 +787,7 @@ class SuchSoftware:
                     cont = True
                     counter = 0
                     while cont:
-                        self.graph.redraw_edges()
+                        self.graph.map_arcs()
                         chi_before = self.graph.chi
                         logger.info('Looking for type {}:'.format(type_num))
                         logger.info('Chi: {}'.format(chi_before))
@@ -796,7 +796,7 @@ class SuchSoftware:
                         num_types, changes = untangling.untangle(self.graph, type_num, strong=False, ui_obj=ui_obj, aggressive=True)
 
                         total_changes += changes
-                        self.graph.redraw_edges()
+                        self.graph.map_arcs()
                         chi_after = self.graph.chi
                         logger.info('Found {} type {}\'s, made {} changes'.format(num_types, type_num, changes))
                         logger.info('Chi: {}'.format(chi_before))
@@ -825,7 +825,7 @@ class SuchSoftware:
 
             self.column_characterization(starting_index, search_type=14, ui_obj=ui_obj)
 
-            self.graph.redraw_edges()
+            self.graph.map_arcs()
             logger.info('Weak untangling complete')
 
         elif search_type == 9:
@@ -845,7 +845,7 @@ class SuchSoftware:
                     cont = True
                     counter = 0
                     while cont:
-                        self.graph.redraw_edges()
+                        self.graph.map_arcs()
                         chi_before = self.graph.chi
                         logger.info('Looking for type {}:'.format(type_num))
                         logger.info('Chi: {}'.format(chi_before))
@@ -854,7 +854,7 @@ class SuchSoftware:
                         num_types, changes = untangling.untangle(self.graph, type_num, strong=False, ui_obj=ui_obj)
 
                         total_changes += changes
-                        self.graph.redraw_edges()
+                        self.graph.map_arcs()
                         chi_after = self.graph.chi
                         logger.info('Found {} type {}\'s, made {} changes'.format(num_types, type_num, changes))
                         logger.info('Chi: {}'.format(chi_before))
@@ -883,7 +883,7 @@ class SuchSoftware:
 
             self.column_characterization(starting_index, search_type=14)
 
-            self.graph.redraw_edges()
+            self.graph.map_arcs()
             logger.info('Weak untangling complete')
 
         elif search_type == 10:
@@ -903,7 +903,7 @@ class SuchSoftware:
                     cont = True
                     counter = 0
                     while cont:
-                        self.graph.redraw_edges()
+                        self.graph.map_arcs()
                         chi_before = self.graph.chi
                         logger.info('Looking for type {}:'.format(type_num))
                         logger.info('Chi: {}'.format(chi_before))
@@ -912,7 +912,7 @@ class SuchSoftware:
                         num_types, changes = untangling.untangle(self.graph, type_num, strong=False, ui_obj=ui_obj)
 
                         total_changes += changes
-                        self.graph.redraw_edges()
+                        self.graph.map_arcs()
                         chi_after = self.graph.chi
                         logger.info('Found {} type {}\'s, made {} changes'.format(num_types, type_num, changes))
                         logger.info('Chi: {}'.format(chi_before))
@@ -996,23 +996,23 @@ class SuchSoftware:
                 if total_counter > 3:
                     static = True
 
-            self.graph.redraw_edges()
+            self.graph.map_arcs()
             logger.info('Strong untangling complete')
 
         elif search_type == 12:
             # reset probs
             logger.info('Resetting probability vectors with zero bias...')
             for i in range(0, self.num_columns):
-                if not self.graph.vertices[i].set_by_user and not self.graph.vertices[i].is_edge_column:
-                    self.graph.vertices[i].reset_prob_vector()
+                if not self.graph.vertices[i].is_set_by_user and not self.graph.vertices[i].is_edge_column:
+                    self.graph.vertices[i].reset_probability_vector()
             logger.info('Probability vectors reset.')
 
         elif search_type == 13:
             # Reset user-input
             logger.info('Resetting user-set columns...')
             for i in range(0, self.num_columns):
-                if self.graph.vertices[i].set_by_user:
-                    self.graph.vertices[i].set_by_user = False
+                if self.graph.vertices[i].is_set_by_user:
+                    self.graph.vertices[i].is_set_by_user = False
             logger.info('User-set columns was re-set.')
 
         elif search_type == 14:
@@ -1023,7 +1023,7 @@ class SuchSoftware:
             # not_removed, strong_intersections, ww, ss = graph_op.remove_intersections(self.graph)
             graph_op.experimental_remove_intersections(self.graph)
             intersections = self.graph.find_intersects()
-            self.graph.map_friends()
+            self.graph.map_districts()
             if ui_obj is not None:
                 ui_obj.update_overlay()
                 ui_obj.update_graph()
@@ -1040,13 +1040,11 @@ class SuchSoftware:
             # Alpha angle analysis
             logger.info('Running experimental angle analysis')
             for i in range(0, self.num_columns):
-                if not self.graph.vertices[i].set_by_user and not self.graph.vertices[i].is_edge_column:
-                    self.graph.vertices[i].reset_symmetry_vector()
-                    self.graph.vertices[i].reset_prob_vector()
-                    self.graph.vertices[i].prob_vector =\
+                if not self.graph.vertices[i].is_set_by_user and not self.graph.vertices[i].is_edge_column:
+                    self.graph.vertices[i].reset_probability_vector()
+                    self.graph.vertices[i].probability_vector =\
                         graph_op.base_angle_score(self.graph, i)
-                    self.graph.vertices[i].prob_vector = np.array(self.graph.vertices[i].prob_vector)
-                    self.graph.vertices[i].define_species()
+                    self.graph.vertices[i].determine_species_from_probability_vector()
             logger.info('Angle analysis complete!')
 
         elif search_type == 17:
@@ -1345,10 +1343,9 @@ class SuchSoftware:
             self.column_circumference_mat = mat_op.gen_framed_mat(self.column_circumference_mat, self.r + self.overhead)
             for x in range(0, self.num_columns):
                 self.column_circumference_mat = mat_op.draw_circle(self.column_circumference_mat,
-                                                                   self.graph.vertices[x].im_coor_x + self.r +
-                                                                   self.overhead,
-                                                                   self.graph.vertices[x].im_coor_y + self.r +
-                                                                   self.overhead, self.r)
+                                                                   int(self.graph.vertices[x].im_coor_x + self.r + self.overhead),
+                                                                   int(self.graph.vertices[x].im_coor_y + self.r + self.overhead),
+                                                                   self.r)
             self.column_circumference_mat = mat_op.gen_de_framed_mat(self.column_circumference_mat, self.r +
                                                                      self.overhead)
 
@@ -1357,9 +1354,9 @@ class SuchSoftware:
 
         self.column_centre_mat = np.zeros((self.im_height, self.im_width, 2), dtype=type(self.im_mat))
         if self.num_columns > 0:
-            for x in range(0, self.num_columns):
-                self.column_centre_mat[self.graph.vertices[x].im_coor_y, self.graph.vertices[x].im_coor_x, 0] = 1
-                self.column_centre_mat[self.graph.vertices[x].im_coor_y, self.graph.vertices[x].im_coor_x, 1] = x
+            for vertex in self.graph.vertices:
+                self.column_centre_mat[int(vertex.im_coor_y), int(vertex.im_coor_x), 0] = 1
+                self.column_centre_mat[int(vertex.im_coor_y), int(vertex.im_coor_x), 1] = vertex.i
 
     def reset_graph(self):
         """Reset the graph.
