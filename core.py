@@ -263,28 +263,29 @@ class SuchSoftware:
         """
 
         string = 'Project summary:\n'
-        for line in self.graph.report():
+        for line in self.graph.report().splitlines(keepends=True):
             string += '    ' + line
         string += '    General:\n'
         string += '        Number of columns: {}\n'.format(self.num_columns)
         string += '        Number of particle columns: {}\n'.format(self.num_precipitate_columns)
-        string += '    Intensities:\n'
-        string += '        Average peak intensity: {}\n'.format(self.avg_peak_gamma)
-        string += '        Average average intensity: {}\n'.format(self.avg_avg_gamma)
-        string += '        Average Si peak intensity: {}\n'.format(self.avg_si_peak_gamma)
-        string += '        Average Cu peak intensity: {}\n'.format(self.avg_cu_peak_gamma)
-        string += '        Average Zn peak intensity: {}\n'.format(self.avg_zn_peak_gamma)
-        string += '        Average Al peak intensity: {}\n'.format(self.avg_al_peak_gamma)
-        string += '        Average Ag peak intensity: {}\n'.format(self.avg_ag_peak_gamma)
-        string += '        Average Mg peak intensity: {}\n'.format(self.avg_mg_peak_gamma)
-        string += '        Average Un peak intensity: {}\n\n'.format(self.avg_un_peak_gamma)
-        string += '        Average Si average intensity: {}\n'.format(self.avg_si_avg_gamma)
-        string += '        Average Cu average intensity: {}\n'.format(self.avg_cu_avg_gamma)
-        string += '        Average Zn average intensity: {}\n'.format(self.avg_zn_avg_gamma)
-        string += '        Average Al average intensity: {}\n'.format(self.avg_al_avg_gamma)
-        string += '        Average Ag average intensity: {}\n'.format(self.avg_ag_avg_gamma)
-        string += '        Average Mg average intensity: {}\n'.format(self.avg_mg_avg_gamma)
-        string += '        Average Un average intensity: {}\n'.format(self.avg_un_avg_gamma)
+        string += '    Average peak intensities:\n'
+        string += '        Average peak intensity: {:.2f}\n'.format(self.avg_peak_gamma)
+        string += '        Average Si peak intensity: {:.2f}\n'.format(self.avg_si_peak_gamma)
+        string += '        Average Cu peak intensity: {:.2f}\n'.format(self.avg_cu_peak_gamma)
+        string += '        Average Zn peak intensity: {:.2f}\n'.format(self.avg_zn_peak_gamma)
+        string += '        Average Al peak intensity: {:.2f}\n'.format(self.avg_al_peak_gamma)
+        string += '        Average Ag peak intensity: {:.2f}\n'.format(self.avg_ag_peak_gamma)
+        string += '        Average Mg peak intensity: {:.2f}\n'.format(self.avg_mg_peak_gamma)
+        string += '        Average Un peak intensity: {:.2f}\n'.format(self.avg_un_peak_gamma)
+        string += '    Average average intensities:\n'
+        string += '        Average average intensity: {:.2f}\n'.format(self.avg_avg_gamma)
+        string += '        Average Si average intensity: {:.2f}\n'.format(self.avg_si_avg_gamma)
+        string += '        Average Cu average intensity: {:.2f}\n'.format(self.avg_cu_avg_gamma)
+        string += '        Average Zn average intensity: {:.2f}\n'.format(self.avg_zn_avg_gamma)
+        string += '        Average Al average intensity: {:.2f}\n'.format(self.avg_al_avg_gamma)
+        string += '        Average Ag average intensity: {:.2f}\n'.format(self.avg_ag_avg_gamma)
+        string += '        Average Mg average intensity: {:.2f}\n'.format(self.avg_mg_avg_gamma)
+        string += '        Average Un average intensity: {:.2f}\n'.format(self.avg_un_avg_gamma)
         string += '    Image composition:\n'
         string += '        Number of Si-columns: {}\n'.format(self.num_si)
         string += '        Number of Cu-columns: {}\n'.format(self.num_cu)
@@ -293,14 +294,14 @@ class SuchSoftware:
         # string += '        Number of Ag-columns: {}\n'.format(self.num_ag)
         string += '        Number of Mg-columns: {}\n'.format(self.num_mg)
         string += '        Number of Un-columns: {}\n'.format(self.num_un)
-        string += '        Number percentage of Si: {}\n'.format(self.number_percentage_si)
-        string += '        Number percentage of Cu: {}\n'.format(self.number_percentage_cu)
-        # string += '        Number percentage of Zn: {}\n'.format(self.number_percentage_zn)
-        string += '        Number percentage of Al: {}\n'.format(self.number_percentage_al)
-        # string += '        Number percentage of Ag: {}\n'.format(self.number_percentage_ag)
-        string += '        Number percentage of Mg: {}\n'.format(self.number_percentage_mg)
-        string += '        Number percentage of Un: {}\n'.format(self.number_percentage_un)
-        string += '    Paticle composition:\n'
+        string += '        Number percentage of Si: {:.4f}\n'.format(self.number_percentage_si)
+        string += '        Number percentage of Cu: {:.4f}\n'.format(self.number_percentage_cu)
+        # string += '        Number percentage of Zn: {:.4f}\n'.format(self.number_percentage_zn)
+        string += '        Number percentage of Al: {:.4f}\n'.format(self.number_percentage_al)
+        # string += '        Number percentage of Ag: {:.4f}\n'.format(self.number_percentage_ag)
+        string += '        Number percentage of Mg: {:.4f}\n'.format(self.number_percentage_mg)
+        string += '        Number percentage of Un: {:.4f}\n'.format(self.number_percentage_un)
+        string += '    Particle composition:\n'
         string += '        Number of precipitate Si-columns: {}\n'.format(self.num_precipitate_si)
         string += '        Number of precipitate Cu-columns: {}\n'.format(self.num_precipitate_cu)
         # string += '        Number of precipitate Zn-columns: {}\n'.format(self.num_precipitate_zn)
@@ -308,13 +309,13 @@ class SuchSoftware:
         # string += '        Number of precipitate Ag-columns: {}\n'.format(self.num_precipitate_ag)
         string += '        Number of precipitate Mg-columns: {}\n'.format(self.num_precipitate_mg)
         string += '        Number of precipitate Un-columns: {}\n'.format(self.num_precipitate_un)
-        string += '        Number percentage of precipitate Si: {}\n'.format(self.precipitate_number_percentage_si)
-        string += '        Number percentage of precipitate Cu: {}\n'.format(self.precipitate_number_percentage_cu)
-        # string += '        Number percentage of precipitate Zn: {}\n'.format(self.precipitate_number_percentage_zn)
-        string += '        Number percentage of precipitate Al: {}\n'.format(self.precipitate_number_percentage_al)
-        # string += '        Number percentage of precipitate Ag: {}\n'.format(self.precipitate_number_percentage_ag)
-        string += '        Number percentage of precipitate Mg: {}\n'.format(self.precipitate_number_percentage_mg)
-        string += '        Number percentage of precipitate Un: {}\n'.format(self.precipitate_number_percentage_un)
+        string += '        Number percentage of precipitate Si: {:.4f}\n'.format(self.precipitate_number_percentage_si)
+        string += '        Number percentage of precipitate Cu: {:.4f}\n'.format(self.precipitate_number_percentage_cu)
+        # string += '        Number percentage of precipitate Zn: {:.4f}\n'.format(self.precipitate_number_percentage_zn)
+        string += '        Number percentage of precipitate Al: {:.4f}\n'.format(self.precipitate_number_percentage_al)
+        # string += '        Number percentage of precipitate Ag: {:.4f}\n'.format(self.precipitate_number_percentage_ag)
+        string += '        Number percentage of precipitate Mg: {:.4f}\n'.format(self.precipitate_number_percentage_mg)
+        string += '        Number percentage of precipitate Un: {:.4f}\n'.format(self.precipitate_number_percentage_un)
 
         if supress_log:
             return string

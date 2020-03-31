@@ -329,14 +329,14 @@ class AtomicGraph:
 
     def report(self):
         string = 'Atomic Graph summary:\n'
-        string += '    Scale: {}\n'.format(self.scale)
+        string += '    Scale: {:.6f}\n'.format(self.scale)
         string += '    Order: {}\n'.format(self.order)
         string += '    Size: {}\n'.format(self.size)
-        string += '    Chi: {}\n'.format(self.chi)
-        string += '    Average degree: {}\n'.format(self.avg_degree)
-        string += '    Matrix redshift: {}\n'.format(self.matrix_redshift)
-        string += '    Particle redshift: {}\n'.format(self.particle_redshift)
-        string += '    Total redshift: {}\n'.format(self.total_redshift)
+        string += '    Chi: {:.3f}\n'.format(self.chi)
+        string += '    Average degree: {:.3f}\n'.format(self.avg_degree)
+        string += '    Matrix redshift: {:.3f}\n'.format(self.matrix_redshift)
+        string += '    Particle redshift: {:.3f}\n'.format(self.particle_redshift)
+        string += '    Total redshift: {:.3f}\n'.format(self.total_redshift)
         return string
 
     def add_vertex(self, vertex):
@@ -582,7 +582,7 @@ class AtomicGraph:
                 i, j = j, next_index
             backup_counter += 1
             if backup_counter > 25:
-                logger.warning('Emergency stop!')
+                # logger.warning('Emergency stop!')
                 stop = True
         angles = []
         vectors = []
@@ -698,10 +698,8 @@ class AtomicGraph:
             vertex.degree = len(vertex.neighbourhood)
 
     def map_districts(self, search_extended_district=False):
-        logger.info('Mapping all districts')
         for i in self.vertex_indices:
             self.map_district(i, search_extended_district=search_extended_district)
-        logger.info('District mapping complete!')
 
     def calc_vertex_parameters(self, i):
         vertex = self.vertices[i]
@@ -763,7 +761,6 @@ class AtomicGraph:
         for vertex in self.vertices:
             if not vertex.void:
                 self.calc_vertex_parameters(vertex.i)
-                print(vertex.i)
         self.calc_normalized_gamma()
         self.calc_redshifts()
 
@@ -774,7 +771,6 @@ class AtomicGraph:
         self.summarize_stats()
 
     def map_arcs(self):
-        logger.info('Mapping arcs')
         self.arcs = []
         self.size = 0
         for vertex in self.vertices:
@@ -784,7 +780,6 @@ class AtomicGraph:
                         arc = Arc(len(self.arcs), vertex, out_neighbour)
                         self.arcs.append(arc)
                         self.size += 1
-        logger.info('Arcs mapped')
 
     def map_meshes(self, i):
         """Automatically generate a connected relational map of all meshes in graph.
@@ -797,7 +792,6 @@ class AtomicGraph:
         :type i: int
 
         """
-        logger.info('Mapping meshes..')
         self.meshes = []
         self.mesh_indices = []
         self.map_districts()
@@ -819,7 +813,6 @@ class AtomicGraph:
             mesh.mesh_index = self.mesh_indices.index(mesh.mesh_index)
 
         self.mesh_indices = new_indices
-        logger.info('Meshes mapped!')
 
     def walk_mesh_edges(self, mesh):
         for k, corner in enumerate(vertex.i for vertex in mesh.vertices):
@@ -843,8 +836,6 @@ class AtomicGraph:
         return utils.make_int_from_list(utils.cyclic_sort(mesh.vertex_indices))
 
     def summarize_stats(self):
-        logger.info('Summarizing stats')
-
         # Calc order
         self.num_void_vertices = 0
         for vertex in self.vertices:
@@ -874,8 +865,6 @@ class AtomicGraph:
                 degrees += vertex.degree
                 counted_columns += 1
         self.avg_degree = degrees / counted_columns
-
-        logger.info('Stat summary complete!')
 
 
 class Mesh:
@@ -1151,7 +1140,6 @@ class AntiGraph:
         self.graph.summarize_stats()
 
     def map_arcs(self):
-        logger.info('Mapping arcs')
         self.arcs = []
         self.size = 0
         for vertex in self.vertices:
@@ -1161,6 +1149,5 @@ class AntiGraph:
                         arc = Arc(len(self.arcs), vertex, out_neighbour)
                         self.arcs.append(arc)
                         self.size += 1
-        logger.info('Arcs mapped')
 
 
