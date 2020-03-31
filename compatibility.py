@@ -93,9 +93,7 @@ def convert(obj, old_version, version):
             new_vertex.probability_vector = vertex.prob_vector.tolist()
 
             new_graph.add_vertex(new_vertex)
-        new_graph.map_districts()
-        new_graph.calc_all_parameters()
-        new_graph.summarize_stats()
+        new_graph.refresh_graph()
         obj.graph = new_graph
         fresh_obj = obj
 
@@ -158,9 +156,7 @@ def convert(obj, old_version, version):
             new_vertex.probability_vector = vertex.prob_vector.tolist()
 
             new_graph.add_vertex(new_vertex)
-        new_graph.map_districts()
-        new_graph.calc_all_parameters()
-        new_graph.summarize_stats()
+        new_graph.refresh_graph()
         obj.graph = new_graph
         fresh_obj = obj
 
@@ -213,9 +209,7 @@ def convert(obj, old_version, version):
             new_vertex.probability_vector = vertex.prob_vector.tolist()
 
             new_graph.add_vertex(new_vertex)
-        new_graph.map_districts()
-        new_graph.calc_all_parameters()
-        new_graph.summarize_stats()
+        new_graph.refresh_graph()
         obj.graph = new_graph
         fresh_obj = obj
 
@@ -262,9 +256,7 @@ def convert(obj, old_version, version):
             new_vertex.probability_vector = vertex.prob_vector.tolist()
 
             new_graph.add_vertex(new_vertex)
-        new_graph.map_districts()
-        new_graph.calc_all_parameters()
-        new_graph.summarize_stats()
+        new_graph.refresh_graph()
         obj.graph = new_graph
         fresh_obj = obj
 
@@ -309,9 +301,7 @@ def convert(obj, old_version, version):
             new_vertex.probability_vector = vertex.prob_vector.tolist()
 
             new_graph.add_vertex(new_vertex)
-        new_graph.map_districts()
-        new_graph.calc_all_parameters()
-        new_graph.summarize_stats()
+        new_graph.refresh_graph()
         obj.graph = new_graph
         fresh_obj = obj
 
@@ -354,9 +344,7 @@ def convert(obj, old_version, version):
             new_vertex.probability_vector = vertex.prob_vector.tolist()
 
             new_graph.add_vertex(new_vertex)
-        new_graph.map_districts()
-        new_graph.calc_all_parameters()
-        new_graph.summarize_stats()
+        new_graph.refresh_graph()
         obj.graph = new_graph
         fresh_obj = obj
 
@@ -397,9 +385,7 @@ def convert(obj, old_version, version):
             new_vertex.probability_vector = vertex.prob_vector.tolist()
 
             new_graph.add_vertex(new_vertex)
-        new_graph.map_districts()
-        new_graph.calc_all_parameters()
-        new_graph.summarize_stats()
+        new_graph.refresh_graph()
         obj.graph = new_graph
         fresh_obj = obj
 
@@ -438,9 +424,7 @@ def convert(obj, old_version, version):
             new_vertex.probability_vector = vertex.prob_vector.tolist()
 
             new_graph.add_vertex(new_vertex)
-        new_graph.map_districts()
-        new_graph.calc_all_parameters()
-        new_graph.summarize_stats()
+        new_graph.refresh_graph()
         obj.graph = new_graph
         fresh_obj = obj
 
@@ -478,9 +462,7 @@ def convert(obj, old_version, version):
             new_vertex.probability_vector = vertex.prob_vector.tolist()
 
             new_graph.add_vertex(new_vertex)
-        new_graph.map_districts()
-        new_graph.calc_all_parameters()
-        new_graph.summarize_stats()
+        new_graph.refresh_graph()
         obj.graph = new_graph
         fresh_obj = obj
 
@@ -510,8 +492,7 @@ def convert(obj, old_version, version):
             new_vertex.probability_vector = vertex.prob_vector.tolist()
 
             new_graph.add_vertex(new_vertex)
-        new_graph.map_districts()
-        new_graph.summarize_stats()
+        new_graph.refresh_graph()
         obj.graph = new_graph
         fresh_obj = obj
 
@@ -540,9 +521,7 @@ def convert(obj, old_version, version):
             new_vertex.probability_vector = vertex.prob_vector.tolist()
 
             new_graph.add_vertex(new_vertex)
-        new_graph.map_districts()
-        new_graph.calc_all_parameters()
-        new_graph.summarize_stats()
+        new_graph.refresh_graph()
         obj.graph = new_graph
         fresh_obj = obj
 

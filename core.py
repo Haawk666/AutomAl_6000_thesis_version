@@ -1126,8 +1126,8 @@ class SuchSoftware:
         if self.num_columns > 0:
             temp_mat = mat_op.gen_framed_mat(self.im_mat, self.r)
             for vertex in self.graph.vertices:
-                vertex.avg_gamma, vertex.peak_gamma = mat_op.average(temp_mat, vertex.im_coor_x + self.r,
-                                                                     vertex.im_coor_y + self.r, self.r)
+                vertex.avg_gamma, vertex.peak_gamma = mat_op.average(temp_mat, int(vertex.im_coor_x + self.r),
+                                                                     int(vertex.im_coor_y + self.r), self.r)
 
     def summarize_stats(self):
         """Summarize current stats about the project file.

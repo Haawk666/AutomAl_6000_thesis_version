@@ -398,6 +398,8 @@ class AtomicGraph:
     def get_alpha_angles(self, i, prioritize_friendly=False):
         pivot = (self.vertices[i].im_coor_x, self.vertices[i].im_coor_y)
         district = self.vertices[i].district
+        if len(district) == 0:
+            return []
         in_neighbourhood = self.vertices[i].in_neighbourhood
         out_neighbourhood = self.vertices[i].out_neighbourhood
 
@@ -707,14 +709,14 @@ class AtomicGraph:
         vertex.out_degree = len(vertex.out_neighbourhood)
         vertex.degree = vertex.in_degree + vertex.out_degree
         vertex.alpha_angles = self.get_alpha_angles(i)
-        if vertex.alpha_angles is not None:
+        if vertex.alpha_angles is not None and not len(vertex.alpha_angles) == 0:
             vertex.alpha_max = max(vertex.alpha_angles)
             vertex.alpha_min = min(vertex.alpha_angles)
         else:
             vertex.alpha_max = 0
             vertex.alpha_min = 0
         vertex.theta_angles = self.get_theta_angles(i)
-        if vertex.theta_angles is not None:
+        if vertex.theta_angles is not None and not len(vertex.theta_angles) == 0:
             vertex.theta_max = max(vertex.theta_angles)
             vertex.theta_min = min(vertex.theta_angles)
             vertex.theta_angle_variance = utils.variance(vertex.theta_angles)
@@ -768,6 +770,7 @@ class AtomicGraph:
         self.map_districts()
         self.calc_all_parameters()
         self.map_meshes(0)
+        self.map_arcs()
         self.summarize_stats()
 
     def map_arcs(self):
@@ -792,27 +795,30 @@ class AtomicGraph:
         :type i: int
 
         """
-        self.meshes = []
-        self.mesh_indices = []
-        self.map_districts()
-        sub_graph_0 = self.get_column_centered_subgraph(i)
-        mesh_0 = sub_graph_0.meshes[0]
-        mesh_0.mesh_index = self.determine_temp_index(mesh_0)
 
-        self.meshes.append(mesh_0)
-        self.mesh_indices.append(mesh_0.mesh_index)
+        if not len(self.vertices[i].district) == 0:
 
-        sys.setrecursionlimit(5000)
-        self.walk_mesh_edges(mesh_0)
+            self.meshes = []
+            self.mesh_indices = []
+            self.map_districts()
+            sub_graph_0 = self.get_column_centered_subgraph(i)
+            mesh_0 = sub_graph_0.meshes[0]
+            mesh_0.mesh_index = self.determine_temp_index(mesh_0)
 
-        new_indices = [i for i in range(0, len(self.mesh_indices))]
+            self.meshes.append(mesh_0)
+            self.mesh_indices.append(mesh_0.mesh_index)
 
-        for k, mesh in enumerate(self.meshes):
-            for j, neighbour in enumerate(mesh.surrounding_meshes):
-                mesh.surrounding_meshes[j] = self.mesh_indices.index(neighbour)
-            mesh.mesh_index = self.mesh_indices.index(mesh.mesh_index)
+            sys.setrecursionlimit(5000)
+            self.walk_mesh_edges(mesh_0)
 
-        self.mesh_indices = new_indices
+            new_indices = [i for i in range(0, len(self.mesh_indices))]
+
+            for k, mesh in enumerate(self.meshes):
+                for j, neighbour in enumerate(mesh.surrounding_meshes):
+                    mesh.surrounding_meshes[j] = self.mesh_indices.index(neighbour)
+                mesh.mesh_index = self.mesh_indices.index(mesh.mesh_index)
+
+            self.mesh_indices = new_indices
 
     def walk_mesh_edges(self, mesh):
         for k, corner in enumerate(vertex.i for vertex in mesh.vertices):
@@ -855,7 +861,10 @@ class AtomicGraph:
             if not vertex.is_edge_column:
                 num_weak_arcs += len(vertex.anti_neighbourhood)
         num_weak_arcs = num_weak_arcs / 2
-        self.chi = num_weak_arcs / self.size
+        if not self.size == 0:
+            self.chi = num_weak_arcs / self.size
+        else:
+            self.chi = 0
 
         # Calc average degree
         counted_columns = 0
@@ -864,7 +873,10 @@ class AtomicGraph:
             if not vertex.is_edge_column and not vertex.void:
                 degrees += vertex.degree
                 counted_columns += 1
-        self.avg_degree = degrees / counted_columns
+        if not counted_columns == 0:
+            self.avg_degree = degrees / counted_columns
+        else:
+            self.avg_degree = 0
 
 
 class Mesh:
