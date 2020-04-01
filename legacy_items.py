@@ -6,7 +6,7 @@ import sys
 
 def precipitate_controller(graph, i):
 
-    graph.particle_boarder = np.ndarray([1], dtype=int)
+    graph.particle_boarder = []
 
     graph.reset_all_flags()
 
@@ -14,20 +14,15 @@ def precipitate_controller(graph, i):
 
     counter = 0
 
-    for x in range(0, graph.num_vertices):
+    for x in range(0, graph.order):
 
-        if graph.vertices[x].flag_1 or graph.vertices[x].h_index == 6:
+        if graph.vertices[x].flag_1 or graph.vertices[x].species_index == 6:
             graph.vertices[x].is_in_precipitate = False
         else:
             graph.vertices[x].is_in_precipitate = True
 
         if graph.vertices[x].flag_2:
-
-            if counter == 0:
-                graph.particle_boarder[0] = x
-            else:
-                graph.particle_boarder = np.append(graph.particle_boarder, x)
-
+            graph.particle_boarder_indices.append(x)
             counter = counter + 1
 
     graph.reset_all_flags()
@@ -36,10 +31,10 @@ def precipitate_controller(graph, i):
 
 def sort_boarder(graph):
 
-    temp_boarder = deepcopy(graph.particle_boarder)
-    selected = np.ndarray([graph.particle_boarder.shape[0]], dtype=bool)
-    for y in range(0, graph.particle_boarder.shape[0]):
-        selected[y] = False
+    temp_boarder = deepcopy(graph.particle_boarder_indices)
+    selected = []
+    for y in range(0, len(graph.particle_boarder_indices)):
+        selected.append(False)
     next_index = 0
     index = 0
     cont_var = True
@@ -49,36 +44,36 @@ def sort_boarder(graph):
 
         distance = 1000000
 
-        for x in range(0, graph.particle_boarder.shape[0]):
+        for x in range(0, len(graph.particle_boarder_indices)):
 
-            current_distance = graph.projected_distance(graph.particle_boarder[x], temp_boarder[index])
+            current_distance = graph.get_projected_image_separation(graph.particle_boarder_indices[x], temp_boarder[index])
 
-            if current_distance < distance and not temp_boarder[index] == graph.particle_boarder[x] and not selected[x]:
+            if current_distance < distance and not temp_boarder[index] == graph.particle_boarder_indices[x] and not selected[x]:
                 distance = current_distance
                 next_index = x
 
         selected[next_index] = True
         index = index + 1
 
-        temp_boarder[index] = graph.particle_boarder[next_index]
+        temp_boarder[index] = graph.particle_boarder_indices[next_index]
 
-        if index == graph.particle_boarder.shape[0] - 1:
+        if index == len(graph.particle_boarder_indices) - 1:
             cont_var = False
 
-        graph.particle_boarder = deepcopy(temp_boarder)
+        graph.particle_boarder_indices = deepcopy(temp_boarder)
 
 
 def precipitate_finder(graph, i):
 
-    indices, distances, n = graph.find_nearest(i, graph.vertices[i].n())
+    indices, distances, n = graph.get_spatial_district(i, n=graph.vertices[i].n, return_separations=True)
 
     graph.vertices[i].flag_1 = True
 
     for x in range(0, n):
 
-        if not graph.vertices[indices[x]].h_index == 3:
+        if not graph.vertices[indices[x]].species_index == 3:
 
-            if not graph.vertices[indices[x]].h_index == 6:
+            if not graph.vertices[indices[x]].species_index == 6:
                 graph.vertices[i].flag_2 = True
 
         else:
@@ -102,7 +97,7 @@ def define_levels(graph, i, level=0):
         found = False
         counter = 0
 
-        while counter < graph.num_vertices:
+        while counter < graph.order:
 
             if graph.vertices[counter].is_in_precipitate and not graph.vertices[counter].flag_1:
 
@@ -110,10 +105,10 @@ def define_levels(graph, i, level=0):
 
                 while x <= neighbour_level:
 
-                    if graph.vertices[graph.vertices[counter].neighbour_indices[x]].is_in_precipitate and \
-                            graph.vertices[graph.vertices[counter].neighbour_indices[x]].flag_1:
+                    if graph.vertices[graph.vertices[counter].district[x]].is_in_precipitate and \
+                            graph.vertices[graph.vertices[counter].district[x]].flag_1:
 
-                        neighbour = graph.vertices[counter].neighbour_indices[x]
+                        neighbour = graph.vertices[counter].district[x]
                         if graph.vertices[neighbour].level == 0:
                             graph.vertices[counter].level = 1
                         else:
@@ -127,7 +122,7 @@ def define_levels(graph, i, level=0):
 
         complete = True
 
-        for y in range(0, graph.num_vertices):
+        for y in range(0, graph.order):
 
             if graph.vertices[y].is_in_precipitate and not graph.vertices[y].flag_1:
 
@@ -168,10 +163,10 @@ def mesh_levels(graph, i, level):
 
         set_level(graph, i, level)
 
-        indices = graph.vertices[i].neighbour_indices
+        indices = graph.vertices[i].district
 
-        for x in range(0, graph.vertices[i].n()):
-            reciprocal = graph.test_reciprocality(i, indices[x])
+        for x in range(0, graph.vertices[i].n):
+            reciprocal = graph.vertices[indices[x]].partner_query(i)
 
             if not graph.vertices[indices[x]].flag_1 and not graph.vertices[i].is_edge_column and reciprocal:
 

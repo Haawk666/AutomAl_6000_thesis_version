@@ -682,7 +682,7 @@ class SuchSoftware:
             self.column_characterization(starting_index, search_type=21)
             # Summarize:
             logger.info('Summarizing stats.')
-            self.summarize_stats()
+            self.graph.refresh_graph()
             logger.info('Basics done')
 
         elif search_type == 2:
@@ -791,7 +791,7 @@ class SuchSoftware:
                         chi_before = self.graph.chi
                         logger.info('Looking for type {}:'.format(type_num))
                         logger.info('Chi: {}'.format(chi_before))
-                        self.graph.sort_all_subsets_by_distance()
+                        self.graph.map_districts()
 
                         num_types, changes = untangling.untangle(self.graph, type_num, strong=False, ui_obj=ui_obj, aggressive=True)
 
@@ -849,7 +849,7 @@ class SuchSoftware:
                         chi_before = self.graph.chi
                         logger.info('Looking for type {}:'.format(type_num))
                         logger.info('Chi: {}'.format(chi_before))
-                        self.graph.sort_all_subsets_by_distance()
+                        self.graph.map_districts()
 
                         num_types, changes = untangling.untangle(self.graph, type_num, strong=False, ui_obj=ui_obj)
 
@@ -907,12 +907,13 @@ class SuchSoftware:
                         chi_before = self.graph.chi
                         logger.info('Looking for type {}:'.format(type_num))
                         logger.info('Chi: {}'.format(chi_before))
-                        self.graph.sort_all_subsets_by_distance()
+                        self.graph.map_districts()
 
                         num_types, changes = untangling.untangle(self.graph, type_num, strong=False, ui_obj=ui_obj)
 
                         total_changes += changes
                         self.graph.map_arcs()
+                        self.graph.summarize_stats()
                         chi_after = self.graph.chi
                         logger.info('Found {} type {}\'s, made {} changes'.format(num_types, type_num, changes))
                         logger.info('Chi: {}'.format(chi_before))
@@ -964,7 +965,7 @@ class SuchSoftware:
                         self.column_characterization(starting_index, search_type=14)
                         logger.info('Looking for type {}:'.format(type_num))
                         logger.info('Chi: {}'.format(chi_before))
-                        self.graph.sort_all_subsets_by_distance()
+                        self.graph.map_districts()
 
                         num_types, changes = untangling.untangle(self.graph, type_num, strong=True)
 
@@ -1002,9 +1003,9 @@ class SuchSoftware:
         elif search_type == 12:
             # reset probs
             logger.info('Resetting probability vectors with zero bias...')
-            for i in range(0, self.num_columns):
-                if not self.graph.vertices[i].is_set_by_user and not self.graph.vertices[i].is_edge_column:
-                    self.graph.vertices[i].reset_probability_vector()
+            for vertex in self.graph.vertices:
+                if not vertex.void and not vertex.is_set_by_user and not vertex.is_edge_column:
+                    vertex.reset_probability_vector()
             logger.info('Probability vectors reset.')
 
         elif search_type == 13:
@@ -1018,11 +1019,11 @@ class SuchSoftware:
         elif search_type == 14:
             # Locate and remove edge intersections
             logger.info('Looking for intersections')
-            intersections = self.graph.find_intersects()
+            intersections = self.graph.find_intersections()
             num_intersections = len(intersections)
             # not_removed, strong_intersections, ww, ss = graph_op.remove_intersections(self.graph)
             graph_op.experimental_remove_intersections(self.graph)
-            intersections = self.graph.find_intersects()
+            intersections = self.graph.find_intersections()
             self.graph.map_districts()
             if ui_obj is not None:
                 ui_obj.update_overlay()
@@ -1039,12 +1040,10 @@ class SuchSoftware:
         elif search_type == 16:
             # Alpha angle analysis
             logger.info('Running experimental angle analysis')
-            for i in range(0, self.num_columns):
-                if not self.graph.vertices[i].is_set_by_user and not self.graph.vertices[i].is_edge_column:
-                    self.graph.vertices[i].reset_probability_vector()
-                    self.graph.vertices[i].probability_vector =\
-                        graph_op.base_angle_score(self.graph, i)
-                    self.graph.vertices[i].determine_species_from_probability_vector()
+            for vertex in self.graph.vertices:
+                if not vertex.is_edge_column and not vertex.is_set_by_user and not vertex.void:
+                    vertex.probability_vector = graph_op.base_angle_score(self.graph, vertex.i)
+                    vertex.determine_species_from_probability_vector()
             logger.info('Angle analysis complete!')
 
         elif search_type == 17:
@@ -1056,7 +1055,7 @@ class SuchSoftware:
             self.find_edge_columns()
             for vertex in self.graph.vertices:
                 if vertex.is_edge_column and not vertex.set_by_user:
-                    vertex.reset_prob_vector(bias=3)
+                    vertex.reset_probability_vector(bias=3)
                     vertex.reset_symmetry_vector(bias=-1)
             logger.info('Found edge columns.')
 
@@ -1077,13 +1076,13 @@ class SuchSoftware:
         elif search_type == 21:
             # Sort neighbours
             logger.info('Sorting neighbours...')
-            self.graph.sort_all_subsets_by_distance()
+            self.graph.map_districts()
             logger.info('Neighbours sorted')
 
         elif search_type == 22:
             # product predictions
             logger.info('Apply product predictions')
-            self.graph.map_friends()
+            self.graph.map_districts()
             probs = []
             for i in range(0, self.num_columns):
                 if not self.graph.vertices[i].set_by_user and not self.graph.vertices[i].is_edge_column:
@@ -1092,9 +1091,9 @@ class SuchSoftware:
                     probs.append([0, 0, 0, 0, 0, 0, 0])
             for i in range(0, self.num_columns):
                 if not self.graph.vertices[i].set_by_user and not self.graph.vertices[i].is_edge_column:
-                    self.graph.vertices[i].prob_vector = probs[i]
+                    self.graph.vertices[i].probability_vector = probs[i]
                     self.graph.vertices[i].define_species()
-            self.graph.map_friends()
+            self.graph.map_districts()
             logger.info('Applied product predictions!')
 
         elif search_type == 23:

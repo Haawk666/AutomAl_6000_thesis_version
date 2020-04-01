@@ -501,7 +501,7 @@ class AtomicGraph:
                             M[y, x] = 0
         return M
 
-    def get_spatial_district(self, i, n=8, exclude=None):
+    def get_spatial_district(self, i, n=8, exclude=None, return_separations=False):
         projected_separations = []
         indices = []
         for vertex in self.vertices:
@@ -517,13 +517,18 @@ class AtomicGraph:
                     indices.append(vertex.i)
 
         district = []
+        separations = []
 
         for k in range(0, n):
             min_index = projected_separations.index(min(projected_separations))
             district.append(indices[min_index])
+            separations.append(projected_separations[min_index])
             projected_separations[min_index] = max(projected_separations) + 5
 
-        return district
+        if return_separations:
+            return district, separations, n
+        else:
+            return district
 
     def get_anti_graph(self):
         anti_graph = AntiGraph(self)
@@ -703,36 +708,98 @@ class AtomicGraph:
         for i in self.vertex_indices:
             self.map_district(i, search_extended_district=search_extended_district)
 
+    def permute_j_k(self, i, j, k):
+        if self.vertices[i].permute_j_k(j, k):
+            self.map_district(i)
+            self.map_district(j)
+            self.map_district(k)
+
+    def weak_remove_edge(self, i, j, aggressive=False):
+
+        config = self.get_column_centered_subgraph(i)
+        options = []
+
+        for mesh in config.meshes:
+            for m, corner in enumerate(mesh.vertex_indices):
+                if m not in [0, 1, len(mesh.vertex_indices) - 1]:
+                    options.append(corner)
+                if m == 1 and corner not in self.vertices[i].out_neighbourhood:
+                    options.append(corner)
+
+        for option in options:
+
+            mesh_1 = self.get_mesh(i, option)
+            mesh_2 = self.get_mesh(option, i)
+            if mesh_1.num_corners == 4 and mesh_2.num_corners == 4:
+                k = option
+                break
+
+        else:
+
+            if aggressive:
+                for option in options:
+                    mesh_1 = self.find_mesh(i, option, return_mesh=True, use_friends=True)
+                    mesh_2 = self.find_mesh(option, i, return_mesh=True, use_friends=True)
+                    if mesh_1.num_corners == 4 or mesh_2.num_corners == 4:
+                        k = option
+                        break
+
+                else:
+                    return -1
+
+            else:
+                return -1
+
+        return k
+
     def find_intersections(self):
 
         intersecting_segments = []
 
         for a in self.vertices:
+            a_coor = a.im_pos()
+            a_coor = (a_coor[0], a_coor[1])
             for b in [self.vertices[index] for index in a.out_neighbourhood]:
                 if not a.is_edge_column and not b.is_edge_column:
+                    b_coor = b.im_pos()
+                    b_coor = (b_coor[0], b_coor[1])
                     for c in [self.vertices[index] for index in a.out_neighbourhood]:
                         if not c.i == b.i:
+                            c_coor = c.im_pos()
+                            c_coor = (c_coor[0], c_coor[1])
                             for d in [self.vertices[index] for index in c.out_neighbourhood]:
-                                intersects = utils.closed_segment_intersect(a.real_coor(), b.real_coor(),
-                                                                            c.real_coor(), d.real_coor())
+                                d_coor = d.im_pos()
+                                d_coor = (d_coor[0], d_coor[1])
+                                intersects = utils.closed_segment_intersect(a_coor, b_coor, c_coor, d_coor)
                                 if intersects and (a.i, b.i, c.i, d.i) not in intersecting_segments and \
                                         (c.i, d.i, a.i, b.i) not in intersecting_segments:
                                     intersecting_segments.append((a.i, b.i, c.i, d.i))
                     for c in [self.vertices[index] for index in a.out_neighbourhood]:
+                        c_coor = c.im_pos()
+                        c_coor = (c_coor[0], c_coor[1])
                         for d in [self.vertices[index] for index in c.out_neighbourhood]:
+                            d_coor = d.im_pos()
+                            d_coor = (d_coor[0], d_coor[1])
                             for e in [self.vertices[index] for index in d.out_neighbourhood]:
-                                intersects = utils.closed_segment_intersect(a.real_coor(), b.real_coor(),
-                                                                            d.real_coor(), e.real_coor())
+                                e_coor = e.im_pos()
+                                e_coor = (e_coor[0], e_coor[1])
+                                intersects = utils.closed_segment_intersect(a_coor, b_coor, d_coor, e_coor)
                                 if intersects and (a.i, b.i, d.i, e.i) not in intersecting_segments and \
                                         (d.i, e.i, a.i, b.i) not in intersecting_segments:
                                     intersecting_segments.append((a.i, b.i, d.i, e.i))
 
         return intersecting_segments
 
-    def terminate_intersections(self):
+    def terminate_arc(self, i, j):
 
-        intersecting_segments = self.find_intersections()
-        pass
+        if self.vertices[i].permute_j_k(j, self.vertices[i].out_neighbourhood[-1]):
+            if self.vertices[i].decrement_species_index():
+                self.map_district(i)
+                return True
+            else:
+                return False
+        else:
+            return True
 
     def calc_vertex_parameters(self, i):
         vertex = self.vertices[i]
@@ -798,7 +865,7 @@ class AtomicGraph:
         self.calc_redshifts()
 
     def refresh_graph(self):
-        self.map_districts()
+        self.map_districts(search_extended_district=True)
         self.calc_all_parameters()
         self.map_meshes(0)
         self.map_arcs()
@@ -917,7 +984,7 @@ class Mesh:
         self.mesh_index = mesh_index
         self.vertices = vertices
         self.vertex_indices = []
-        self.edges = []
+        self.arcs = []
         self.angles = []
         self.angle_vectors = []
         self.surrounding_meshes = []
@@ -925,7 +992,7 @@ class Mesh:
         self.is_enclosed = True
         self.is_consistent = True
         self.num_corners = 0
-        self.num_edges = 0
+        self.num_arcs = 0
         self.cm = (0, 0)
 
         for vertex in self.vertices:
@@ -934,8 +1001,9 @@ class Mesh:
         for vertex in self.vertices:
             for out_neighbour in vertex.out_neighbourhood:
                 if out_neighbour in self.vertex_indices:
-                    self.edges.append((vertex.i, out_neighbour))
-                    self.num_edges += 1
+                    index = self.vertex_indices.index(out_neighbour)
+                    self.arcs.append(Arc(self.num_arcs, vertex, self.vertices[index]))
+                    self.num_arcs += 1
         self.calc_cm()
 
     def __str__(self):

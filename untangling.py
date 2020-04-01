@@ -1,5 +1,6 @@
 """Module containing the graph untangling algorithm by Haakon Tvedt."""
 import graph
+import graph_2
 import logging
 # Instantiate logger:
 logger = logging.getLogger(__name__)
@@ -159,7 +160,7 @@ def weak_resolve(graph_obj, configs, classes, search_type, ui_obj=None, aggressi
             if class_ == 'A_1':
                 k = graph_obj.weak_remove_edge(i, j, aggressive=aggressive)
                 if not k == -1:
-                    if graph_obj.real_projected_distance(i, k) < cut_off:
+                    if graph_obj.projected_distance(i, k) < cut_off:
                         if graph_obj.permute_j_k(i, j, k):
                             changes += 1
                             if ui_obj is not None:
@@ -593,27 +594,23 @@ def find_type(graph_obj, search_type, strong=False, ui_obj=None, aggressive=Fals
     changes = 0
 
     for vertex in graph_obj.vertices:
-        for partner in vertex.partners():
+        for out_neighbour in vertex.out_neighbourhood:
 
-            if not graph_obj.vertices[partner].partner_query(vertex.i) and \
-                    not vertex.is_edge_column and not graph_obj.vertices[partner].is_edge_column:
+            if not graph_obj.vertices[out_neighbour].partner_query(vertex.i) and \
+                    not vertex.is_edge_column and not graph_obj.vertices[out_neighbour].is_edge_column:
 
-                corners_1, angles_1, vectors_1 = graph_obj.find_mesh(vertex.i, partner, use_friends=True)
-                corners_2, angles_2, vectors_2 = graph_obj.find_mesh(partner, vertex.i, use_friends=True)
+                corners_1, angles_1, vectors_1 = graph_obj.get_mesh_numerics(vertex.i, out_neighbour)
+                corners_2, angles_2, vectors_2 = graph_obj.get_mesh_numerics(out_neighbour, vertex.i)
 
-                mesh_1 = graph.Mesh()
+                mesh_1 = graph_2.Mesh(1, graph_obj.get_vertex_objects_from_indices(corners_1))
                 for k, corner in enumerate(corners_1):
-                    mesh_1.add_vertex(graph_obj.vertices[corner])
                     mesh_1.angles.append(angles_1[k])
                     mesh_1.angle_vectors.append(vectors_1[k])
-                mesh_1.redraw_edges()
 
-                mesh_2 = graph.Mesh()
+                mesh_2 = graph_2.Mesh(2, graph_obj.get_vertex_objects_from_indices(corners_2))
                 for k, corner in enumerate(corners_2):
-                    mesh_2.add_vertex(graph_obj.vertices[corner])
                     mesh_2.angles.append(angles_2[k])
                     mesh_2.angle_vectors.append(vectors_2[k])
-                mesh_2.redraw_edges()
 
                 if search_type == 1 and mesh_1.num_corners == 3 and mesh_2.num_corners == 3:
                     config = mesh_1, mesh_2

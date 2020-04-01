@@ -351,7 +351,7 @@ def precipitate_finder(graph_obj, i):
 
 
 def experimental_remove_intersections(graph_obj):
-    intersections = graph_obj.find_intersects()
+    intersections = graph_obj.find_intersections()
 
     for intersection in intersections:
 
@@ -359,17 +359,17 @@ def experimental_remove_intersections(graph_obj):
         edge_2 = (intersection[2], intersection[3])
 
         if graph_obj.vertices[edge_1[0]].partner_query(edge_1[1]):
-            if edge_2[0] in graph_obj.vertices[edge_1[0]].anti_partners():
+            if edge_2[0] in graph_obj.vertices[edge_1[0]].anti_neighbourhood:
                 graph_obj.permute_j_k(edge_1[0], edge_1[1], edge_2[0])
             else:
-                if not graph_obj.strong_remove_edge(edge_1[0], edge_1[1]):
+                if not graph_obj.terminate_arc(edge_1[0], edge_1[1]):
                     logger.warning('Could not remove {} {}'.format(edge_1[0], edge_1[1]))
 
         if graph_obj.vertices[edge_2[0]].partner_query(edge_2[1]):
-            if edge_1[0] in graph_obj.vertices[edge_2[0]].anti_partners():
+            if edge_1[0] in graph_obj.vertices[edge_2[0]].anti_neighbourhood:
                 graph_obj.permute_j_k(edge_2[0], edge_2[1], edge_1[0])
             else:
-                if not graph_obj.strong_remove_edge(edge_2[0], edge_2[1]):
+                if not graph_obj.terminate_arc(edge_2[0], edge_2[1]):
                     logger.warning('Could not remove {} {}'.format(edge_2[0], edge_2[1]))
 
 
