@@ -670,8 +670,14 @@ class MainUI(QtWidgets.QMainWindow):
             self.control_window.select_column()
 
     def menu_ad_hoc_trigger(self):
-        if self.project_instance is not None and not self.selected_column == -1:
-            pass
+        if self.project_instance is not None:
+            counter = 0
+            for vertex in self.project_instance.graph.vertices:
+                if not vertex.void and not vertex.is_edge_column:
+                    if not vertex.n == vertex.out_degree:
+                        logger.info(str(vertex.i))
+                        counter += 1
+            logger.info('\n{}'.format(counter))
 
     def menu_toggle_tooltips_trigger(self, state):
         self.control_window.mode_tooltip(state)

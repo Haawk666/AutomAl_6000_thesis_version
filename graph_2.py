@@ -81,7 +81,7 @@ class Vertex:
         self.neighbourhood = []
         self.anti_neighbourhood = []
         self.partners = []
-        self.anti_partners = []
+        self.semi_partners = []
 
         self.determine_species_from_species_index()
 
@@ -133,7 +133,7 @@ class Vertex:
         string += '        Neighbourhood: {}\n'.format(self.neighbourhood)
         string += '        Anti-Neighbourhood: {}\n'.format(self.anti_neighbourhood)
         string += '        Partners: {}\n'.format(self.partners)
-        string += '        Anti-partners: {}\n'.format(self.anti_partners)
+        string += '        Semi-partners: {}\n'.format(self.semi_partners)
         string += '    Settings:\n'
         string += '        Is in precipitate: {}\n'.format(str(self.is_in_precipitate))
         string += '        Is edge column: {}\n'.format(str(self.is_edge_column))
@@ -337,6 +337,10 @@ class AtomicGraph:
         string += '    Matrix redshift: {:.3f}\n'.format(self.matrix_redshift)
         string += '    Particle redshift: {:.3f}\n'.format(self.particle_redshift)
         string += '    Total redshift: {:.3f}\n'.format(self.total_redshift)
+        return string
+
+    def vertex_report(self, i):
+        string = self.vertices[i].report()
         return string
 
     def add_vertex(self, vertex):
@@ -663,6 +667,7 @@ class AtomicGraph:
 
     def map_district(self, i, search_extended_district=False):
         vertex = self.vertices[i]
+        print(i)
 
         if not vertex.void:
             # Determine out-neighbourhood
@@ -693,20 +698,59 @@ class AtomicGraph:
 
             # Determine partners and anti-partners
             vertex.partners = []
-            vertex.anti_partners = []
+            vertex.semi_partners = []
             for neighbour in vertex.neighbourhood:
                 if neighbour in vertex.in_neighbourhood and neighbour in vertex.out_neighbourhood:
                     vertex.partners.append(neighbour)
                 else:
-                    vertex.anti_partners.append(neighbour)
+                    vertex.semi_partners.append(neighbour)
 
             vertex.in_degree = len(vertex.in_neighbourhood)
             vertex.out_degree = len(vertex.out_neighbourhood)
             vertex.degree = len(vertex.neighbourhood)
 
     def map_districts(self, search_extended_district=False):
-        for i in self.vertex_indices:
-            self.map_district(i, search_extended_district=search_extended_district)
+        # Determine out_neighbourhoods:
+        for vertex in self.vertices:
+            vertex.out_neighbourhood = []
+            if not vertex.void:
+                vertex.out_neighbourhood = vertex.district[:vertex.n]
+
+        # Determine in_neighbourhoods:
+        for vertex in self.vertices:
+            vertex.in_neighbourhood = []
+            if not vertex.void:
+                for candidate in self.vertices:
+                    if vertex.i in candidate.out_neighbourhood:
+                        vertex.in_neighbourhood.append(candidate.i)
+        # Determine neighbourhood:
+        for vertex in self.vertices:
+            vertex.neighbourhood = []
+            if not vertex.void:
+                vertex.neighbourhood = copy.deepcopy(vertex.out_neighbourhood)
+                for in_neighbour in vertex.in_neighbourhood:
+                    if in_neighbour not in vertex.neighbourhood:
+                        vertex.neighbourhood.append(in_neighbour)
+        # Determine anti_neighbourhood:
+        for vertex in self.vertices:
+            vertex.anti_neighbourhood = []
+            if not vertex.void:
+                for citizen in vertex.district:
+                    if citizen not in vertex.neighbourhood:
+                        vertex.anti_neighbourhood.append(citizen)
+        # Determine partners and semi-partners:
+        for vertex in self.vertices:
+            vertex.partners = []
+            vertex.semi_partners = []
+            if not vertex.void:
+                for neighbour in vertex.neighbourhood:
+                    if neighbour in vertex.in_neighbourhood and neighbour in vertex.out_neighbourhood:
+                        vertex.partners.append(neighbour)
+                    else:
+                        vertex.semi_partners.append(neighbour)
+                vertex.in_degree = len(vertex.in_neighbourhood)
+                vertex.out_degree = len(vertex.out_neighbourhood)
+                vertex.degree = len(vertex.neighbourhood)
 
     def permute_j_k(self, i, j, k):
         if self.vertices[i].permute_j_k(j, k):
@@ -805,7 +849,7 @@ class AtomicGraph:
         vertex = self.vertices[i]
         vertex.in_degree = len(vertex.in_neighbourhood)
         vertex.out_degree = len(vertex.out_neighbourhood)
-        vertex.degree = vertex.in_degree + vertex.out_degree
+        vertex.degree = len(vertex.neighbourhood)
         vertex.alpha_angles = self.get_alpha_angles(i)
         if vertex.alpha_angles is not None and not len(vertex.alpha_angles) == 0:
             vertex.alpha_max = max(vertex.alpha_angles)

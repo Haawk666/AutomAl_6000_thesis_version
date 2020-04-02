@@ -3,73 +3,95 @@ GUI: GUI version: 0.0.2
 GUI: core version: 0.0.11
 GUI: Build version: Alpha 1.0
 ------------------------
-GUI: Opening file C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/008_columns
-core: Attempted to load un-compatible save-file. Running conversion script...
-core: Conversion successful!
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/008_columns
-core: Doing the basics...
-core: Setting alloy...
-core: Alloy set.
-core: Resetting probability vectors with zero bias...
-core: Probability vectors reset.
-core: Mapping spatial locality...
-core: Spatial mapping complete.
-core: Running experimental angle analysis
-core: Angle analysis complete!
-core: Finding particle with legacy method....
-graph_2: All flags reset!
-graph_2: All flags reset!
-core: Found particle.
-core: Running legacy level definition algorithm....
-graph_2: All flags reset!
-graph_2: All flags reset!
-core: Levels set.
-core: Adding edges to graph...
-core: Edges added.
-core: Looking for intersections
-core: Found 0 intersections
-core: 0 literal intersections still remain
-core: Sorting neighbours...
-core: Neighbours sorted
-core: Summarizing stats.
-core: Basics done
-core: Vertex 2080:
+GUI: Opening file C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/008_fuckface
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/008_fuckface
+core: Vertex 1549:
     General:
-        Image position (x, y) = (457.026, 437.908)
-        Pixel position (x, y) = (457, 437)
-        Spatial relative position in pm (x, y, z) = (4301.320, 4121.388, 0.000)
-        Peak gamma = 0.3279
-        Average gamma = 0.2146
-        Atomic species: Al
-        Species index: 3
-        Symmetry: 4
+        Image position (x, y) = (689.864, 234.240)
+        Pixel position (x, y) = (689, 234)
+        Spatial relative position in pm (x, y, z) = (6492.685, 2204.560, 0.000)
+        Peak gamma = 0.3638
+        Average gamma = 0.2554
+        Atomic species: Si
+        Species index: 0
+        Symmetry: 3
     Analysis:
-        Probability vector: [ 0.141 0.141 0.141 0.155 0.141 0.141 0.141 ]
+        Probability vector: [ 0.544 0.430 0.000 0.026 0.000 0.000 0.000 ]
     Graph parameters:
-        In-degree: 6
-        Out-degree: 6
-        Degree: 6
-        Alpha angles: [ 2.404 1.163 2.717 ]
-            Max: 2.717
-            Min: 1.163
-        Theta angles: [ 1.280 0.729 0.708 1.163 1.189 1.215 ]
-            Max: 1.280
-            Min: 0.708
-            Variance: 0.066
-        Normalized peak gamma: 0.246
-        Normalized average gamma: 0.257
-        Redshift: 0.000
+        In-degree: 3
+        Out-degree: 4
+        Degree: 4
+        Alpha angles: [ 1.731 2.870 1.682 ]
+            Max: 2.870
+            Min: 1.682
+        Theta angles: [ 1.682 1.285 1.585 1.731 ]
+            Max: 1.731
+            Min: 1.285
+            Variance: 0.040
+        Normalized peak gamma: 0.282
+        Normalized average gamma: 0.298
+        Redshift: 181.386
     Local graph mapping:
-        District: [852, 1518, 325, 169, 10, 2229, 1816, 2361]
-        In-neighbourhood: [852, 1518, 325, 169, 10, 2229]
-        Out-neighbourhood: [852, 1518, 325, 169, 10, 2229]
-        Neighbourhood: [852, 1518, 325, 169, 10, 2229]
-        Anti-Neighbourhood: [1816, 2361]
-        Partners: [852, 1518, 325, 169, 10, 2229]
-        Anti-partners: []
+        District: [1904, 2058, 1426, 900, 1403, 694, 1853, 289]
+        In-neighbourhood: [900, 1426, 1904]
+        Out-neighbourhood: [1904, 2058, 1426, 900]
+        Neighbourhood: [1904, 2058, 1426, 900]
+        Anti-Neighbourhood: [1403, 694, 1853, 289]
+        Partners: [1904, 1426, 900]
+        Semi-partners: []
     Settings:
-        Is in precipitate: False
-        Is edge column: True
+        Is in precipitate: True
+        Is edge column: False
+        Is set by user: False
+        Show in overlay: True
+        Is void: False
+        Flag 1: False
+        Flag 2: False
+        Flag 3: False
+        Flag 4: False
+        Flag 5: False
+        Flag 6: False
+        Flag 7: False
+        Flag 8: False
+        Flag 9: False
+
+core: Vertex 1549:
+    General:
+        Image position (x, y) = (689.864, 234.240)
+        Pixel position (x, y) = (689, 234)
+        Spatial relative position in pm (x, y, z) = (6492.685, 2204.560, 0.000)
+        Peak gamma = 0.3638
+        Average gamma = 0.2554
+        Atomic species: Si
+        Species index: 0
+        Symmetry: 3
+    Analysis:
+        Probability vector: [ 0.544 0.430 0.000 0.026 0.000 0.000 0.000 ]
+    Graph parameters:
+        In-degree: 3
+        Out-degree: 3
+        Degree: 4
+        Alpha angles: [ 1.731 2.870 1.682 ]
+            Max: 2.870
+            Min: 1.682
+        Theta angles: [ 1.682 1.285 1.585 1.731 ]
+            Max: 1.731
+            Min: 1.285
+            Variance: 0.040
+        Normalized peak gamma: 0.282
+        Normalized average gamma: 0.298
+        Redshift: 134.753
+    Local graph mapping:
+        District: [1904, 2058, 1426, 900, 1403, 694, 1853, 289]
+        In-neighbourhood: [900, 1426, 1904]
+        Out-neighbourhood: [1904, 2058, 1426]
+        Neighbourhood: [1904, 2058, 1426, 900]
+        Anti-Neighbourhood: [1403, 694, 1853, 289]
+        Partners: [1904, 1426]
+        Semi-partners: [2058, 900]
+    Settings:
+        Is in precipitate: True
+        Is edge column: False
         Is set by user: False
         Show in overlay: True
         Is void: False

@@ -583,20 +583,16 @@ class SuchSoftware:
 
         """
 
-        for y in range(0, self.num_columns):
+        for vertex in self.graph.vertices:
 
-            x_coor = self.graph.vertices[y].spatial_coor_x
-            y_coor = self.graph.vertices[y].spatial_coor_y
+            x_coor = vertex.im_coor_x
+            y_coor = vertex.im_coor_y
             margin = 6 * self.r
 
             if x_coor < margin or x_coor > self.im_width - margin - 1 or y_coor < margin or y_coor > self.im_height - margin - 1:
-
-                self.graph.vertices[y].is_edge_column = True
-                self.graph.vertices[y].reset_probability_vector(bias=3)
-
+                self.graph.vertices[vertex.i].is_edge_column = True
             else:
-
-                self.graph.vertices[y].is_edge_column = False
+                self.graph.vertices[vertex.i].is_edge_column = False
 
     def normalize_gamma(self):
         """Find the mean of the intensity of the Al-matrix, and scale all intensities.
@@ -738,7 +734,7 @@ class SuchSoftware:
             self.redraw_circumference_mat()
             for i in range(0, self.num_columns):
                 self.graph.vertices[i].district, _ = self.find_nearest(i, self.map_size)
-            self.find_edge_columns()
+            self.column_characterization(starting_index, search_type=18)
             logger.info('Spatial mapping complete.')
 
         elif search_type == 4:
@@ -1054,9 +1050,8 @@ class SuchSoftware:
             logger.info('Finding edge columns....')
             self.find_edge_columns()
             for vertex in self.graph.vertices:
-                if vertex.is_edge_column and not vertex.set_by_user:
+                if vertex.is_edge_column and not vertex.is_set_by_user:
                     vertex.reset_probability_vector(bias=3)
-                    vertex.reset_symmetry_vector(bias=-1)
             logger.info('Found edge columns.')
 
         elif search_type == 19:
