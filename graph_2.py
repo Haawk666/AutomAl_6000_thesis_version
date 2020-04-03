@@ -53,6 +53,12 @@ class Vertex:
         self.flag_8 = False
         self.flag_9 = False
 
+        # Internal flags used by algorithmns. Should not be used as custom flagstates
+        self.internal_flag_1 = False
+        self.internal_flag_2 = False
+        self.internal_flag_3 = False
+        self.internal_flag_4 = False
+
         # Self-analysis
         self.probability_vector = [0, 0, 0, 0, 0, 0, 1]
         self.analysis_vector = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
@@ -82,6 +88,8 @@ class Vertex:
         self.anti_neighbourhood = []
         self.partners = []
         self.semi_partners = []
+        self.out_semi_partners = []
+        self.in_semi_partners = []
 
         self.determine_species_from_species_index()
 
@@ -715,7 +723,6 @@ class AtomicGraph:
             vertex.out_neighbourhood = []
             if not vertex.void:
                 vertex.out_neighbourhood = vertex.district[:vertex.n]
-
         # Determine in_neighbourhoods:
         for vertex in self.vertices:
             vertex.in_neighbourhood = []
@@ -747,6 +754,12 @@ class AtomicGraph:
                     if neighbour in vertex.in_neighbourhood and neighbour in vertex.out_neighbourhood:
                         vertex.partners.append(neighbour)
                     else:
+                        vertex.semi_partners.append(neighbour)
+                    if neighbour in vertex.in_neighbourhood:
+                        vertex.in_semi_partners.append(neighbour)
+                    else:
+                        vertex.out_semi_pratners.append(nighbour)
+
                         vertex.semi_partners.append(neighbour)
                 vertex.in_degree = len(vertex.in_neighbourhood)
                 vertex.out_degree = len(vertex.out_neighbourhood)
