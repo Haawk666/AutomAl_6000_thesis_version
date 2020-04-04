@@ -5,90 +5,46 @@ GUI: Build version: Alpha 1.0
 ------------------------
 GUI: Opening file C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/008_fuckface
 core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/008_fuckface
-core: Vertex 1549:
+core: Vertex 2235:
     General:
-        Image position (x, y) = (689.864, 234.240)
-        Pixel position (x, y) = (689, 234)
-        Spatial relative position in pm (x, y, z) = (6492.685, 2204.560, 0.000)
-        Peak gamma = 0.3638
-        Average gamma = 0.2554
-        Atomic species: Si
-        Species index: 0
-        Symmetry: 3
+        Image position (x, y) = (498.718, 344.460)
+        Pixel position (x, y) = (498, 344)
+        Spatial relative position in pm (x, y, z) = (4693.704, 3241.903, 0.000)
+        Peak gamma = 0.3015
+        Average gamma = 0.2140
+        Atomic species: Mg
+        Species index: 5
+        Symmetry: 5
     Analysis:
-        Probability vector: [ 0.544 0.430 0.000 0.026 0.000 0.000 0.000 ]
+        Probability vector: [ 0.000 0.000 0.000 0.001 0.000 0.999 0.000 ]
+        Alpha model: [ 0.000 0.000 0.000 0.000 0.000 0.000 1.000]
+        Theta model: [ 0.000 0.000 0.000 0.000 0.000 0.000 1.000]
+        Gamma model: [ 0.000 0.000 0.000 0.000 0.000 0.000 1.000]
+        Model: [ 0.000 0.000 0.000 0.000 0.000 0.000 1.000]
+        Product model: [ 0.000 0.000 0.000 0.000 0.000 0.000 1.000]
+        Weighted model: [ 0.000 0.000 0.000 0.000 0.000 0.000 1.000]
     Graph parameters:
-        In-degree: 3
-        Out-degree: 4
-        Degree: 4
-        Alpha angles: [ 1.731 2.870 1.682 ]
-            Max: 2.870
-            Min: 1.682
-        Theta angles: [ 1.682 1.285 1.585 1.731 ]
-            Max: 1.731
-            Min: 1.285
-            Variance: 0.040
-        Normalized peak gamma: 0.282
-        Normalized average gamma: 0.298
-        Redshift: 181.386
+        In-degree: 4
+        Out-degree: 5
+        Degree: 5
+        Alpha angles: [ 1.364 1.537 3.382 ]
+            Max: 3.382
+            Min: 1.364
+        Theta angles: [ 1.364 1.537 0.781 0.899 1.701 ]
+            Max: 1.701
+            Min: 0.781
+            Variance: 0.160
+        Normalized peak gamma: 0.220
+        Normalized average gamma: 0.257
+        Redshift: 586.827
     Local graph mapping:
-        District: [1904, 2058, 1426, 900, 1403, 694, 1853, 289]
-        In-neighbourhood: [900, 1426, 1904]
-        Out-neighbourhood: [1904, 2058, 1426, 900]
-        Neighbourhood: [1904, 2058, 1426, 900]
-        Anti-Neighbourhood: [1403, 694, 1853, 289]
-        Partners: [1904, 1426, 900]
+        District: [394, 1339, 726, 2331, 163, 2320, 2255, 2125]
+        In-neighbourhood: [394, 726, 1339, 2331]
+        Out-neighbourhood: [394, 1339, 726, 2331, 163]
+        Neighbourhood: [394, 1339, 726, 2331, 163]
+        Anti-Neighbourhood: [2320, 2255, 2125]
+        Partners: [394, 1339, 726, 2331]
         Semi-partners: []
-    Settings:
-        Is in precipitate: True
-        Is edge column: False
-        Is set by user: False
-        Show in overlay: True
-        Is void: False
-        Flag 1: False
-        Flag 2: False
-        Flag 3: False
-        Flag 4: False
-        Flag 5: False
-        Flag 6: False
-        Flag 7: False
-        Flag 8: False
-        Flag 9: False
-
-core: Vertex 1549:
-    General:
-        Image position (x, y) = (689.864, 234.240)
-        Pixel position (x, y) = (689, 234)
-        Spatial relative position in pm (x, y, z) = (6492.685, 2204.560, 0.000)
-        Peak gamma = 0.3638
-        Average gamma = 0.2554
-        Atomic species: Si
-        Species index: 0
-        Symmetry: 3
-    Analysis:
-        Probability vector: [ 0.544 0.430 0.000 0.026 0.000 0.000 0.000 ]
-    Graph parameters:
-        In-degree: 3
-        Out-degree: 3
-        Degree: 4
-        Alpha angles: [ 1.731 2.870 1.682 ]
-            Max: 2.870
-            Min: 1.682
-        Theta angles: [ 1.682 1.285 1.585 1.731 ]
-            Max: 1.731
-            Min: 1.285
-            Variance: 0.040
-        Normalized peak gamma: 0.282
-        Normalized average gamma: 0.298
-        Redshift: 134.753
-    Local graph mapping:
-        District: [1904, 2058, 1426, 900, 1403, 694, 1853, 289]
-        In-neighbourhood: [900, 1426, 1904]
-        Out-neighbourhood: [1904, 2058, 1426]
-        Neighbourhood: [1904, 2058, 1426, 900]
-        Anti-Neighbourhood: [1403, 694, 1853, 289]
-        Partners: [1904, 1426]
-        Semi-partners: [2058, 900]
     Settings:
         Is in precipitate: True
         Is edge column: False

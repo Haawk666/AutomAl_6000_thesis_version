@@ -61,13 +61,21 @@ class Vertex:
 
         # Self-analysis
         self.probability_vector = [0, 0, 0, 0, 0, 0, 1]
-        self.analysis_vector = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
-        self.n = 3
+        self.confidence = 0
+        self.alpha_model = [0, 0, 0, 0, 0, 0, 1]
+        self.alpha_confidence = 0
+        self.theta_model = [0, 0, 0, 0, 0, 0, 1]
+        self.theta_confidence = 0
+        self.gamma_model = [0, 0, 0, 0, 0, 0, 1]
+        self.gamma_confidence = 0
+        self.model = [0, 0, 0, 0, 0, 0, 1]
+        self.model_confidence = 0
+        self.product_model = [0, 0, 0, 0, 0, 0, 1]
+        self.product_confidence = 0
+        self.weighted_model = [0, 0, 0, 0, 0, 0, 1]
+        self.weighted_confidence = 0
 
-        # Graph parameters
-        self.in_degree = 0
-        self.out_degree = 0
-        self.degree = 0
+        # Model variables
         self.alpha_angles = []
         self.alpha_max = 0
         self.alpha_min = 0
@@ -91,6 +99,12 @@ class Vertex:
         self.out_semi_partners = []
         self.in_semi_partners = []
 
+        # Vertex parameters
+        self.n = 3
+        self.in_degree = 0
+        self.out_degree = 0
+        self.degree = 0
+
         self.determine_species_from_species_index()
 
     def __str__(self):
@@ -110,10 +124,59 @@ class Vertex:
         string += '        Species index: {}\n'.format(self.species_index)
         string += '        Symmetry: {}\n'.format(self.n)
         string += '    Analysis:\n'
+        self.alpha_model = [0, 0, 0, 0, 0, 0, 1]
+        self.theta_model = [0, 0, 0, 0, 0, 0, 1]
+        self.gamma_model = [0, 0, 0, 0, 0, 0, 1]
+        self.model = [0, 0, 0, 0, 0, 0, 1]
+        self.product_model = [0, 0, 0, 0, 0, 0, 1]
+        self.weighted_model = [0, 0, 0, 0, 0, 0, 1]
         string += '        Probability vector: ['
         for prob in self.probability_vector:
             string += ' {:.3f}'.format(prob)
         string += ' ]\n'
+        string += '            Prediction: {}'.format(self.species_strings[self.species_index])
+        string += '            Confidence: {}'.format(self.confidence)
+        string += '        Alpha model: ['
+        for a in self.alpha_model:
+            string += ' {:.3f}'.format(a)
+        string += ' ]\n'
+        string += '            Prediction: {}'.format(self.species_strings[self.alpha_model.index(max(self.alpha_model))])
+        string += '            Confidence: {}'.format(self.alpha_confidence)
+        string += '        Theta model: ['
+        for t in self.theta_model:
+            string += ' {:.3f}'.format(t)
+        string += ' ]\n'
+        string += '            Prediction: {}'.format(
+            self.species_strings[self.theta_model.index(max(self.theta_model))])
+        string += '            Confidence: {}'.format(self.theta_confidence)
+        string += '        Gamma model: ['
+        for g in self.gamma_model:
+            string += ' {:.3f}'.format(g)
+        string += ' ]\n'
+        string += '            Prediction: {}'.format(
+            self.species_strings[self.gamma_model.index(max(self.gamma_model))])
+        string += '            Confidence: {}'.format(self.gamma_confidence)
+        string += '        Model: ['
+        for m in self.model:
+            string += ' {:.3f}'.format(m)
+        string += ' ]\n'
+        string += '            Prediction: {}'.format(
+            self.species_strings[self.model.index(max(self.model))])
+        string += '            Confidence: {}'.format(self.model_confidence)
+        string += '        Product model: ['
+        for p in self.product_model:
+            string += ' {:.3f}'.format(p)
+        string += ' ]\n'
+        string += '            Prediction: {}'.format(
+            self.species_strings[self.product_model.index(max(self.product_model))])
+        string += '            Confidence: {}'.format(self.product_confidence)
+        string += '        Weighted model: ['
+        for w in self.weighted_model:
+            string += ' {:.3f}'.format(w)
+        string += ' ]\n'
+        string += '            Prediction: {}'.format(
+            self.species_strings[self.weighted_model.index(max(self.weighted_model))])
+        string += '            Confidence: {}'.format(self.weighted_confidence)
         string += '    Graph parameters:\n'
         string += '        In-degree: {}\n'.format(self.in_degree)
         string += '        Out-degree: {}\n'.format(self.out_degree)
@@ -758,7 +821,7 @@ class AtomicGraph:
                     if neighbour in vertex.in_neighbourhood:
                         vertex.in_semi_partners.append(neighbour)
                     else:
-                        vertex.out_semi_pratners.append(nighbour)
+                        vertex.out_semi_pratners.append(neighbour)
 
                         vertex.semi_partners.append(neighbour)
                 vertex.in_degree = len(vertex.in_neighbourhood)
