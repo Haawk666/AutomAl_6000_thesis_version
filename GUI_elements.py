@@ -254,7 +254,7 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
             self.removeItem(edge_item)
         self.edges[i] = []
         vertex_a = self.ui_obj.project_instance.graph.vertices[i]
-        for n, vertex_b in enumerate(self.ui_obj.project_instance.graph.get_neighbours(vertex_a.i)):
+        for n, vertex_b in enumerate(self.ui_obj.project_instance.graph.vertices(vertex_a.i).district):
             p1 = vertex_a.real_coor()
             p2 = vertex_b.real_coor()
             consistent = vertex_b.partner_query(vertex_a.i)
@@ -3326,7 +3326,8 @@ class CalcModels(QtWidgets.QDialog):
         else:
             files = self.ui_obj.savefile
 
-        filename = QtWidgets.QFileDialog.getSaveFileName(self, "Select output file", '', "Comma separated file (*.csv)")
+        # filename = QtWidgets.QFileDialog.getSaveFileName(self, "Select output file", '', "Comma separated file (*.csv)")
+        filename = 'fuckface'
         if filename[0]:
             filter = [self.chb_edge_columns.isChecked(),
                       self.chb_matrix_columns.isChecked(),

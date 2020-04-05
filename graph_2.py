@@ -1021,7 +1021,7 @@ class AtomicGraph:
                         vertex.internal_flag_3 = False
                         vertex.internal_flag_4 = False
                 elif vertex.species_index == 5:
-                    if vertex.alpha_max < 4.5:
+                    if vertex.alpha_max < 3.175:
                         vertex.internal_flag_1 = True
                         vertex.internal_flag_2 = False
                         vertex.internal_flag_3 = False
@@ -1058,7 +1058,16 @@ class AtomicGraph:
             self.refresh_graph()
         if evaluate_category:
             self.evaluate_sub_category()
-        data = [[[]], [[]], [[]], [[]], [[]], [[]], [[]], [[]]]
+        data = [
+            [[], [], [], [], [], [], []],
+            [[], [], [], [], [], [], []],
+            [[], [], [], [], [], [], []],
+            [[], [], [], [], [], [], []],
+            [[], [], [], [], [], [], []],
+            [[], [], [], [], [], [], []],
+            [[], [], [], [], [], [], []],
+            [[], [], [], [], [], [], []],
+        ]
         for vertex in self.vertices:
             if not vertex.void:
                 vertex_filter = [vertex.is_edge_column, vertex.is_in_precipitate, vertex.show_in_overlay,

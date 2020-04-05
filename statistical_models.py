@@ -8,6 +8,10 @@ import utils
 import default_models
 
 import numpy as np
+import logging
+# Instantiate logger:
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 def alpha_model(alpha_angles, return_advanced_model=False):
@@ -124,8 +128,18 @@ def calculate_parameters_from_files(files, model, filter=None, recalc_properties
     """
     if filter is None:
         filter = [False, True, True, True, True, True, True]
-    data = [[[]], [[]], [[]], [[]], [[]], [[]], [[]], [[]]]
-    for i, file in enumerate(files):
+    data = [
+        [[], [], [], [], [], [], []],
+        [[], [], [], [], [], [], []],
+        [[], [], [], [], [], [], []],
+        [[], [], [], [], [], [], []],
+        [[], [], [], [], [], [], []],
+        [[], [], [], [], [], [], []],
+        [[], [], [], [], [], [], []],
+        [[], [], [], [], [], [], []],
+    ]
+    for file in files.splitlines(keepends=False):
+        print(file)
         instance = core.SuchSoftware.load(file)
         image_data = instance.graph.calc_condensed_property_data(filter, recalc_properties, evaluate_category=True)
         for advanced_species in range(0, 8):
@@ -148,7 +162,11 @@ def calculate_parameters_from_files(files, model, filter=None, recalc_properties
             params[advanced_species_index].append(mean_vector)
             params[advanced_species_index].append(covar_matrix)
             params[advanced_species_index].append(np.linalg.det(np.array(covar_matrix)))
-            params[advanced_species_index].append(np.linalg.inv(np.array(covar_matrix)).tolist())
+            if not params[advanced_species_index][2] == 0:
+                params[advanced_species_index].append(np.linalg.inv(np.array(covar_matrix)).tolist())
+            else:
+                params[advanced_species_index].append(covar_matrix)
+                logger.error('Singular covariance matrix!')
         if savefile is None:
             default_models.alpha_model = params
         else:
@@ -170,7 +188,11 @@ def calculate_parameters_from_files(files, model, filter=None, recalc_properties
             params[advanced_species_index].append(mean_vector)
             params[advanced_species_index].append(covar_matrix)
             params[advanced_species_index].append(np.linalg.det(np.array(covar_matrix)))
-            params[advanced_species_index].append(np.linalg.inv(np.array(covar_matrix)).tolist())
+            if not params[advanced_species_index][2] == 0:
+                params[advanced_species_index].append(np.linalg.inv(np.array(covar_matrix)).tolist())
+            else:
+                params[advanced_species_index].append(covar_matrix)
+                logger.error('Singular covariance matrix!')
         if savefile is None:
             default_models.theta_model = params
         else:
@@ -192,7 +214,11 @@ def calculate_parameters_from_files(files, model, filter=None, recalc_properties
             params[advanced_species_index].append(mean_vector)
             params[advanced_species_index].append(covar_matrix)
             params[advanced_species_index].append(np.linalg.det(np.array(covar_matrix)))
-            params[advanced_species_index].append(np.linalg.inv(np.array(covar_matrix)).tolist())
+            if not params[advanced_species_index][2] == 0:
+                params[advanced_species_index].append(np.linalg.inv(np.array(covar_matrix)).tolist())
+            else:
+                params[advanced_species_index].append(covar_matrix)
+                logger.error('Singular covariance matrix!')
         if savefile is None:
             default_models.gamma = params
         else:
@@ -220,7 +246,11 @@ def calculate_parameters_from_files(files, model, filter=None, recalc_properties
             params[advanced_species_index].append(mean_vector)
             params[advanced_species_index].append(covar_matrix)
             params[advanced_species_index].append(np.linalg.det(np.array(covar_matrix)))
-            params[advanced_species_index].append(np.linalg.inv(np.array(covar_matrix)).tolist())
+            if not params[advanced_species_index][2] == 0:
+                params[advanced_species_index].append(np.linalg.inv(np.array(covar_matrix)).tolist())
+            else:
+                params[advanced_species_index].append(covar_matrix)
+                logger.error('Singular covariance matrix!')
         if savefile is None:
             default_models.composite_model = params
         else:
