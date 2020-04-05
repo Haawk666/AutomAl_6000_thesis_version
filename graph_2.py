@@ -1,4 +1,5 @@
 import utils
+import statistical_models
 import numpy as np
 import copy
 import sys
@@ -826,7 +827,7 @@ class AtomicGraph:
                     if neighbour in vertex.in_neighbourhood:
                         vertex.in_semi_partners.append(neighbour)
                     else:
-                        vertex.out_semi_pratners.append(neighbour)
+                        vertex.out_semi_partners.append(neighbour)
 
                         vertex.semi_partners.append(neighbour)
                 vertex.in_degree = len(vertex.in_neighbourhood)
@@ -991,14 +992,47 @@ class AtomicGraph:
         self.calc_normalized_gamma()
         self.calc_redshifts()
 
+    def calc_model_predictions(self):
+        for vertex in self.vertices:
+            if not vertex.void:
+                vertex.alpha_model = statistical_models.alpha_model(vertex.alpha_angles)
+
     def refresh_graph(self):
         self.map_districts(search_extended_district=True)
         self.calc_all_parameters()
+        self.evaluate_sub_category()
+        self.calc_model_predictions()
         self.map_meshes(0)
         self.map_arcs()
         self.summarize_stats()
 
-    def calc_condensed_property_data(self):
+    def evaluate_sub_category(self):
+        for vertex in self.vertices:
+            if not vertex.void and not vertex.internal_flag_4:
+                if vertex.species_index == 3:
+                    if vertex.is_in_precipitate:
+                        vertex.internal_flag_1 = False
+                        vertex.internal_flag_2 = True
+                        vertex.internal_flag_3 = False
+                        vertex.internal_flag_4 = False
+                    else:
+                        vertex.internal_flag_1 = True
+                        vertex.internal_flag_2 = False
+                        vertex.internal_flag_3 = False
+                        vertex.internal_flag_4 = False
+                elif vertex.species_index == 5:
+                    if vertex.alpha_max < 4.5:
+                        vertex.internal_flag_1 = True
+                        vertex.internal_flag_2 = False
+                        vertex.internal_flag_3 = False
+                        vertex.internal_flag_4 = False
+                    else:
+                        vertex.internal_flag_1 = False
+                        vertex.internal_flag_2 = True
+                        vertex.internal_flag_3 = False
+                        vertex.internal_flag_4 = False
+
+    def calc_condensed_property_data(self, filter=None, recalc=True, evaluate_category=False):
         """Get all vertex parameters in a condensed list-matrix following this logic:
 
         ======= =========== =========== =========== =========== =========== ======================= ================
@@ -1018,42 +1052,57 @@ class AtomicGraph:
 
 
         """
-        self.refresh_graph()
+        if filter is None:
+            filter = [False, True, True, True, True, True, True]
+        if recalc:
+            self.refresh_graph()
+        if evaluate_category:
+            self.evaluate_sub_category()
         data = [[[]], [[]], [[]], [[]], [[]], [[]], [[]], [[]]]
         for vertex in self.vertices:
-            if not vertex.is_edge_column and not vertex.void:
+            if not vertex.void:
+                vertex_filter = [vertex.is_edge_column, vertex.is_in_precipitate, vertex.show_in_overlay,
+                                 vertex.flag_1, vertex.flag_2, vertex.flag_3, vertex.flag_4]
                 advanced_species_index = 0
-                if vertex.species_index == 0:
-                    if vertex.internal_flag_1:
-                        advanced_species_index = 0
-                    elif vertex.internal_flag_2:
-                        advanced_species_index = 1
-                    else:
-                        advanced_species_index = None
-                elif vertex.species_index == 1:
-                    advanced_species_index = 2
-                elif vertex.species_index == 2:
-                    advanced_species_index = None
-                elif vertex.species_index == 3:
-                    if vertex.internal_flag_1:
-                        advanced_species_index = 3
-                    elif vertex.internal_flag_2:
-                        advanced_species_index = 4
-                    else:
-                        advanced_species_index = None
-                elif vertex.species_index == 4:
-                    advanced_species_index = None
-                elif vertex.species_index == 5:
-                    if vertex.internal_flag_1:
-                        advanced_species_index = 5
-                    elif vertex.internal_flag_2:
-                        advanced_species_index = 6
-                    elif vertex.internal_flag_3:
-                        advanced_species_index = 7
-                    else:
-                        advanced_species_index = None
-                else:
-                    advanced_species_index = None
+                if not (not filter[0] and vertex_filter[0]):
+                    if not (not filter[1] and vertex_filter[1]):
+                        if not (not filter[2] and vertex_filter[2]):
+                            if not (not filter[3] and vertex_filter[3]):
+                                if not (not filter[4] and vertex_filter[4]):
+                                    if not (not filter[5] and vertex_filter[5]):
+                                        if not (not filter[6] and vertex_filter[6]):
+
+                                            if vertex.species_index == 0:
+                                                if vertex.internal_flag_1:
+                                                    advanced_species_index = 0
+                                                elif vertex.internal_flag_2:
+                                                    advanced_species_index = 1
+                                                else:
+                                                    advanced_species_index = None
+                                            elif vertex.species_index == 1:
+                                                advanced_species_index = 2
+                                            elif vertex.species_index == 2:
+                                                advanced_species_index = None
+                                            elif vertex.species_index == 3:
+                                                if vertex.internal_flag_1:
+                                                    advanced_species_index = 3
+                                                elif vertex.internal_flag_2:
+                                                    advanced_species_index = 4
+                                                else:
+                                                    advanced_species_index = None
+                                            elif vertex.species_index == 4:
+                                                advanced_species_index = None
+                                            elif vertex.species_index == 5:
+                                                if vertex.internal_flag_1:
+                                                    advanced_species_index = 5
+                                                elif vertex.internal_flag_2:
+                                                    advanced_species_index = 6
+                                                elif vertex.internal_flag_3:
+                                                    advanced_species_index = 7
+                                                else:
+                                                    advanced_species_index = None
+                                            else:
+                                                advanced_species_index = None
 
                 if advanced_species_index is not None:
                     data[advanced_species_index][0].append(vertex.alpha_max)

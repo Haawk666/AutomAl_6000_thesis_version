@@ -62,6 +62,7 @@ btn_build_info_graph = 'Build the \'info-graph\' of the graph. Here the edges ar
                        'red wherever the underlying statistical models disagree on its species, which could indicate\n' \
                        'the need for manual inspection..'
 btn_pca = 'Launch a principle component analysis (PCA) from a wizard'
+btn_calc_models = 'Calculate model parameters with the help of a wizard'
 
 chb_toggle_positions = 'Toggle the overlay of atomic positions'
 chb_show_graphic_updates = 'Determines whether the graphical representation of the data will update while the\n' \

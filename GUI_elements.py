@@ -12,6 +12,7 @@ import export_module
 import data_module
 import utils
 import params
+import statistical_models
 # External imports:
 from PyQt5 import QtWidgets, QtGui, QtCore
 import pathlib
@@ -1002,6 +1003,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_build_anti_graph = GUI_custom_components.MediumButton('Build anti-graph', self, trigger_func=self.ui_obj.btn_build_anti_graph_trigger)
         self.btn_build_info_graph = GUI_custom_components.MediumButton('Build info-graph', self, trigger_func=self.ui_obj.btn_build_info_graph_trigger)
         self.btn_pca = GUI_custom_components.MediumButton('Perform PCA', self, trigger_func=self.ui_obj.btn_pca_trigger)
+        self.btn_calc_models = GUI_custom_components.MediumButton('Calculate model', self, trigger_func=self.ui_obj.btn_calc_models_trigger)
 
         # Button layouts
         btn_move_control_layout = QtWidgets.QHBoxLayout()
@@ -1069,11 +1071,18 @@ class ControlWindow(QtWidgets.QWidget):
         btn_info_graph_layout.addWidget(self.btn_build_info_graph)
         btn_info_graph_layout.addStretch()
 
-        btn_analysis_layout = QtWidgets.QHBoxLayout()
-        btn_analysis_layout.addWidget(self.btn_plot)
-        btn_analysis_layout.addWidget(self.btn_pca)
-        btn_analysis_layout.addWidget(self.btn_export)
-        btn_analysis_layout.addStretch()
+
+        btn_analysis_layout_1 = QtWidgets.QHBoxLayout()
+        btn_analysis_layout_1.addWidget(self.btn_plot)
+        btn_analysis_layout_1.addWidget(self.btn_pca)
+        btn_analysis_layout_1.addWidget(self.btn_export)
+        btn_analysis_layout_1.addStretch()
+        btn_analysis_layout_2 = QtWidgets.QHBoxLayout()
+        btn_analysis_layout_2.addWidget(self.btn_calc_models)
+        btn_analysis_layout_2.addStretch()
+        btn_analysis_layout = QtWidgets.QVBoxLayout()
+        btn_analysis_layout.addLayout(btn_analysis_layout_1)
+        btn_analysis_layout.addLayout(btn_analysis_layout_2)
 
         # Group boxes
         self.image_box_layout = QtWidgets.QVBoxLayout()
@@ -1253,6 +1262,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_list.append(self.btn_build_anti_graph)
         self.btn_list.append(self.btn_build_info_graph)
         self.btn_list.append(self.btn_pca)
+        self.btn_list.append(self.btn_calc_models)
 
         self.chb_list.append(self.chb_toggle_positions)
         self.chb_list.append(self.chb_show_graphic_updates)
@@ -3132,4 +3142,258 @@ class PcaWizard(QtWidgets.QDialog):
 
     def btn_cancel_trigger(self):
         self.close()
+
+
+class CalcModels(QtWidgets.QDialog):
+
+    def __init__(self, *args, ui_obj=None):
+        super().__init__(*args)
+
+        self.ui_obj = ui_obj
+
+        self.setWindowTitle('Calculate model parameters wizard')
+
+        self.btn_next = QtWidgets.QPushButton('Next')
+        self.btn_next.clicked.connect(self.btn_next_trigger)
+        self.btn_back = QtWidgets.QPushButton('Back')
+        self.btn_back.clicked.connect(self.btn_back_trigger)
+        self.btn_cancel = QtWidgets.QPushButton('Cancel')
+        self.btn_cancel.clicked.connect(self.btn_cancel_trigger)
+
+        self.btn_layout = QtWidgets.QHBoxLayout()
+        self.stack_layout = QtWidgets.QStackedLayout()
+        self.top_layout = QtWidgets.QVBoxLayout()
+
+        self.widget_frame_0 = QtWidgets.QWidget()
+        self.widget_frame_1 = QtWidgets.QWidget()
+        self.widget_frame_2 = QtWidgets.QWidget()
+
+        # Frame 0
+        self.lbl_file = QtWidgets.QLabel('Calc model from current project or enter a list of projects')
+        self.rbtn_current_project = QtWidgets.QRadioButton('Current project')
+        self.rbtn_list_of_projects = QtWidgets.QRadioButton('Enter list of projects files')
+        self.lst_files = QtWidgets.QListWidget()
+        self.btn_add_files = QtWidgets.QPushButton('Add files')
+
+        # Frame 1
+        self.lbl_select_data = QtWidgets.QLabel('Select model')
+        self.combo_1 = QtWidgets.QComboBox()
+
+        # Frame 2
+        self.lbl_filter = QtWidgets.QLabel('Set inclusion filter: (Columns with unchecked properties will not be included)')
+        self.chb_edge_columns = QtWidgets.QCheckBox('Include edge columns')
+        self.chb_matrix_columns = QtWidgets.QCheckBox('Include aluminium matrix columns')
+        self.chb_hidden_columns = QtWidgets.QCheckBox('Include columns that are set to be hidden in the overlay')
+        self.chb_flag_1 = QtWidgets.QCheckBox('Include columns where flag 1 is set to True')
+        self.chb_flag_2 = QtWidgets.QCheckBox('Include columns where flag 2 is set to True')
+        self.chb_flag_3 = QtWidgets.QCheckBox('Include columns where flag 3 is set to True')
+        self.chb_flag_4 = QtWidgets.QCheckBox('Include columns where flag 4 is set to True')
+
+        self.step = 0
+        self.state_list = []
+
+        self.set_layout()
+        self.exec_()
+
+    def page_0_layout(self):
+        h_layout = QtWidgets.QHBoxLayout()
+        v_layout = QtWidgets.QVBoxLayout()
+
+        v_layout.addStretch()
+        v_layout.addWidget(self.lbl_file)
+        v_layout.addWidget(self.rbtn_current_project)
+        v_layout.addWidget(self.rbtn_list_of_projects)
+        v_layout.addWidget(self.lst_files)
+        v_layout.addWidget(self.btn_add_files)
+        v_layout.addStretch()
+
+        h_layout.addStretch()
+        h_layout.addLayout(v_layout)
+        h_layout.addStretch()
+
+        self.rbtn_current_project.setChecked(True)
+        self.rbtn_list_of_projects.setChecked(False)
+        self.lst_files.setDisabled(True)
+        self.btn_add_files.setDisabled(True)
+
+        self.lst_files.setMinimumWidth(500)
+
+        self.rbtn_current_project.toggled.connect(self.rbtn_current_project_trigger)
+        self.btn_add_files.clicked.connect(self.btn_add_files_trigger)
+
+        self.widget_frame_0.setLayout(h_layout)
+
+    def page_1_layout(self):
+        self.combo_1.addItem('alpha model')
+        self.combo_1.addItem('theta model')
+        self.combo_1.addItem('gamma model')
+        self.combo_1.addItem('composite model')
+
+        h_layout = QtWidgets.QHBoxLayout()
+        v_layout = QtWidgets.QVBoxLayout()
+
+        v_layout.addStretch()
+        v_layout.addWidget(self.lbl_select_data)
+        v_layout.addWidget(self.combo_1)
+        v_layout.addStretch()
+
+        h_layout.addStretch()
+        h_layout.addLayout(v_layout)
+        h_layout.addStretch()
+
+        self.widget_frame_1.setLayout(h_layout)
+
+    def page_2_layout(self):
+        self.chb_edge_columns.setChecked(False)
+        self.chb_matrix_columns.setChecked(True)
+        self.chb_hidden_columns.setChecked(True)
+        self.chb_flag_1.setChecked(True)
+        self.chb_flag_2.setChecked(True)
+        self.chb_flag_3.setChecked(True)
+        self.chb_flag_4.setChecked(True)
+
+        h_layout = QtWidgets.QHBoxLayout()
+        v_layout = QtWidgets.QVBoxLayout()
+
+        v_layout.addStretch()
+        v_layout.addWidget(self.lbl_filter)
+        v_layout.addWidget(self.chb_edge_columns)
+        v_layout.addWidget(self.chb_matrix_columns)
+        v_layout.addWidget(self.chb_hidden_columns)
+        v_layout.addWidget(self.chb_flag_1)
+        v_layout.addWidget(self.chb_flag_2)
+        v_layout.addWidget(self.chb_flag_3)
+        v_layout.addWidget(self.chb_flag_4)
+        v_layout.addStretch()
+
+        h_layout.addStretch()
+        h_layout.addLayout(v_layout)
+        h_layout.addStretch()
+
+        self.widget_frame_2.setLayout(h_layout)
+
+    def set_layout(self):
+        self.btn_layout.addStretch()
+        self.btn_layout.addWidget(self.btn_cancel)
+        self.btn_layout.addWidget(self.btn_back)
+        self.btn_layout.addWidget(self.btn_next)
+        self.btn_layout.addStretch()
+
+        self.page_0_layout()
+        self.stack_layout.addWidget(self.widget_frame_0)
+
+        self.page_1_layout()
+        self.stack_layout.addWidget(self.widget_frame_1)
+
+        self.page_2_layout()
+        self.stack_layout.addWidget(self.widget_frame_2)
+
+        self.top_layout.addLayout(self.stack_layout)
+        self.top_layout.addLayout(self.btn_layout)
+
+        self.setLayout(self.top_layout)
+
+    def btn_add_files_trigger(self):
+        prompt = QtWidgets.QFileDialog()
+        prompt.setFileMode(QtWidgets.QFileDialog.ExistingFiles)
+        if prompt.exec_():
+            filenames = prompt.selectedFiles()
+        else:
+            filenames = None
+        if filenames is not None:
+            for file_ in filenames:
+                exlusive = True
+                for i in range(self.lst_files.count()):
+                    if file_ == self.lst_files.item(i).text():
+                        exlusive = False
+                if exlusive:
+                    self.lst_files.addItem(file_)
+
+    def rbtn_current_project_trigger(self, state):
+        self.lst_files.setDisabled(state)
+        self.btn_add_files.setDisabled(state)
+
+    def export(self):
+        self.close()
+        self.ui_obj.sys_message('Working...')
+        if self.rbtn_list_of_projects.isChecked():
+            files = ''
+            for i in range(self.lst_files.count()):
+                if not i == self.lst_files.count() - 1:
+                    files += self.lst_files.item(i).text() + '\n'
+                else:
+                    files += self.lst_files.item(i).text()
+        else:
+            files = self.ui_obj.savefile
+
+        filename = QtWidgets.QFileDialog.getSaveFileName(self, "Select output file", '', "Comma separated file (*.csv)")
+        if filename[0]:
+            filter = [self.chb_edge_columns.isChecked(),
+                      self.chb_matrix_columns.isChecked(),
+                      self.chb_hidden_columns.isChecked(),
+                      self.chb_flag_1.isChecked(),
+                      self.chb_flag_2.isChecked(),
+                      self.chb_flag_3.isChecked(),
+                      self.chb_flag_4.isChecked()]
+            if self.combo_1.currentIndex() == 0:
+                statistical_models.calculate_parameters_from_files(files, 0, filter=filter)
+            elif self.combo_1.currentIndex() == 1:
+                statistical_models.calculate_parameters_from_files(files, 0, filter=filter)
+            elif self.combo_1.currentIndex() == 2:
+                statistical_models.calculate_parameters_from_files(files, 0, filter=filter)
+            elif self.combo_1.currentIndex() == 3:
+                statistical_models.calculate_parameters_from_files(files, 0, filter=filter)
+            else:
+                logger.error('Not implemented!')
+            GUI.logger.info('Successfully saved model parameters to {}'.format(filename[0]))
+        self.ui_obj.sys_message('Ready.')
+
+    def get_next_frame(self):
+        next_frame = 0
+        if self.stack_layout.currentIndex() == 0:
+            next_frame = 1
+        elif self.stack_layout.currentIndex() == 1:
+            next_frame = 2
+            self.btn_next.setText('Calcuate!')
+        elif self.stack_layout.currentIndex() == 2:
+            next_frame = -2
+        else:
+            logger.error('Error!')
+            self.close()
+
+        return next_frame
+
+    def get_previous_frame(self):
+        previous_frame = 0
+        if self.stack_layout.currentIndex() == 0:
+            previous_frame = -1
+        elif self.stack_layout.currentIndex() == 1:
+            previous_frame = 0
+        elif self.stack_layout.currentIndex() == 2:
+            previous_frame = 1
+        else:
+            logger.error('Error!')
+            self.close()
+
+        return previous_frame
+
+    def btn_next_trigger(self):
+        next_frame = self.get_next_frame()
+        if next_frame == -2:
+            self.export()
+        elif next_frame == -1:
+            self.close()
+        else:
+            self.stack_layout.setCurrentIndex(next_frame)
+
+    def btn_back_trigger(self):
+        previous_frame = self.get_previous_frame()
+        if previous_frame == -1:
+            self.close()
+        else:
+            self.stack_layout.setCurrentIndex(previous_frame)
+
+    def btn_cancel_trigger(self):
+        self.close()
+
 

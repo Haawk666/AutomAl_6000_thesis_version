@@ -8,6 +8,7 @@ import GUI_elements
 import GUI_settings
 import mat_op
 import params
+import default_models
 # External imports:
 from PyQt5 import QtWidgets, QtGui, QtCore
 import sys
@@ -671,13 +672,7 @@ class MainUI(QtWidgets.QMainWindow):
 
     def menu_ad_hoc_trigger(self):
         if self.project_instance is not None:
-            counter = 0
-            for vertex in self.project_instance.graph.vertices:
-                if not vertex.void and not vertex.is_edge_column:
-                    if not vertex.n == vertex.out_degree:
-                        logger.info(str(vertex.i))
-                        counter += 1
-            logger.info('\n{}'.format(counter))
+            print(default_models.alpha_model)
 
     def menu_toggle_tooltips_trigger(self, state):
         self.control_window.mode_tooltip(state)
@@ -963,17 +958,17 @@ class MainUI(QtWidgets.QMainWindow):
                     self.project_instance.graph.vertices[self.selected_column].internal_flag_1 = True
                     self.project_instance.graph.vertices[self.selected_column].internal_flag_2 = False
                     self.project_instance.graph.vertices[self.selected_column].internal_flag_3 = False
-                    self.project_instance.graph.vertices[self.selected_column].internal_flag_4 = False
+                    self.project_instance.graph.vertices[self.selected_column].internal_flag_4 = True
                 elif item == '2':
                     self.project_instance.graph.vertices[self.selected_column].internal_flag_1 = False
                     self.project_instance.graph.vertices[self.selected_column].internal_flag_2 = True
                     self.project_instance.graph.vertices[self.selected_column].internal_flag_3 = False
-                    self.project_instance.graph.vertices[self.selected_column].internal_flag_4 = False
+                    self.project_instance.graph.vertices[self.selected_column].internal_flag_4 = True
                 elif item == '3':
                     self.project_instance.graph.vertices[self.selected_column].internal_flag_1 = False
                     self.project_instance.graph.vertices[self.selected_column].internal_flag_2 = False
                     self.project_instance.graph.vertices[self.selected_column].internal_flag_3 = True
-                    self.project_instance.graph.vertices[self.selected_column].internal_flag_4 = False
+                    self.project_instance.graph.vertices[self.selected_column].internal_flag_4 = True
                 elif item == '4':
                     self.project_instance.graph.vertices[self.selected_column].internal_flag_1 = False
                     self.project_instance.graph.vertices[self.selected_column].internal_flag_2 = False
@@ -1169,6 +1164,9 @@ class MainUI(QtWidgets.QMainWindow):
         message.setText('Not available in this version..')
         message.exec_()
         # GUI_elements.PcaWizard(ui_obj=self)
+
+    def btn_calc_models_trigger(self):
+        GUI_elements.CalcModels(ui_obj=self)
 
     def btn_save_log_trigger(self):
         filename = QtWidgets.QFileDialog.getSaveFileName(self, 'Save log-file', '')
