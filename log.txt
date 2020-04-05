@@ -3,52 +3,55 @@ GUI: GUI version: 0.0.2
 GUI: core version: 0.0.11
 GUI: Build version: Alpha 1.0
 ------------------------
-GUI: Opening file C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/008_fuckface
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/008_fuckface
-core: Vertex 2235:
+GUI: Opening file C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/008_columns
+core: Attempted to load un-compatible save-file. Running conversion script...
+core: Conversion successful!
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/008_columns
+core: Vertex 319:
     General:
-        Image position (x, y) = (498.718, 344.460)
-        Pixel position (x, y) = (498, 344)
-        Spatial relative position in pm (x, y, z) = (4693.704, 3241.903, 0.000)
-        Peak gamma = 0.3015
-        Average gamma = 0.2140
-        Atomic species: Mg
-        Species index: 5
-        Symmetry: 5
+        Image position (x, y) = (257.132, 156.914)
+        Pixel position (x, y) = (257, 156)
+        Spatial relative position in pm (x, y, z) = (2420.012, 1476.801, 0.000)
+        Peak gamma = 0.4211
+        Average gamma = 0.2828
+        Atomic species: Al
+        Species index: 3
+        Symmetry: 4
     Analysis:
-        Probability vector: [ 0.000 0.000 0.000 0.001 0.000 0.999 0.000 ]
-        Alpha model: [ 0.000 0.000 0.000 0.000 0.000 0.000 1.000]
-        Theta model: [ 0.000 0.000 0.000 0.000 0.000 0.000 1.000]
-        Gamma model: [ 0.000 0.000 0.000 0.000 0.000 0.000 1.000]
-        Model: [ 0.000 0.000 0.000 0.000 0.000 0.000 1.000]
-        Product model: [ 0.000 0.000 0.000 0.000 0.000 0.000 1.000]
-        Weighted model: [ 0.000 0.000 0.000 0.000 0.000 0.000 1.000]
-    Graph parameters:
-        In-degree: 4
-        Out-degree: 5
-        Degree: 5
-        Alpha angles: [ 1.364 1.537 3.382 ]
-            Max: 3.382
-            Min: 1.364
-        Theta angles: [ 1.364 1.537 0.781 0.899 1.701 ]
-            Max: 1.701
-            Min: 0.781
-            Variance: 0.160
-        Normalized peak gamma: 0.220
-        Normalized average gamma: 0.257
-        Redshift: 586.827
+        Species variant: 1
+        Probability vector: [ 0.000 0.000 0.000 1.000 0.000 0.000 0.000 ]
+            Prediction: Al            Confidence: 0        Alpha model: [ 0.000 0.000 0.000 0.000 0.000 0.000 1.000 ]
+            Prediction: Un            Confidence: 0        Theta model: [ 0.000 0.000 0.000 0.000 0.000 0.000 1.000 ]
+            Prediction: Un            Confidence: 0        Gamma model: [ 0.000 0.000 0.000 0.000 0.000 0.000 1.000 ]
+            Prediction: Un            Confidence: 0        Model: [ 0.000 0.000 0.000 0.000 0.000 0.000 1.000 ]
+            Prediction: Un            Confidence: 0        Product model: [ 0.000 0.000 0.000 0.000 0.000 0.000 1.000 ]
+            Prediction: Un            Confidence: 0        Weighted model: [ 0.000 0.000 0.000 0.000 0.000 0.000 1.000 ]
+            Prediction: Un            Confidence: 0    Graph parameters:
+        In-degree: 0
+        Out-degree: 0
+        Degree: 0
+        Alpha angles: [ ]
+            Max: 0.000
+            Min: 0.000
+        Theta angles: [ ]
+            Max: 0.000
+            Min: 0.000
+            Variance: 0.000
+        Normalized peak gamma: 0.300
+        Normalized average gamma: 0.300
+        Redshift: 0.000
     Local graph mapping:
-        District: [394, 1339, 726, 2331, 163, 2320, 2255, 2125]
-        In-neighbourhood: [394, 726, 1339, 2331]
-        Out-neighbourhood: [394, 1339, 726, 2331, 163]
-        Neighbourhood: [394, 1339, 726, 2331, 163]
-        Anti-Neighbourhood: [2320, 2255, 2125]
-        Partners: [394, 1339, 726, 2331]
+        District: []
+        In-neighbourhood: []
+        Out-neighbourhood: []
+        Neighbourhood: []
+        Anti-Neighbourhood: []
+        Partners: []
         Semi-partners: []
     Settings:
-        Is in precipitate: True
+        Is in precipitate: False
         Is edge column: False
-        Is set by user: False
+        Is set by user: True
         Show in overlay: True
         Is void: False
         Flag 1: False

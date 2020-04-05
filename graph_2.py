@@ -54,7 +54,7 @@ class Vertex:
         self.flag_9 = False
 
         # Internal flags used by algorithmns. Should not be used as custom flagstates
-        self.internal_flag_1 = False
+        self.internal_flag_1 = True
         self.internal_flag_2 = False
         self.internal_flag_3 = False
         self.internal_flag_4 = False
@@ -83,6 +83,7 @@ class Vertex:
         self.theta_max = 0
         self.theta_min = 0
         self.theta_angle_variance = 0
+        self.theta_angle_mean = 0
         self.normalized_peak_gamma = peak_gamma
         self.normalized_avg_gamma = avg_gamma
         self.redshift = 0
@@ -124,59 +125,61 @@ class Vertex:
         string += '        Species index: {}\n'.format(self.species_index)
         string += '        Symmetry: {}\n'.format(self.n)
         string += '    Analysis:\n'
-        self.alpha_model = [0, 0, 0, 0, 0, 0, 1]
-        self.theta_model = [0, 0, 0, 0, 0, 0, 1]
-        self.gamma_model = [0, 0, 0, 0, 0, 0, 1]
-        self.model = [0, 0, 0, 0, 0, 0, 1]
-        self.product_model = [0, 0, 0, 0, 0, 0, 1]
-        self.weighted_model = [0, 0, 0, 0, 0, 0, 1]
+        if self.internal_flag_1:
+            string += '        Species variant: 1\n'
+        elif self.internal_flag_2:
+            string += '        Species variant: 2\n'
+        elif self.internal_flag_3:
+            string += '        Species variant: 3\n'
+        elif self.internal_flag_4:
+            string += '        Species variant: 4\n'
         string += '        Probability vector: ['
         for prob in self.probability_vector:
             string += ' {:.3f}'.format(prob)
         string += ' ]\n'
-        string += '            Prediction: {}'.format(self.species_strings[self.species_index])
-        string += '            Confidence: {}'.format(self.confidence)
+        string += '            Prediction: {}\n'.format(self.species_strings[self.species_index])
+        string += '            Confidence: {}\n'.format(self.confidence)
         string += '        Alpha model: ['
         for a in self.alpha_model:
             string += ' {:.3f}'.format(a)
         string += ' ]\n'
-        string += '            Prediction: {}'.format(self.species_strings[self.alpha_model.index(max(self.alpha_model))])
-        string += '            Confidence: {}'.format(self.alpha_confidence)
+        string += '            Prediction: {}\n'.format(self.species_strings[self.alpha_model.index(max(self.alpha_model))])
+        string += '            Confidence: {}\n'.format(self.alpha_confidence)
         string += '        Theta model: ['
         for t in self.theta_model:
             string += ' {:.3f}'.format(t)
         string += ' ]\n'
-        string += '            Prediction: {}'.format(
+        string += '            Prediction: {}\n'.format(
             self.species_strings[self.theta_model.index(max(self.theta_model))])
-        string += '            Confidence: {}'.format(self.theta_confidence)
+        string += '            Confidence: {}\n'.format(self.theta_confidence)
         string += '        Gamma model: ['
         for g in self.gamma_model:
             string += ' {:.3f}'.format(g)
         string += ' ]\n'
-        string += '            Prediction: {}'.format(
+        string += '            Prediction: {}\n'.format(
             self.species_strings[self.gamma_model.index(max(self.gamma_model))])
-        string += '            Confidence: {}'.format(self.gamma_confidence)
+        string += '            Confidence: {}\n'.format(self.gamma_confidence)
         string += '        Model: ['
         for m in self.model:
             string += ' {:.3f}'.format(m)
         string += ' ]\n'
-        string += '            Prediction: {}'.format(
+        string += '            Prediction: {}\n'.format(
             self.species_strings[self.model.index(max(self.model))])
-        string += '            Confidence: {}'.format(self.model_confidence)
+        string += '            Confidence: {}\n'.format(self.model_confidence)
         string += '        Product model: ['
         for p in self.product_model:
             string += ' {:.3f}'.format(p)
         string += ' ]\n'
-        string += '            Prediction: {}'.format(
+        string += '            Prediction: {}\n'.format(
             self.species_strings[self.product_model.index(max(self.product_model))])
-        string += '            Confidence: {}'.format(self.product_confidence)
+        string += '            Confidence: {}\n'.format(self.product_confidence)
         string += '        Weighted model: ['
         for w in self.weighted_model:
             string += ' {:.3f}'.format(w)
         string += ' ]\n'
-        string += '            Prediction: {}'.format(
+        string += '            Prediction: {}\n'.format(
             self.species_strings[self.weighted_model.index(max(self.weighted_model))])
-        string += '            Confidence: {}'.format(self.weighted_confidence)
+        string += '            Confidence: {}\n'.format(self.weighted_confidence)
         string += '    Graph parameters:\n'
         string += '        In-degree: {}\n'.format(self.in_degree)
         string += '        Out-degree: {}\n'.format(self.out_degree)
@@ -205,6 +208,8 @@ class Vertex:
         string += '        Anti-Neighbourhood: {}\n'.format(self.anti_neighbourhood)
         string += '        Partners: {}\n'.format(self.partners)
         string += '        Semi-partners: {}\n'.format(self.semi_partners)
+        string += '        Out-semi-partners: {}\n'.format(self.out_semi_partners)
+        string += '        In-semi-partners: {}\n'.format(self.in_semi_partners)
         string += '    Settings:\n'
         string += '        Is in precipitate: {}\n'.format(str(self.is_in_precipitate))
         string += '        Is edge column: {}\n'.format(str(self.is_edge_column))
@@ -938,10 +943,12 @@ class AtomicGraph:
             vertex.theta_max = max(vertex.theta_angles)
             vertex.theta_min = min(vertex.theta_angles)
             vertex.theta_angle_variance = utils.variance(vertex.theta_angles)
+            vertex.theta_angle_mean = utils.mean_val(vertex.theta_angles)
         else:
             vertex.theta_max = 0
             vertex.theta_min = 0
             vertex.theta_angle_variance = 0
+            vertex.theta_angle_mean = 0
 
     def calc_normalized_gamma(self):
         peak_gammas = []
@@ -990,6 +997,74 @@ class AtomicGraph:
         self.map_meshes(0)
         self.map_arcs()
         self.summarize_stats()
+
+    def calc_condensed_property_data(self):
+        """Get all vertex parameters in a condensed list-matrix following this logic:
+
+        ======= =========== =========== =========== =========== =========== ======================= ================
+        Catgory Alpha_max   Alpha_min   Theta_max   Thea_min    Theta_avg   Norm_gamma_avg          Norm_gamma_peak
+        ======= =========== =========== =========== =========== =========== ======================= ================
+        Si_1    data[0][0]  data[0][1]  data[0][2]  data[0][3]  data[0][4]  data[0][5]              data[0][6]
+        Si_2    data[1][0]  data[1][1]  data[1][2]  data[1][3]  data[1][4]  data[1][5]              data[1][6]
+        Cu      data[2][0]  data[2][1]  data[2][2]  data[2][3]  data[2][4]  data[2][5]              data[2][6]
+        Al_1    data[3][0]  data[3][1]  data[3][2]  data[3][3]  data[3][4]  data[3][5]              data[3][6]
+        Al_2    data[4][0]  data[4][1]  data[4][2]  data[4][3]  data[4][4]  data[4][5]              data[4][6]
+        Mg_1    data[5][0]  data[5][1]  data[5][2]  data[5][3]  data[5][4]  data[5][5]              data[5][6]
+        Mg_2    data[6][0]  data[6][1]  data[6][2]  data[6][3]  data[6][4]  data[6][5]              data[6][6]
+        Mg_3    data[7][0]  data[7][1]  data[7][2]  data[7][3]  data[7][4]  data[7][5]              data[7][6]
+        ======= =========== =========== =========== =========== =========== ======================= ================
+
+        One individual data value is then referenced by data[1][2][3] etc...
+
+
+        """
+        self.refresh_graph()
+        data = [[[]], [[]], [[]], [[]], [[]], [[]], [[]], [[]]]
+        for vertex in self.vertices:
+            if not vertex.is_edge_column and not vertex.void:
+                advanced_species_index = 0
+                if vertex.species_index == 0:
+                    if vertex.internal_flag_1:
+                        advanced_species_index = 0
+                    elif vertex.internal_flag_2:
+                        advanced_species_index = 1
+                    else:
+                        advanced_species_index = None
+                elif vertex.species_index == 1:
+                    advanced_species_index = 2
+                elif vertex.species_index == 2:
+                    advanced_species_index = None
+                elif vertex.species_index == 3:
+                    if vertex.internal_flag_1:
+                        advanced_species_index = 3
+                    elif vertex.internal_flag_2:
+                        advanced_species_index = 4
+                    else:
+                        advanced_species_index = None
+                elif vertex.species_index == 4:
+                    advanced_species_index = None
+                elif vertex.species_index == 5:
+                    if vertex.internal_flag_1:
+                        advanced_species_index = 5
+                    elif vertex.internal_flag_2:
+                        advanced_species_index = 6
+                    elif vertex.internal_flag_3:
+                        advanced_species_index = 7
+                    else:
+                        advanced_species_index = None
+                else:
+                    advanced_species_index = None
+
+                if advanced_species_index is not None:
+                    data[advanced_species_index][0].append(vertex.alpha_max)
+                    data[advanced_species_index][1].append(vertex.alpha_min)
+                    data[advanced_species_index][2].append(vertex.theta_max)
+                    data[advanced_species_index][3].append(vertex.theta_min)
+                    data[advanced_species_index][4].append(vertex.theta_angle_mean)
+                    data[advanced_species_index][5].append(vertex.normalized_avg_gamma)
+                    data[advanced_species_index][6].append(vertex.normalized_peak_gamma)
+
+        return data
 
     def map_arcs(self):
         self.arcs = []

@@ -38,6 +38,8 @@ btn_reset_alg_1 = 'Restart column detection'
 btn_start_alg_2 = 'Start column characterization'
 btn_reset_alg_2 = 'Restart column characterization'
 btn_invert_lvl_alg_2 = 'Invert all z-heights'
+btn_set_variant = 'Set the variant flag state. Used to separate between for instance Si_1 and Si_2 when collecting' \
+                  'statistical parameters'
 btn_delete = 'Not implemented'
 btn_print_details = 'Print a summary of vertex details to the terminal window'
 btn_snap = 'Snap the view to the selected column'
@@ -130,6 +132,7 @@ control_window_btn_list = [btn_show_stats,
                            btn_start_alg_2,
                            btn_reset_alg_2,
                            btn_invert_lvl_alg_2,
+                           btn_set_variant,
                            btn_delete,
                            btn_print_details,
                            btn_snap,

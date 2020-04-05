@@ -953,6 +953,36 @@ class MainUI(QtWidgets.QMainWindow):
     def btn_invert_levels_trigger(self):
         self.menu_invert_precipitate_columns_trigger()
 
+    def btn_set_variant_trigger(self):
+        if self.project_instance is not None and not self.selected_column == -1:
+            items = ('1', '2', '3', '4')
+            item, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set variant", "Variant: ", items, 0, False)
+            if ok_pressed and item:
+                self.sys_message('Working...')
+                if item == '1':
+                    self.project_instance.graph.vertices[self.selected_column].internal_flag_1 = True
+                    self.project_instance.graph.vertices[self.selected_column].internal_flag_2 = False
+                    self.project_instance.graph.vertices[self.selected_column].internal_flag_3 = False
+                    self.project_instance.graph.vertices[self.selected_column].internal_flag_4 = False
+                elif item == '2':
+                    self.project_instance.graph.vertices[self.selected_column].internal_flag_1 = False
+                    self.project_instance.graph.vertices[self.selected_column].internal_flag_2 = True
+                    self.project_instance.graph.vertices[self.selected_column].internal_flag_3 = False
+                    self.project_instance.graph.vertices[self.selected_column].internal_flag_4 = False
+                elif item == '3':
+                    self.project_instance.graph.vertices[self.selected_column].internal_flag_1 = False
+                    self.project_instance.graph.vertices[self.selected_column].internal_flag_2 = False
+                    self.project_instance.graph.vertices[self.selected_column].internal_flag_3 = True
+                    self.project_instance.graph.vertices[self.selected_column].internal_flag_4 = False
+                elif item == '4':
+                    self.project_instance.graph.vertices[self.selected_column].internal_flag_1 = False
+                    self.project_instance.graph.vertices[self.selected_column].internal_flag_2 = False
+                    self.project_instance.graph.vertices[self.selected_column].internal_flag_3 = False
+                    self.project_instance.graph.vertices[self.selected_column].internal_flag_4 = True
+                else:
+                    pass
+                self.sys_message('Ready.')
+
     def btn_delete_trigger(self):
         if self.project_instance is not None and not self.selected_column == -1:
             ok_pressed = QtWidgets.QMessageBox.question(self, 'Confirm', 'Are you sure you wish to delete this column?', QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No, QtWidgets.QMessageBox.No)
