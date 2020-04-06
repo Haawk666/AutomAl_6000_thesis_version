@@ -222,7 +222,6 @@ def covariance(data_1, data_2):
     mean_2 = mean_val(data_2)
 
     sum_ = 0
-
     for item_1, item_2 in zip(data_1, data_2):
         sum_ += (item_1 - mean_1) * (item_2 - mean_2)
 
