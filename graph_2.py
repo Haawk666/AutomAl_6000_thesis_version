@@ -1197,7 +1197,7 @@ class AtomicGraph:
             self.meshes.append(mesh_0)
             self.mesh_indices.append(mesh_0.mesh_index)
 
-            sys.setrecursionlimit(100000)
+            sys.setrecursionlimit(10000)
             print('Starting mesh walk')
             self.walk_mesh_edges(mesh_0)
             print('Mesh walk complete')
