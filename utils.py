@@ -4,6 +4,10 @@
 import numpy as np
 # import scipy.optimize as opt
 from copy import deepcopy
+import logging
+# Instantiate logger:
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 def make_int_from_list(list_):
@@ -159,8 +163,10 @@ def multivariate_normal_dist(x, means, covar_determinant, inverse_covar_matrix):
 
     result = np.matmul(np.matmul(deviance_vector.T, np.array(inverse_covar_matrix)), deviance_vector)
     result = np.exp(-0.5 * result)
-    result = result / (np.sqrt(((2 * np.pi) ** k) * covar_determinant))
-
+    if not (np.sqrt(((2 * np.pi) ** k) * covar_determinant)) == 0:
+        result = result / (np.sqrt(((2 * np.pi) ** k) * covar_determinant))
+    else:
+        result = result / (np.sqrt(((2 * np.pi) ** k) * covar_determinant) + 0.00001)
     return float(result)
 
 

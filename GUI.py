@@ -325,12 +325,16 @@ class MainUI(QtWidgets.QMainWindow):
                 pass
             if self.tabs.currentIndex() == 1 or self.tabs.currentIndex() == 2 or self.tabs.currentIndex() == 3:
                 if key == QtCore.Qt.Key_1:
+                    self.project_instance.graph.vertices[self.selected_column].is_set_by_user = True
                     self.set_species(0)
                 elif key == QtCore.Qt.Key_2:
+                    self.project_instance.graph.vertices[self.selected_column].is_set_by_user = True
                     self.set_species(1)
                 elif key == QtCore.Qt.Key_3:
+                    self.project_instance.graph.vertices[self.selected_column].is_set_by_user = True
                     self.set_species(3)
                 elif key == QtCore.Qt.Key_4:
+                    self.project_instance.graph.vertices[self.selected_column].is_set_by_user = True
                     self.set_species(5)
                 elif key == QtCore.Qt.Key_Plus:
                     self.set_level(self.project_instance.graph.vertices[self.selected_column].anti_level())
@@ -673,6 +677,7 @@ class MainUI(QtWidgets.QMainWindow):
     def menu_ad_hoc_trigger(self):
         if self.project_instance is not None:
             print(default_models.alpha_model)
+
 
     def menu_toggle_tooltips_trigger(self, state):
         self.control_window.mode_tooltip(state)

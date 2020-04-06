@@ -3,6 +3,7 @@ import statistical_models
 import numpy as np
 import copy
 import sys
+import time
 import logging
 # Instantiate logger:
 logger = logging.getLogger(__name__)
@@ -198,6 +199,7 @@ class Vertex:
         string += '            Max: {:.3f}\n'.format(self.theta_max)
         string += '            Min: {:.3f}\n'.format(self.theta_min)
         string += '            Variance: {:.3f}\n'.format(self.theta_angle_variance)
+        string += '            Mean: {:.3f}\n'.format(self.theta_angle_mean)
         string += '        Normalized peak gamma: {:.3f}\n'.format(self.normalized_peak_gamma)
         string += '        Normalized average gamma: {:.3f}\n'.format(self.normalized_avg_gamma)
         string += '        Redshift: {:.3f}\n'.format(self.redshift)
@@ -616,11 +618,23 @@ class AtomicGraph:
         return anti_graph
 
     def get_mesh(self, i, j, mesh_index=0):
-        indices, angles, vectors = self.get_mesh_numerics(i, j)
-        mesh = Mesh(mesh_index, self.get_vertex_objects_from_indices(indices))
-        mesh.angles = angles
-        mesh.angle_vectors = vectors
-        return mesh
+        if i == 4681 and j == 4597:
+            print('debug 1')
+            indices, angles, vectors = self.get_mesh_numerics(i, j)
+            print('debug 2')
+            mesh = Mesh(mesh_index, self.get_vertex_objects_from_indices(indices))
+            print('debug 3')
+            mesh.angles = angles
+            print('debug 4')
+            mesh.angle_vectors = vectors
+            print('debug 5')
+            return mesh
+        else:
+            indices, angles, vectors = self.get_mesh_numerics(i, j)
+            mesh = Mesh(mesh_index, self.get_vertex_objects_from_indices(indices))
+            mesh.angles = angles
+            mesh.angle_vectors = vectors
+            return mesh
 
     def get_induced_subgraph(self, vertex_indices):
         pass
@@ -818,18 +832,19 @@ class AtomicGraph:
         for vertex in self.vertices:
             vertex.partners = []
             vertex.semi_partners = []
+            vertex.in_semi_partners = []
+            vertex.out_semi_partners = []
             if not vertex.void:
                 for neighbour in vertex.neighbourhood:
                     if neighbour in vertex.in_neighbourhood and neighbour in vertex.out_neighbourhood:
                         vertex.partners.append(neighbour)
                     else:
                         vertex.semi_partners.append(neighbour)
-                    if neighbour in vertex.in_neighbourhood:
-                        vertex.in_semi_partners.append(neighbour)
-                    else:
-                        vertex.out_semi_partners.append(neighbour)
+                        if neighbour in vertex.in_neighbourhood:
+                            vertex.in_semi_partners.append(neighbour)
+                        else:
+                            vertex.out_semi_partners.append(neighbour)
 
-                        vertex.semi_partners.append(neighbour)
                 vertex.in_degree = len(vertex.in_neighbourhood)
                 vertex.out_degree = len(vertex.out_neighbourhood)
                 vertex.degree = len(vertex.neighbourhood)
@@ -929,9 +944,6 @@ class AtomicGraph:
 
     def calc_vertex_parameters(self, i):
         vertex = self.vertices[i]
-        vertex.in_degree = len(vertex.in_neighbourhood)
-        vertex.out_degree = len(vertex.out_neighbourhood)
-        vertex.degree = len(vertex.neighbourhood)
         vertex.alpha_angles = self.get_alpha_angles(i)
         if vertex.alpha_angles is not None and not len(vertex.alpha_angles) == 0:
             vertex.alpha_max = max(vertex.alpha_angles)
@@ -986,11 +998,19 @@ class AtomicGraph:
                     self.matrix_redshift += vertex.redshift
 
     def calc_all_parameters(self):
+        tic_11 = time.perf_counter()
         for vertex in self.vertices:
             if not vertex.void:
                 self.calc_vertex_parameters(vertex.i)
+        tic_12 = time.perf_counter()
         self.calc_normalized_gamma()
+        tic_13 = time.perf_counter()
         self.calc_redshifts()
+        tic_14 = time.perf_counter()
+        time_summary = '            Calc vertex parameters: {:.3f} seconds\n'.format(tic_12 - tic_11)
+        time_summary += '            Calc normalized gamma: {:.3f} seconds\n'.format(tic_13 - tic_12)
+        time_summary += '            Calc redshifts: {:.3f}\n'.format(tic_14 - tic_13)
+        return time_summary
 
     def calc_model_predictions(self):
         for vertex in self.vertices:
@@ -998,13 +1018,33 @@ class AtomicGraph:
                 vertex.alpha_model = statistical_models.alpha_model(vertex.alpha_angles)
 
     def refresh_graph(self):
+        logger.info('Refreshing all graph properties..')
+        tic_1 = time.perf_counter()
         self.map_districts(search_extended_district=True)
-        self.calc_all_parameters()
+        tic_2 = time.perf_counter()
+        timing_string = self.calc_all_parameters()
+        tic_3 = time.perf_counter()
         self.evaluate_sub_category()
+        tic_4 = time.perf_counter()
         self.calc_model_predictions()
+        tic_5 = time.perf_counter()
         self.map_meshes(0)
+        tic_6 = time.perf_counter()
         self.map_arcs()
+        tic_7 = time.perf_counter()
         self.summarize_stats()
+        tic_8 = time.perf_counter()
+        summary_string = 'Refreshed graph in {:.3f} seconds\n'.format(tic_8 - tic_1)
+        summary_string += '    Timing of constituent task:\n'
+        summary_string += '        Graph.map_districts(search_extended_district=True): {:.3f} seconds\n'.format(tic_2 - tic_1)
+        summary_string += '        Graph.calc_all_parameters(): {:.3f} second\n'.format(tic_3 - tic_2)
+        summary_string += timing_string
+        summary_string += '        Graph.evaluate_sub_category(): {:.3f} second\n'.format(tic_4 - tic_3)
+        summary_string += '        Graph.calc_model_predicions(): {:.3f} second\n'.format(tic_5 - tic_4)
+        summary_string += '        Graph.map_meshes(0): {:.3f} second\n'.format(tic_6 - tic_4)
+        summary_string += '        Graph.map_arcs(): {:.3f} second\n'.format(tic_7 - tic_6)
+        summary_string += '        Graph.summarize_stats(): {:.3f} second\n'.format(tic_8 - tic_7)
+        logger.info(summary_string)
 
     def evaluate_sub_category(self):
         for vertex in self.vertices:
@@ -1148,10 +1188,8 @@ class AtomicGraph:
         """
 
         if not len(self.vertices[i].district) == 0:
-
             self.meshes = []
             self.mesh_indices = []
-            self.map_districts()
             sub_graph_0 = self.get_column_centered_subgraph(i)
             mesh_0 = sub_graph_0.meshes[0]
             mesh_0.mesh_index = self.determine_temp_index(mesh_0)
@@ -1159,8 +1197,10 @@ class AtomicGraph:
             self.meshes.append(mesh_0)
             self.mesh_indices.append(mesh_0.mesh_index)
 
-            sys.setrecursionlimit(5000)
+            sys.setrecursionlimit(100000)
+            print('Starting mesh walk')
             self.walk_mesh_edges(mesh_0)
+            print('Mesh walk complete')
 
             new_indices = [i for i in range(0, len(self.mesh_indices))]
 
@@ -1173,6 +1213,7 @@ class AtomicGraph:
 
     def walk_mesh_edges(self, mesh):
         for k, corner in enumerate(vertex.i for vertex in mesh.vertices):
+            print('{}, {}'.format(corner, mesh.vertices[k - 1].i))
             new_mesh = self.get_mesh(corner, mesh.vertices[k - 1].i, 0)
             has_edge_columns = False
             for vertex in new_mesh.vertices:

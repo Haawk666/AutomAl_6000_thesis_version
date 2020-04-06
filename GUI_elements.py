@@ -254,9 +254,11 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
             self.removeItem(edge_item)
         self.edges[i] = []
         vertex_a = self.ui_obj.project_instance.graph.vertices[i]
-        for n, vertex_b in enumerate(self.ui_obj.project_instance.graph.vertices(vertex_a.i).district):
-            p1 = vertex_a.real_coor()
-            p2 = vertex_b.real_coor()
+        for n, vertex_b in enumerate(self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(self.ui_obj.project_instance.graph.vertices[vertex_a.i].district)):
+            p1 = vertex_a.im_pos()
+            p1 = (p1[0], p1[1])
+            p2 = vertex_b.im_pos()
+            p2 = (p2[0], p2[1])
             consistent = vertex_b.partner_query(vertex_a.i)
             if vertex_a.level == vertex_b.level:
                 dislocation = True
@@ -268,7 +270,7 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
                                                              dislocation=dislocation,
                                                              chb=self.ui_obj.control_window.chb_graph))
             self.addItem(self.edges[i][-1])
-            if n >= vertex_a.n():
+            if n >= vertex_a.n:
                 self.edges[i][-1].hide()
 
     def redraw_neighbourhood(self, i):

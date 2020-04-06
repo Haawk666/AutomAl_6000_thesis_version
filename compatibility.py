@@ -75,7 +75,8 @@ def convert(obj, old_version, version):
         for vertex in old_graph.vertices:
             new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r, vertex.peak_gamma,
                                         vertex.avg_gamma, obj.scale, level=vertex.level, species_index=vertex.h_index)
-            new_vertex.district = vertex.neighbour_indices
+            for i, citizen in enumerate(vertex.neighbour_indices):
+                new_vertex.district.append(citizen)
             new_vertex.is_in_precipitate = vertex.is_in_precipitate
             new_vertex.is_edge_column = vertex.is_edge_column
             new_vertex.is_set_by_user = vertex.set_by_user
@@ -138,7 +139,8 @@ def convert(obj, old_version, version):
         for vertex in old_graph.vertices:
             new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r, vertex.peak_gamma,
                                         vertex.avg_gamma, obj.scale, level=vertex.level, species_index=vertex.h_index)
-            new_vertex.district = vertex.neighbour_indices
+            for i, citizen in enumerate(vertex.neighbour_indices):
+                new_vertex.district.append(citizen)
             new_vertex.is_in_precipitate = vertex.is_in_precipitate
             new_vertex.is_edge_column = vertex.is_edge_column
             new_vertex.is_set_by_user = vertex.set_by_user
@@ -191,7 +193,8 @@ def convert(obj, old_version, version):
         for vertex in old_graph.vertices:
             new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r, vertex.peak_gamma,
                                         vertex.avg_gamma, obj.scale, level=vertex.level, species_index=vertex.h_index)
-            new_vertex.district = vertex.neighbour_indices
+            for i, citizen in enumerate(vertex.neighbour_indices):
+                new_vertex.district.append(citizen)
             new_vertex.is_in_precipitate = vertex.is_in_precipitate
             new_vertex.is_edge_column = vertex.is_edge_column
             new_vertex.is_set_by_user = vertex.set_by_user
@@ -238,7 +241,8 @@ def convert(obj, old_version, version):
         for vertex in old_graph.vertices:
             new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r, vertex.peak_gamma,
                                         vertex.avg_gamma, obj.scale, level=vertex.level, species_index=vertex.h_index)
-            new_vertex.district = vertex.neighbour_indices
+            for i, citizen in enumerate(vertex.neighbour_indices):
+                new_vertex.district.append(citizen)
             new_vertex.is_in_precipitate = vertex.is_in_precipitate
             new_vertex.is_edge_column = vertex.is_edge_column
             new_vertex.is_set_by_user = vertex.set_by_user
@@ -283,7 +287,8 @@ def convert(obj, old_version, version):
         for vertex in old_graph.vertices:
             new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r, vertex.peak_gamma,
                                         vertex.avg_gamma, obj.scale, level=vertex.level, species_index=vertex.h_index)
-            new_vertex.district = vertex.neighbour_indices
+            for i, citizen in enumerate(vertex.neighbour_indices):
+                new_vertex.district.append(citizen)
             new_vertex.is_in_precipitate = vertex.is_in_precipitate
             new_vertex.is_edge_column = vertex.is_edge_column
             new_vertex.is_set_by_user = vertex.set_by_user
@@ -326,7 +331,8 @@ def convert(obj, old_version, version):
         for vertex in old_graph.vertices:
             new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r, vertex.peak_gamma,
                                         vertex.avg_gamma, obj.scale, level=vertex.level, species_index=vertex.h_index)
-            new_vertex.district = vertex.neighbour_indices
+            for i, citizen in enumerate(vertex.neighbour_indices):
+                new_vertex.district.append(citizen)
             new_vertex.is_in_precipitate = vertex.is_in_precipitate
             new_vertex.is_edge_column = vertex.is_edge_column
             new_vertex.is_set_by_user = vertex.set_by_user
@@ -367,7 +373,8 @@ def convert(obj, old_version, version):
         for vertex in old_graph.vertices:
             new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r, vertex.peak_gamma,
                                         vertex.avg_gamma, obj.scale, level=vertex.level, species_index=vertex.h_index)
-            new_vertex.district = vertex.neighbour_indices
+            for i, citizen in enumerate(vertex.neighbour_indices):
+                new_vertex.district.append(citizen)
             new_vertex.is_in_precipitate = vertex.is_in_precipitate
             new_vertex.is_edge_column = vertex.is_edge_column
             new_vertex.is_set_by_user = vertex.set_by_user
@@ -406,7 +413,8 @@ def convert(obj, old_version, version):
         for vertex in old_graph.vertices:
             new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r, vertex.peak_gamma,
                                         vertex.avg_gamma, obj.scale, level=vertex.level, species_index=vertex.h_index)
-            new_vertex.district = vertex.neighbour_indices
+            for i, citizen in enumerate(vertex.neighbour_indices):
+                new_vertex.district.append(citizen)
             new_vertex.is_in_precipitate = vertex.is_in_precipitate
             new_vertex.is_edge_column = vertex.is_edge_column
             new_vertex.is_set_by_user = vertex.set_by_user
@@ -444,7 +452,8 @@ def convert(obj, old_version, version):
         for vertex in old_graph.vertices:
             new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r, vertex.peak_gamma,
                                         vertex.avg_gamma, obj.scale, level=vertex.level, species_index=vertex.h_index)
-            new_vertex.district = vertex.neighbour_indices
+            for i, citizen in enumerate(vertex.neighbour_indices):
+                new_vertex.district.append(citizen)
             new_vertex.is_in_precipitate = vertex.is_in_precipitate
             new_vertex.is_edge_column = vertex.is_edge_column
             new_vertex.is_set_by_user = vertex.set_by_user
@@ -474,7 +483,8 @@ def convert(obj, old_version, version):
         for vertex in old_graph.vertices:
             new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r, vertex.peak_gamma,
                                         vertex.avg_gamma, obj.scale, level=vertex.level, species_index=vertex.h_index)
-            new_vertex.district = vertex.neighbour_indices
+            for i, citizen in enumerate(vertex.neighbour_indices):
+                new_vertex.district.append(citizen)
             new_vertex.is_in_precipitate = vertex.is_in_precipitate
             new_vertex.is_edge_column = vertex.is_edge_column
             new_vertex.is_set_by_user = vertex.set_by_user
@@ -503,7 +513,8 @@ def convert(obj, old_version, version):
         for vertex in old_graph.vertices:
             new_vertex = graph_2.Vertex(vertex.i, vertex.real_coor_x, vertex.real_coor_y, vertex.r, vertex.peak_gamma,
                                         vertex.avg_gamma, obj.scale, level=vertex.level, species_index=vertex.h_index)
-            new_vertex.district = vertex.neighbour_indices
+            for i, citizen in enumerate(vertex.neighbour_indices):
+                new_vertex.district.append(citizen)
             new_vertex.is_in_precipitate = vertex.is_in_precipitate
             new_vertex.is_edge_column = vertex.is_edge_column
             new_vertex.is_set_by_user = vertex.set_by_user
