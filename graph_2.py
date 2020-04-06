@@ -992,8 +992,19 @@ class AtomicGraph:
         for vertex in self.vertices:
             vertex.alpha_model = []
             vertex.advanced_alpha_model = []
+            vertex.theta_model = []
+            vertex.advanced_theta_model = []
+            vertex.gamma_model = []
+            vertex.advanced_gamma_model = []
+            vertex.model = []
+            vertex.advanced_model = []
             if not vertex.void:
-                vertex.alpha_model, vertex.advanced_alpha_model = statistical_models.alpha_model(vertex.alpha_angles)
+                vertex.alpha_model, vertex.advanced_alpha_model = statistical_models.alpha_model(vertex.alpha_max, vertex.alpha_min)
+                vertex.theta_model, vertex.advanced_theta_model = statistical_models.theta_model(vertex.theta_max, vertex.theta_min, vertex.theta_angle_mean)
+                vertex.gamma_model, vertex.advanced_gamma_model = statistical_models.normalized_gamma_model(vertex.normalized_avg_gamma, vertex.normalized_peak_gamma)
+                vertex.model, vertex.advanced_model = statistical_models.composite_model(vertex.alpha_max, vertex.alpha_min,
+                                                                                         vertex.theta_max, vertex.theta_min, vertex.theta_angle_mean,
+                                                                                         vertex.normalized_avg_gamma, vertex.normalized_peak_gamma)
 
     def refresh_graph(self):
         self.map_districts(search_extended_district=True)
@@ -1058,7 +1069,7 @@ class AtomicGraph:
         """Get all vertex parameters in a condensed list-matrix following this logic:
 
         ======= =========== =========== =========== =========== =========== ======================= ================
-        Catgory Alpha_max   Alpha_min   Theta_max   Thea_min    Theta_avg   Norm_gamma_avg          Norm_gamma_peak
+        Catgory Alpha_max   Alpha_min   Theta_max   Theta_min   Theta_avg   Norm_gamma_avg          Norm_gamma_peak
         ======= =========== =========== =========== =========== =========== ======================= ================
         Si_1    data[0][0]  data[0][1]  data[0][2]  data[0][3]  data[0][4]  data[0][5]              data[0][6]
         Si_2    data[1][0]  data[1][1]  data[1][2]  data[1][3]  data[1][4]  data[1][5]              data[1][6]

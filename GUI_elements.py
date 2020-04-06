@@ -3341,11 +3341,11 @@ class CalcModels(QtWidgets.QDialog):
             if self.combo_1.currentIndex() == 0:
                 statistical_models.calculate_parameters_from_files(files, 0, filter=filter)
             elif self.combo_1.currentIndex() == 1:
-                statistical_models.calculate_parameters_from_files(files, 0, filter=filter)
+                statistical_models.calculate_parameters_from_files(files, 1, filter=filter)
             elif self.combo_1.currentIndex() == 2:
-                statistical_models.calculate_parameters_from_files(files, 0, filter=filter)
+                statistical_models.calculate_parameters_from_files(files, 2, filter=filter)
             elif self.combo_1.currentIndex() == 3:
-                statistical_models.calculate_parameters_from_files(files, 0, filter=filter)
+                statistical_models.calculate_parameters_from_files(files, 3, filter=filter)
             else:
                 logger.error('Not implemented!')
             GUI.logger.info('Successfully saved model parameters to {}'.format(filename[0]))

@@ -14,18 +14,18 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
-def alpha_model(alpha_angles):
-    x = [max(alpha_angles), min(alpha_angles)]
+def alpha_model(alpha_max, alpha_min):
+    x = [alpha_max, alpha_min]
     params = default_models.alpha_model
     advanced_model = [
-        utils.multivariate_normal_dist(x, params[0][0], params[0][2], params[0][3]),
-        utils.multivariate_normal_dist(x, params[1][0], params[1][2], params[1][3]),
-        utils.multivariate_normal_dist(x, params[2][0], params[2][2], params[2][3]),
-        utils.multivariate_normal_dist(x, params[3][0], params[3][2], params[3][3]),
-        utils.multivariate_normal_dist(x, params[4][0], params[4][2], params[4][3]),
-        utils.multivariate_normal_dist(x, params[5][0], params[5][2], params[5][3]),
-        utils.multivariate_normal_dist(x, params[6][0], params[6][2], params[6][3]),
-        utils.multivariate_normal_dist(x, params[7][0], params[7][2], params[7][3])
+        utils.multivariate_normal_dist(x, params[0][0], params[0][3], params[0][4]),
+        utils.multivariate_normal_dist(x, params[1][0], params[1][3], params[1][4]),
+        utils.multivariate_normal_dist(x, params[2][0], params[2][3], params[2][4]),
+        utils.multivariate_normal_dist(x, params[3][0], params[3][3], params[3][4]),
+        utils.multivariate_normal_dist(x, params[4][0], params[4][3], params[4][4]),
+        utils.multivariate_normal_dist(x, params[5][0], params[5][3], params[5][4]),
+        utils.multivariate_normal_dist(x, params[6][0], params[6][3], params[6][4]),
+        utils.multivariate_normal_dist(x, params[7][0], params[7][3], params[7][4])
     ]
     simple_model = [
         advanced_model[0] + advanced_model[1],
@@ -39,16 +39,79 @@ def alpha_model(alpha_angles):
     return simple_model, advanced_model
 
 
-def theta_model(Theta_angles):
-    pass
+def theta_model(theta_max, theta_min, theta_avg):
+    x = [theta_max, theta_min, theta_avg]
+    params = default_models.theta_model
+    advanced_model = [
+        utils.multivariate_normal_dist(x, params[0][0], params[0][3], params[0][4]),
+        utils.multivariate_normal_dist(x, params[1][0], params[1][3], params[1][4]),
+        utils.multivariate_normal_dist(x, params[2][0], params[2][3], params[2][4]),
+        utils.multivariate_normal_dist(x, params[3][0], params[3][3], params[3][4]),
+        utils.multivariate_normal_dist(x, params[4][0], params[4][3], params[4][4]),
+        utils.multivariate_normal_dist(x, params[5][0], params[5][3], params[5][4]),
+        utils.multivariate_normal_dist(x, params[6][0], params[6][3], params[6][4]),
+        utils.multivariate_normal_dist(x, params[7][0], params[7][3], params[7][4])
+    ]
+    simple_model = [
+        advanced_model[0] + advanced_model[1],
+        advanced_model[2],
+        0,
+        advanced_model[3] + advanced_model[4],
+        0,
+        advanced_model[5] + advanced_model[6] + advanced_model[7],
+        0
+    ]
+    return simple_model, advanced_model
 
 
 def normalized_gamma_model(normalized_peak_gamma, normalized_avg_gamma):
-    pass
+    x = [normalized_peak_gamma, normalized_avg_gamma]
+    params = default_models.gamma_model
+    advanced_model = [
+        utils.multivariate_normal_dist(x, params[0][0], params[0][3], params[0][4]),
+        utils.multivariate_normal_dist(x, params[1][0], params[1][3], params[1][4]),
+        utils.multivariate_normal_dist(x, params[2][0], params[2][3], params[2][4]),
+        utils.multivariate_normal_dist(x, params[3][0], params[3][3], params[3][4]),
+        utils.multivariate_normal_dist(x, params[4][0], params[4][3], params[4][4]),
+        utils.multivariate_normal_dist(x, params[5][0], params[5][3], params[5][4]),
+        utils.multivariate_normal_dist(x, params[6][0], params[6][3], params[6][4]),
+        utils.multivariate_normal_dist(x, params[7][0], params[7][3], params[7][4])
+    ]
+    simple_model = [
+        advanced_model[0] + advanced_model[1],
+        advanced_model[2],
+        0,
+        advanced_model[3] + advanced_model[4],
+        0,
+        advanced_model[5] + advanced_model[6] + advanced_model[7],
+        0
+    ]
+    return simple_model, advanced_model
 
 
-def composite_model(vertex):
-    pass
+def composite_model(alpha_max, alpha_min, theta_max, theta_min, theta_avg, gamma_avg, gamma_peak):
+    x = [alpha_max, alpha_min, theta_max, theta_min, theta_avg, gamma_avg, gamma_peak]
+    params = default_models.composite_model
+    advanced_model = [
+        utils.multivariate_normal_dist(x, params[0][0], params[0][3], params[0][4]),
+        utils.multivariate_normal_dist(x, params[1][0], params[1][3], params[1][4]),
+        utils.multivariate_normal_dist(x, params[2][0], params[2][3], params[2][4]),
+        utils.multivariate_normal_dist(x, params[3][0], params[3][3], params[3][4]),
+        utils.multivariate_normal_dist(x, params[4][0], params[4][3], params[4][4]),
+        utils.multivariate_normal_dist(x, params[5][0], params[5][3], params[5][4]),
+        utils.multivariate_normal_dist(x, params[6][0], params[6][3], params[6][4]),
+        utils.multivariate_normal_dist(x, params[7][0], params[7][3], params[7][4])
+    ]
+    simple_model = [
+        advanced_model[0] + advanced_model[1],
+        advanced_model[2],
+        0,
+        advanced_model[3] + advanced_model[4],
+        0,
+        advanced_model[5] + advanced_model[6] + advanced_model[7],
+        0
+    ]
+    return simple_model, advanced_model
 
 
 def product_model(vertex):
@@ -160,13 +223,21 @@ def calculate_parameters_from_files(files, model, filter=None, recalc_properties
             params[advanced_species_index].append(variance_vector)
             params[advanced_species_index].append(covar_matrix)
             params[advanced_species_index].append(np.linalg.det(np.array(covar_matrix)))
-            if not params[advanced_species_index][2] == 0:
+            if not params[advanced_species_index][3] == 0:
                 params[advanced_species_index].append(np.linalg.inv(np.array(covar_matrix)).tolist())
             else:
                 params[advanced_species_index].append(covar_matrix)
                 logger.error('Singular covariance matrix!')
         if savefile is None:
             default_models.alpha_model = params
+            string = '[\n'
+            for species in range(0, 8):
+                if species == 7:
+                    string += '    {}\n'.format(params[species])
+                else:
+                    string += '    {},\n'.format(params[species])
+            string += ']'
+            print(string)
         else:
             default_models.alpha_model = params
 
@@ -174,25 +245,36 @@ def calculate_parameters_from_files(files, model, filter=None, recalc_properties
         for advanced_species_index, species_data in enumerate(data):
             covar_matrix = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
             mean_vector = []
+            variance_vector = []
             for property_ in range(2, 5):
                 mean_vector.append(utils.mean_val(data[advanced_species_index][property_]))
+                variance_vector.append(utils.variance(data[advanced_species_index][property_]))
                 for secondary_property in range(2, 5):
                     if property_ == secondary_property:
-                        covar_matrix[property_][secondary_property] = utils.variance(
+                        covar_matrix[property_ - 2][secondary_property - 2] = utils.variance(
                             data[advanced_species_index][property_])
                     else:
-                        covar_matrix[property_][secondary_property] = utils.covariance(
+                        covar_matrix[property_ - 2][secondary_property - 2] = utils.covariance(
                             data[advanced_species_index][property_], data[advanced_species_index][secondary_property])
             params[advanced_species_index].append(mean_vector)
+            params[advanced_species_index].append(variance_vector)
             params[advanced_species_index].append(covar_matrix)
             params[advanced_species_index].append(np.linalg.det(np.array(covar_matrix)))
-            if not params[advanced_species_index][2] == 0:
+            if not params[advanced_species_index][3] == 0:
                 params[advanced_species_index].append(np.linalg.inv(np.array(covar_matrix)).tolist())
             else:
                 params[advanced_species_index].append(covar_matrix)
                 logger.error('Singular covariance matrix!')
         if savefile is None:
             default_models.theta_model = params
+            string = '[\n'
+            for species in range(0, 8):
+                if species == 7:
+                    string += '    {}\n'.format(params[species])
+                else:
+                    string += '    {},\n'.format(params[species])
+            string += ']'
+            print(string)
         else:
             default_models.theta_model = params
 
@@ -200,25 +282,36 @@ def calculate_parameters_from_files(files, model, filter=None, recalc_properties
         for advanced_species_index, species_data in enumerate(data):
             covar_matrix = [[0, 0], [0, 0]]
             mean_vector = []
+            variance_vector = []
             for property_ in range(5, 7):
                 mean_vector.append(utils.mean_val(data[advanced_species_index][property_]))
+                variance_vector.append(utils.variance(data[advanced_species_index][property_]))
                 for secondary_property in range(5, 7):
                     if property_ == secondary_property:
-                        covar_matrix[property_][secondary_property] = utils.variance(
+                        covar_matrix[property_ - 5][secondary_property - 5] = utils.variance(
                             data[advanced_species_index][property_])
                     else:
-                        covar_matrix[property_][secondary_property] = utils.covariance(
+                        covar_matrix[property_ - 5][secondary_property - 5] = utils.covariance(
                             data[advanced_species_index][property_], data[advanced_species_index][secondary_property])
             params[advanced_species_index].append(mean_vector)
+            params[advanced_species_index].append(variance_vector)
             params[advanced_species_index].append(covar_matrix)
             params[advanced_species_index].append(np.linalg.det(np.array(covar_matrix)))
-            if not params[advanced_species_index][2] == 0:
+            if not params[advanced_species_index][3] == 0:
                 params[advanced_species_index].append(np.linalg.inv(np.array(covar_matrix)).tolist())
             else:
                 params[advanced_species_index].append(covar_matrix)
                 logger.error('Singular covariance matrix!')
         if savefile is None:
-            default_models.gamma = params
+            default_models.gamma_model = params
+            string = '[\n'
+            for species in range(0, 8):
+                if species == 7:
+                    string += '    {}\n'.format(params[species])
+                else:
+                    string += '    {},\n'.format(params[species])
+            string += ']'
+            print(string)
         else:
             print(params)
 
@@ -232,8 +325,10 @@ def calculate_parameters_from_files(files, model, filter=None, recalc_properties
                             [0, 0, 0, 0, 0, 0, 0],
                             [0, 0, 0, 0, 0, 0, 0]]
             mean_vector = []
+            variance_vector = []
             for property_ in range(0, 7):
                 mean_vector.append(utils.mean_val(data[advanced_species_index][property_]))
+                variance_vector.append(utils.variance(data[advanced_species_index][property_]))
                 for secondary_property in range(0, 7):
                     if property_ == secondary_property:
                         covar_matrix[property_][secondary_property] = utils.variance(
@@ -242,15 +337,24 @@ def calculate_parameters_from_files(files, model, filter=None, recalc_properties
                         covar_matrix[property_][secondary_property] = utils.covariance(
                             data[advanced_species_index][property_], data[advanced_species_index][secondary_property])
             params[advanced_species_index].append(mean_vector)
+            params[advanced_species_index].append(variance_vector)
             params[advanced_species_index].append(covar_matrix)
             params[advanced_species_index].append(np.linalg.det(np.array(covar_matrix)))
-            if not params[advanced_species_index][2] == 0:
+            if not params[advanced_species_index][3] == 0:
                 params[advanced_species_index].append(np.linalg.inv(np.array(covar_matrix)).tolist())
             else:
                 params[advanced_species_index].append(covar_matrix)
                 logger.error('Singular covariance matrix!')
         if savefile is None:
             default_models.composite_model = params
+            string = '[\n'
+            for species in range(0, 8):
+                if species == 7:
+                    string += '    {}\n'.format(params[species])
+                else:
+                    string += '    {},\n'.format(params[species])
+            string += ']'
+            print(string)
         else:
             print(params)
 

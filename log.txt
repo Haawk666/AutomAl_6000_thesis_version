@@ -3,3 +3,43 @@ GUI: GUI version: 0.0.2
 GUI: core version: 0.0.11
 GUI: Build version: Alpha 1.0
 ------------------------
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_008_ready
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_012a_ready
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_018_Ba_ready
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_023_ready
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_030_ready
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_haakon_009_ready
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_haakon_012a_ready
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_haakon_016_ready
+statistical_models: Singular covariance matrix!
+GUI: Successfully saved model parameters to f
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_008_ready
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_012a_ready
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_018_Ba_ready
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_023_ready
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_030_ready
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_haakon_009_ready
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_haakon_012a_ready
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_haakon_016_ready
+statistical_models: Singular covariance matrix!
+GUI: Successfully saved model parameters to f
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_008_ready
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_012a_ready
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_018_Ba_ready
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_023_ready
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_030_ready
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_haakon_009_ready
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_haakon_012a_ready
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_haakon_016_ready
+statistical_models: Singular covariance matrix!
+GUI: Successfully saved model parameters to f
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_008_ready
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_012a_ready
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_018_Ba_ready
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_023_ready
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_030_ready
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_haakon_009_ready
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_haakon_012a_ready
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_haakon_016_ready
+statistical_models: Singular covariance matrix!
+GUI: Successfully saved model parameters to f
