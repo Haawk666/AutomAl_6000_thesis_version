@@ -480,7 +480,7 @@ class AtomicSubGraph(QtWidgets.QGraphicsScene):
         self.report += 'Sub-graph centered on vertex {}:----------\n'.format(self.sub_graph.vertex_indices[0])
         for m, mesh in enumerate(self.sub_graph.meshes):
             self.report += 'Mesh {}:\n'.format(m)
-            self.report += '    Number of corners: {}\n'.format(str(mesh.num_corners))
+            self.report += '    Number of corners: {}\n'.format(str(mesh.order))
             self.report += '    Sum of angles: {}\n'.format(str(sum(mesh.angles)))
             self.report += '    Variance of angles: {}\n'.format(utils.variance(mesh.angles))
             self.report += '    Symmetry prob vector from central angle: {}\n'.format(str([0, 0, 0]))

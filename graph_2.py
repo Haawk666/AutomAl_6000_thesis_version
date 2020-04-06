@@ -61,20 +61,23 @@ class Vertex:
         self.internal_flag_3 = False
         self.internal_flag_4 = False
 
-        # Self-analysis
+        # model-analysis
         self.probability_vector = [0, 0, 0, 0, 0, 0, 1]
         self.confidence = 0
         self.alpha_model = [0, 0, 0, 0, 0, 0, 1]
+        self.advanced_alpha_model = [0, 0, 0, 0, 0, 0, 0, 0]
         self.alpha_confidence = 0
         self.theta_model = [0, 0, 0, 0, 0, 0, 1]
+        self.advanced_theta_model = [0, 0, 0, 0, 0, 0, 0, 0]
         self.theta_confidence = 0
         self.gamma_model = [0, 0, 0, 0, 0, 0, 1]
+        self.advanced_gamma_model = [0, 0, 0, 0, 0, 0, 0, 0]
         self.gamma_confidence = 0
         self.model = [0, 0, 0, 0, 0, 0, 1]
+        self.advanced_model = [0, 0, 0, 0, 0, 0, 0, 0]
         self.model_confidence = 0
-        self.product_model = [0, 0, 0, 0, 0, 0, 1]
-        self.product_confidence = 0
         self.weighted_model = [0, 0, 0, 0, 0, 0, 1]
+        self.advanced_weighted_model = [0, 0, 0, 0, 0, 0, 0, 0]
         self.weighted_confidence = 0
 
         # Model variables
@@ -168,13 +171,6 @@ class Vertex:
         string += '            Prediction: {}\n'.format(
             self.species_strings[self.model.index(max(self.model))])
         string += '            Confidence: {}\n'.format(self.model_confidence)
-        string += '        Product model: ['
-        for p in self.product_model:
-            string += ' {:.3f}'.format(p)
-        string += ' ]\n'
-        string += '            Prediction: {}\n'.format(
-            self.species_strings[self.product_model.index(max(self.product_model))])
-        string += '            Confidence: {}\n'.format(self.product_confidence)
         string += '        Weighted model: ['
         for w in self.weighted_model:
             string += ' {:.3f}'.format(w)
@@ -618,23 +614,11 @@ class AtomicGraph:
         return anti_graph
 
     def get_mesh(self, i, j, mesh_index=0):
-        if i == 4681 and j == 4597:
-            print('debug 1')
-            indices, angles, vectors = self.get_mesh_numerics(i, j)
-            print('debug 2')
-            mesh = Mesh(mesh_index, self.get_vertex_objects_from_indices(indices))
-            print('debug 3')
-            mesh.angles = angles
-            print('debug 4')
-            mesh.angle_vectors = vectors
-            print('debug 5')
-            return mesh
-        else:
-            indices, angles, vectors = self.get_mesh_numerics(i, j)
-            mesh = Mesh(mesh_index, self.get_vertex_objects_from_indices(indices))
-            mesh.angles = angles
-            mesh.angle_vectors = vectors
-            return mesh
+        indices, angles, vectors = self.get_mesh_numerics(i, j)
+        mesh = Mesh(mesh_index, self.get_vertex_objects_from_indices(indices))
+        mesh.angles = angles
+        mesh.angle_vectors = vectors
+        return mesh
 
     def get_induced_subgraph(self, vertex_indices):
         pass
@@ -998,53 +982,27 @@ class AtomicGraph:
                     self.matrix_redshift += vertex.redshift
 
     def calc_all_parameters(self):
-        tic_11 = time.perf_counter()
         for vertex in self.vertices:
             if not vertex.void:
                 self.calc_vertex_parameters(vertex.i)
-        tic_12 = time.perf_counter()
         self.calc_normalized_gamma()
-        tic_13 = time.perf_counter()
         self.calc_redshifts()
-        tic_14 = time.perf_counter()
-        time_summary = '            Calc vertex parameters: {:.3f} seconds\n'.format(tic_12 - tic_11)
-        time_summary += '            Calc normalized gamma: {:.3f} seconds\n'.format(tic_13 - tic_12)
-        time_summary += '            Calc redshifts: {:.3f}\n'.format(tic_14 - tic_13)
-        return time_summary
 
     def calc_model_predictions(self):
         for vertex in self.vertices:
+            vertex.alpha_model = []
+            vertex.advanced_alpha_model = []
             if not vertex.void:
-                vertex.alpha_model = statistical_models.alpha_model(vertex.alpha_angles)
+                vertex.alpha_model, vertex.advanced_alpha_model = statistical_models.alpha_model(vertex.alpha_angles)
 
     def refresh_graph(self):
-        logger.info('Refreshing all graph properties..')
-        tic_1 = time.perf_counter()
         self.map_districts(search_extended_district=True)
-        tic_2 = time.perf_counter()
-        timing_string = self.calc_all_parameters()
-        tic_3 = time.perf_counter()
+        self.calc_all_parameters()
         self.evaluate_sub_category()
-        tic_4 = time.perf_counter()
         self.calc_model_predictions()
-        tic_5 = time.perf_counter()
         self.map_meshes(0)
-        tic_6 = time.perf_counter()
         self.map_arcs()
-        tic_7 = time.perf_counter()
         self.summarize_stats()
-        tic_8 = time.perf_counter()
-        summary_string = 'Refreshed graph in {:.3f} seconds\n'.format(tic_8 - tic_1)
-        summary_string += '    Timing of constituent task:\n'
-        summary_string += '        Graph.map_districts(search_extended_district=True): {:.3f} seconds\n'.format(tic_2 - tic_1)
-        summary_string += '        Graph.calc_all_parameters(): {:.3f} second\n'.format(tic_3 - tic_2)
-        summary_string += timing_string
-        summary_string += '        Graph.evaluate_sub_category(): {:.3f} second\n'.format(tic_4 - tic_3)
-        summary_string += '        Graph.calc_model_predicions(): {:.3f} second\n'.format(tic_5 - tic_4)
-        summary_string += '        Graph.map_meshes(0): {:.3f} second\n'.format(tic_6 - tic_4)
-        summary_string += '        Graph.map_arcs(): {:.3f} second\n'.format(tic_7 - tic_6)
-        summary_string += '        Graph.summarize_stats(): {:.3f} second\n'.format(tic_8 - tic_7)
-        logger.info(summary_string)
 
     def evaluate_sub_category(self):
         for vertex in self.vertices:
@@ -1060,11 +1018,35 @@ class AtomicGraph:
                         vertex.internal_flag_2 = False
                         vertex.internal_flag_3 = False
                         vertex.internal_flag_4 = False
+                elif vertex.species_index == 0:
+                    sub_graph = self.get_column_centered_subgraph(vertex.i)
+                    for mesh in sub_graph.meshes:
+                        if mesh.order == 4:
+                            if mesh.vertices[0].species_index == 0 and\
+                                    mesh.vertices[1].species_index == 5 and\
+                                    mesh.vertices[2].species_index == 1 and\
+                                    mesh.vertices[3].species_index == 5 and\
+                                    mesh.order == 4:
+                                vertex.internal_flag_1 = False
+                                vertex.internal_flag_2 = True
+                                vertex.internal_flag_3 = False
+                                vertex.internal_flag_4 = False
+                                break
+                    else:
+                        vertex.internal_flag_1 = True
+                        vertex.internal_flag_2 = False
+                        vertex.internal_flag_3 = False
+                        vertex.internal_flag_4 = False
                 elif vertex.species_index == 5:
                     if vertex.alpha_max < 3.175:
                         vertex.internal_flag_1 = True
                         vertex.internal_flag_2 = False
                         vertex.internal_flag_3 = False
+                        vertex.internal_flag_4 = False
+                    elif len(vertex.partners) == 5 and len(vertex.out_semi_partners) == 1:
+                        vertex.internal_flag_1 = False
+                        vertex.internal_flag_2 = False
+                        vertex.internal_flag_3 = True
                         vertex.internal_flag_4 = False
                     else:
                         vertex.internal_flag_1 = False
@@ -1198,9 +1180,7 @@ class AtomicGraph:
             self.mesh_indices.append(mesh_0.mesh_index)
 
             sys.setrecursionlimit(10000)
-            print('Starting mesh walk')
             self.walk_mesh_edges(mesh_0)
-            print('Mesh walk complete')
 
             new_indices = [i for i in range(0, len(self.mesh_indices))]
 
@@ -1213,7 +1193,6 @@ class AtomicGraph:
 
     def walk_mesh_edges(self, mesh):
         for k, corner in enumerate(vertex.i for vertex in mesh.vertices):
-            print('{}, {}'.format(corner, mesh.vertices[k - 1].i))
             new_mesh = self.get_mesh(corner, mesh.vertices[k - 1].i, 0)
             has_edge_columns = False
             for vertex in new_mesh.vertices:
@@ -1285,19 +1264,19 @@ class Mesh:
 
         self.is_enclosed = True
         self.is_consistent = True
-        self.num_corners = 0
-        self.num_arcs = 0
+        self.order = 0
+        self.size = 0
         self.cm = (0, 0)
 
         for vertex in self.vertices:
             self.vertex_indices.append(vertex.i)
-            self.num_corners += 1
+            self.order += 1
         for vertex in self.vertices:
             for out_neighbour in vertex.out_neighbourhood:
                 if out_neighbour in self.vertex_indices:
                     index = self.vertex_indices.index(out_neighbour)
-                    self.arcs.append(Arc(self.num_arcs, vertex, self.vertices[index]))
-                    self.num_arcs += 1
+                    self.arcs.append(Arc(self.size, vertex, self.vertices[index]))
+                    self.size += 1
         self.calc_cm()
 
     def __str__(self):
@@ -1335,7 +1314,7 @@ class Mesh:
         self.cm = (x_fit, y_fit)
 
     def test_sidedness(self):
-        if not self.num_corners == 4:
+        if not self.order == 4:
             return False
         else:
             return True

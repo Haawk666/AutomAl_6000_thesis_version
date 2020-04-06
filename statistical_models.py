@@ -14,10 +14,8 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
-def alpha_model(alpha_angles, return_advanced_model=False):
-    alpha_max = max(alpha_angles)
-    alpha_min = min(alpha_angles)
-    x = [alpha_max, alpha_min]
+def alpha_model(alpha_angles):
+    x = [max(alpha_angles), min(alpha_angles)]
     params = default_models.alpha_model
     advanced_model = [
         utils.multivariate_normal_dist(x, params[0][0], params[0][2], params[0][3]),
@@ -38,10 +36,7 @@ def alpha_model(alpha_angles, return_advanced_model=False):
         advanced_model[5] + advanced_model[6] + advanced_model[7],
         0
     ]
-    if return_advanced_model:
-        return utils.normalize_list(advanced_model, 1)
-    else:
-        return utils.normalize_list(simple_model, 1)
+    return simple_model, advanced_model
 
 
 def theta_model(Theta_angles):
@@ -152,14 +147,17 @@ def calculate_parameters_from_files(files, model, filter=None, recalc_properties
         for advanced_species_index, species_data in enumerate(data):
             covar_matrix = [[0, 0], [0, 0]]
             mean_vector = []
+            variance_vector = []
             for property_ in range(0, 2):
                 mean_vector.append(utils.mean_val(data[advanced_species_index][property_]))
+                variance_vector.append(utils.variance(data[advanced_species_index][property_]))
                 for secondary_property in range(0, 2):
                     if property_ == secondary_property:
                         covar_matrix[property_][secondary_property] = utils.variance(data[advanced_species_index][property_])
                     else:
                         covar_matrix[property_][secondary_property] = utils.covariance(data[advanced_species_index][property_], data[advanced_species_index][secondary_property])
             params[advanced_species_index].append(mean_vector)
+            params[advanced_species_index].append(variance_vector)
             params[advanced_species_index].append(covar_matrix)
             params[advanced_species_index].append(np.linalg.det(np.array(covar_matrix)))
             if not params[advanced_species_index][2] == 0:

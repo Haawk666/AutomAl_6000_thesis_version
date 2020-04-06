@@ -360,7 +360,7 @@ class MeshDetail(QtWidgets.QGraphicsItemGroup):
             self.make()
 
     def make(self):
-        num_corners = self.mesh.num_corners
+        num_corners = self.mesh.order
         text = QtWidgets.QGraphicsSimpleTextItem()
         text.setText('{}'.format(num_corners))
         text.setFont(GUI_settings.font_mesh_details)
