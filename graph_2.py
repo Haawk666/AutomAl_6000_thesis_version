@@ -65,19 +65,19 @@ class Vertex:
         self.probability_vector = [0, 0, 0, 0, 0, 0, 1]
         self.confidence = 0
         self.alpha_model = [0, 0, 0, 0, 0, 0, 1]
-        self.advanced_alpha_model = [0, 0, 0, 0, 0, 0, 0, 0]
+        self.advanced_alpha_model = [0, 0, 0, 0, 0, 0, 0]
         self.alpha_confidence = 0
         self.theta_model = [0, 0, 0, 0, 0, 0, 1]
-        self.advanced_theta_model = [0, 0, 0, 0, 0, 0, 0, 0]
+        self.advanced_theta_model = [0, 0, 0, 0, 0, 0, 0]
         self.theta_confidence = 0
         self.gamma_model = [0, 0, 0, 0, 0, 0, 1]
-        self.advanced_gamma_model = [0, 0, 0, 0, 0, 0, 0, 0]
+        self.advanced_gamma_model = [0, 0, 0, 0, 0, 0, 0]
         self.gamma_confidence = 0
         self.model = [0, 0, 0, 0, 0, 0, 1]
-        self.advanced_model = [0, 0, 0, 0, 0, 0, 0, 0]
+        self.advanced_model = [0, 0, 0, 0, 0, 0, 0]
         self.model_confidence = 0
         self.weighted_model = [0, 0, 0, 0, 0, 0, 1]
-        self.advanced_weighted_model = [0, 0, 0, 0, 0, 0, 0, 0]
+        self.advanced_weighted_model = [0, 0, 0, 0, 0, 0, 0]
         self.weighted_confidence = 0
 
         # Model variables
@@ -1054,11 +1054,6 @@ class AtomicGraph:
                         vertex.internal_flag_2 = False
                         vertex.internal_flag_3 = False
                         vertex.internal_flag_4 = False
-                    elif len(vertex.partners) == 5 and len(vertex.out_semi_partners) == 1:
-                        vertex.internal_flag_1 = False
-                        vertex.internal_flag_2 = False
-                        vertex.internal_flag_3 = True
-                        vertex.internal_flag_4 = False
                     else:
                         vertex.internal_flag_1 = False
                         vertex.internal_flag_2 = True
@@ -1078,7 +1073,6 @@ class AtomicGraph:
         Al_2    data[4][0]  data[4][1]  data[4][2]  data[4][3]  data[4][4]  data[4][5]              data[4][6]
         Mg_1    data[5][0]  data[5][1]  data[5][2]  data[5][3]  data[5][4]  data[5][5]              data[5][6]
         Mg_2    data[6][0]  data[6][1]  data[6][2]  data[6][3]  data[6][4]  data[6][5]              data[6][6]
-        Mg_3    data[7][0]  data[7][1]  data[7][2]  data[7][3]  data[7][4]  data[7][5]              data[7][6]
         ======= =========== =========== =========== =========== =========== ======================= ================
 
         One individual data value is then referenced by data[1][2][3] etc...
@@ -1098,8 +1092,7 @@ class AtomicGraph:
             [[], [], [], [], [], [], []],
             [[], [], [], [], [], [], []],
             [[], [], [], [], [], [], []],
-            [[], [], [], [], [], [], []],
-            [[], [], [], [], [], [], []],
+            [[], [], [], [], [], [], []]
         ]
         for vertex in self.vertices:
             if not vertex.void:
@@ -1140,7 +1133,7 @@ class AtomicGraph:
                                                 elif vertex.internal_flag_2:
                                                     advanced_species_index = 6
                                                 elif vertex.internal_flag_3:
-                                                    advanced_species_index = 7
+                                                    advanced_species_index = None
                                                 else:
                                                     advanced_species_index = None
                                             else:

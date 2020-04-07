@@ -3,43 +3,471 @@ GUI: GUI version: 0.0.2
 GUI: core version: 0.0.11
 GUI: Build version: Alpha 1.0
 ------------------------
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_008_ready
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_012a_ready
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_018_Ba_ready
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_023_ready
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_030_ready
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_haakon_009_ready
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_haakon_012a_ready
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_haakon_016_ready
-statistical_models: Singular covariance matrix!
-GUI: Successfully saved model parameters to f
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_008_ready
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_012a_ready
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_018_Ba_ready
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_023_ready
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_030_ready
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_haakon_009_ready
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_haakon_012a_ready
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_haakon_016_ready
-statistical_models: Singular covariance matrix!
-GUI: Successfully saved model parameters to f
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_008_ready
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_012a_ready
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_018_Ba_ready
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_023_ready
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_030_ready
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_haakon_009_ready
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_haakon_012a_ready
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_haakon_016_ready
-statistical_models: Singular covariance matrix!
-GUI: Successfully saved model parameters to f
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_008_ready
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_012a_ready
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_018_Ba_ready
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_023_ready
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_030_ready
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_haakon_009_ready
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_haakon_012a_ready
-core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/model_haakon_016_ready
-statistical_models: Singular covariance matrix!
-GUI: Successfully saved model parameters to f
+GUI: Opening file C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_a/008_control
+core: Attempted to load un-compatible save-file. Running conversion script...
+core: Conversion successful!
+core: Loaded C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_a/008_control
+GUI: 18
+GUI: 20
+GUI: 21
+GUI: 22
+GUI: 23
+GUI: 27
+GUI: 28
+GUI: 29
+GUI: 32
+GUI: 52
+GUI: 134
+GUI: 150
+GUI: 278
+GUI: 405
+GUI: 590
+GUI: 2329
+GUI: 2355
+GUI: Divergent vertices: 17
+core: Vertex 18:
+    General:
+        Image position (x, y) = (371.757, 717.036)
+        Pixel position (x, y) = (371, 717)
+        Spatial relative position in pm (x, y, z) = (3498.811, 6748.412, 0.000)
+        Peak gamma = 0.5623
+        Average gamma = 0.3624
+        Atomic species: Si
+        Species index: 0
+        Symmetry: 3
+    Analysis:
+        Species variant: 1
+        Probability vector: [ 0.997 0.003 0.000 0.000 0.000 0.000 0.000 ]
+            Prediction: Si
+            Confidence: 0
+        Alpha model: [ 0.076 0.924 0.000 0.000 0.000 0.000 0.000 ]
+            Prediction: Cu
+            Confidence: 0
+        Theta model: [ 0.002 0.998 0.000 0.000 0.000 0.000 0.000 ]
+            Prediction: Cu
+            Confidence: 0
+        Gamma model: [ 0.045 0.095 0.000 0.858 0.000 0.001 0.000 ]
+            Prediction: Al
+            Confidence: 0
+        Model: [ 0.000 1.000 0.000 0.000 0.000 0.000 0.000 ]
+            Prediction: Cu
+            Confidence: 0
+        Weighted model: [ 0.000 0.000 0.000 0.000 0.000 0.000 1.000 ]
+            Prediction: Un
+            Confidence: 0
+    Graph parameters:
+        In-degree: 3
+        Out-degree: 3
+        Degree: 3
+        Alpha angles: [ 2.165 2.080 2.038 ]
+            Max: 2.165
+            Min: 2.038
+        Theta angles: [ 2.038 2.080 2.165 ]
+            Max: 2.165
+            Min: 2.038
+            Variance: 0.004
+            Mean: 2.094
+        Normalized peak gamma: 0.480
+        Normalized average gamma: 0.405
+        Redshift: 41.622
+    Local graph mapping:
+        District: [82, 1534, 2122, 162, 15, 1274, 28, 293]
+        In-neighbourhood: [82, 1534, 2122]
+        Out-neighbourhood: [82, 1534, 2122]
+        Neighbourhood: [82, 1534, 2122]
+        Anti-Neighbourhood: [162, 15, 1274, 28, 293]
+        Partners: [82, 1534, 2122]
+        Semi-partners: []
+        Out-semi-partners: []
+        In-semi-partners: []
+    Settings:
+        Is in precipitate: True
+        Is edge column: False
+        Is set by user: False
+        Show in overlay: True
+        Is void: False
+        Flag 1: False
+        Flag 2: False
+        Flag 3: False
+        Flag 4: False
+        Flag 5: False
+        Flag 6: False
+        Flag 7: False
+        Flag 8: False
+        Flag 9: False
+
+GUI: 18
+GUI: 20
+GUI: 21
+GUI: 22
+GUI: 23
+GUI: 27
+GUI: 28
+GUI: 29
+GUI: 32
+GUI: 52
+GUI: 134
+GUI: 150
+GUI: 278
+GUI: 405
+GUI: 590
+GUI: 2329
+GUI: 2355
+GUI: Divergent vertices: 17
+core: Vertex 20:
+    General:
+        Image position (x, y) = (412.235, 303.034)
+        Pixel position (x, y) = (412, 303)
+        Spatial relative position in pm (x, y, z) = (3879.766, 2852.022, 0.000)
+        Peak gamma = 0.5308
+        Average gamma = 0.3600
+        Atomic species: Si
+        Species index: 0
+        Symmetry: 3
+    Analysis:
+        Species variant: 1
+        Probability vector: [ 0.999 0.001 0.000 0.000 0.000 0.000 0.000 ]
+            Prediction: Si
+            Confidence: 0
+        Alpha model: [ 0.243 0.757 0.000 0.000 0.000 0.000 0.000 ]
+            Prediction: Cu
+            Confidence: 0
+        Theta model: [ 0.006 0.994 0.000 0.000 0.000 0.000 0.000 ]
+            Prediction: Cu
+            Confidence: 0
+        Gamma model: [ 0.266 0.024 0.000 0.710 0.000 0.000 0.000 ]
+            Prediction: Al
+            Confidence: 0
+        Model: [ 0.011 0.989 0.000 0.000 0.000 0.000 0.000 ]
+            Prediction: Cu
+            Confidence: 0
+        Weighted model: [ 0.000 0.000 0.000 0.000 0.000 0.000 1.000 ]
+            Prediction: Un
+            Confidence: 0
+    Graph parameters:
+        In-degree: 3
+        Out-degree: 3
+        Degree: 3
+        Alpha angles: [ 2.006 2.286 1.992 ]
+            Max: 2.286
+            Min: 1.992
+        Theta angles: [ 2.006 2.286 1.992 ]
+            Max: 2.286
+            Min: 1.992
+            Variance: 0.028
+            Mean: 2.094
+        Normalized peak gamma: 0.449
+        Normalized average gamma: 0.402
+        Redshift: -44.875
+    Local graph mapping:
+        District: [17, 2118, 1941, 1639, 2293, 2151, 214, 577]
+        In-neighbourhood: [17, 1941, 2118]
+        Out-neighbourhood: [17, 2118, 1941]
+        Neighbourhood: [17, 2118, 1941]
+        Anti-Neighbourhood: [1639, 2293, 2151, 214, 577]
+        Partners: [17, 2118, 1941]
+        Semi-partners: []
+        Out-semi-partners: []
+        In-semi-partners: []
+    Settings:
+        Is in precipitate: True
+        Is edge column: False
+        Is set by user: False
+        Show in overlay: True
+        Is void: False
+        Flag 1: False
+        Flag 2: False
+        Flag 3: False
+        Flag 4: False
+        Flag 5: False
+        Flag 6: False
+        Flag 7: False
+        Flag 8: False
+        Flag 9: False
+
+core: Vertex 21:
+    General:
+        Image position (x, y) = (457.913, 597.561)
+        Pixel position (x, y) = (457, 597)
+        Spatial relative position in pm (x, y, z) = (4309.672, 5623.970, 0.000)
+        Peak gamma = 0.5189
+        Average gamma = 0.3367
+        Atomic species: Si
+        Species index: 0
+        Symmetry: 3
+    Analysis:
+        Species variant: 1
+        Probability vector: [ 0.999 0.001 0.000 0.000 0.000 0.000 0.000 ]
+            Prediction: Si
+            Confidence: 0
+        Alpha model: [ 0.121 0.879 0.000 0.000 0.000 0.000 0.000 ]
+            Prediction: Cu
+            Confidence: 0
+        Theta model: [ 0.003 0.997 0.000 0.000 0.000 0.000 0.000 ]
+            Prediction: Cu
+            Confidence: 0
+        Gamma model: [ 0.388 0.012 0.000 0.593 0.000 0.007 0.000 ]
+            Prediction: Al
+            Confidence: 0
+        Model: [ 0.035 0.965 0.000 0.000 0.000 0.000 0.000 ]
+            Prediction: Cu
+            Confidence: 0
+        Weighted model: [ 0.000 0.000 0.000 0.000 0.000 0.000 1.000 ]
+            Prediction: Un
+            Confidence: 0
+    Graph parameters:
+        In-degree: 3
+        Out-degree: 3
+        Degree: 3
+        Alpha angles: [ 2.163 2.161 1.959 ]
+            Max: 2.163
+            Min: 1.959
+        Theta angles: [ 2.163 2.161 1.959 ]
+            Max: 2.163
+            Min: 1.959
+            Variance: 0.014
+            Mean: 2.094
+        Normalized peak gamma: 0.437
+        Normalized average gamma: 0.379
+        Redshift: 16.107
+    Local graph mapping:
+        District: [446, 1892, 2224, 1448, 398, 2284, 1400, 405]
+        In-neighbourhood: [446, 1892, 2224]
+        Out-neighbourhood: [446, 1892, 2224]
+        Neighbourhood: [446, 1892, 2224]
+        Anti-Neighbourhood: [1448, 398, 2284, 1400, 405]
+        Partners: [446, 1892, 2224]
+        Semi-partners: []
+        Out-semi-partners: []
+        In-semi-partners: []
+    Settings:
+        Is in precipitate: True
+        Is edge column: False
+        Is set by user: False
+        Show in overlay: True
+        Is void: False
+        Flag 1: False
+        Flag 2: False
+        Flag 3: False
+        Flag 4: False
+        Flag 5: False
+        Flag 6: False
+        Flag 7: False
+        Flag 8: False
+        Flag 9: False
+
+GUI: 18
+GUI: 20
+GUI: 21
+GUI: 22
+GUI: 23
+GUI: 27
+GUI: 28
+GUI: 29
+GUI: 32
+GUI: 52
+GUI: 134
+GUI: 150
+GUI: 278
+GUI: 405
+GUI: 590
+GUI: 2329
+GUI: 2355
+GUI: Divergent vertices: 17
+core: Vertex 2329:
+    General:
+        Image position (x, y) = (237.431, 387.417)
+        Pixel position (x, y) = (237, 387)
+        Spatial relative position in pm (x, y, z) = (2234.596, 3646.196, 202.475)
+        Peak gamma = 0.2812
+        Average gamma = 0.2092
+        Atomic species: Al
+        Species index: 3
+        Symmetry: 4
+    Analysis:
+        Species variant: 2
+        Probability vector: [ 0.000 0.000 0.000 1.000 0.000 0.000 0.000 ]
+            Prediction: Al
+            Confidence: 0
+        Alpha model: [ 0.130 0.870 0.000 0.000 0.000 0.000 0.000 ]
+            Prediction: Cu
+            Confidence: 0
+        Theta model: [ 0.958 0.000 0.000 0.042 0.000 0.000 0.000 ]
+            Prediction: Si
+            Confidence: 0
+        Gamma model: [ 0.020 0.000 0.000 0.153 0.000 0.827 0.000 ]
+            Prediction: Mg
+            Confidence: 0
+        Model: [ 1.000 0.000 0.000 0.000 0.000 0.000 0.000 ]
+            Prediction: Si
+            Confidence: 0
+        Weighted model: [ 0.000 0.000 0.000 0.000 0.000 0.000 1.000 ]
+            Prediction: Un
+            Confidence: 0
+    Graph parameters:
+        In-degree: 4
+        Out-degree: 4
+        Degree: 4
+        Alpha angles: [ 2.258 1.949 2.076 ]
+            Max: 2.258
+            Min: 1.949
+        Theta angles: [ 2.076 1.002 0.947 2.258 ]
+            Max: 2.258
+            Min: 0.947
+            Variance: 0.480
+            Mean: 1.571
+        Normalized peak gamma: 0.199
+        Normalized average gamma: 0.252
+        Redshift: -239.624
+    Local graph mapping:
+        District: [2254, 2302, 2274, 2011, 2328, 2317, 614, 1864]
+        In-neighbourhood: [2011, 2254, 2274, 2302]
+        Out-neighbourhood: [2254, 2302, 2274, 2011]
+        Neighbourhood: [2254, 2302, 2274, 2011]
+        Anti-Neighbourhood: [2328, 2317, 614, 1864]
+        Partners: [2254, 2302, 2274, 2011]
+        Semi-partners: []
+        Out-semi-partners: []
+        In-semi-partners: []
+    Settings:
+        Is in precipitate: True
+        Is edge column: False
+        Is set by user: True
+        Show in overlay: True
+        Is void: False
+        Flag 1: False
+        Flag 2: False
+        Flag 3: False
+        Flag 4: False
+        Flag 5: False
+        Flag 6: False
+        Flag 7: False
+        Flag 8: False
+        Flag 9: False
+
+core: Vertex 2355:
+    General:
+        Image position (x, y) = (446.484, 523.724)
+        Pixel position (x, y) = (446, 523)
+        Spatial relative position in pm (x, y, z) = (4202.103, 4929.051, 0.000)
+        Peak gamma = 0.4025
+        Average gamma = 0.2450
+        Atomic species: Al
+        Species index: 3
+        Symmetry: 4
+    Analysis:
+        Species variant: 2
+        Probability vector: [ 0.000 0.000 0.000 1.000 0.000 0.000 0.000 ]
+            Prediction: Al
+            Confidence: 0
+        Alpha model: [ 0.016 0.000 0.000 0.000 0.000 0.984 0.000 ]
+            Prediction: Mg
+            Confidence: 0
+        Theta model: [ 1.000 0.000 0.000 0.000 0.000 0.000 0.000 ]
+            Prediction: Si
+            Confidence: 0
+        Gamma model: [ 0.450 0.000 0.000 0.125 0.000 0.425 0.000 ]
+            Prediction: Si
+            Confidence: 0
+        Model: [ 0.998 0.000 0.000 0.002 0.000 0.000 0.000 ]
+            Prediction: Si
+            Confidence: 0
+        Weighted model: [ 0.000 0.000 0.000 0.000 0.000 0.000 1.000 ]
+            Prediction: Un
+            Confidence: 0
+    Graph parameters:
+        In-degree: 4
+        Out-degree: 4
+        Degree: 4
+        Alpha angles: [ 2.629 2.423 1.231 ]
+            Max: 2.629
+            Min: 1.231
+        Theta angles: [ 1.394 1.235 2.423 1.231 ]
+            Max: 2.423
+            Min: 1.231
+            Variance: 0.329
+            Mean: 1.571
+        Normalized peak gamma: 0.321
+        Normalized average gamma: 0.287
+        Redshift: -8.243
+    Local graph mapping:
+        District: [1824, 904, 52, 89, 22, 2342, 1610, 2228]
+        In-neighbourhood: [52, 89, 904, 1824]
+        Out-neighbourhood: [1824, 904, 52, 89]
+        Neighbourhood: [1824, 904, 52, 89]
+        Anti-Neighbourhood: [22, 2342, 1610, 2228]
+        Partners: [1824, 904, 52, 89]
+        Semi-partners: []
+        Out-semi-partners: []
+        In-semi-partners: []
+    Settings:
+        Is in precipitate: True
+        Is edge column: False
+        Is set by user: True
+        Show in overlay: True
+        Is void: False
+        Flag 1: False
+        Flag 2: False
+        Flag 3: False
+        Flag 4: False
+        Flag 5: False
+        Flag 6: False
+        Flag 7: False
+        Flag 8: False
+        Flag 9: False
+
+core: Summarizing stats...
+core: Collected stats.
+core: Project summary:
+    Atomic Graph summary:
+        Scale: 9.411544
+        Order: 2368
+        Size: 9472
+        Chi: 0.380
+        Average degree: 4.000
+        Matrix redshift: 24892.786
+        Particle redshift: -19534.877
+        Total redshift: 5357.908
+    General:
+        Number of columns: 2368
+        Number of particle columns: 331
+    Average peak intensities:
+        Average peak intensity: 0.29
+        Average Si peak intensity: 0.41
+        Average Cu peak intensity: 0.79
+        Average Zn peak intensity: 0.00
+        Average Al peak intensity: 0.39
+        Average Ag peak intensity: 0.00
+        Average Mg peak intensity: 0.30
+        Average Un peak intensity: 0.00
+    Average average intensities:
+        Average average intensity: 0.20
+        Average Si average intensity: 0.27
+        Average Cu average intensity: 0.52
+        Average Zn average intensity: 0.00
+        Average Al average intensity: 0.27
+        Average Ag average intensity: 0.00
+        Average Mg average intensity: 0.21
+        Average Un average intensity: 0.00
+    Image composition:
+        Number of Si-columns: 117
+        Number of Cu-columns: 9
+        Number of Al-columns: 1547
+        Number of Mg-columns: 126
+        Number of Un-columns: 0
+        Number percentage of Si: 0.0494
+        Number percentage of Cu: 0.0038
+        Number percentage of Al: 0.6533
+        Number percentage of Mg: 0.0532
+        Number percentage of Un: 0.0000
+    Particle composition:
+        Number of precipitate Si-columns: 115
+        Number of precipitate Cu-columns: 9
+        Number of precipitate Al-columns: 82
+        Number of precipitate Mg-columns: 125
+        Number of precipitate Un-columns: 0
+        Number percentage of precipitate Si: 0.3474
+        Number percentage of precipitate Cu: 0.0272
+        Number percentage of precipitate Al: 0.2477
+        Number percentage of precipitate Mg: 0.3776
+        Number percentage of precipitate Un: 0.0000

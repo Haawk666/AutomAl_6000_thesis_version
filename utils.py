@@ -217,6 +217,7 @@ def variance(data):
 
 
 def covariance(data_1, data_2):
+    """Two-pass numerically stable covariance calculation"""
 
     mean_1 = mean_val(data_1)
     mean_2 = mean_val(data_2)
@@ -225,8 +226,8 @@ def covariance(data_1, data_2):
     for item_1, item_2 in zip(data_1, data_2):
         sum_ += (item_1 - mean_1) * (item_2 - mean_2)
 
-    if len(data_1) > 1:
-        covar = sum_ / (len(data_1) - 1)
+    if len(data_1) > 2:
+        covar = sum_ / len(data_1)
     else:
         covar = 0
 

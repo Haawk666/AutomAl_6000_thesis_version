@@ -24,16 +24,16 @@ def alpha_model(alpha_max, alpha_min):
         utils.multivariate_normal_dist(x, params[3][0], params[3][3], params[3][4]),
         utils.multivariate_normal_dist(x, params[4][0], params[4][3], params[4][4]),
         utils.multivariate_normal_dist(x, params[5][0], params[5][3], params[5][4]),
-        utils.multivariate_normal_dist(x, params[6][0], params[6][3], params[6][4]),
-        utils.multivariate_normal_dist(x, params[7][0], params[7][3], params[7][4])
+        utils.multivariate_normal_dist(x, params[6][0], params[6][3], params[6][4])
     ]
+    advanced_model = utils.normalize_list(advanced_model, 1)
     simple_model = [
         advanced_model[0] + advanced_model[1],
         advanced_model[2],
         0,
         advanced_model[3] + advanced_model[4],
         0,
-        advanced_model[5] + advanced_model[6] + advanced_model[7],
+        advanced_model[5] + advanced_model[6],
         0
     ]
     return simple_model, advanced_model
@@ -49,16 +49,16 @@ def theta_model(theta_max, theta_min, theta_avg):
         utils.multivariate_normal_dist(x, params[3][0], params[3][3], params[3][4]),
         utils.multivariate_normal_dist(x, params[4][0], params[4][3], params[4][4]),
         utils.multivariate_normal_dist(x, params[5][0], params[5][3], params[5][4]),
-        utils.multivariate_normal_dist(x, params[6][0], params[6][3], params[6][4]),
-        utils.multivariate_normal_dist(x, params[7][0], params[7][3], params[7][4])
+        utils.multivariate_normal_dist(x, params[6][0], params[6][3], params[6][4])
     ]
+    advanced_model = utils.normalize_list(advanced_model, 1)
     simple_model = [
         advanced_model[0] + advanced_model[1],
         advanced_model[2],
         0,
         advanced_model[3] + advanced_model[4],
         0,
-        advanced_model[5] + advanced_model[6] + advanced_model[7],
+        advanced_model[5] + advanced_model[6],
         0
     ]
     return simple_model, advanced_model
@@ -74,16 +74,16 @@ def normalized_gamma_model(normalized_peak_gamma, normalized_avg_gamma):
         utils.multivariate_normal_dist(x, params[3][0], params[3][3], params[3][4]),
         utils.multivariate_normal_dist(x, params[4][0], params[4][3], params[4][4]),
         utils.multivariate_normal_dist(x, params[5][0], params[5][3], params[5][4]),
-        utils.multivariate_normal_dist(x, params[6][0], params[6][3], params[6][4]),
-        utils.multivariate_normal_dist(x, params[7][0], params[7][3], params[7][4])
+        utils.multivariate_normal_dist(x, params[6][0], params[6][3], params[6][4])
     ]
+    advanced_model = utils.normalize_list(advanced_model, 1)
     simple_model = [
         advanced_model[0] + advanced_model[1],
         advanced_model[2],
         0,
         advanced_model[3] + advanced_model[4],
         0,
-        advanced_model[5] + advanced_model[6] + advanced_model[7],
+        advanced_model[5] + advanced_model[6],
         0
     ]
     return simple_model, advanced_model
@@ -99,16 +99,16 @@ def composite_model(alpha_max, alpha_min, theta_max, theta_min, theta_avg, gamma
         utils.multivariate_normal_dist(x, params[3][0], params[3][3], params[3][4]),
         utils.multivariate_normal_dist(x, params[4][0], params[4][3], params[4][4]),
         utils.multivariate_normal_dist(x, params[5][0], params[5][3], params[5][4]),
-        utils.multivariate_normal_dist(x, params[6][0], params[6][3], params[6][4]),
-        utils.multivariate_normal_dist(x, params[7][0], params[7][3], params[7][4])
+        utils.multivariate_normal_dist(x, params[6][0], params[6][3], params[6][4])
     ]
+    advanced_model = utils.normalize_list(advanced_model, 1)
     simple_model = [
         advanced_model[0] + advanced_model[1],
         advanced_model[2],
         0,
         advanced_model[3] + advanced_model[4],
         0,
-        advanced_model[5] + advanced_model[6] + advanced_model[7],
+        advanced_model[5] + advanced_model[6],
         0
     ]
     return simple_model, advanced_model
@@ -193,18 +193,24 @@ def calculate_parameters_from_files(files, model, filter=None, recalc_properties
         [[], [], [], [], [], [], []],
         [[], [], [], [], [], [], []],
         [[], [], [], [], [], [], []],
-        [[], [], [], [], [], [], []],
-        [[], [], [], [], [], [], []],
+        [[], [], [], [], [], [], []]
     ]
     for file in files.splitlines(keepends=False):
-        print(file)
         instance = core.SuchSoftware.load(file)
         image_data = instance.graph.calc_condensed_property_data(filter, recalc_properties, evaluate_category=True)
-        for advanced_species in range(0, 8):
+        for advanced_species in range(0, 7):
             for property_ in range(0, 7):
                 data[advanced_species][property_] += image_data[advanced_species][property_]
 
-    params = [[], [], [], [], [], [], [], []]
+    string = 'data = [\n'
+    for advanced_species in range(0, 7):
+        string += '\n'
+        for property_ in range(0, 7):
+            string += '    {}\n'.format(data[advanced_species][property_])
+    string += '\n]'
+    # print(string)
+
+    params = [[], [], [], [], [], [], []]
 
     if model == 0:
         for advanced_species_index, species_data in enumerate(data):
@@ -230,9 +236,9 @@ def calculate_parameters_from_files(files, model, filter=None, recalc_properties
                 logger.error('Singular covariance matrix!')
         if savefile is None:
             default_models.alpha_model = params
-            string = '[\n'
-            for species in range(0, 8):
-                if species == 7:
+            string = 'Params = [\n'
+            for species in range(0, 7):
+                if species == 6:
                     string += '    {}\n'.format(params[species])
                 else:
                     string += '    {},\n'.format(params[species])
@@ -267,9 +273,9 @@ def calculate_parameters_from_files(files, model, filter=None, recalc_properties
                 logger.error('Singular covariance matrix!')
         if savefile is None:
             default_models.theta_model = params
-            string = '[\n'
-            for species in range(0, 8):
-                if species == 7:
+            string = 'Params = [\n'
+            for species in range(0, 7):
+                if species == 6:
                     string += '    {}\n'.format(params[species])
                 else:
                     string += '    {},\n'.format(params[species])
@@ -304,9 +310,9 @@ def calculate_parameters_from_files(files, model, filter=None, recalc_properties
                 logger.error('Singular covariance matrix!')
         if savefile is None:
             default_models.gamma_model = params
-            string = '[\n'
-            for species in range(0, 8):
-                if species == 7:
+            string = 'Params = [\n'
+            for species in range(0, 7):
+                if species == 6:
                     string += '    {}\n'.format(params[species])
                 else:
                     string += '    {},\n'.format(params[species])
@@ -347,9 +353,9 @@ def calculate_parameters_from_files(files, model, filter=None, recalc_properties
                 logger.error('Singular covariance matrix!')
         if savefile is None:
             default_models.composite_model = params
-            string = '[\n'
-            for species in range(0, 8):
-                if species == 7:
+            string = 'Params = [\n'
+            for species in range(0, 7):
+                if species == 6:
                     string += '    {}\n'.format(params[species])
                 else:
                     string += '    {},\n'.format(params[species])
