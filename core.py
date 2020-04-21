@@ -938,7 +938,7 @@ class SuchSoftware:
 
             self.column_characterization(starting_index, search_type=14, ui_obj=ui_obj)
 
-            self.graph.redraw_edges()
+            self.graph.map_arcs()
             logger.info('Weak untangling complete')
 
         elif search_type == 11:
@@ -1080,32 +1080,32 @@ class SuchSoftware:
             self.graph.map_districts()
             probs = []
             for i in range(0, self.num_columns):
-                if not self.graph.vertices[i].set_by_user and not self.graph.vertices[i].is_edge_column:
+                if not self.graph.vertices[i].is_set_by_user and not self.graph.vertices[i].is_edge_column:
                     probs.append(np.array(graph_op.base_stat_score(self.graph, i, get_individual_predictions=True)[8]))
                 else:
                     probs.append([0, 0, 0, 0, 0, 0, 0])
             for i in range(0, self.num_columns):
-                if not self.graph.vertices[i].set_by_user and not self.graph.vertices[i].is_edge_column:
+                if not self.graph.vertices[i].is_set_by_user and not self.graph.vertices[i].is_edge_column:
                     self.graph.vertices[i].probability_vector = probs[i]
-                    self.graph.vertices[i].define_species()
+                    self.graph.vertices[i].determine_species_from_probability_vector()
             self.graph.map_districts()
             logger.info('Applied product predictions!')
 
         elif search_type == 23:
             # Model predictions
             logger.info('Apply model predictions')
-            self.graph.map_friends()
+            self.graph.map_districts()
             probs = []
             for i in range(0, self.num_columns):
-                if not self.graph.vertices[i].set_by_user and not self.graph.vertices[i].is_edge_column:
+                if not self.graph.vertices[i].is_set_by_user and not self.graph.vertices[i].is_edge_column:
                     probs.append(np.array(graph_op.base_stat_score(self.graph, i, get_individual_predictions=False)))
                 else:
                     probs.append([0, 0, 0, 0, 0, 0, 0])
             for i in range(0, self.num_columns):
-                if not self.graph.vertices[i].set_by_user and not self.graph.vertices[i].is_edge_column:
-                    self.graph.vertices[i].prob_vector = probs[i]
-                    self.graph.vertices[i].define_species()
-            self.graph.map_friends()
+                if not self.graph.vertices[i].is_set_by_user and not self.graph.vertices[i].is_edge_column:
+                    self.graph.vertices[i].probability_vector = probs[i]
+                    self.graph.vertices[i].determine_species_from_probability_vector()
+            self.graph.map_districts()
             logger.info('Applied model predictions!')
 
         else:

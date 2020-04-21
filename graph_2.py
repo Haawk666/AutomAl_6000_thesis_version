@@ -855,7 +855,7 @@ class AtomicGraph:
 
             mesh_1 = self.get_mesh(i, option)
             mesh_2 = self.get_mesh(option, i)
-            if mesh_1.num_corners == 4 and mesh_2.num_corners == 4:
+            if mesh_1.order == 4 and mesh_2.order == 4:
                 k = option
                 break
 
@@ -863,9 +863,9 @@ class AtomicGraph:
 
             if aggressive:
                 for option in options:
-                    mesh_1 = self.find_mesh(i, option, return_mesh=True, use_friends=True)
-                    mesh_2 = self.find_mesh(option, i, return_mesh=True, use_friends=True)
-                    if mesh_1.num_corners == 4 or mesh_2.num_corners == 4:
+                    mesh_1 = self.get_mesh(i, option)
+                    mesh_2 = self.get_mesh(option, i)
+                    if mesh_1.order == 4 or mesh_2.order == 4:
                         k = option
                         break
 
@@ -874,6 +874,26 @@ class AtomicGraph:
 
             else:
                 return -1
+
+        return k
+
+    def weak_preserve_edge(self, i, j):
+
+        config = self.get_column_centered_subgraph(j)
+        options = []
+
+        for mesh in config.meshes:
+            for m, corner in enumerate(mesh.vertex_indices):
+                if (m == 1 or m == len(mesh.vertex_indices) - 1) and corner in self.vertices[j].out_neighbourhood and not corner == i:
+                    options.append(corner)
+
+        k = -1
+        for option in options:
+            mesh_1 = self.get_mesh(j, option)
+            mesh_2 = self.get_mesh(option, j)
+            if mesh_1.order == 3 and mesh_2.order == 3:
+                k = option
+                break
 
         return k
 
