@@ -34,14 +34,34 @@ def normalize_static(mat):
 
 
 def gen_framed_mat(mat, r):
+    """Return input matrix padded with a frame of zeros and width r.
+
+    :param mat: Matrix to be padded.
+    :type mat: np.array
+    :param r: Width of frame
+    :type r: int
+    :returns Framed matrix:
+    :rtype np.array:
+
+    """
     hor_frame = np.zeros((r, mat.shape[1]), dtype=type(mat))
     ver_frame = np.zeros((mat.shape[0] + 2 * r, r), dtype=type(mat))
-    mat = np.concatenate((hor_frame, mat, hor_frame), axis=0)
-    mat = np.concatenate((ver_frame, mat, ver_frame), axis=1)
-    return mat
+    framed_mat = np.concatenate((hor_frame, mat, hor_frame), axis=0)
+    framed_mat = np.concatenate((ver_frame, framed_mat, ver_frame), axis=1)
+    return framed_mat
 
 
 def gen_de_framed_mat(temp_mat, r):
+    """Return input matrix de-framed by width r.
+
+    :param temp_mat: Matrix to be de-padded.
+    :type temp_mat: np.array
+    :param r: Width of frame
+    :type r: int
+    :returns De-framed matrix:
+    :rtype np.array:
+
+    """
     (height, width) = temp_mat.shape
     return temp_mat[r:height - r, r:width - r]
 
