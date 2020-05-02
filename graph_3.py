@@ -387,22 +387,24 @@ class AtomicGraph:
                 result = arc
                 break
         else:
-            if j in self.vertices[i].out_neighbourhood:
-                result = Arc(-1, self.vertices[i], self.vertices[j])
+            vertex_a = None
+            vertex_b = None
+            for vertex in self.vertices:
+                if vertex.i == i:
+                    vertex_a = vertex
+                if vertex.i == j:
+                    vertex_b = vertex
+            if vertex_a is not None and vertex_b is not None:
+                if j in vertex_a.out_neighbourhood:
+                    result = Arc(-1, vertex_a, vertex_b)
         return result
 
     def get_vertex_objects_from_indices(self, vertex_indices):
         vertices = []
-        for index in vertex_indices:
-            vertices.append(self.vertices[index])
-        return vertices
-
-    def get_only_non_void_vertex_indices(self):
-        non_void = []
         for vertex in self.vertices:
-            if not vertex.void:
-                non_void.append(vertex.i)
-        return non_void
+            if vertex.i in vertex_indices:
+                vertices.append(vertex)
+        return vertices
 
     def get_alpha_angles(self, i, prioritize_friendly=False):
         pivot = (self.vertices[i].im_coor_x, self.vertices[i].im_coor_y)

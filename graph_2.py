@@ -383,6 +383,7 @@ class AtomicGraph:
         self.mesh_indices = []
 
         self.particle_boarder_indices = []
+        self.structures = []
 
         self.scale = scale
         self.district_size = district_size
@@ -1429,6 +1430,9 @@ class SubGraph:
         self.num_vertices = 0
         self.num_arcs = 0
         self.num_meshes = 0
+
+        self.class_ = None
+        self.configuration = None
 
     def finalize_init(self):
         self.redraw_edges()
