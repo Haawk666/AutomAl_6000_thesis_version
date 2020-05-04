@@ -12,7 +12,7 @@ import export_module
 import data_module
 import utils
 import params
-import statistical_models
+import statistics
 # External imports:
 from PyQt5 import QtWidgets, QtGui, QtCore
 import pathlib
@@ -183,7 +183,7 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
         vertex_a = self.ui_obj.project_instance.graph.vertices[i]
         vertex_b = self.ui_obj.project_instance.graph.vertices[self.edges[i][m].j]
         consistent = vertex_b.partner_query(vertex_a.i)
-        if vertex_a.level == vertex_b.level:
+        if vertex_a.zeta == vertex_b.zeta:
             dislocation = True
         else:
             dislocation = False
@@ -220,7 +220,7 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
                 p1 = vertex_a.im_pos()
                 p2 = vertex_b.im_pos()
                 consistent = vertex_b.partner_query(vertex_a.i)
-                if vertex_a.level == vertex_b.level:
+                if vertex_a.zeta == vertex_b.zeta:
                     dislocation = True
                 else:
                     dislocation = False
@@ -260,7 +260,7 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
             p2 = vertex_b.im_pos()
             p2 = (p2[0], p2[1])
             consistent = vertex_b.partner_query(vertex_a.i)
-            if vertex_a.level == vertex_b.level:
+            if vertex_a.zeta == vertex_b.zeta:
                 dislocation = True
             else:
                 dislocation = False
@@ -572,20 +572,20 @@ class AntiGraph(QtWidgets.QGraphicsScene):
                                                                   p1=p1, p2=p2, r=self.ui_obj.project_instance.r,
                                                                   scale_factor=self.scale_factor))
             self.addItem(self.edges[-1])
-            if edge.vertex_a.level == 1 and edge.vertex_b.level == 1:
+            if edge.vertex_a.zeta == 1 and edge.vertex_b.zeta == 1:
                 pass
             else:
                 self.edges[-1].setZValue(-2)
 
     def toggle_level_0(self, on):
         for vertex in self.graph.vertices:
-            if vertex.level == 0:
+            if vertex.zeta == 0:
                 if on:
                     self.interactive_vertex_objects[vertex.i].show()
                 else:
                     self.interactive_vertex_objects[vertex.i].hide()
         for m, edge in enumerate(self.graph.arcs):
-            if edge.vertex_a.level == 0 and edge.vertex_b.level == 0:
+            if edge.vertex_a.zeta == 0 and edge.vertex_b.zeta == 0:
                 if on:
                     self.edges[m].show()
                 else:
@@ -593,13 +593,13 @@ class AntiGraph(QtWidgets.QGraphicsScene):
 
     def toggle_level_1(self, on):
         for vertex in self.graph.vertices:
-            if vertex.level == 1:
+            if vertex.zeta == 1:
                 if on:
                     self.interactive_vertex_objects[vertex.i].show()
                 else:
                     self.interactive_vertex_objects[vertex.i].hide()
         for m, edge in enumerate(self.graph.arcs):
-            if edge.vertex_a.level == 1 and edge.vertex_b.level == 1:
+            if edge.vertex_a.zeta == 1 and edge.vertex_b.zeta == 1:
                 if on:
                     self.edges[m].show()
                 else:
@@ -1542,7 +1542,7 @@ class ControlWindow(QtWidgets.QWidget):
             self.lbl_column_peak_gamma.setText('Peak gamma: {}'.format(vertex.peak_gamma))
             self.lbl_column_avg_gamma.setText('Avg gamma: {}'.format(vertex.avg_gamma))
             self.lbl_column_species.setText('Atomic species: {}'.format(vertex.atomic_species))
-            self.lbl_column_level.setText('Level: {}'.format(vertex.level))
+            self.lbl_column_level.setText('Level: {}'.format(vertex.zeta))
             self.lbl_confidence.setText('Confidence: VOID')
             self.lbl_symmetry_confidence.setText('Symmetry confidence: VOID')
             self.lbl_level_confidence.setText('Level confidence: VOID')
@@ -3178,8 +3178,10 @@ class CalcModels(QtWidgets.QDialog):
         self.btn_add_files = QtWidgets.QPushButton('Add files')
 
         # Frame 1
-        self.lbl_select_data = QtWidgets.QLabel('Select model')
-        self.combo_1 = QtWidgets.QComboBox()
+        self.lbl_select_data = QtWidgets.QLabel('Select plots')
+        self.chb_plot_data = QtWidgets.QCheckBox('Plot data')
+        self.chb_plot_pca = QtWidgets.QCheckBox('Plot PCA')
+        self.chb_plot_model_components = QtWidgets.QCheckBox('Plot model summary')
 
         # Frame 2
         self.lbl_filter = QtWidgets.QLabel('Set inclusion filter: (Columns with unchecked properties will not be included)')
@@ -3226,17 +3228,18 @@ class CalcModels(QtWidgets.QDialog):
         self.widget_frame_0.setLayout(h_layout)
 
     def page_1_layout(self):
-        self.combo_1.addItem('alpha model')
-        self.combo_1.addItem('theta model')
-        self.combo_1.addItem('gamma model')
-        self.combo_1.addItem('composite model')
+        self.chb_plot_data.setChecked(True)
+        self.chb_plot_pca.setChecked(False)
+        self.chb_plot_model_components.setChecked(True)
 
         h_layout = QtWidgets.QHBoxLayout()
         v_layout = QtWidgets.QVBoxLayout()
 
         v_layout.addStretch()
         v_layout.addWidget(self.lbl_select_data)
-        v_layout.addWidget(self.combo_1)
+        v_layout.addWidget(self.chb_plot_data)
+        v_layout.addWidget(self.chb_plot_pca)
+        v_layout.addWidget(self.chb_plot_model_components)
         v_layout.addStretch()
 
         h_layout.addStretch()
@@ -3328,8 +3331,7 @@ class CalcModels(QtWidgets.QDialog):
         else:
             files = self.ui_obj.savefile
 
-        # filename = QtWidgets.QFileDialog.getSaveFileName(self, "Select output file", '', "Comma separated file (*.csv)")
-        filename = 'fuckface'
+        filename = QtWidgets.QFileDialog.getSaveFileName(self, "Save model as", '', "")
         if filename[0]:
             filter = [self.chb_edge_columns.isChecked(),
                       self.chb_matrix_columns.isChecked(),
@@ -3338,17 +3340,9 @@ class CalcModels(QtWidgets.QDialog):
                       self.chb_flag_2.isChecked(),
                       self.chb_flag_3.isChecked(),
                       self.chb_flag_4.isChecked()]
-            if self.combo_1.currentIndex() == 0:
-                statistical_models.calculate_parameters_from_files(files, 0, filter=filter)
-            elif self.combo_1.currentIndex() == 1:
-                statistical_models.calculate_parameters_from_files(files, 1, filter=filter)
-            elif self.combo_1.currentIndex() == 2:
-                statistical_models.calculate_parameters_from_files(files, 2, filter=filter)
-            elif self.combo_1.currentIndex() == 3:
-                statistical_models.calculate_parameters_from_files(files, 3, filter=filter)
-            else:
-                logger.error('Not implemented!')
+            model = statistics.calculate_models(files, filter_=filter, recalc_properties=False, savefile=filename)
             GUI.logger.info('Successfully saved model parameters to {}'.format(filename[0]))
+            if self.chb_plot_data
         self.ui_obj.sys_message('Ready.')
 
     def get_next_frame(self):

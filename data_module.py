@@ -8,8 +8,8 @@ import utils
 import numpy as np
 import csv
 import copy
-# from matplotlib import pyplot as plt
-# from matplotlib.gridspec import GridSpec
+from matplotlib import pyplot as plt
+from matplotlib.gridspec import GridSpec
 import logging
 # Instantiate logger
 logger = logging.getLogger(__name__)
@@ -94,57 +94,57 @@ class VertexNumericData:
 
     def plot(self):
         pass
-        # logger.info('Generating plot...')
-        #
-        # alpha = np.linspace(-10, 10, 1000)
-        #
-        # fig = plt.figure(constrained_layout=True)
-        # gs = GridSpec(2, 2, figure=fig)
-        # ax_pc_1 = fig.add_subplot(gs[0, 0])
-        # ax_pc_2 = fig.add_subplot(gs[1, 0])
-        # ax_scatter = fig.add_subplot(gs[:, 1])
-        #
-        # ax_pc_1.plot(alpha, utils.normal_dist(alpha, utils.mean_val(self.cu_pca_data[:, 2]), np.sqrt(utils.variance(self.cu_pca_data[:, 2]))),
-        #              'y', label='Cu ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(utils.mean_val(self.cu_pca_data[:, 2]), np.sqrt(utils.variance(self.cu_pca_data[:, 2]))))
-        # ax_pc_1.plot(alpha, utils.normal_dist(alpha, utils.mean_val(self.si_pca_data[:, 2]), np.sqrt(utils.variance(self.si_pca_data[:, 2]))),
-        #              'r', label='Si ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(utils.mean_val(self.si_pca_data[:, 2]), np.sqrt(utils.variance(self.si_pca_data[:, 2]))))
-        # ax_pc_1.plot(alpha, utils.normal_dist(alpha, utils.mean_val(self.al_pca_data[:, 2]), np.sqrt(utils.variance(self.al_pca_data[:, 2]))),
-        #              'g', label='Al ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(utils.mean_val(self.al_pca_data[:, 2]), np.sqrt(utils.variance(self.al_pca_data[:, 2]))))
-        # ax_pc_1.plot(alpha, utils.normal_dist(alpha, utils.mean_val(self.mg_pca_data[:, 2]), np.sqrt(utils.variance(self.mg_pca_data[:, 2]))),
-        #              'm', label='Mg ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(utils.mean_val(self.mg_pca_data[:, 2]), np.sqrt(utils.variance(self.mg_pca_data[:, 2]))))
-        #
-        # ax_pc_1.set_title('Principle component 1 fitted density')
-        # ax_pc_1.set_xlabel('Principle component 1')
-        # ax_pc_1.legend()
-        #
-        # ax_pc_2.plot(alpha, utils.normal_dist(alpha, utils.mean_val(self.cu_pca_data[:, 3]), np.sqrt(utils.variance(self.cu_pca_data[:, 3]))),
-        #              'y', label='Cu ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(utils.mean_val(self.cu_pca_data[:, 3]), np.sqrt(utils.variance(self.cu_pca_data[:, 3]))))
-        # ax_pc_2.plot(alpha, utils.normal_dist(alpha, utils.mean_val(self.si_pca_data[:, 3]), np.sqrt(utils.variance(self.si_pca_data[:, 3]))),
-        #              'r', label='Si ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(utils.mean_val(self.si_pca_data[:, 3]), np.sqrt(utils.variance(self.si_pca_data[:, 3]))))
-        # ax_pc_2.plot(alpha, utils.normal_dist(alpha, utils.mean_val(self.al_pca_data[:, 3]), np.sqrt(utils.variance(self.al_pca_data[:, 3]))),
-        #              'g', label='Al ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(utils.mean_val(self.al_pca_data[:, 3]), np.sqrt(utils.variance(self.al_pca_data[:, 3]))))
-        # ax_pc_2.plot(alpha, utils.normal_dist(alpha, utils.mean_val(self.mg_pca_data[:, 3]), np.sqrt(utils.variance(self.mg_pca_data[:, 3]))),
-        #              'm', label='Mg ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(utils.mean_val(self.mg_pca_data[:, 3]), np.sqrt(utils.variance(self.mg_pca_data[:, 3]))))
-        #
-        # ax_pc_2.set_title('Principle component 2 fitted density')
-        # ax_pc_2.set_xlabel('Principle component 2')
-        # ax_pc_2.legend()
-        #
-        # ax_scatter.scatter(self.cu_pca_data[:, 2], self.cu_pca_data[:, 3], c='y', label='Cu', s=4)
-        # ax_scatter.scatter(self.si_pca_data[:, 2], self.si_pca_data[:, 3], c='r', label='Si', s=4)
-        # ax_scatter.scatter(self.al_pca_data[:, 2], self.al_pca_data[:, 3], c='g', label='Al', s=4)
-        # ax_scatter.scatter(self.mg_pca_data[:, 2], self.mg_pca_data[:, 3], c='m', label='Mg', s=4)
-        #
-        # ax_scatter.set_title('Scatter-plot of two first principle components')
-        # ax_scatter.set_xlabel('PC 1')
-        # ax_scatter.set_ylabel('PC 2')
-        # ax_scatter.legend()
-        #
-        # fig.suptitle('Principle component analysis')
-        #
-        # logger.info('Plotted PCA alpha over {} files and {} vertices!'.format(self.num_files, self.num_vertices))
-        #
-        # plt.show()
+        logger.info('Generating plot...')
+
+        alpha = np.linspace(-10, 10, 1000)
+
+        fig = plt.figure(constrained_layout=True)
+        gs = GridSpec(2, 2, figure=fig)
+        ax_pc_1 = fig.add_subplot(gs[0, 0])
+        ax_pc_2 = fig.add_subplot(gs[1, 0])
+        ax_scatter = fig.add_subplot(gs[:, 1])
+
+        ax_pc_1.plot(alpha, utils.normal_dist(alpha, utils.mean_val(self.cu_pca_data[:, 2]), np.sqrt(utils.variance(self.cu_pca_data[:, 2]))),
+                     'y', label='Cu ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(utils.mean_val(self.cu_pca_data[:, 2]), np.sqrt(utils.variance(self.cu_pca_data[:, 2]))))
+        ax_pc_1.plot(alpha, utils.normal_dist(alpha, utils.mean_val(self.si_pca_data[:, 2]), np.sqrt(utils.variance(self.si_pca_data[:, 2]))),
+                     'r', label='Si ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(utils.mean_val(self.si_pca_data[:, 2]), np.sqrt(utils.variance(self.si_pca_data[:, 2]))))
+        ax_pc_1.plot(alpha, utils.normal_dist(alpha, utils.mean_val(self.al_pca_data[:, 2]), np.sqrt(utils.variance(self.al_pca_data[:, 2]))),
+                     'g', label='Al ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(utils.mean_val(self.al_pca_data[:, 2]), np.sqrt(utils.variance(self.al_pca_data[:, 2]))))
+        ax_pc_1.plot(alpha, utils.normal_dist(alpha, utils.mean_val(self.mg_pca_data[:, 2]), np.sqrt(utils.variance(self.mg_pca_data[:, 2]))),
+                     'm', label='Mg ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(utils.mean_val(self.mg_pca_data[:, 2]), np.sqrt(utils.variance(self.mg_pca_data[:, 2]))))
+
+        ax_pc_1.set_title('Principle component 1 fitted density')
+        ax_pc_1.set_xlabel('Principle component 1')
+        ax_pc_1.legend()
+
+        ax_pc_2.plot(alpha, utils.normal_dist(alpha, utils.mean_val(self.cu_pca_data[:, 3]), np.sqrt(utils.variance(self.cu_pca_data[:, 3]))),
+                     'y', label='Cu ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(utils.mean_val(self.cu_pca_data[:, 3]), np.sqrt(utils.variance(self.cu_pca_data[:, 3]))))
+        ax_pc_2.plot(alpha, utils.normal_dist(alpha, utils.mean_val(self.si_pca_data[:, 3]), np.sqrt(utils.variance(self.si_pca_data[:, 3]))),
+                     'r', label='Si ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(utils.mean_val(self.si_pca_data[:, 3]), np.sqrt(utils.variance(self.si_pca_data[:, 3]))))
+        ax_pc_2.plot(alpha, utils.normal_dist(alpha, utils.mean_val(self.al_pca_data[:, 3]), np.sqrt(utils.variance(self.al_pca_data[:, 3]))),
+                     'g', label='Al ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(utils.mean_val(self.al_pca_data[:, 3]), np.sqrt(utils.variance(self.al_pca_data[:, 3]))))
+        ax_pc_2.plot(alpha, utils.normal_dist(alpha, utils.mean_val(self.mg_pca_data[:, 3]), np.sqrt(utils.variance(self.mg_pca_data[:, 3]))),
+                     'm', label='Mg ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(utils.mean_val(self.mg_pca_data[:, 3]), np.sqrt(utils.variance(self.mg_pca_data[:, 3]))))
+
+        ax_pc_2.set_title('Principle component 2 fitted density')
+        ax_pc_2.set_xlabel('Principle component 2')
+        ax_pc_2.legend()
+
+        ax_scatter.scatter(self.cu_pca_data[:, 2], self.cu_pca_data[:, 3], c='y', label='Cu', s=4)
+        ax_scatter.scatter(self.si_pca_data[:, 2], self.si_pca_data[:, 3], c='r', label='Si', s=4)
+        ax_scatter.scatter(self.al_pca_data[:, 2], self.al_pca_data[:, 3], c='g', label='Al', s=4)
+        ax_scatter.scatter(self.mg_pca_data[:, 2], self.mg_pca_data[:, 3], c='m', label='Mg', s=4)
+
+        ax_scatter.set_title('Scatter-plot of two first principle components')
+        ax_scatter.set_xlabel('PC 1')
+        ax_scatter.set_ylabel('PC 2')
+        ax_scatter.legend()
+
+        fig.suptitle('Principle component analysis')
+
+        logger.info('Plotted PCA alpha over {} files and {} vertices!'.format(self.num_files, self.num_vertices))
+
+        plt.show()
 
     def principal_component_analysis(self, data=None):
 

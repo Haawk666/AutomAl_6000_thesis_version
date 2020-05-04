@@ -1,5 +1,5 @@
 GUI: Welcome to AutomAl 6000 by Haakon Tvedt
 GUI: GUI version: 0.0.2
-GUI: core version: 0.0.11
+GUI: core version: 0.0.12
 GUI: Build version: Alpha 1.0
 ------------------------

@@ -98,7 +98,7 @@ class SuchSoftware:
     """
 
     # Version
-    version = [0, 0, 11]
+    version = [0, 0, 12]
 
     # Number of elements in the probability vectors
     num_selections = 7
@@ -753,7 +753,7 @@ class SuchSoftware:
         elif search_type == 6:
             # Legacy level determination
             logger.info('Running legacy level definition algorithm....')
-            legacy_items.define_levels(self.graph, starting_index, self.graph.vertices[starting_index].level)
+            legacy_items.define_levels(self.graph, starting_index, self.graph.vertices[starting_index].zeta)
             logger.info('Levels set.')
 
         elif search_type == 7:
@@ -761,7 +761,7 @@ class SuchSoftware:
             logger.info('Running experimental level definition algorithm....')
             self.graph.reset_all_flags()
             self.graph.map_districts()
-            graph_op.naive_determine_z(self.graph, starting_index, self.graph.vertices[starting_index].level)
+            graph_op.naive_determine_z(self.graph, starting_index, self.graph.vertices[starting_index].zeta)
             graph_op.revise_z(self.graph)
             graph_op.revise_z(self.graph)
             logger.info('Levels set.')

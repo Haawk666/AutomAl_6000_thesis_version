@@ -1,7 +1,7 @@
 
 
 import utils
-import statistical_models
+import statistics
 import numpy as np
 import copy
 import sys
@@ -951,12 +951,12 @@ class AtomicGraph:
             vertex.model = []
             vertex.advanced_model = []
             if not vertex.void:
-                vertex.alpha_model, vertex.advanced_alpha_model = statistical_models.alpha_model(vertex.alpha_max, vertex.alpha_min)
-                vertex.theta_model, vertex.advanced_theta_model = statistical_models.theta_model(vertex.theta_max, vertex.theta_min, vertex.theta_angle_mean)
-                vertex.gamma_model, vertex.advanced_gamma_model = statistical_models.normalized_gamma_model(vertex.normalized_avg_gamma, vertex.normalized_peak_gamma)
-                vertex.model, vertex.advanced_model = statistical_models.composite_model(vertex.alpha_max, vertex.alpha_min,
-                                                                                         vertex.theta_max, vertex.theta_min, vertex.theta_angle_mean,
-                                                                                         vertex.normalized_avg_gamma, vertex.normalized_peak_gamma)
+                vertex.alpha_model, vertex.advanced_alpha_model = statistics.alpha_model(vertex.alpha_max, vertex.alpha_min)
+                vertex.theta_model, vertex.advanced_theta_model = statistics.theta_model(vertex.theta_max, vertex.theta_min, vertex.theta_angle_mean)
+                vertex.gamma_model, vertex.advanced_gamma_model = statistics.normalized_gamma_model(vertex.normalized_avg_gamma, vertex.normalized_peak_gamma)
+                vertex.model, vertex.advanced_model = statistics.composite_model(vertex.alpha_max, vertex.alpha_min,
+                                                                                 vertex.theta_max, vertex.theta_min, vertex.theta_angle_mean,
+                                                                                 vertex.normalized_avg_gamma, vertex.normalized_peak_gamma)
 
     def refresh_graph(self):
         self.map_districts(search_extended_district=True)

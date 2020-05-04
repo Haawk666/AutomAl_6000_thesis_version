@@ -122,31 +122,31 @@ class InteractiveOverlayColumn(InteractiveColumn):
             self.setBrush(self.brush_black)
             if self.vertex.species_index == 0:
                 self.setPen(self.pen_si)
-                if self.vertex.level == 0:
+                if self.vertex.zeta == 0:
                     self.setBrush(self.brush_si)
             elif self.vertex.species_index == 1:
                 self.setPen(self.pen_cu)
-                if self.vertex.level == 0:
+                if self.vertex.zeta == 0:
                     self.setBrush(self.brush_cu)
             elif self.vertex.species_index == 2:
                 self.setPen(self.pen_zn)
-                if self.vertex.level == 0:
+                if self.vertex.zeta == 0:
                     self.setBrush(self.brush_zn)
             elif self.vertex.species_index == 3:
                 self.setPen(self.pen_al)
-                if self.vertex.level == 0:
+                if self.vertex.zeta == 0:
                     self.setBrush(self.brush_al)
             elif self.vertex.species_index == 4:
                 self.setPen(self.pen_ag)
-                if self.vertex.level == 0:
+                if self.vertex.zeta == 0:
                     self.setBrush(self.brush_ag)
             elif self.vertex.species_index == 5:
                 self.setPen(self.pen_mg)
-                if self.vertex.level == 0:
+                if self.vertex.zeta == 0:
                     self.setBrush(self.brush_mg)
             elif self.vertex.species_index == 6:
                 self.setPen(self.pen_un)
-                if self.vertex.level == 0:
+                if self.vertex.zeta == 0:
                     self.setBrush(self.brush_un)
             else:
                 logger.error('Unknown h_index')
@@ -177,7 +177,7 @@ class InteractiveGraphColumn(InteractiveColumn):
             self.setPen(self.selected_pen)
         else:
             self.setPen(self.unselected_pen)
-        if self.vertex.level == 0:
+        if self.vertex.zeta == 0:
             self.setBrush(self.level_0_brush)
         else:
             self.setBrush(self.level_1_brush)
