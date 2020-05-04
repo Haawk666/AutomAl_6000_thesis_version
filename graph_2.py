@@ -1080,17 +1080,15 @@ class AtomicGraph:
                     vertex.species_variant = 1
                     vertex.advanced_category_index = 2
 
-    def calc_condensed_property_data(self, filter_=None, recalc=True, evaluate_category=False, keys=None):
+    def calc_condensed_property_data(self, filter_=None, recalc=True, keys=None):
         if filter_ is None:
             filter_ = [False, True, True, True, True, True, True]
         if keys is None:
-            keys = ['species_index', 'species_variant', 'advanced_category_index','alpha_max', 'alpha_min', 'theta_max', 'theta_min',
+            keys = ['species_index', 'species_variant', 'advanced_category_index', 'alpha_max', 'alpha_min', 'theta_max', 'theta_min',
                 'theta_angle_mean', 'normalized_peak_gamma', 'normalized_avg_gamma', 'avg_central_separation'
             ]
         if recalc:
             self.refresh_graph()
-        if evaluate_category:
-            self.evaluate_sub_categories()
         data = []
         for vertex in self.vertices:
             if not vertex.void:
