@@ -193,7 +193,7 @@ class DataManager:
         self.categorization = categorization
         if self.categorization == 'advanced':
             self.category_titles = ['Si_1', 'Si_2', 'Cu', 'Al_1', 'Al_2', 'Mg_1', 'Mg_2']
-            self.colours = ['r', 'lightsalmon', 'y', 'g', 'mediumseagreen', 'm', 'plum']
+            self.colours = ['r', 'k', 'y', 'g', 'mediumseagreen', 'm', 'plum']
         elif self.categorization == 'simple':
             self.category_titles = ['Si', 'Cu', 'Al', 'Mg']
             self.colours = ['r', 'y', 'g', 'm']
