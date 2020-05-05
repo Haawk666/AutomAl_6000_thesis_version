@@ -7,7 +7,7 @@ import core
 import GUI_elements
 import GUI_settings
 import mat_op
-import default_models
+import statistics
 # External imports:
 from PyQt5 import QtWidgets, QtGui, QtCore
 import sys
@@ -1156,7 +1156,10 @@ class MainUI(QtWidgets.QMainWindow):
         GUI_elements.CalcModels(ui_obj=self)
 
     def btn_plot_models_trigger(self):
-        GUI_elements.PlotModels(ui_obj=self)
+        if self.project_instance is not None:
+            GUI_elements.PlotModels(ui_obj=self, model=self.project_instance.graph.active_model)
+        else:
+            GUI_elements.PlotModels(ui_obj=self, model=statistics.DataManager.load('default_model'))
 
     def btn_save_log_trigger(self):
         filename = QtWidgets.QFileDialog.getSaveFileName(self, 'Save log-file', '')

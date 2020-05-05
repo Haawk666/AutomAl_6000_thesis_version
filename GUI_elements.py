@@ -3329,8 +3329,7 @@ class CalcModels(QtWidgets.QDialog):
         else:
             files = self.ui_obj.savefile
 
-        # filename = QtWidgets.QFileDialog.getSaveFileName(self, "Save model as", '', "")
-        filename = 'default_model'
+        filename = QtWidgets.QFileDialog.getSaveFileName(self, "Save model as", '', "")
         if filename[0]:
             filter = [self.chb_edge_columns.isChecked(),
                       self.chb_matrix_columns.isChecked(),
@@ -3400,18 +3399,25 @@ class CalcModels(QtWidgets.QDialog):
 
 class PlotModels(QtWidgets.QDialog):
 
-    def __init__(self, *args, ui_obj=None):
+    def __init__(self, *args, ui_obj=None, model=None):
         super().__init__(*args)
 
         self.ui_obj = ui_obj
 
         self.setWindowTitle('Display model details')
 
-        self.model = ui_obj.project_instance.active_model
+        self.model = model
 
-        self.lbl_viewing_model = QtWidgets.QLabel('Viewing model: {}'.format(self.model.save_filename))
+        self.lbl_viewing_model = QtWidgets.QLabel('')
+        self.lbl_categories = QtWidgets.QLabel('')
+        self.lbl_attributes = QtWidgets.QLabel('')
+        self.lbl_size = QtWidgets.QLabel('')
+        self.lbl_attribute_1 = QtWidgets.QLabel('Attribute 1: ')
+        self.lbl_attribute_2 = QtWidgets.QLabel('Attribute 2: ')
+        self.lbl_pca_categories = QtWidgets.QLabel('Show categorization: ')
+        self.lbl_single_attribute = QtWidgets.QLabel('Attribute: ')
 
-        self.btn_quit = QtWidgets.QPushButton('Next')
+        self.btn_quit = QtWidgets.QPushButton('Quit')
         self.btn_quit.clicked.connect(self.btn_quit_trigger)
         self.btn_activate_model = QtWidgets.QPushButton('Set as active')
         self.btn_activate_model.clicked.connect(self.btn_activate_model_trigger)
@@ -3424,34 +3430,185 @@ class PlotModels(QtWidgets.QDialog):
         self.btn_plot_all.clicked.connect(self.btn_plot_all_trigger)
         self.btn_plot_pca = QtWidgets.QPushButton('Plot')
         self.btn_plot_pca.clicked.connect(self.btn_plot_pca_trigger)
+        self.btn_plot_single = QtWidgets.QPushButton('Plot')
+        self.btn_plot_single.clicked.connect(self.btn_plot_single_trigger)
 
         self.cmb_attribute_1 = QtWidgets.QComboBox()
         self.cmb_attribute_2 = QtWidgets.QComboBox()
+        self.cmb_single_attribute = QtWidgets.QComboBox()
         self.cmb_pca_setting = QtWidgets.QComboBox()
+
+        self.cmb_pca_setting.addItem('Advanced')
+        self.cmb_pca_setting.addItem('Simple')
+        self.cmb_pca_setting.addItem('None')
 
         self.set_layout()
         self.exec_()
 
     def set_layout(self):
+        # Fill info into widgets:
+        self.lbl_viewing_model.setText('Model: {}'.format(self.model.save_filename))
+        if self.ui_obj.project_instance is not None:
+            if self.model.save_filename == self.ui_obj.project_instance.graph.active_model.save_filename:
+                self.btn_activate_model.setDisabled(True)
+            else:
+                self.btn_activate_model.setDisabled(False)
+        else:
+            self.btn_activate_model.setDisabled(True)
+        number_of_files = 0
+        for file in self.model.files.splitlines(keepends=False):
+            number_of_files += 1
+        gen_string = ''
+        gen_string += 'Total size, n = {}\n'.format(self.model.uncategorized_normal_dist.n)
+        gen_string += 'Data gathered from {} images\n'.format(number_of_files)
+        gen_string += 'Filter:\n'
+        gen_string += '    Include edge columns: {}\n'.format(self.model.filter_[0])
+        gen_string += '    Include matrix columns: {}\n'.format(self.model.filter_[1])
+        gen_string += '    Include hidden columns: {}\n'.format(self.model.filter_[2])
+        gen_string += '    Include flag 1: {}\n'.format(self.model.filter_[3])
+        gen_string += '    Include flag 2: {}\n'.format(self.model.filter_[4])
+        gen_string += '    Include flag 3: {}\n'.format(self.model.filter_[5])
+        gen_string += '    Include flag 4: {}\n'.format(self.model.filter_[6])
+        self.lbl_size.setText(gen_string)
+        attr_string = ''
+        for attribute in self.model.attribute_keys:
+            self.cmb_attribute_1.addItem(attribute)
+            self.cmb_attribute_2.addItem(attribute)
+            self.cmb_single_attribute.addItem(attribute)
+            attr_string += '{}\n'.format(attribute)
+        self.lbl_attributes.setText('{}'.format(attr_string))
+        cat_string = ''
+        for c, category_key in enumerate(self.model.category_titles):
+            cat_string += '{}\t\tn = {}\n'.format(category_key, self.model.composite_model[c].n)
+        self.lbl_categories.setText('{}'.format(cat_string))
+
+        # Create group boxes:
         grp_set_model = QtWidgets.QGroupBox('Select model')
         grp_dual_plot = QtWidgets.QGroupBox('Dual plot')
         grp_plot_all = QtWidgets.QGroupBox('Plot all model attributes densities')
         grp_plot_pca = QtWidgets.QGroupBox('Plot 2 first principle components')
+        grp_categorization = QtWidgets.QGroupBox('Data categories ({}):'.format(self.model.num_data_categories))
+        grp_attributes = QtWidgets.QGroupBox('Data attributes ({}):'.format(self.model.k))
+        grp_general = QtWidgets.QGroupBox('General:')
+        grp_single_plot = QtWidgets.QGroupBox('Plot attribute model distributions')
+
+        # Create group layouts:
+        grp_set_model_layout = QtWidgets.QVBoxLayout()
+        grp_set_model_layout.addWidget(self.lbl_viewing_model)
+        layout = QtWidgets.QHBoxLayout()
+        layout.addStretch()
+        layout.addWidget(self.btn_activate_model)
+        layout.addStretch()
+        grp_set_model_layout.addLayout(layout)
+        layout = QtWidgets.QHBoxLayout()
+        layout.addStretch()
+        layout.addWidget(self.btn_load_model)
+        layout.addStretch()
+        grp_set_model_layout.addLayout(layout)
+        grp_set_model.setLayout(grp_set_model_layout)
+
+        grp_dual_plot_layout = QtWidgets.QVBoxLayout()
+        layout = QtWidgets.QHBoxLayout()
+        layout.addWidget(self.lbl_attribute_1)
+        layout.addWidget(self.cmb_attribute_1)
+        grp_dual_plot_layout.addLayout(layout)
+        layout = QtWidgets.QHBoxLayout()
+        layout.addWidget(self.lbl_attribute_2)
+        layout.addWidget(self.cmb_attribute_2)
+        grp_dual_plot_layout.addLayout(layout)
+        layout = QtWidgets.QHBoxLayout()
+        layout.addStretch()
+        layout.addWidget(self.btn_dual_plot)
+        layout.addStretch()
+        grp_dual_plot_layout.addLayout(layout)
+        grp_dual_plot.setLayout(grp_dual_plot_layout)
+
+        grp_plot_all_layout = QtWidgets.QVBoxLayout()
+        layout = QtWidgets.QHBoxLayout()
+        layout.addStretch()
+        layout.addWidget(self.btn_plot_all)
+        layout.addStretch()
+        grp_plot_all_layout.addLayout(layout)
+        grp_plot_all.setLayout(grp_plot_all_layout)
+
+        grp_plot_pca_layout = QtWidgets.QVBoxLayout()
+        layout = QtWidgets.QHBoxLayout()
+        layout.addWidget(self.lbl_pca_categories)
+        layout.addWidget(self.cmb_pca_setting)
+        grp_plot_pca_layout.addLayout(layout)
+        layout = QtWidgets.QHBoxLayout()
+        layout.addStretch()
+        layout.addWidget(self.btn_plot_pca)
+        layout.addStretch()
+        grp_plot_pca_layout.addLayout(layout)
+        grp_plot_pca.setLayout(grp_plot_pca_layout)
+
+        grp_categorization_layout = QtWidgets.QVBoxLayout()
+        grp_categorization_layout.addWidget(self.lbl_categories)
+        grp_categorization.setLayout(grp_categorization_layout)
+
+        grp_attributes_layout = QtWidgets.QVBoxLayout()
+        grp_attributes_layout.addWidget(self.lbl_attributes)
+        grp_attributes.setLayout(grp_attributes_layout)
+
+        grp_single_plot_layout = QtWidgets.QVBoxLayout()
+        layout = QtWidgets.QHBoxLayout()
+        layout.addWidget(self.lbl_single_attribute)
+        layout.addWidget(self.cmb_single_attribute)
+        grp_single_plot_layout.addLayout(layout)
+        layout = QtWidgets.QHBoxLayout()
+        layout.addStretch()
+        layout.addWidget(self.btn_plot_single)
+        layout.addStretch()
+        grp_single_plot_layout.addLayout(layout)
+        grp_single_plot.setLayout(grp_single_plot_layout)
+
+        grp_general_layout = QtWidgets.QVBoxLayout()
+        grp_general_layout.addWidget(self.lbl_size)
+        grp_general.setLayout(grp_general_layout)
+
+        # Set top layout:
+        grid = QtWidgets.QGridLayout()
+        grid.addWidget(grp_set_model, 0, 0)
+        grid.addWidget(grp_general, 1, 0)
+        grid.addWidget(grp_categorization, 2, 0)
+        grid.addWidget(grp_attributes, 3, 0)
+        grid.addWidget(grp_single_plot, 0, 1)
+        grid.addWidget(grp_dual_plot, 1, 1)
+        grid.addWidget(grp_plot_all, 2, 1)
+        grid.addWidget(grp_plot_pca, 3, 1)
+
+        top_layout = QtWidgets.QVBoxLayout()
+        top_layout.addLayout(grid)
+        layout = QtWidgets.QHBoxLayout()
+        layout.addStretch()
+        layout.addWidget(self.btn_quit)
+        layout.addStretch()
+        top_layout.addLayout(layout)
+
+        self.setLayout(top_layout)
 
     def btn_activate_model_trigger(self):
-        pass
+        self.ui_obj.project_instance.active_model = self.model
+        self.ui_obj.graph.active_model = self.model
 
     def btn_load_model_trigger(self):
-        pass
+        filename = QtWidgets.QFileDialog.getOpenFileName(self, "Load model", '', "")
+        if filename[0]:
+            self.close()
+            PlotModels(ui_obj=self.ui_obj, model=statistics.DataManager.load(filename[0]))
 
     def btn_dual_plot_trigger(self):
-        pass
+        self.model.dual_plot(self.cmb_attribute_1.currentText(), self.cmb_attribute_2.currentText())
 
     def btn_plot_all_trigger(self):
-        pass
+        self.model.model_plot()
 
     def btn_plot_pca_trigger(self):
-        pass
+        self.model.plot_pca
+
+    def btn_plot_single_trigger(self):
+        self.model.single_plot(self.cmb_single_attribute.currentText())
 
     def btn_quit_trigger(self):
         self.close()

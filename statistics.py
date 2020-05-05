@@ -144,6 +144,7 @@ class DataManager:
     ======================= ===========================================================================
     :code:`'advanced'`      Categorize data by the :code:`vertex.advanced_category_index` attribute
     :code:`'simple'`        Categorize data by the :code:`vertex.species_index` attribute
+    :code:`'none'`          Don't categorize data
     ======================= ===========================================================================
 
     note
@@ -197,6 +198,9 @@ class DataManager:
         elif self.categorization == 'simple':
             self.category_titles = ['Si', 'Cu', 'Al', 'Mg']
             self.colours = ['r', 'y', 'g', 'm']
+        elif self.categorization == 'none':
+            self.category_titles = ['Column']
+            self.colours = ['k']
         else:
             self.category_titles = ['Si', 'Cu', 'Al', 'Mg']
             self.colours = ['r', 'y', 'g', 'm']
