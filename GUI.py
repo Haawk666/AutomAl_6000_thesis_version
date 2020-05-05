@@ -7,7 +7,6 @@ import core
 import GUI_elements
 import GUI_settings
 import mat_op
-import params
 import default_models
 # External imports:
 from PyQt5 import QtWidgets, QtGui, QtCore
@@ -1065,29 +1064,7 @@ class MainUI(QtWidgets.QMainWindow):
         pass
 
     def btn_test_trigger(self):
-        # path = 'C:\\Users\\haakot\\OneDrive\\NTNU\\TFY4900 Master\\Data_a\\'
-        path = 'F:\\Direktoratet\\Delt\\OneDrive\\NTNU\\TFY4900 Master\\Data_a\\'
-        files = '.008_control\n.012a_control\n.023_control\n.030_control\n.Smart_aligned_Qprime_control\n.Small_Qprime_control'.replace('.', path)
-        params_, covar_matrices, reduced_model_covar_matrices, covar_determinants, reduced_model_covar_determinants,\
-            inverse_covar_matrices, inverse_reduced_model_covar_matrices = params.produce_params(calc=True, files=files)
-        for i, element in enumerate(['Cu', 'Si_1', 'Si_2', 'Al_1', 'Al_2', 'Mg_1', 'Mg_2']):
-            print(element)
-            for j in range(0, 7):
-                print(covar_matrices[i][j])
-        print('\n')
-        print(params_)
-        print('\n')
-        print(covar_matrices)
-        print('\n')
-        print(reduced_model_covar_matrices)
-        print('\n')
-        print(covar_determinants)
-        print('\n')
-        print(reduced_model_covar_determinants)
-        print('\n')
-        print(inverse_covar_matrices)
-        print('\n')
-        print(inverse_reduced_model_covar_matrices)
+        pass
 
     def btn_crash_trigger(self):
         raise IndexError
@@ -1177,6 +1154,9 @@ class MainUI(QtWidgets.QMainWindow):
 
     def btn_calc_models_trigger(self):
         GUI_elements.CalcModels(ui_obj=self)
+
+    def btn_plot_models_trigger(self):
+        GUI_elements.PlotModels(ui_obj=self)
 
     def btn_save_log_trigger(self):
         filename = QtWidgets.QFileDialog.getSaveFileName(self, 'Save log-file', '')

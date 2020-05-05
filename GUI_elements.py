@@ -7,11 +7,7 @@ import GUI_custom_components
 import GUI_settings
 import GUI_tooltips
 import GUI
-import plotting_module
-import export_module
-import data_module
 import utils
-import params
 import statistics
 # External imports:
 from PyQt5 import QtWidgets, QtGui, QtCore
@@ -1006,6 +1002,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_build_info_graph = GUI_custom_components.MediumButton('Build info-graph', self, trigger_func=self.ui_obj.btn_build_info_graph_trigger)
         self.btn_pca = GUI_custom_components.MediumButton('Perform PCA', self, trigger_func=self.ui_obj.btn_pca_trigger)
         self.btn_calc_models = GUI_custom_components.MediumButton('Calculate model', self, trigger_func=self.ui_obj.btn_calc_models_trigger)
+        self.btn_plot_models = GUI_custom_components.MediumButton('Plot model', self, trigger_func=self.ui_obj.btn_plot_models_trigger)
 
         # Button layouts
         btn_move_control_layout = QtWidgets.QHBoxLayout()
@@ -1073,7 +1070,6 @@ class ControlWindow(QtWidgets.QWidget):
         btn_info_graph_layout.addWidget(self.btn_build_info_graph)
         btn_info_graph_layout.addStretch()
 
-
         btn_analysis_layout_1 = QtWidgets.QHBoxLayout()
         btn_analysis_layout_1.addWidget(self.btn_plot)
         btn_analysis_layout_1.addWidget(self.btn_pca)
@@ -1081,6 +1077,7 @@ class ControlWindow(QtWidgets.QWidget):
         btn_analysis_layout_1.addStretch()
         btn_analysis_layout_2 = QtWidgets.QHBoxLayout()
         btn_analysis_layout_2.addWidget(self.btn_calc_models)
+        btn_analysis_layout_2.addWidget(self.btn_plot_models)
         btn_analysis_layout_2.addStretch()
         btn_analysis_layout = QtWidgets.QVBoxLayout()
         btn_analysis_layout.addLayout(btn_analysis_layout_1)
@@ -1265,6 +1262,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_list.append(self.btn_build_info_graph)
         self.btn_list.append(self.btn_pca)
         self.btn_list.append(self.btn_calc_models)
+        self.btn_list.append(self.btn_plot_models)
 
         self.chb_list.append(self.chb_toggle_positions)
         self.chb_list.append(self.chb_show_graphic_updates)
@@ -3331,7 +3329,8 @@ class CalcModels(QtWidgets.QDialog):
         else:
             files = self.ui_obj.savefile
 
-        filename = QtWidgets.QFileDialog.getSaveFileName(self, "Save model as", '', "")
+        # filename = QtWidgets.QFileDialog.getSaveFileName(self, "Save model as", '', "")
+        filename = 'default_model'
         if filename[0]:
             filter = [self.chb_edge_columns.isChecked(),
                       self.chb_matrix_columns.isChecked(),
@@ -3340,9 +3339,14 @@ class CalcModels(QtWidgets.QDialog):
                       self.chb_flag_2.isChecked(),
                       self.chb_flag_3.isChecked(),
                       self.chb_flag_4.isChecked()]
-            model = statistics.calculate_models(files, filter_=filter, recalc_properties=False, savefile=filename)
+            manager = statistics.DataManager(files, filter_=filter, save_filename=filename, recalc=False)
+            manager.save()
             GUI.logger.info('Successfully saved model parameters to {}'.format(filename[0]))
-            if self.chb_plot_data
+            if self.chb_plot_data:
+                manager.single_plot(0)
+                manager.dual_plot(0, 1)
+                manager.dual_plot('normalized_avg_gamma', 'avg_central_separation')
+                manager.model_plot()
         self.ui_obj.sys_message('Ready.')
 
     def get_next_frame(self):
@@ -3392,5 +3396,65 @@ class CalcModels(QtWidgets.QDialog):
 
     def btn_cancel_trigger(self):
         self.close()
+
+
+class PlotModels(QtWidgets.QDialog):
+
+    def __init__(self, *args, ui_obj=None):
+        super().__init__(*args)
+
+        self.ui_obj = ui_obj
+
+        self.setWindowTitle('Display model details')
+
+        self.model = ui_obj.project_instance.active_model
+
+        self.lbl_viewing_model = QtWidgets.QLabel('Viewing model: {}'.format(self.model.save_filename))
+
+        self.btn_quit = QtWidgets.QPushButton('Next')
+        self.btn_quit.clicked.connect(self.btn_quit_trigger)
+        self.btn_activate_model = QtWidgets.QPushButton('Set as active')
+        self.btn_activate_model.clicked.connect(self.btn_activate_model_trigger)
+        self.btn_activate_model.setDisabled(True)
+        self.btn_load_model = QtWidgets.QPushButton('Load model')
+        self.btn_load_model.clicked.connect(self.btn_load_model_trigger)
+        self.btn_dual_plot = QtWidgets.QPushButton('Plot')
+        self.btn_dual_plot.clicked.connect(self.btn_dual_plot_trigger)
+        self.btn_plot_all = QtWidgets.QPushButton('Plot')
+        self.btn_plot_all.clicked.connect(self.btn_plot_all_trigger)
+        self.btn_plot_pca = QtWidgets.QPushButton('Plot')
+        self.btn_plot_pca.clicked.connect(self.btn_plot_pca_trigger)
+
+        self.cmb_attribute_1 = QtWidgets.QComboBox()
+        self.cmb_attribute_2 = QtWidgets.QComboBox()
+        self.cmb_pca_setting = QtWidgets.QComboBox()
+
+        self.set_layout()
+        self.exec_()
+
+    def set_layout(self):
+        grp_set_model = QtWidgets.QGroupBox('Select model')
+        grp_dual_plot = QtWidgets.QGroupBox('Dual plot')
+        grp_plot_all = QtWidgets.QGroupBox('Plot all model attributes densities')
+        grp_plot_pca = QtWidgets.QGroupBox('Plot 2 first principle components')
+
+    def btn_activate_model_trigger(self):
+        pass
+
+    def btn_load_model_trigger(self):
+        pass
+
+    def btn_dual_plot_trigger(self):
+        pass
+
+    def btn_plot_all_trigger(self):
+        pass
+
+    def btn_plot_pca_trigger(self):
+        pass
+
+    def btn_quit_trigger(self):
+        self.close()
+
 
 

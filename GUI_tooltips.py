@@ -63,6 +63,7 @@ btn_build_info_graph = 'Build the \'info-graph\' of the graph. Here the edges ar
                        'the need for manual inspection..'
 btn_pca = 'Launch a principle component analysis (PCA) from a wizard'
 btn_calc_models = 'Calculate model parameters with the help of a wizard'
+btn_plot_models = 'Display various plots of any of the constructed statistical models'
 
 chb_toggle_positions = 'Toggle the overlay of atomic positions'
 chb_show_graphic_updates = 'Determines whether the graphical representation of the data will update while the\n' \
@@ -150,7 +151,9 @@ control_window_btn_list = [btn_show_stats,
                            btn_print_distances,
                            btn_build_anti_graph,
                            btn_build_info_graph,
-                           btn_pca]
+                           btn_pca,
+                           btn_calc_models,
+                           btn_plot_models]
 
 control_window_chb_list = [chb_toggle_positions,
                            chb_show_graphic_updates,

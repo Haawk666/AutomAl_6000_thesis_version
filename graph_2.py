@@ -362,7 +362,7 @@ class AtomicGraph:
     species_symmetry = [3, 3, 3, 4, 4, 5, 3]
     al_lattice_const = 404.95
 
-    def __init__(self, scale, district_size=8):
+    def __init__(self, scale, active_model=None, district_size=8):
 
         self.vertices = []
         self.vertex_indices = []
@@ -378,6 +378,11 @@ class AtomicGraph:
 
         self.scale = scale
         self.district_size = district_size
+
+        if active_model == None:
+            self.active_model = statistics.DataManager.load('default_model')
+        else:
+            self.active_model = active_model
 
         # Stats
         self.chi = 0
@@ -1010,21 +1015,36 @@ class AtomicGraph:
 
     def calc_model_predictions(self):
         for vertex in self.vertices:
-            vertex.alpha_model = []
-            vertex.advanced_alpha_model = []
-            vertex.theta_model = []
-            vertex.advanced_theta_model = []
-            vertex.gamma_model = []
-            vertex.advanced_gamma_model = []
-            vertex.model = []
-            vertex.advanced_model = []
             if not vertex.void:
-                vertex.alpha_model, vertex.advanced_alpha_model = statistics.alpha_model(vertex.alpha_max, vertex.alpha_min)
-                vertex.theta_model, vertex.advanced_theta_model = statistics.theta_model(vertex.theta_max, vertex.theta_min, vertex.theta_angle_mean)
-                vertex.gamma_model, vertex.advanced_gamma_model = statistics.normalized_gamma_model(vertex.normalized_avg_gamma, vertex.normalized_peak_gamma)
-                vertex.model, vertex.advanced_model = statistics.composite_model(vertex.alpha_max, vertex.alpha_min,
-                                                                                 vertex.theta_max, vertex.theta_min, vertex.theta_angle_mean,
-                                                                                 vertex.normalized_avg_gamma, vertex.normalized_peak_gamma)
+                args = [vertex.alpha_max, vertex.alpha_min]
+                vertex.advanced_alpha_model = self.active_model.calc_alpha_prediction(args)
+                vertex.alpha_model = [
+                    vertex.advanced_alpha_model[0] + vertex.advanced_alpha_model[1],
+                    vertex.advanced_alpha_model[2],
+                    0,
+                    vertex.advanced_alpha_model[3] + vertex.advanced_alpha_model[4],
+                    0,
+                    vertex.advanced_alpha_model[5] + vertex.advanced_alpha_model[6],
+                    0
+                ]
+                args += [
+                    vertex.theta_max,
+                    vertex.theta_min,
+                    vertex.theta_angle_mean,
+                    vertex.normalized_peak_gamma,
+                    vertex.normalized_avg_gamma,
+                    vertex.avg_central_separation
+                ]
+                vertex.advanced_model = self.active_model.calc_prediction(args)
+                vertex.model = [
+                    vertex.advanced_model[0] + vertex.advanced_model[1],
+                    vertex.advanced_model[2],
+                    0,
+                    vertex.advanced_model[3] + vertex.advanced_model[4],
+                    0,
+                    vertex.advanced_model[5] + vertex.advanced_model[6],
+                    0
+                ]
 
     def refresh_graph(self):
         logger.info('Refreshing graph...')

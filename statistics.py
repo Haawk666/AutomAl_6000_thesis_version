@@ -17,154 +17,6 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
-def alpha_model(alpha_max, alpha_min):
-    x = [alpha_max, alpha_min]
-    params = default_models.alpha_model
-    advanced_model = [
-        utils.multivariate_normal_dist(x, params[0][0], params[0][3], params[0][4]),
-        utils.multivariate_normal_dist(x, params[1][0], params[1][3], params[1][4]),
-        utils.multivariate_normal_dist(x, params[2][0], params[2][3], params[2][4]),
-        utils.multivariate_normal_dist(x, params[3][0], params[3][3], params[3][4]),
-        utils.multivariate_normal_dist(x, params[4][0], params[4][3], params[4][4]),
-        utils.multivariate_normal_dist(x, params[5][0], params[5][3], params[5][4]),
-        utils.multivariate_normal_dist(x, params[6][0], params[6][3], params[6][4])
-    ]
-    advanced_model = utils.normalize_list(advanced_model, 1)
-    simple_model = [
-        advanced_model[0] + advanced_model[1],
-        advanced_model[2],
-        0,
-        advanced_model[3] + advanced_model[4],
-        0,
-        advanced_model[5] + advanced_model[6],
-        0
-    ]
-    return simple_model, advanced_model
-
-
-def theta_model(theta_max, theta_min, theta_avg):
-    x = [theta_max, theta_min, theta_avg]
-    params = default_models.theta_model
-    advanced_model = [
-        utils.multivariate_normal_dist(x, params[0][0], params[0][3], params[0][4]),
-        utils.multivariate_normal_dist(x, params[1][0], params[1][3], params[1][4]),
-        utils.multivariate_normal_dist(x, params[2][0], params[2][3], params[2][4]),
-        utils.multivariate_normal_dist(x, params[3][0], params[3][3], params[3][4]),
-        utils.multivariate_normal_dist(x, params[4][0], params[4][3], params[4][4]),
-        utils.multivariate_normal_dist(x, params[5][0], params[5][3], params[5][4]),
-        utils.multivariate_normal_dist(x, params[6][0], params[6][3], params[6][4])
-    ]
-    advanced_model = utils.normalize_list(advanced_model, 1)
-    simple_model = [
-        advanced_model[0] + advanced_model[1],
-        advanced_model[2],
-        0,
-        advanced_model[3] + advanced_model[4],
-        0,
-        advanced_model[5] + advanced_model[6],
-        0
-    ]
-    return simple_model, advanced_model
-
-
-def normalized_gamma_model(normalized_peak_gamma, normalized_avg_gamma):
-    x = [normalized_peak_gamma, normalized_avg_gamma]
-    params = default_models.gamma_model
-    advanced_model = [
-        utils.multivariate_normal_dist(x, params[0][0], params[0][3], params[0][4]),
-        utils.multivariate_normal_dist(x, params[1][0], params[1][3], params[1][4]),
-        utils.multivariate_normal_dist(x, params[2][0], params[2][3], params[2][4]),
-        utils.multivariate_normal_dist(x, params[3][0], params[3][3], params[3][4]),
-        utils.multivariate_normal_dist(x, params[4][0], params[4][3], params[4][4]),
-        utils.multivariate_normal_dist(x, params[5][0], params[5][3], params[5][4]),
-        utils.multivariate_normal_dist(x, params[6][0], params[6][3], params[6][4])
-    ]
-    advanced_model = utils.normalize_list(advanced_model, 1)
-    simple_model = [
-        advanced_model[0] + advanced_model[1],
-        advanced_model[2],
-        0,
-        advanced_model[3] + advanced_model[4],
-        0,
-        advanced_model[5] + advanced_model[6],
-        0
-    ]
-    return simple_model, advanced_model
-
-
-def composite_model(alpha_max, alpha_min, theta_max, theta_min, theta_avg, gamma_avg, gamma_peak):
-    x = [alpha_max, alpha_min, theta_max, theta_min, theta_avg, gamma_avg, gamma_peak]
-    params = default_models.composite_model
-    advanced_model = [
-        utils.multivariate_normal_dist(x, params[0][0], params[0][3], params[0][4]),
-        utils.multivariate_normal_dist(x, params[1][0], params[1][3], params[1][4]),
-        utils.multivariate_normal_dist(x, params[2][0], params[2][3], params[2][4]),
-        utils.multivariate_normal_dist(x, params[3][0], params[3][3], params[3][4]),
-        utils.multivariate_normal_dist(x, params[4][0], params[4][3], params[4][4]),
-        utils.multivariate_normal_dist(x, params[5][0], params[5][3], params[5][4]),
-        utils.multivariate_normal_dist(x, params[6][0], params[6][3], params[6][4])
-    ]
-    advanced_model = utils.normalize_list(advanced_model, 1)
-    simple_model = [
-        advanced_model[0] + advanced_model[1],
-        advanced_model[2],
-        0,
-        advanced_model[3] + advanced_model[4],
-        0,
-        advanced_model[5] + advanced_model[6],
-        0
-    ]
-    return simple_model, advanced_model
-
-
-def product_model(vertex):
-    pass
-
-
-def weighted_model(vertex):
-    pass
-
-
-def calculate_models(files, filter_=None, recalc_properties=False, savefile='default_models'):
-
-    data = []
-    keys = ['advanced_category_index', 'alpha_max', 'alpha_min', 'theta_max', 'theta_min',
-        'theta_angle_mean', 'normalized_peak_gamma', 'normalized_avg_gamma', 'avg_central_separation'
-    ]
-    for file in files.splitlines(keepends=False):
-        instance = core.SuchSoftware.load(file)
-        image_data = instance.graph.calc_condensed_property_data(filter_=filter_, recalc=recalc_properties,
-                                                                 evaluate_category=True, keys=keys)
-        data += image_data
-
-    category_titles = ['Si_1', 'Si_2', 'Cu', 'Al_1', 'Al_2', 'Mg_1', 'Mg_2']
-    reformatted_data = [
-        [[], [], [], [], [], [], [], []],
-        [[], [], [], [], [], [], [], []],
-        [[], [], [], [], [], [], [], []],
-        [[], [], [], [], [], [], [], []],
-        [[], [], [], [], [], [], [], []],
-        [[], [], [], [], [], [], [], []],
-        [[], [], [], [], [], [], [], []]
-    ]
-    for data_item in data:
-        data_item['category_title'] = category_titles[data_item['advanced_category_index']]
-        reformatted_data[data_item['advanced_category_index']][0].append(data_item['alpha_max'])
-        reformatted_data[data_item['advanced_category_index']][1].append(data_item['alpha_min'])
-        reformatted_data[data_item['advanced_category_index']][2].append(data_item['theta_max'])
-        reformatted_data[data_item['advanced_category_index']][3].append(data_item['theta_min'])
-        reformatted_data[data_item['advanced_category_index']][4].append(data_item['theta_angle_mean'])
-        reformatted_data[data_item['advanced_category_index']][5].append(data_item['normalized_peak_gamma'])
-        reformatted_data[data_item['advanced_category_index']][6].append(data_item['normalized_avg_gamma'])
-        reformatted_data[data_item['advanced_category_index']][7].append(data_item['avg_central_separation'])
-
-    model = DataManager(reformatted_data, category_titles)
-    with open(savefile, 'wb') as f:
-        pickle.dump(model, f, pickle.HIGHEST_PROTOCOL)
-
-    return model
-
-
 class MultivariateNormalDist:
 
     def __init__(self, data, category_title):
@@ -224,6 +76,10 @@ class MultivariateNormalDist:
         idx = np.argsort(self.covar_matrix_eigenvalues)[::-1]
         self.covar_matrix_eigenvalues = self.covar_matrix_eigenvalues[idx]
         self.covar_matrix_eigenvectors = self.covar_matrix_eigenvectors[:, idx]
+
+    def prediction(self, args):
+        prob = utils.multivariate_normal_dist(args, self.means, self.covar_matrix_determinant, self.inverse_covar_matrix)
+        return prob
 
 
 class DataManager:
@@ -312,7 +168,7 @@ class DataManager:
 
     """
 
-    def __init__(self, files, filter_=None, keys=None, save_filename='model', categorization='advanced'):
+    def __init__(self, files, filter_=None, keys=None, save_filename='model', categorization='advanced', recalc=False):
 
         if filter_ is None:
             self.filter_ = [False, True, True, True, True, True, True]
@@ -324,11 +180,12 @@ class DataManager:
                          'theta_angle_mean', 'normalized_peak_gamma', 'normalized_avg_gamma', 'avg_central_separation']
         else:
             self.keys = keys
-        self.attribute_keys = self.determine_attribute_keys()
+        self.attribute_keys, self.attribute_units = self.determine_attribute_keys()
         self.k = len(self.attribute_keys)
 
         self.files = files
         self.save_filename = save_filename
+        self.recalc = recalc
 
         self.original_dict_data = self.collect_data()
         self.n = len(self.original_dict_data)
@@ -336,64 +193,73 @@ class DataManager:
         self.categorization = categorization
         if self.categorization == 'advanced':
             self.category_titles = ['Si_1', 'Si_2', 'Cu', 'Al_1', 'Al_2', 'Mg_1', 'Mg_2']
+            self.colours = ['r', 'lightsalmon', 'y', 'g', 'mediumseagreen', 'm', 'plum']
         elif self.categorization == 'simple':
             self.category_titles = ['Si', 'Cu', 'Al', 'Mg']
+            self.colours = ['r', 'y', 'g', 'm']
         else:
             self.category_titles = ['Si', 'Cu', 'Al', 'Mg']
+            self.colours = ['r', 'y', 'g', 'm']
             logger.warning('Unrecognized categorization. Using \'simple\'...')
         self.num_data_categories = len(self.category_titles)
 
-        self.matrix_data, self.category_n = self.vectorize_data()
+        self.matrix_data = self.vectorize_data()
         self.concatenated_matrix_data = self.concatenate_categories()
+        self.normalized_concatenated_matrix_data = np.array(self.concatenated_matrix_data)
 
         self.uncategorized_normal_dist = MultivariateNormalDist(self.concatenated_matrix_data, 'All categories')
 
-
-
-
-
-
-        self.mean_shifted_concatenated_data = self.concatenated_data
-        self.mean_shifted_data = []
-
-        self.uncategorized_normal_dist = MultivariateNormalDist(self.concatenated_data, 'All categories')
-
-        self.shift_data()
+        self.norm_data()
+        self.normalized_uncategorized_normal_dist = MultivariateNormalDist(self.normalized_concatenated_matrix_data, 'All categories')
 
         self.composite_model = []
         self.alpha_model = []
-        self.separation_model = []
+        self.avg_central_separation_model = []
 
-        for i, category in enumerate(self.data):
-            self.composite_model.append(MultivariateNormalDist(category, self.category_titles[i]))
-            self.alpha_model.append(MultivariateNormalDist(category[0:1, :], ['alpha_max', 'alpha_min']))
-            self.separation_model.append(MultivariateNormalDist(category[7, :], ['avg_central_separation']))
+        for c, category_data in enumerate(self.matrix_data):
+            self.composite_model.append(MultivariateNormalDist(category_data, self.category_titles[c]))
+            if 'alpha_max' in self.attribute_keys and 'alpha_min' in self.attribute_keys:
+                max_index = self.attribute_keys.index('alpha_max')
+                min_index = self.attribute_keys.index('alpha_min')
+                self.alpha_model.append(MultivariateNormalDist(category_data[np.array([max_index, min_index]), :], self.category_titles[c]))
+            if 'avg_central_separation' in self.attribute_keys:
+                attr_index = self.attribute_keys.index('avg_central_separation')
+                self.avg_central_separation_model.append(MultivariateNormalDist(category_data[attr_index, :].reshape(1, category_data[attr_index, :].shape[0]), self.category_titles[c]))
 
     def determine_attribute_keys(self):
         attributes = []
+        units = []
         if 'alpha_max' in self.keys:
             attributes.append('alpha_max')
+            units.append('(radians)')
         if 'alpha_min' in self.keys:
             attributes.append('alpha_min')
+            units.append('(radians)')
         if 'theta_max' in self.keys:
             attributes.append('theta_max')
+            units.append('(radians)')
         if 'theta_min' in self.keys:
             attributes.append('theta_min')
+            units.append('(radians)')
         if 'theta_angle_mean' in self.keys:
             attributes.append('theta_angle_mean')
+            units.append('(radians)')
         if 'normalized_peak_gamma' in self.keys:
             attributes.append('normalized_peak_gamma')
+            units.append('(normalized intensity)')
         if 'normalized_avg_gamma' in self.keys:
             attributes.append('normalized_avg_gamma')
+            units.append('(normalized intensity)')
         if 'avg_central_separation' in self.keys:
             attributes.append('avg_central_separation')
-        return attributes
+            units.append('nm')
+        return attributes, units
 
     def collect_data(self):
         data = []
         for file in self.files.splitlines(keepends=False):
             instance = core.SuchSoftware.load(file)
-            image_data = instance.graph.calc_condensed_property_data(filter_=self.filter_, recalc=True, keys=self.keys)
+            image_data = instance.graph.calc_condensed_property_data(filter_=self.filter_, recalc=self.recalc, keys=self.keys)
             data += image_data
         return data
 
@@ -406,7 +272,7 @@ class DataManager:
         for data_item in self.original_dict_data:
             for h, attribute in enumerate(self.attribute_keys):
                 if self.categorization == 'advanced':
-                    data[data_item['advanced_category_index']][h] = data_item[attribute]
+                    data[data_item['advanced_category_index']][h].append(data_item[attribute])
                 else:
                     if data_item['species_index'] == 0:
                         category_index = 0
@@ -419,129 +285,197 @@ class DataManager:
                     else:
                         logger.error('Error in category assignment!')
                         category_index = 4
-                    data[category_index][h] = data_item[attribute]
+                    data[category_index][h].append(data_item[attribute])
         matrix_data = []
-        category_n = []
         for category_data in data:
             matrix_data.append(np.array(category_data))
-            category_n.append(matrix_data[-1].shape[1])
-        return matrix_data, category_n
-
-    def prepare_data(self, data):
-        matrix_data = []
-        for category in data:
-            matrix = np.array(category)
-            matrix_data.append(matrix)
-        self.data = matrix_data
+        return matrix_data
 
     def concatenate_categories(self):
-        concatenated_data = self.data[0]
+        concatenated_data = self.matrix_data[0]
         for i, category in enumerate(self.category_titles):
             if not i == 0:
-                concatenated_data = np.concatenate((concatenated_data, self.data[i]), axis=1)
+                concatenated_data = np.concatenate((concatenated_data, self.matrix_data[i]), axis=1)
+        print(concatenated_data.shape)
         return concatenated_data
 
-    def shift_data(self):
-        for attribute in range(0, 8):
-            for data_item in self.mean_shifted_data[attribute, :]:
-                data_item -= self.uncategorized_normal_dist.means[attribute]
-        self.mean_shifted_data = []
-        for category in self.data:
-            self.mean_shifted_data.append(category)
-            for attribute in range(0, 8):
-                for h, data_item in enumerate(category[attribute, :]):
-                    self.mean_shifted_data[-1][attribute, h] -= self.uncategorized_normal_dist.means[attribute]
+    def norm_data(self):
+        for attr_index, attr_key in enumerate(self.attribute_keys):
+            mean = self.uncategorized_normal_dist.means[attr_index]
+            for data_item in self.normalized_concatenated_matrix_data[attr_index, :]:
+                data_item -= mean
 
-    def plot_data(self):
-        pass
+    def calc_prediction(self, args):
+        prediction = []
+        for c, category in enumerate(self.category_titles):
+            prediction.append(self.composite_model[c].prediction(args))
+        prediction = utils.normalize_list(prediction, 1)
+        return prediction
 
-    def plot_pca(self):
-        logger.info('Generating plot...')
+    def calc_alpha_prediction(self, args):
+        prediction = []
+        for c, category in enumerate(self.category_titles):
+            prediction.append(self.alpha_model[c].prediction(args))
+        prediction = utils.normalize_list(prediction, 1)
+        return prediction
 
-        alpha = np.linspace(-10, 10, 1000)
+    def calc_avg_central_separation_prediction(self, arg):
+        prediction = []
+        for c, category in enumerate(self.category_titles):
+            prediction.append(self.avg_central_separation_model[c].prediction(arg))
+        prediction = utils.normalize_list(prediction, 1)
+        return prediction
+
+    def single_plot(self, attr):
+        if type(attr) == int:
+            attr_index = attr
+            attr_key = self.attribute_keys[attr_index]
+        else:
+            attr_key = attr
+            attr_index = self.attribute_keys.index(attr_key)
+
+        attr_min_val = self.concatenated_matrix_data[attr_index, :].min()
+        attr_max_val = self.concatenated_matrix_data[attr_index, :].max()
+
+        line = np.linspace(attr_min_val, attr_max_val, 1000)
 
         fig = plt.figure(constrained_layout=True)
-        gs = GridSpec(2, 2, figure=fig)
-        ax_pc_1 = fig.add_subplot(gs[0, 0])
-        ax_pc_2 = fig.add_subplot(gs[1, 0])
-        ax_scatter = fig.add_subplot(gs[:, 1])
+        gs = GridSpec(1, 1, figure=fig)
+        ax_attr = fig.add_subplot(gs[0, 0])
 
-        ax_pc_1.plot(alpha, utils.normal_dist(alpha, utils.mean_val(self.cu_pca_data[:, 2]),
-                                              np.sqrt(utils.variance(self.cu_pca_data[:, 2]))),
-                     'y',
-                     label='Cu ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(utils.mean_val(self.cu_pca_data[:, 2]),
-                                                                                np.sqrt(utils.variance(
-                                                                                    self.cu_pca_data[:, 2]))))
-        ax_pc_1.plot(alpha, utils.normal_dist(alpha, utils.mean_val(self.si_pca_data[:, 2]),
-                                              np.sqrt(utils.variance(self.si_pca_data[:, 2]))),
-                     'r',
-                     label='Si ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(utils.mean_val(self.si_pca_data[:, 2]),
-                                                                                np.sqrt(utils.variance(
-                                                                                    self.si_pca_data[:, 2]))))
-        ax_pc_1.plot(alpha, utils.normal_dist(alpha, utils.mean_val(self.al_pca_data[:, 2]),
-                                              np.sqrt(utils.variance(self.al_pca_data[:, 2]))),
-                     'g',
-                     label='Al ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(utils.mean_val(self.al_pca_data[:, 2]),
-                                                                                np.sqrt(utils.variance(
-                                                                                    self.al_pca_data[:, 2]))))
-        ax_pc_1.plot(alpha, utils.normal_dist(alpha, utils.mean_val(self.mg_pca_data[:, 2]),
-                                              np.sqrt(utils.variance(self.mg_pca_data[:, 2]))),
-                     'm',
-                     label='Mg ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(utils.mean_val(self.mg_pca_data[:, 2]),
-                                                                                np.sqrt(utils.variance(
-                                                                                    self.mg_pca_data[:, 2]))))
+        for c, category in enumerate(self.category_titles):
+            mean = self.composite_model[c].means[attr_index]
+            var = self.composite_model[c].variances[attr_index]
+            ax_attr.plot(
+                line,
+                utils.normal_dist(line, mean, var),
+                self.colours[c],
+                label='{} ($\mu = ${:.2f}, $\sigma^2 = ${:.2f})'.format(category, mean, var)
+            )
 
-        ax_pc_1.set_title('Principle component 1 fitted density')
-        ax_pc_1.set_xlabel('Principle component 1')
-        ax_pc_1.legend()
-
-        ax_pc_2.plot(alpha, utils.normal_dist(alpha, utils.mean_val(self.cu_pca_data[:, 3]),
-                                              np.sqrt(utils.variance(self.cu_pca_data[:, 3]))),
-                     'y',
-                     label='Cu ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(utils.mean_val(self.cu_pca_data[:, 3]),
-                                                                                np.sqrt(utils.variance(
-                                                                                    self.cu_pca_data[:, 3]))))
-        ax_pc_2.plot(alpha, utils.normal_dist(alpha, utils.mean_val(self.si_pca_data[:, 3]),
-                                              np.sqrt(utils.variance(self.si_pca_data[:, 3]))),
-                     'r',
-                     label='Si ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(utils.mean_val(self.si_pca_data[:, 3]),
-                                                                                np.sqrt(utils.variance(
-                                                                                    self.si_pca_data[:, 3]))))
-        ax_pc_2.plot(alpha, utils.normal_dist(alpha, utils.mean_val(self.al_pca_data[:, 3]),
-                                              np.sqrt(utils.variance(self.al_pca_data[:, 3]))),
-                     'g',
-                     label='Al ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(utils.mean_val(self.al_pca_data[:, 3]),
-                                                                                np.sqrt(utils.variance(
-                                                                                    self.al_pca_data[:, 3]))))
-        ax_pc_2.plot(alpha, utils.normal_dist(alpha, utils.mean_val(self.mg_pca_data[:, 3]),
-                                              np.sqrt(utils.variance(self.mg_pca_data[:, 3]))),
-                     'm',
-                     label='Mg ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(utils.mean_val(self.mg_pca_data[:, 3]),
-                                                                                np.sqrt(utils.variance(
-                                                                                    self.mg_pca_data[:, 3]))))
-
-        ax_pc_2.set_title('Principle component 2 fitted density')
-        ax_pc_2.set_xlabel('Principle component 2')
-        ax_pc_2.legend()
-
-        ax_scatter.scatter(self.cu_pca_data[:, 2], self.cu_pca_data[:, 3], c='y', label='Cu', s=4)
-        ax_scatter.scatter(self.si_pca_data[:, 2], self.si_pca_data[:, 3], c='r', label='Si', s=4)
-        ax_scatter.scatter(self.al_pca_data[:, 2], self.al_pca_data[:, 3], c='g', label='Al', s=4)
-        ax_scatter.scatter(self.mg_pca_data[:, 2], self.mg_pca_data[:, 3], c='m', label='Mg', s=4)
-
-        ax_scatter.set_title('Scatter-plot of two first principle components')
-        ax_scatter.set_xlabel('PC 1')
-        ax_scatter.set_ylabel('PC 2')
-        ax_scatter.legend()
-
-        fig.suptitle('Principle component analysis')
-
-        logger.info('Plotted PCA alpha over {} files and {} vertices!'.format(self.num_files, self.num_vertices))
+        ax_attr.set_title('{} fitted density'.format(attr_key))
+        ax_attr.set_xlabel('{} {}'.format(attr_key, self.attribute_units[attr_index]))
+        ax_attr.legend()
 
         plt.show()
 
+    def dual_plot(self, attribute_1, attribute_2):
+
+        if type(attribute_1) == int:
+            attr_1_index = attribute_1
+            attr_1_key = self.attribute_keys[attr_1_index]
+        else:
+            attr_1_key = attribute_1
+            attr_1_index = self.attribute_keys.index(attr_1_key)
+        if type(attribute_2) == int:
+            attr_2_index = attribute_2
+            attr_2_key = self.attribute_keys[attr_2_index]
+        else:
+            attr_2_key = attribute_2
+            attr_2_index = self.attribute_keys.index(attr_2_key)
+
+        attr_1_min_val, attr_2_min_val = self.concatenated_matrix_data[attr_1_index, :].min(), self.concatenated_matrix_data[attr_2_index, :].min()
+        attr_1_max_val, attr_2_max_val = self.concatenated_matrix_data[attr_1_index, :].max(), self.concatenated_matrix_data[attr_2_index, :].max()
+
+        line_1 = np.linspace(attr_1_min_val, attr_1_max_val, 1000)
+        line_2 = np.linspace(attr_2_min_val, attr_2_max_val, 1000)
+
+        fig = plt.figure(constrained_layout=True)
+        gs = GridSpec(2, 2, figure=fig)
+        ax_attr_1 = fig.add_subplot(gs[0, 0])
+        ax_attr_2 = fig.add_subplot(gs[1, 0])
+        ax_scatter = fig.add_subplot(gs[:, 1])
+
+        for c, category in enumerate(self.category_titles):
+            mean = self.composite_model[c].means[attr_1_index]
+            var = self.composite_model[c].variances[attr_1_index]
+            ax_attr_1.plot(
+                line_1,
+                utils.normal_dist(line_1, mean, var),
+                self.colours[c],
+                label='{} ($\mu$ = {:.2f}, $\sigma^2$ = {:.2f})'.format(category, mean, var)
+            )
+
+        ax_attr_1.set_title('{} fitted density'.format(attr_1_key))
+        ax_attr_1.set_xlabel('{} {}'.format(attr_1_key, self.attribute_units[attr_1_index]))
+        ax_attr_1.legend()
+
+        for c, category in enumerate(self.category_titles):
+            mean = self.composite_model[c].means[attr_2_index]
+            var = self.composite_model[c].variances[attr_2_index]
+            ax_attr_2.plot(
+                line_2,
+                utils.normal_dist(line_2, mean, var),
+                c=self.colours[c],
+                label='{} ($\mu$ = {:.2f}, $\sigma^2$ = {:.2f})'.format(category, mean, var)
+            )
+
+        ax_attr_2.set_title('{} fitted density'.format(attr_2_key))
+        ax_attr_2.set_xlabel('{} {}'.format(attr_2_key, self.attribute_units[attr_2_index]))
+        ax_attr_2.legend()
+
+        for c, category in enumerate(self.category_titles):
+            ax_scatter.scatter(
+                self.matrix_data[c][attr_1_index, :],
+                self.matrix_data[c][attr_2_index, :],
+                c=self.colours[c],
+                label='{}'.format(category),
+                s=8
+            )
+
+        ax_scatter.set_title('Scatter-plot of {} vs {}'.format(attr_1_key, attr_2_key))
+        ax_scatter.set_xlabel('{} {}'.format(attr_1_key, self.attribute_units[attr_1_index]))
+        ax_scatter.set_ylabel('{} {}'.format(attr_2_key, self.attribute_units[attr_2_index]))
+        ax_scatter.legend()
+
+        plt.show()
+
+    def model_plot(self):
+
+        fig = plt.figure(constrained_layout=True)
+        gs = GridSpec(3, 3, figure=fig)
+        ax = [
+            fig.add_subplot(gs[0, 0]),
+            fig.add_subplot(gs[0, 1]),
+            fig.add_subplot(gs[0, 2]),
+            fig.add_subplot(gs[1, 0]),
+            fig.add_subplot(gs[1, 1]),
+            fig.add_subplot(gs[1, 2]),
+            fig.add_subplot(gs[2, 0]),
+            fig.add_subplot(gs[2, 1]),
+            fig.add_subplot(gs[2, 2])
+        ]
+        ax = ax[0:len(self.attribute_keys)]
+
+        for attr_index, attr_key in enumerate(self.attribute_keys):
+
+            min_val = self.concatenated_matrix_data[attr_index, :].min()
+            max_val = self.concatenated_matrix_data[attr_index, :].max()
+            line = np.linspace(min_val, max_val, 1000)
+
+            for c, category in enumerate(self.category_titles):
+                mean = self.composite_model[c].means[attr_index]
+                var = self.composite_model[c].variances[attr_index]
+                ax[attr_index].plot(
+                    line,
+                    utils.normal_dist(line, mean, var),
+                    c=self.colours[c],
+                    label='{} ($\mu = ${:.2f}, $\sigma = ${:.2f})'.format(category, mean, var)
+                )
+
+            ax[attr_index].set_title('{} fitted density'.format(attr_key))
+            ax[attr_index].set_xlabel('{} {}'.format(attr_key, self.attribute_units[attr_index]))
+            ax[attr_index].legend()
+
+        fig.suptitle('Composite model component normal distributions')
+
+        plt.show()
+
+    def plot_pca(self):
+        pass
+
     def save(self):
-        with open(self.savefile, 'wb') as f:
+        with open(self.save_filename, 'wb') as f:
             pickle.dump(self, f, pickle.HIGHEST_PROTOCOL)
 
     @staticmethod
@@ -559,416 +493,6 @@ class DataManager:
             obj = pickle.load(f)
         return obj
 
-
-class Plotting:
-
-    def __init__(self, data):
-
-        self.data = data
-
-    def plot_interatomic_separations(self, type_='distribution'):
-        logger.info('Generating plots...')
-
-        if type_ == 'distribution':
-
-            distance = np.linspace(200, 400, 1000)
-
-            fig = plt.figure(constrained_layout=True)
-            gs = GridSpec(2, 1, figure=fig)
-            ax_same = fig.add_subplot(gs[0, 0])
-            ax_pairs_1 = fig.add_subplot(gs[1, 0])
-
-            ax_same.plot(distance, utils.normal_dist(distance, self.si_si_mean, self.si_si_std), 'r', label='Si <-> Si')
-            ax_same.plot(distance, utils.normal_dist(distance, self.cu_cu_mean, self.cu_cu_std), 'y', label='Cu <-> Cu')
-            ax_same.plot(distance, utils.normal_dist(distance, self.al_al_mean, self.al_al_std), 'g', label='Al <-> Al')
-            ax_same.plot(distance, utils.normal_dist(distance, self.mg_mg_mean, self.mg_mg_std), 'm', label='Mg <-> Mg')
-
-            ax_same.axvline(x=2 * core.SuchSoftware.si_radii, c='r')
-            ax_same.axvline(x=2 * core.SuchSoftware.cu_radii, c='y')
-            ax_same.axvline(x=2 * core.SuchSoftware.al_radii, c='g')
-            ax_same.axvline(x=2 * core.SuchSoftware.mg_radii, c='m')
-
-            ax_same.set_title('Similar species pairs')
-            ax_same.set_xlabel('Inter-atomic distance (pm)')
-            ax_same.legend()
-
-            ax_pairs_1.plot(distance, utils.normal_dist(distance, self.si_cu_mean, self.si_cu_std), 'r', label='Si <-> Cu')
-            ax_pairs_1.plot(distance, utils.normal_dist(distance, self.si_al_mean, self.si_al_std), 'k', label='Si <-> Al')
-            ax_pairs_1.plot(distance, utils.normal_dist(distance, self.si_mg_mean, self.si_mg_std), 'c', label='Si <-> Mg')
-            ax_pairs_1.plot(distance, utils.normal_dist(distance, self.cu_al_mean, self.cu_al_std), 'y', label='Cu <-> Al')
-            ax_pairs_1.plot(distance, utils.normal_dist(distance, self.cu_al_mean, self.cu_al_std), 'b', label='Cu <-> Mg')
-            ax_pairs_1.plot(distance, utils.normal_dist(distance, self.al_mg_mean, self.al_mg_std), 'g', label='Al <-> Mg')
-
-            ax_pairs_1.axvline(x=core.SuchSoftware.si_radii + core.SuchSoftware.cu_radii, c='r')
-            ax_pairs_1.axvline(x=core.SuchSoftware.si_radii + core.SuchSoftware.al_radii, c='k')
-            ax_pairs_1.axvline(x=core.SuchSoftware.si_radii + core.SuchSoftware.mg_radii, c='c')
-            ax_pairs_1.axvline(x=core.SuchSoftware.cu_radii + core.SuchSoftware.al_radii, c='y')
-            ax_pairs_1.axvline(x=core.SuchSoftware.cu_radii + core.SuchSoftware.mg_radii, c='b')
-            ax_pairs_1.axvline(x=core.SuchSoftware.al_radii + core.SuchSoftware.mg_radii, c='g')
-
-            ax_pairs_1.set_title('Un-similar species pairs')
-            ax_pairs_1.set_xlabel('Inter-atomic distance (pm)')
-            ax_pairs_1.legend()
-
-            fig.suptitle('Fitted distributions of inter-atomic distances\n'
-                         '(Vertical lines represent hard sphere model values)')
-
-            plt.show()
-
-        elif type_ == 'box':
-
-            fig, ax = plt.subplots()
-
-            tick_labels = ['Si <-> Si', 'Cu <-> Cu', 'Al <-> Al', 'Mg <-> Mg', 'Si <-> Cu', 'Si <-> Al', 'Si <-> Mg',
-                           'Cu <-> Al', 'Cu <-> Mg', 'Al <-> Mg']
-
-            ax.boxplot([self.si_si, self.cu_cu, self.al_al, self.mg_mg, self.si_cu, self.si_al, self.si_mg, self.cu_al, self.cu_mg, self.al_mg])
-
-            ax.set_xticklabels(tick_labels, rotation=45, fontsize=12, fontdict={'horizontalalignment': 'right'})
-
-            ax.plot(1, 2 * core.SuchSoftware.si_radii, color='r', marker='*', markeredgecolor='k', markersize=12,
-                    linestyle='', label='Hard-sphere model values')
-            ax.plot(2, 2 * core.SuchSoftware.cu_radii, color='r', marker='*', markeredgecolor='k', markersize=12)
-            ax.plot(3, 2 * core.SuchSoftware.al_radii, color='r', marker='*', markeredgecolor='k', markersize=12)
-            ax.plot(4, 2 * core.SuchSoftware.mg_radii, color='r', marker='*', markeredgecolor='k', markersize=12)
-            ax.plot(5, core.SuchSoftware.si_radii + core.SuchSoftware.cu_radii, color='r', marker='*',
-                    markeredgecolor='k', markersize=12)
-            ax.plot(6, core.SuchSoftware.si_radii + core.SuchSoftware.al_radii, color='r', marker='*',
-                    markeredgecolor='k', markersize=12)
-            ax.plot(7, core.SuchSoftware.si_radii + core.SuchSoftware.mg_radii, color='r', marker='*',
-                    markeredgecolor='k', markersize=12)
-            ax.plot(8, core.SuchSoftware.cu_radii + core.SuchSoftware.al_radii, color='r', marker='*',
-                    markeredgecolor='k', markersize=12)
-            ax.plot(9, core.SuchSoftware.cu_radii + core.SuchSoftware.mg_radii, color='r', marker='*',
-                    markeredgecolor='k', markersize=12)
-            ax.plot(10, core.SuchSoftware.al_radii + core.SuchSoftware.mg_radii, color='r', marker='*',
-                    markeredgecolor='k', markersize=12)
-
-            ax.yaxis.grid(True, linestyle='-', which='major', color='lightgrey', alpha=0.5)
-            ax.set_axisbelow(True)
-
-            ax.set_ylabel('Inter-atomic distance (pm)')
-            ax.legend(loc='upper left')
-
-            fig.subplots_adjust(bottom=0.20)
-            fig.suptitle('Box plot of inter-atomic distance data')
-
-            plt.show()
-
-        elif type_ == 'scatter':
-
-            fig, ax = plt.subplots()
-
-            tick_labels = ['', 'Si <-> Si', 'Cu <-> Cu', 'Al <-> Al', 'Mg <-> Mg', 'Si <-> Cu', 'Si <-> Al', 'Si <-> Mg',
-                           'Cu <-> Al', 'Cu <-> Mg', 'Al <-> Mg']
-
-            ax.plot([0] * len(self.si_si), self.si_si, marker='o', markeredgecolor='k', markersize=4, linestyle='', fillstyle='none')
-            ax.plot([1] * len(self.cu_cu), self.cu_cu, marker='o', markeredgecolor='k', markersize=4, linestyle='', fillstyle='none')
-            ax.plot([2] * len(self.al_al), self.al_al, marker='o', markeredgecolor='k', markersize=4, linestyle='', fillstyle='none')
-            ax.plot([3] * len(self.mg_mg), self.mg_mg, marker='o', markeredgecolor='k', markersize=4, linestyle='', fillstyle='none')
-            ax.plot([4] * len(self.si_cu), self.si_cu, marker='o', markeredgecolor='k', markersize=4, linestyle='', fillstyle='none')
-            ax.plot([5] * len(self.si_al), self.si_al, marker='o', markeredgecolor='k', markersize=4, linestyle='', fillstyle='none')
-            ax.plot([6] * len(self.si_mg), self.si_mg, marker='o', markeredgecolor='k', markersize=4, linestyle='', fillstyle='none')
-            ax.plot([7] * len(self.cu_al), self.cu_al, marker='o', markeredgecolor='k', markersize=4, linestyle='', fillstyle='none')
-            ax.plot([8] * len(self.cu_mg), self.cu_mg, marker='o', markeredgecolor='k', markersize=4, linestyle='', fillstyle='none')
-            ax.plot([9] * len(self.al_mg), self.al_mg, marker='o', markeredgecolor='k', markersize=4, linestyle='', fillstyle='none')
-
-            ax.plot(0, 2 * core.SuchSoftware.si_radii, color='r', marker='*', markeredgecolor='k', markersize=12,
-                    linestyle='', label='Hard-sphere model values')
-            ax.plot(1, 2 * core.SuchSoftware.cu_radii, color='r', marker='*', markeredgecolor='k', markersize=12)
-            ax.plot(2, 2 * core.SuchSoftware.al_radii, color='r', marker='*', markeredgecolor='k', markersize=12)
-            ax.plot(3, 2 * core.SuchSoftware.mg_radii, color='r', marker='*', markeredgecolor='k', markersize=12)
-            ax.plot(4, core.SuchSoftware.si_radii + core.SuchSoftware.cu_radii, color='r', marker='*',
-                    markeredgecolor='k', markersize=12)
-            ax.plot(5, core.SuchSoftware.si_radii + core.SuchSoftware.al_radii, color='r', marker='*',
-                    markeredgecolor='k', markersize=12)
-            ax.plot(6, core.SuchSoftware.si_radii + core.SuchSoftware.mg_radii, color='r', marker='*',
-                    markeredgecolor='k', markersize=12)
-            ax.plot(7, core.SuchSoftware.cu_radii + core.SuchSoftware.al_radii, color='r', marker='*',
-                    markeredgecolor='k', markersize=12)
-            ax.plot(8, core.SuchSoftware.cu_radii + core.SuchSoftware.mg_radii, color='r', marker='*',
-                    markeredgecolor='k', markersize=12)
-            ax.plot(9, core.SuchSoftware.al_radii + core.SuchSoftware.mg_radii, color='r', marker='*',
-                    markeredgecolor='k', markersize=12)
-
-            ax.xaxis.set_major_locator(tick.MultipleLocator(1))
-            ax.set_xticklabels(tick_labels, rotation=45, fontsize=12, fontdict={'horizontalalignment': 'right'})
-
-            ax.yaxis.grid(True, linestyle='-', which='major', color='lightgrey', alpha=0.5)
-            ax.set_axisbelow(True)
-
-            ax.set_ylabel('Inter-atomic distance (pm)')
-            ax.legend(loc='upper left')
-
-            fig.subplots_adjust(bottom=0.20)
-            fig.suptitle('Scatter-plot of inter-atomic distance data')
-
-            plt.show()
-
-        elif type_ == 'all':
-
-            distance = np.linspace(200, 400, 1000)
-
-            fig = plt.figure(constrained_layout=True)
-            gs = GridSpec(2, 2, figure=fig)
-            ax_same = fig.add_subplot(gs[0, 0])
-            ax_pairs_1 = fig.add_subplot(gs[1, 0])
-            ax_box = fig.add_subplot(gs[0, 1])
-            ax_scatter = fig.add_subplot(gs[1, 1])
-
-            ax_same.plot(distance, utils.normal_dist(distance, self.si_si_mean, self.si_si_std), 'r', label='Si <-> Si')
-            ax_same.plot(distance, utils.normal_dist(distance, self.cu_cu_mean, self.cu_cu_std), 'y', label='Cu <-> Cu')
-            ax_same.plot(distance, utils.normal_dist(distance, self.al_al_mean, self.al_al_std), 'g', label='Al <-> Al')
-            ax_same.plot(distance, utils.normal_dist(distance, self.mg_mg_mean, self.mg_mg_std), 'm', label='Mg <-> Mg')
-
-            ax_same.axvline(x=2 * core.SuchSoftware.si_radii, c='r')
-            ax_same.axvline(x=2 * core.SuchSoftware.cu_radii, c='y')
-            ax_same.axvline(x=2 * core.SuchSoftware.al_radii, c='g')
-            ax_same.axvline(x=2 * core.SuchSoftware.mg_radii, c='m')
-
-            ax_same.set_title('Similar species pairs')
-            ax_same.set_xlabel('Inter-atomic distance (pm)')
-            ax_same.legend()
-
-            ax_pairs_1.plot(distance, utils.normal_dist(distance, self.si_cu_mean, self.si_cu_std), 'r',
-                            label='Si <-> Cu')
-            ax_pairs_1.plot(distance, utils.normal_dist(distance, self.si_al_mean, self.si_al_std), 'k',
-                            label='Si <-> Al')
-            ax_pairs_1.plot(distance, utils.normal_dist(distance, self.si_mg_mean, self.si_mg_std), 'c',
-                            label='Si <-> Mg')
-            ax_pairs_1.plot(distance, utils.normal_dist(distance, self.cu_al_mean, self.cu_al_std), 'y',
-                            label='Cu <-> Al')
-            ax_pairs_1.plot(distance, utils.normal_dist(distance, self.cu_al_mean, self.cu_al_std), 'b',
-                            label='Cu <-> Mg')
-            ax_pairs_1.plot(distance, utils.normal_dist(distance, self.al_mg_mean, self.al_mg_std), 'g',
-                            label='Al <-> Mg')
-
-            ax_pairs_1.axvline(x=core.SuchSoftware.si_radii + core.SuchSoftware.cu_radii, c='r')
-            ax_pairs_1.axvline(x=core.SuchSoftware.si_radii + core.SuchSoftware.al_radii, c='k')
-            ax_pairs_1.axvline(x=core.SuchSoftware.si_radii + core.SuchSoftware.mg_radii, c='c')
-            ax_pairs_1.axvline(x=core.SuchSoftware.cu_radii + core.SuchSoftware.al_radii, c='y')
-            ax_pairs_1.axvline(x=core.SuchSoftware.cu_radii + core.SuchSoftware.mg_radii, c='b')
-            ax_pairs_1.axvline(x=core.SuchSoftware.al_radii + core.SuchSoftware.mg_radii, c='g')
-
-            ax_pairs_1.set_title('Un-similar species pairs')
-            ax_pairs_1.set_xlabel('Inter-atomic distance (pm)')
-            ax_pairs_1.legend()
-
-            tick_labels = ['Si <-> Si', 'Cu <-> Cu', 'Al <-> Al', 'Mg <-> Mg', 'Si <-> Cu', 'Si <-> Al', 'Si <-> Mg',
-                           'Cu <-> Al', 'Cu <-> Mg', 'Al <-> Mg']
-
-            ax_box.boxplot([self.si_si, self.cu_cu, self.al_al, self.mg_mg, self.si_cu, self.si_al, self.si_mg, self.cu_al,
-                        self.cu_mg, self.al_mg])
-
-            ax_box.set_xticklabels(tick_labels, rotation=45, fontsize=10, fontdict={'horizontalalignment': 'right'})
-
-            ax_box.plot(1, 2 * core.SuchSoftware.si_radii, color='r', marker='*', markeredgecolor='k', markersize=12,
-                    linestyle='', label='Hard-sphere model values')
-            ax_box.plot(2, 2 * core.SuchSoftware.cu_radii, color='r', marker='*', markeredgecolor='k', markersize=12)
-            ax_box.plot(3, 2 * core.SuchSoftware.al_radii, color='r', marker='*', markeredgecolor='k', markersize=12)
-            ax_box.plot(4, 2 * core.SuchSoftware.mg_radii, color='r', marker='*', markeredgecolor='k', markersize=12)
-            ax_box.plot(5, core.SuchSoftware.si_radii + core.SuchSoftware.cu_radii, color='r', marker='*',
-                    markeredgecolor='k', markersize=12)
-            ax_box.plot(6, core.SuchSoftware.si_radii + core.SuchSoftware.al_radii, color='r', marker='*',
-                    markeredgecolor='k', markersize=12)
-            ax_box.plot(7, core.SuchSoftware.si_radii + core.SuchSoftware.mg_radii, color='r', marker='*',
-                    markeredgecolor='k', markersize=12)
-            ax_box.plot(8, core.SuchSoftware.cu_radii + core.SuchSoftware.al_radii, color='r', marker='*',
-                    markeredgecolor='k', markersize=12)
-            ax_box.plot(9, core.SuchSoftware.cu_radii + core.SuchSoftware.mg_radii, color='r', marker='*',
-                    markeredgecolor='k', markersize=12)
-            ax_box.plot(10, core.SuchSoftware.al_radii + core.SuchSoftware.mg_radii, color='r', marker='*',
-                    markeredgecolor='k', markersize=12)
-
-            ax_box.yaxis.grid(True, linestyle='-', which='major', color='lightgrey', alpha=0.5)
-            ax_box.set_axisbelow(True)
-
-            ax_box.set_ylabel('Inter-atomic distance (pm)')
-            ax_box.legend(loc='upper left')
-            ax_box.set_title('Box-plot of inter-atomic distance data')
-
-            tick_labels = ['', 'Si <-> Si', 'Cu <-> Cu', 'Al <-> Al', 'Mg <-> Mg', 'Si <-> Cu', 'Si <-> Al', 'Si <-> Mg',
-                           'Cu <-> Al', 'Cu <-> Mg', 'Al <-> Mg']
-
-            ax_scatter.plot([1] * len(self.si_si), self.si_si, marker='o', markeredgecolor='k', markersize=4, linestyle='',
-                    fillstyle='none')
-            ax_scatter.plot([2] * len(self.cu_cu), self.cu_cu, marker='o', markeredgecolor='k', markersize=4, linestyle='',
-                    fillstyle='none')
-            ax_scatter.plot([3] * len(self.al_al), self.al_al, marker='o', markeredgecolor='k', markersize=4, linestyle='',
-                    fillstyle='none')
-            ax_scatter.plot([4] * len(self.mg_mg), self.mg_mg, marker='o', markeredgecolor='k', markersize=4, linestyle='',
-                    fillstyle='none')
-            ax_scatter.plot([5] * len(self.si_cu), self.si_cu, marker='o', markeredgecolor='k', markersize=4, linestyle='',
-                    fillstyle='none')
-            ax_scatter.plot([6] * len(self.si_al), self.si_al, marker='o', markeredgecolor='k', markersize=4, linestyle='',
-                    fillstyle='none')
-            ax_scatter.plot([7] * len(self.si_mg), self.si_mg, marker='o', markeredgecolor='k', markersize=4, linestyle='',
-                    fillstyle='none')
-            ax_scatter.plot([8] * len(self.cu_al), self.cu_al, marker='o', markeredgecolor='k', markersize=4, linestyle='',
-                    fillstyle='none')
-            ax_scatter.plot([9] * len(self.cu_mg), self.cu_mg, marker='o', markeredgecolor='k', markersize=4, linestyle='',
-                    fillstyle='none')
-            ax_scatter.plot([10] * len(self.al_mg), self.al_mg, marker='o', markeredgecolor='k', markersize=4, linestyle='',
-                    fillstyle='none')
-
-            ax_scatter.plot(1, 2 * core.SuchSoftware.si_radii, color='r', marker='*', markeredgecolor='k', markersize=12,
-                    linestyle='', label='Hard-sphere model values')
-            ax_scatter.plot(2, 2 * core.SuchSoftware.cu_radii, color='r', marker='*', markeredgecolor='k', markersize=12)
-            ax_scatter.plot(3, 2 * core.SuchSoftware.al_radii, color='r', marker='*', markeredgecolor='k', markersize=12)
-            ax_scatter.plot(4, 2 * core.SuchSoftware.mg_radii, color='r', marker='*', markeredgecolor='k', markersize=12)
-            ax_scatter.plot(5, core.SuchSoftware.si_radii + core.SuchSoftware.cu_radii, color='r', marker='*',
-                    markeredgecolor='k', markersize=12)
-            ax_scatter.plot(6, core.SuchSoftware.si_radii + core.SuchSoftware.al_radii, color='r', marker='*',
-                    markeredgecolor='k', markersize=12)
-            ax_scatter.plot(7, core.SuchSoftware.si_radii + core.SuchSoftware.mg_radii, color='r', marker='*',
-                    markeredgecolor='k', markersize=12)
-            ax_scatter.plot(8, core.SuchSoftware.cu_radii + core.SuchSoftware.al_radii, color='r', marker='*',
-                    markeredgecolor='k', markersize=12)
-            ax_scatter.plot(9, core.SuchSoftware.cu_radii + core.SuchSoftware.mg_radii, color='r', marker='*',
-                    markeredgecolor='k', markersize=12)
-            ax_scatter.plot(10, core.SuchSoftware.al_radii + core.SuchSoftware.mg_radii, color='r', marker='*',
-                    markeredgecolor='k', markersize=12)
-
-            ax_scatter.xaxis.set_major_locator(tick.MultipleLocator(1))
-            ax_scatter.set_xticklabels(tick_labels, rotation=45, fontsize=10, fontdict={'horizontalalignment': 'right'})
-
-            ax_scatter.yaxis.grid(True, linestyle='-', which='major', color='lightgrey', alpha=0.5)
-            ax_scatter.set_axisbelow(True)
-
-            ax_scatter.set_title('Scatter-plot of inter-atomic distance data')
-            ax_scatter.set_ylabel('Inter-atomic distance (pm)')
-            ax_scatter.legend(loc='upper left')
-
-            fig.suptitle('All inter-atomic distance plots')
-
-            plt.show()
-
-        else:
-
-            logger.error('Unkonwn plot-type!')
-
-    def plot_gamma(self):
-        logger.info('Generating plots...')
-
-        gamma = np.linspace(0, 1, 1000)
-
-        fig = plt.figure(constrained_layout=True)
-        gs = GridSpec(2, 2, figure=fig)
-        ax_peak = fig.add_subplot(gs[0, 0])
-        ax_avg = fig.add_subplot(gs[1, 0])
-        ax_scatter = fig.add_subplot(gs[:, 1])
-
-        ax_peak.plot(gamma, utils.normal_dist(gamma, self.cu_peak_gamma_mean, self.cu_peak_gamma_std), 'y', label='Cu ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.cu_peak_gamma_mean, self.cu_peak_gamma_std))
-        ax_peak.plot(gamma, utils.normal_dist(gamma, self.si_peak_gamma_mean, self.si_peak_gamma_std), 'r', label='Si ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.si_peak_gamma_mean, self.si_peak_gamma_std))
-        ax_peak.plot(gamma, utils.normal_dist(gamma, self.al_peak_gamma_mean, self.al_peak_gamma_std), 'g', label='Al ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.al_peak_gamma_mean, self.al_peak_gamma_std))
-        ax_peak.plot(gamma, utils.normal_dist(gamma, self.mg_peak_gamma_mean, self.mg_peak_gamma_std), 'm', label='Mg ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.mg_peak_gamma_mean, self.mg_peak_gamma_std))
-
-        ax_peak.set_title('peak z-contrast fitted distributions')
-        ax_peak.set_xlabel('peak z-contrast (normalized $\in (0, 1)$)')
-        ax_peak.legend()
-
-        ax_avg.plot(gamma, utils.normal_dist(gamma, self.cu_avg_gamma_mean, self.cu_avg_gamma_std), 'y', label='Cu ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.cu_avg_gamma_mean, self.cu_avg_gamma_std))
-        ax_avg.plot(gamma, utils.normal_dist(gamma, self.si_avg_gamma_mean, self.si_avg_gamma_std), 'r', label='Si ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.si_avg_gamma_mean, self.si_avg_gamma_std))
-        ax_avg.plot(gamma, utils.normal_dist(gamma, self.al_avg_gamma_mean, self.al_avg_gamma_std), 'g', label='Al ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.al_avg_gamma_mean, self.al_avg_gamma_std))
-        ax_avg.plot(gamma, utils.normal_dist(gamma, self.mg_avg_gamma_mean, self.mg_avg_gamma_std), 'm', label='Mg ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.mg_avg_gamma_mean, self.mg_avg_gamma_std))
-
-        ax_avg.set_title('average z-contrast fitted distributions')
-        ax_avg.set_xlabel('average z-contrast (normalized $\in (0, 1)$)')
-        ax_avg.legend()
-
-        ax_scatter.scatter(self.cu_peak_intensities, self.cu_avg_intensities, c='y', label='Cu', s=8)
-        ax_scatter.scatter(self.si_peak_intensities, self.si_avg_intensities, c='r', label='Si', s=8)
-        ax_scatter.scatter(self.al_peak_intensities, self.al_avg_intensities, c='g', label='Al', s=8)
-        ax_scatter.scatter(self.mg_peak_intensities, self.mg_avg_intensities, c='m', label='Mg', s=8)
-
-        ax_scatter.set_title('Scatter-plot of peak-avg contrast')
-        ax_scatter.set_xlabel('peak z-contrast (normalized $\in (0, 1)$)')
-        ax_scatter.set_ylabel('average z-contrast (normalized $\in (0, 1)$)')
-        ax_scatter.set_xlim([0, 1])
-        ax_scatter.set_ylim([0, 1])
-        ax_scatter.legend()
-
-        fig.suptitle('Scatter plot of peak-avg contrasts')
-
-        plt.show()
-
-    def plot_alpha(self):
-
-        logger.info('Generating plot(s)...')
-
-        alpha = np.linspace(1, 4, 1000)
-
-        fig = plt.figure(constrained_layout=True)
-        gs = GridSpec(2, 2, figure=fig)
-        ax_min = fig.add_subplot(gs[0, 0])
-        ax_max = fig.add_subplot(gs[1, 0])
-        ax_scatter = fig.add_subplot(gs[:, 1])
-
-        ax_min.plot(alpha, utils.normal_dist(alpha, self.cu_min_mean, self.cu_min_std), 'y',
-                    label='Cu ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.cu_min_mean, self.cu_min_std))
-        ax_min.plot(alpha, utils.normal_dist(alpha, self.si_1_min_mean, self.si_1_min_std), 'r',
-                    label='Si$_1$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.si_1_min_mean, self.si_1_min_std))
-        ax_min.plot(alpha, utils.normal_dist(alpha, self.si_2_min_mean, self.si_2_min_std), 'k',
-                    label='Si$_2$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.si_2_min_mean, self.si_2_min_std))
-        ax_min.plot(alpha, utils.normal_dist(alpha, self.al_1_min_mean, self.al_1_min_std), 'g',
-                    label='Al$_1$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.al_1_min_mean, self.al_1_min_std))
-        ax_min.plot(alpha, utils.normal_dist(alpha, self.al_2_min_mean, self.al_2_min_std), 'g',
-                    label='Al$_2$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.al_2_min_mean, self.al_2_min_std))
-        ax_min.plot(alpha, utils.normal_dist(alpha, self.mg_1_min_mean, self.mg_1_min_std), 'm',
-                    label='Mg$_1$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.mg_1_min_mean, self.mg_1_min_std))
-        ax_min.plot(alpha, utils.normal_dist(alpha, self.mg_2_min_mean, self.mg_2_min_std), 'c',
-                    label='Mg$_2$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.mg_2_min_mean, self.mg_2_min_std))
-
-        ax_min.set_title('Minimum central angles fitted density')
-        ax_min.set_xlabel('Min angle (radians)')
-        ax_min.legend()
-
-        ax_max.plot(alpha, utils.normal_dist(alpha, self.cu_max_mean, self.cu_max_std), 'y',
-                    label='Cu ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.cu_max_mean, self.cu_max_std))
-        ax_max.plot(alpha, utils.normal_dist(alpha, self.si_1_max_mean, self.si_1_max_std), 'r',
-                    label='Si$_1$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.si_1_max_mean, self.si_1_max_std))
-        ax_max.plot(alpha, utils.normal_dist(alpha, self.si_2_max_mean, self.si_2_max_std), 'k',
-                    label='Si$_2$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.si_2_max_mean, self.si_2_max_std))
-        ax_max.plot(alpha, utils.normal_dist(alpha, self.al_1_max_mean, self.al_1_max_std), 'g',
-                    label='Al$_1$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.al_1_max_mean, self.al_1_max_std))
-        ax_max.plot(alpha, utils.normal_dist(alpha, self.al_2_max_mean, self.al_2_max_std), 'g',
-                    label='Al$_2$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.al_2_max_mean, self.al_2_max_std))
-        ax_max.plot(alpha, utils.normal_dist(alpha, self.mg_1_max_mean, self.mg_1_max_std), 'm',
-                    label='Mg$_1$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.mg_1_max_mean, self.mg_1_max_std))
-        ax_max.plot(alpha, utils.normal_dist(alpha, self.mg_2_max_mean, self.mg_2_max_std), 'c',
-                    label='Mg$_2$ ($\mu$ = ' + '{:.2f}, $\sigma$ = {:.2f})'.format(self.mg_2_max_mean, self.mg_2_max_std))
-
-        ax_max.set_title('Maximum central angles fitted density')
-        ax_max.set_xlabel('max angle (radians)')
-        ax_max.legend()
-
-        ax_scatter.scatter(self.cu_min_angles, self.cu_max_angles, c='y', label='Cu', s=8)
-        ax_scatter.scatter(self.si_1_min_angles, self.si_1_max_angles, c='r', label='Si$_1$', s=8)
-        ax_scatter.scatter(self.si_2_min_angles, self.si_2_max_angles, c='k', label='Si$_2$', s=8)
-        ax_scatter.scatter(self.al_1_min_angles, self.al_1_max_angles, c='g', label='Al', s=8)
-        ax_scatter.scatter(self.al_2_min_angles, self.al_2_max_angles, c='g', label='Al', s=8)
-        ax_scatter.scatter(self.mg_1_min_angles, self.mg_1_max_angles, c='m', label='Mg$_1$', s=8)
-        ax_scatter.scatter(self.mg_2_min_angles, self.mg_2_max_angles, c='c', label='Mg$_2$', s=8)
-
-        ax_scatter.set_title('Scatter-plot of min-max angles')
-        ax_scatter.set_xlabel('Min angle (radians)')
-        ax_scatter.set_ylabel('max angle (radians)')
-        ax_scatter.legend()
-
-        if self.angle_mode == 'alpha':
-            fig.suptitle('Alpha min/max summary')
-        else:
-            fig.suptitle('Theta min/max summary')
-
-        logger.info('Plotted min/max over {} files and {} vertices!'.format(self.number_of_files, self.number_of_vertices))
-
-        plt.show()
-
-    def plot_theta(self):
-        pass
-
-    def plot_avg_central_separation(self):
-        pass
 
 
 

@@ -8,7 +8,7 @@ import graph_op
 import compatibility
 import legacy_items
 import untangling
-import params
+import statistics
 # External imports:
 import numpy as np
 import dm3_lib as dm3
@@ -98,7 +98,7 @@ class SuchSoftware:
     """
 
     # Version
-    version = [0, 0, 12]
+    version = [0, 0, 14]
 
     # Number of elements in the probability vectors
     num_selections = 7
@@ -242,7 +242,8 @@ class SuchSoftware:
         self.overhead = int(6 * (self.r / 10))
 
         # Initialize an empty graph
-        self.graph = graph_2.AtomicGraph(self.scale)
+        self.active_model = statistics.DataManager.load('default_model')
+        self.graph = graph_2.AtomicGraph(self.scale, self.active_model)
 
         logger.info('Generated instance from {}'.format(filename_full))
 

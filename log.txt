@@ -1,5 +1,163 @@
 GUI: Welcome to AutomAl 6000 by Haakon Tvedt
 GUI: GUI version: 0.0.2
-GUI: core version: 0.0.12
+GUI: core version: 0.0.14
 GUI: Build version: Alpha 1.0
 ------------------------
+GUI: Opening file C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/_model_018_Ba_ready
+core: Attempted to load un-compatible save-file. Running conversion script...
+core: Conversion successful!
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/_model_018_Ba_ready
+core: Vertex 61:
+    General:
+        Image position (x, y) = (561.946, 239.856)
+        Pixel position (x, y) = (561, 239)
+        Spatial relative position in pm (x, y, z) = (5288.782, 2257.414, 202.475)
+        Peak gamma = 0.9169
+        Average gamma = 0.6068
+        Atomic species: Si
+        Species index: 0
+        Symmetry: 3
+    Analysis:
+        Species variant: 1
+        Probability vector: [ 0.744 0.256 0.000 0.000 0.000 0.000 0.000 ]
+            Prediction: Si
+            Confidence: 0
+        Alpha model: [ 0.161 0.839 0.000 0.000 0.000 0.000 0.000 ]
+            Prediction: Cu
+            Confidence: 0
+        Theta model: [ 0.004 0.996 0.000 0.000 0.000 0.000 0.000 ]
+            Prediction: Cu
+            Confidence: 0
+        Gamma model: [ 0.632 0.002 0.000 0.359 0.000 0.007 0.000 ]
+            Prediction: Si
+            Confidence: 0
+        Model: [ 0.208 0.792 0.000 0.000 0.000 0.000 0.000 ]
+            Prediction: Cu
+            Confidence: 0
+        Weighted model: [ 0.000 0.000 0.000 0.000 0.000 0.000 1.000 ]
+            Prediction: Un
+            Confidence: 0
+    Graph parameters:
+        In-degree: 3
+        Out-degree: 3
+        Degree: 3
+        Alpha angles: [ 1.961 2.276 2.047 ]
+            Max: 2.276
+            Min: 1.961
+        Theta angles: [ 1.961 2.276 2.047 ]
+            Max: 2.276
+            Min: 1.961
+            Variance: 0.026
+            Mean: 2.094
+        Normalized peak gamma: 0.411
+        Normalized average gamma: 0.367
+        Redshift: -34.887
+        Average central separation: 271.98120686716874
+    Local graph mapping:
+        District: [786, 2189, 1669, 1565, 1434, 1271, 206, 41]
+        In-neighbourhood: [786, 1669, 2189]
+        Out-neighbourhood: [786, 2189, 1669]
+        Neighbourhood: [786, 2189, 1669]
+        Anti-Neighbourhood: [1565, 1434, 1271, 206, 41]
+        Partners: [786, 2189, 1669]
+        Semi-partners: []
+        Out-semi-partners: []
+        In-semi-partners: []
+    Settings:
+        Is in precipitate: True
+        Is edge column: False
+        Is set by user: False
+        Show in overlay: True
+        Is void: False
+        Flag 1: False
+        Flag 2: False
+        Flag 3: False
+        Flag 4: False
+        Flag 5: False
+        Flag 6: False
+        Flag 7: False
+        Flag 8: False
+        Flag 9: False
+
+graph_2: Refreshing graph...
+graph_2:     Mapping districts
+graph_2:     Calculating vertex parameters
+graph_2:     Evaluating species variants
+graph_2:     Calculating model predictions
+graph_2:     Mapping meshes
+graph_2:     Mapping arcs
+graph_2:     Summarizing graph stats
+graph_2: Graph refreshed!
+core: Vertex 61:
+    General:
+        Image position (x, y) = (561.946, 239.856)
+        Pixel position (x, y) = (561, 239)
+        Spatial relative position in pm (x, y, z) = (5288.782, 2257.414, 202.475)
+        Peak gamma = 0.9169
+        Average gamma = 0.6068
+        Atomic species: Si
+        Species index: 0
+        Symmetry: 3
+    Analysis:
+        Species variant: 1
+        Probability vector: [ 0.744 0.256 0.000 0.000 0.000 0.000 0.000 ]
+            Prediction: Si
+            Confidence: 0
+        Alpha model: [ 0.441 0.559 0.000 0.000 0.000 0.000 0.000 ]
+            Prediction: Cu
+            Confidence: 0
+        Theta model: [ 0.004 0.996 0.000 0.000 0.000 0.000 0.000 ]
+            Prediction: Cu
+            Confidence: 0
+        Gamma model: [ 0.632 0.002 0.000 0.359 0.000 0.007 0.000 ]
+            Prediction: Si
+            Confidence: 0
+        Model: [ nan nan 0.000 nan 0.000 nan 0.000 ]
+            Prediction: Si
+            Confidence: 0
+        Weighted model: [ 0.000 0.000 0.000 0.000 0.000 0.000 1.000 ]
+            Prediction: Un
+            Confidence: 0
+    Graph parameters:
+        In-degree: 3
+        Out-degree: 3
+        Degree: 3
+        Alpha angles: [ 1.961 2.276 2.047 ]
+            Max: 2.276
+            Min: 1.961
+        Theta angles: [ 1.961 2.276 2.047 ]
+            Max: 2.276
+            Min: 1.961
+            Variance: 0.026
+            Mean: 2.094
+        Normalized peak gamma: 0.411
+        Normalized average gamma: 0.367
+        Redshift: -34.887
+        Average central separation: 271.98120686716874
+    Local graph mapping:
+        District: [786, 2189, 1669, 1565, 1434, 1271, 206, 41]
+        In-neighbourhood: [786, 1669, 2189]
+        Out-neighbourhood: [786, 2189, 1669]
+        Neighbourhood: [786, 2189, 1669]
+        Anti-Neighbourhood: [1565, 1434, 1271, 206, 41]
+        Partners: [786, 2189, 1669]
+        Semi-partners: []
+        Out-semi-partners: []
+        In-semi-partners: []
+    Settings:
+        Is in precipitate: True
+        Is edge column: False
+        Is set by user: False
+        Show in overlay: True
+        Is void: False
+        Flag 1: False
+        Flag 2: False
+        Flag 3: False
+        Flag 4: False
+        Flag 5: False
+        Flag 6: False
+        Flag 7: False
+        Flag 8: False
+        Flag 9: False
+
+core: Saved C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_a/_model_018_Ba_ready

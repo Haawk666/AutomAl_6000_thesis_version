@@ -6,8 +6,10 @@
     generally not guarantied to be possible, but opening old project files in newer version should always be possible.
 
 """
-
+# Internal imports
 import graph_2
+import statistics
+# External imports
 import logging
 # Instantiate logger
 logger = logging.getLogger(__name__)
@@ -96,6 +98,8 @@ def convert(obj, old_version, version):
             new_graph.add_vertex(new_vertex)
         new_graph.refresh_graph()
         obj.graph = new_graph
+        obj.active_model = statistics.DataManager.load('default_model')
+        obj.graph.active_model = obj.active_model
         fresh_obj = obj
 
     elif old_version == [0, 0, 1]:
@@ -160,6 +164,8 @@ def convert(obj, old_version, version):
             new_graph.add_vertex(new_vertex)
         new_graph.refresh_graph()
         obj.graph = new_graph
+        obj.active_model = statistics.DataManager.load('default_model')
+        obj.graph.active_model = obj.active_model
         fresh_obj = obj
 
     elif old_version == [0, 0, 2]:
@@ -214,6 +220,8 @@ def convert(obj, old_version, version):
             new_graph.add_vertex(new_vertex)
         new_graph.refresh_graph()
         obj.graph = new_graph
+        obj.active_model = statistics.DataManager.load('default_model')
+        obj.graph.active_model = obj.active_model
         fresh_obj = obj
 
     elif old_version == [0, 0, 3]:
@@ -262,6 +270,8 @@ def convert(obj, old_version, version):
             new_graph.add_vertex(new_vertex)
         new_graph.refresh_graph()
         obj.graph = new_graph
+        obj.active_model = statistics.DataManager.load('default_model')
+        obj.graph.active_model = obj.active_model
         fresh_obj = obj
 
     elif old_version == [0, 0, 4]:
@@ -308,6 +318,8 @@ def convert(obj, old_version, version):
             new_graph.add_vertex(new_vertex)
         new_graph.refresh_graph()
         obj.graph = new_graph
+        obj.active_model = statistics.DataManager.load('default_model')
+        obj.graph.active_model = obj.active_model
         fresh_obj = obj
 
     elif old_version == [0, 0, 5]:
@@ -352,6 +364,8 @@ def convert(obj, old_version, version):
             new_graph.add_vertex(new_vertex)
         new_graph.refresh_graph()
         obj.graph = new_graph
+        obj.active_model = statistics.DataManager.load('default_model')
+        obj.graph.active_model = obj.active_model
         fresh_obj = obj
 
     elif old_version == [0, 0, 6]:
@@ -394,6 +408,8 @@ def convert(obj, old_version, version):
             new_graph.add_vertex(new_vertex)
         new_graph.refresh_graph()
         obj.graph = new_graph
+        obj.active_model = statistics.DataManager.load('default_model')
+        obj.graph.active_model = obj.active_model
         fresh_obj = obj
 
     elif old_version == [0, 0, 7]:
@@ -434,6 +450,8 @@ def convert(obj, old_version, version):
             new_graph.add_vertex(new_vertex)
         new_graph.refresh_graph()
         obj.graph = new_graph
+        obj.active_model = statistics.DataManager.load('default_model')
+        obj.graph.active_model = obj.active_model
         fresh_obj = obj
 
     elif old_version == [0, 0, 8]:
@@ -473,6 +491,8 @@ def convert(obj, old_version, version):
             new_graph.add_vertex(new_vertex)
         new_graph.refresh_graph()
         obj.graph = new_graph
+        obj.active_model = statistics.DataManager.load('default_model')
+        obj.graph.active_model = obj.active_model
         fresh_obj = obj
 
     elif old_version == [0, 0, 9]:
@@ -504,6 +524,8 @@ def convert(obj, old_version, version):
             new_graph.add_vertex(new_vertex)
         new_graph.refresh_graph()
         obj.graph = new_graph
+        obj.active_model = statistics.DataManager.load('default_model')
+        obj.graph.active_model = obj.active_model
         fresh_obj = obj
 
     elif old_version == [0, 0, 10]:
@@ -534,6 +556,8 @@ def convert(obj, old_version, version):
             new_graph.add_vertex(new_vertex)
         new_graph.refresh_graph()
         obj.graph = new_graph
+        obj.active_model = statistics.DataManager.load('default_model')
+        obj.graph.active_model = obj.active_model
         fresh_obj = obj
 
     elif old_version == [0, 0, 11]:
@@ -565,6 +589,17 @@ def convert(obj, old_version, version):
             new_graph.add_vertex(new_vertex)
         new_graph.refresh_graph()
         obj.graph = new_graph
+        obj.active_model = statistics.DataManager.load('default_model')
+        obj.graph.active_model = obj.active_model
+        fresh_obj = obj
+
+    elif old_version == [0, 0, 12]:
+        obj.active_model = statistics.DataManager.load('default_model')
+        obj.graph.active_model = obj.active_model
+        fresh_obj = obj
+
+    elif old_version == [0, 0, 13]:
+        obj.graph.active_model = obj.active_model
         fresh_obj = obj
 
     else:
