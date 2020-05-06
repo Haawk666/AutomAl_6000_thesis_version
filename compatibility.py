@@ -98,7 +98,7 @@ def convert(obj, old_version, version):
             new_graph.add_vertex(new_vertex)
         new_graph.refresh_graph()
         obj.graph = new_graph
-        obj.active_model = statistics.DataManager.load('default_model')
+        obj.active_model = statistics.VertexDataManager.load('default_model')
         obj.graph.active_model = obj.active_model
         fresh_obj = obj
 
@@ -164,7 +164,7 @@ def convert(obj, old_version, version):
             new_graph.add_vertex(new_vertex)
         new_graph.refresh_graph()
         obj.graph = new_graph
-        obj.active_model = statistics.DataManager.load('default_model')
+        obj.active_model = statistics.VertexDataManager.load('default_model')
         obj.graph.active_model = obj.active_model
         fresh_obj = obj
 
@@ -220,7 +220,7 @@ def convert(obj, old_version, version):
             new_graph.add_vertex(new_vertex)
         new_graph.refresh_graph()
         obj.graph = new_graph
-        obj.active_model = statistics.DataManager.load('default_model')
+        obj.active_model = statistics.VertexDataManager.load('default_model')
         obj.graph.active_model = obj.active_model
         fresh_obj = obj
 
@@ -270,7 +270,7 @@ def convert(obj, old_version, version):
             new_graph.add_vertex(new_vertex)
         new_graph.refresh_graph()
         obj.graph = new_graph
-        obj.active_model = statistics.DataManager.load('default_model')
+        obj.active_model = statistics.VertexDataManager.load('default_model')
         obj.graph.active_model = obj.active_model
         fresh_obj = obj
 
@@ -318,7 +318,7 @@ def convert(obj, old_version, version):
             new_graph.add_vertex(new_vertex)
         new_graph.refresh_graph()
         obj.graph = new_graph
-        obj.active_model = statistics.DataManager.load('default_model')
+        obj.active_model = statistics.VertexDataManager.load('default_model')
         obj.graph.active_model = obj.active_model
         fresh_obj = obj
 
@@ -364,7 +364,7 @@ def convert(obj, old_version, version):
             new_graph.add_vertex(new_vertex)
         new_graph.refresh_graph()
         obj.graph = new_graph
-        obj.active_model = statistics.DataManager.load('default_model')
+        obj.active_model = statistics.VertexDataManager.load('default_model')
         obj.graph.active_model = obj.active_model
         fresh_obj = obj
 
@@ -408,7 +408,7 @@ def convert(obj, old_version, version):
             new_graph.add_vertex(new_vertex)
         new_graph.refresh_graph()
         obj.graph = new_graph
-        obj.active_model = statistics.DataManager.load('default_model')
+        obj.active_model = statistics.VertexDataManager.load('default_model')
         obj.graph.active_model = obj.active_model
         fresh_obj = obj
 
@@ -450,7 +450,7 @@ def convert(obj, old_version, version):
             new_graph.add_vertex(new_vertex)
         new_graph.refresh_graph()
         obj.graph = new_graph
-        obj.active_model = statistics.DataManager.load('default_model')
+        obj.active_model = statistics.VertexDataManager.load('default_model')
         obj.graph.active_model = obj.active_model
         fresh_obj = obj
 
@@ -491,7 +491,7 @@ def convert(obj, old_version, version):
             new_graph.add_vertex(new_vertex)
         new_graph.refresh_graph()
         obj.graph = new_graph
-        obj.active_model = statistics.DataManager.load('default_model')
+        obj.active_model = statistics.VertexDataManager.load('default_model')
         obj.graph.active_model = obj.active_model
         fresh_obj = obj
 
@@ -524,7 +524,7 @@ def convert(obj, old_version, version):
             new_graph.add_vertex(new_vertex)
         new_graph.refresh_graph()
         obj.graph = new_graph
-        obj.active_model = statistics.DataManager.load('default_model')
+        obj.active_model = statistics.VertexDataManager.load('default_model')
         obj.graph.active_model = obj.active_model
         fresh_obj = obj
 
@@ -556,7 +556,7 @@ def convert(obj, old_version, version):
             new_graph.add_vertex(new_vertex)
         new_graph.refresh_graph()
         obj.graph = new_graph
-        obj.active_model = statistics.DataManager.load('default_model')
+        obj.active_model = statistics.VertexDataManager.load('default_model')
         obj.graph.active_model = obj.active_model
         fresh_obj = obj
 
@@ -589,12 +589,12 @@ def convert(obj, old_version, version):
             new_graph.add_vertex(new_vertex)
         new_graph.refresh_graph()
         obj.graph = new_graph
-        obj.active_model = statistics.DataManager.load('default_model')
+        obj.active_model = statistics.VertexDataManager.load('default_model')
         obj.graph.active_model = obj.active_model
         fresh_obj = obj
 
     elif old_version == [0, 0, 12]:
-        obj.active_model = statistics.DataManager.load('default_model')
+        obj.active_model = statistics.VertexDataManager.load('default_model')
         obj.graph.active_model = obj.active_model
         for vertex in obj.graph.vertices:
             vertex.avg_redshift = 0

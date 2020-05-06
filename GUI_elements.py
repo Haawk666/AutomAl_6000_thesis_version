@@ -2268,7 +2268,7 @@ class DataExportWizard(QtWidgets.QDialog):
             if self.cmb_categorization.currentText() == 'simple' and 'species_index' not in export_keys:
                 keys.append('species_index')
             # Initate manager
-            manager = statistics.DataManager(files, filter_=filter_, save_filename=filename[0], recalc=self.chb_recalculate_graphs.isChecked(), keys=keys, categorization=self.cmb_categorization.currentText())
+            manager = statistics.VertexDataManager(files, filter_=filter_, save_filename=filename[0], recalc=self.chb_recalculate_graphs.isChecked(), keys=keys, categorization=self.cmb_categorization.currentText())
             manager.export_csv(filename[0] + filename[1], export_keys)
             GUI.logger.info('Successfully exported data to {}'.format(filename[0]))
         self.ui_obj.sys_message('Ready.')
@@ -2685,7 +2685,7 @@ class CalcModels(QtWidgets.QDialog):
             if self.cmb_categorization.currentText() == 'simple' and 'species_index' not in keys:
                 keys.append('species_index')
             # Initate manager
-            manager = statistics.DataManager(files, filter_=filter_, save_filename=filename[0], recalc=self.chb_recalculate_graphs.isChecked(), keys=keys, categorization=self.cmb_categorization.currentText())
+            manager = statistics.VertexDataManager(files, filter_=filter_, save_filename=filename[0], recalc=self.chb_recalculate_graphs.isChecked(), keys=keys, categorization=self.cmb_categorization.currentText())
             manager.save()
             GUI.logger.info('Successfully saved model parameters to {}'.format(filename[0]))
         self.ui_obj.sys_message('Ready.')
@@ -2947,7 +2947,7 @@ class PlotModels(QtWidgets.QDialog):
         filename = QtWidgets.QFileDialog.getOpenFileName(self, "Load model", '', "")
         if filename[0]:
             self.close()
-            PlotModels(ui_obj=self.ui_obj, model=statistics.DataManager.load(filename[0]))
+            PlotModels(ui_obj=self.ui_obj, model=statistics.VertexDataManager.load(filename[0]))
 
     def btn_dual_plot_trigger(self):
         self.model.dual_plot(self.cmb_attribute_1.currentText(), self.cmb_attribute_2.currentText())

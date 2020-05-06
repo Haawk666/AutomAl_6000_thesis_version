@@ -1,6 +1,5 @@
 """This module contains the different statistical models used in the column characterization algorithm. It also has
-methods that can gather model parameters from sets of overlay files. The default model parameters used here are
-gathered from the images in the validation data set. See automal.org for more details."""
+methods that can gather model parameters from sets of overlay files. See automal.org for more details."""
 
 # Internal imports
 import core
@@ -73,7 +72,9 @@ class MultivariateNormalDist:
         self.covar_matrix_eigenvectors = self.covar_matrix_eigenvectors[:, idx]
 
     def get_partial_model(self, attr_indices):
-        new_means = self.means[attr_indices]
+        new_means = []
+        for attr_index in attr_indices:
+            new_means.append(self.means[attr_index])
         attr_indices = np.array(attr_indices)
         new_covar_matrix = np.array(self.covar_matrix[attr_indices, attr_indices])
         new_inverse_covar_matrix = np.linalg.inv(new_covar_matrix)
@@ -97,7 +98,7 @@ class MultivariateNormalDist:
         return prob
 
 
-class DataManager:
+class VertexDataManager:
     """A class designed to gather, handle, transform, plot, model and export data from multiple images for AutomAl 6000
 
     The :code:`filter_` argument can be used to access particular sub-sets of the available data. The filter is passed
@@ -674,5 +675,16 @@ class DataManager:
         return obj
 
 
+class ArcDataManager:
 
+    def __inti__(self):
+
+        pass
+
+
+class ImageDataManager:
+
+    def __inti__(self):
+
+        pass
 

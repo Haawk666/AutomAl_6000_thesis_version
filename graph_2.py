@@ -1,5 +1,9 @@
+
+
+# Internal imports:
 import utils
 import statistics
+# External imports:
 import numpy as np
 import copy
 import sys
@@ -389,8 +393,8 @@ class AtomicGraph:
         self.scale = scale
         self.district_size = district_size
 
-        if active_model == None:
-            self.active_model = statistics.DataManager.load('default_model')
+        if active_model is None:
+            self.active_model = statistics.VertexDataManager.load('default_model')
         else:
             self.active_model = active_model
 

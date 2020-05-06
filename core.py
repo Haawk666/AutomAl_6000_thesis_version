@@ -1,9 +1,8 @@
 """Module for the 'SuchSoftware' class that handles a *project instance*."""
 
 # Program imports:
-import mat_op
-import graph_2
 import utils
+import graph_2
 import graph_op
 import compatibility
 import legacy_items
@@ -14,7 +13,6 @@ import numpy as np
 import dm3_lib as dm3
 import sys
 import pickle
-# from matplotlib import pyplot as plt
 import logging
 # Instantiate logger
 logger = logging.getLogger(__name__)
@@ -106,30 +104,10 @@ class SuchSoftware:
     # Number of closest neighbours that are included in local search-spaces
     map_size = 8
 
-    # Al lattice constant in pico-meters
-    al_lattice_const = 404.95
-
-    # Atomic "hard sphere" radii in pm:
-    si_radii = 117.5
-    cu_radii = 127.81
-    zn_radii = 133.25
-    al_radii = 143
-    ag_radii = 144.5
-    mg_radii = 160
-    un_radii = 200
-
-    # Indexable list of atomic radii
-    atomic_radii = (si_radii, cu_radii, zn_radii, al_radii, ag_radii, mg_radii, un_radii)
-
-    # Relative mean peak intensities for the different implemented alloys:
-    intensities_0 = [0.44, 0.88, 0.00, 0.40, 0.00, 0.33, 0.00]
-    intensities_1 = [0.70, 0.00, 0.00, 0.67, 0.00, 0.49, 0.00]
-
-    # Indexable list
-    intensities = [intensities_0, intensities_1]
-
-    # Indexable species strings
     species_strings = ['Si', 'Cu', 'Zn', 'Al', 'Ag', 'Mg', 'Un']
+    atomic_radii = [117.5, 127.81, 133.25, 143.0, 144.5, 160.0, 200.0]
+    species_symmetry = [3, 3, 3, 4, 4, 5, 3]
+    al_lattice_const = 404.95
 
     def __init__(self, filename_full, debug_obj=None):
 
@@ -159,22 +137,17 @@ class SuchSoftware:
             self.im_mat = dm3f.imagedata
             (self.scale, junk) = dm3f.pxsize
             self.scale = 1000 * self.scale
-            self.im_mat = mat_op.normalize_static(self.im_mat)
+            self.im_mat = utils.normalize_static(self.im_mat)
             (self.im_height, self.im_width) = self.im_mat.shape
-            self.fft_im_mat = mat_op.gen_fft(self.im_mat)
+            self.fft_im_mat = utils.gen_fft(self.im_mat)
 
-        # Data matrices: These hold much of the information gathered by the different algorithms
+        # Data matrices:
         self.search_mat = self.im_mat
         self.column_centre_mat = np.zeros((self.im_height, self.im_width, 2), dtype=type(self.im_mat))
-        self.column_circumference_mat = np.zeros((self.im_height, self.im_width), dtype=type(self.im_mat))
 
         # Counting and statistical variables
         self.num_columns = 0
         self.num_precipitate_columns = 0
-
-        self.num_inconsistencies = 0
-        self.num_popular = 0
-        self.num_unpopular = 0
 
         self.num_al = 0
         self.num_mg = 0
@@ -192,29 +165,6 @@ class SuchSoftware:
         self.num_precipitate_mg = 0
         self.num_precipitate_un = 0
 
-        self.boarder_size = 0
-        self.num_eyes = 0
-        self.num_flowers = 0
-
-        self.avg_peak_gamma = 0.0
-        self.avg_avg_gamma = 0.0
-
-        self.avg_si_peak_gamma = 0.0
-        self.avg_cu_peak_gamma = 0.0
-        self.avg_zn_peak_gamma = 0.0
-        self.avg_al_peak_gamma = 0.0
-        self.avg_ag_peak_gamma = 0.0
-        self.avg_mg_peak_gamma = 0.0
-        self.avg_un_peak_gamma = 0.0
-
-        self.avg_si_avg_gamma = 0.0
-        self.avg_cu_avg_gamma = 0.0
-        self.avg_zn_avg_gamma = 0.0
-        self.avg_al_avg_gamma = 0.0
-        self.avg_ag_avg_gamma = 0.0
-        self.avg_mg_avg_gamma = 0.0
-        self.avg_un_avg_gamma = 0.0
-
         self.number_percentage_si = 0.0
         self.number_percentage_cu = 0.0
         self.number_percentage_zn = 0.0
@@ -231,34 +181,22 @@ class SuchSoftware:
         self.precipitate_number_percentage_mg = 0.0
         self.precipitate_number_percentage_un = 0.0
 
-        self.stats_string = 'Empty'
-        self.export_data_string = ' '
-
         # These are hyper-parameters of the algorithms. See the documentation.
         self.threshold = 0.2586
-        self.search_size = 1
+        self.search_size = 10
         self.r = int(100 / self.scale)
-        self.certainty_threshold = 0.8
         self.overhead = int(6 * (self.r / 10))
 
         # Initialize an empty graph
-        self.graph = graph_2.AtomicGraph(self.scale, statistics.DataManager.load('default_model'))
+        self.graph = graph_2.AtomicGraph(self.scale, statistics.VertexDataManager.load('default_model'))
 
         logger.info('Generated instance from {}'.format(filename_full))
-
-        # DEPRECATED:
-        self.dist_1_std = 0
-        self.dist_2_std = 0
-        self.dist_3_std = 0
-        self.dist_4_std = 0
-        self.dist_5_std = 0
-        self.dist_8_std = 0
 
     def __str__(self):
         return self.report()
 
     def report(self, supress_log=True):
-        """Build a string representation of current statistical summary and store it in self.stats_string.
+        """Build a string representation of current statistical summary.
 
         """
 
@@ -268,24 +206,6 @@ class SuchSoftware:
         string += '    General:\n'
         string += '        Number of columns: {}\n'.format(self.num_columns)
         string += '        Number of particle columns: {}\n'.format(self.num_precipitate_columns)
-        string += '    Average peak intensities:\n'
-        string += '        Average peak intensity: {:.2f}\n'.format(self.avg_peak_gamma)
-        string += '        Average Si peak intensity: {:.2f}\n'.format(self.avg_si_peak_gamma)
-        string += '        Average Cu peak intensity: {:.2f}\n'.format(self.avg_cu_peak_gamma)
-        string += '        Average Zn peak intensity: {:.2f}\n'.format(self.avg_zn_peak_gamma)
-        string += '        Average Al peak intensity: {:.2f}\n'.format(self.avg_al_peak_gamma)
-        string += '        Average Ag peak intensity: {:.2f}\n'.format(self.avg_ag_peak_gamma)
-        string += '        Average Mg peak intensity: {:.2f}\n'.format(self.avg_mg_peak_gamma)
-        string += '        Average Un peak intensity: {:.2f}\n'.format(self.avg_un_peak_gamma)
-        string += '    Average average intensities:\n'
-        string += '        Average average intensity: {:.2f}\n'.format(self.avg_avg_gamma)
-        string += '        Average Si average intensity: {:.2f}\n'.format(self.avg_si_avg_gamma)
-        string += '        Average Cu average intensity: {:.2f}\n'.format(self.avg_cu_avg_gamma)
-        string += '        Average Zn average intensity: {:.2f}\n'.format(self.avg_zn_avg_gamma)
-        string += '        Average Al average intensity: {:.2f}\n'.format(self.avg_al_avg_gamma)
-        string += '        Average Ag average intensity: {:.2f}\n'.format(self.avg_ag_avg_gamma)
-        string += '        Average Mg average intensity: {:.2f}\n'.format(self.avg_mg_avg_gamma)
-        string += '        Average Un average intensity: {:.2f}\n'.format(self.avg_un_avg_gamma)
         string += '    Image composition:\n'
         string += '        Number of Si-columns: {}\n'.format(self.num_si)
         string += '        Number of Cu-columns: {}\n'.format(self.num_cu)
@@ -451,9 +371,8 @@ class SuchSoftware:
             logger.info('Continuing column detection. Search mode is \'{}\''.format(search_type))
         cont = True
         counter = self.num_columns
-        self.column_circumference_mat = mat_op.gen_framed_mat(self.column_circumference_mat, self.r + self.overhead)
-        self.search_mat = mat_op.gen_framed_mat(self.search_mat, self.r + self.overhead)
-        self.im_mat = mat_op.gen_framed_mat(self.im_mat, self.r + self.overhead)
+        self.search_mat = utils.gen_framed_mat(self.search_mat, self.r + self.overhead)
+        self.im_mat = utils.gen_framed_mat(self.im_mat, self.r + self.overhead)
 
         while cont:
 
@@ -470,7 +389,7 @@ class SuchSoftware:
             x_fit_pix = int(np.floor(x_fit))
             y_fit_pix = int(np.floor(y_fit))
 
-            self.search_mat = mat_op.delete_pixels(self.search_mat, x_fit_pix, y_fit_pix, self.r + self.overhead)
+            self.search_mat = utils.delete_pixels(self.search_mat, x_fit_pix, y_fit_pix, self.r + self.overhead)
 
             vertex = graph_2.Vertex(counter, x_fit_real_coor, y_fit_real_coor, self.r, max_val, 0, self.scale)
             vertex.reset_probability_vector(bias=6)
@@ -478,8 +397,6 @@ class SuchSoftware:
 
             self.column_centre_mat[y_fit_real_coor_pix, x_fit_real_coor_pix, 0] = 1
             self.column_centre_mat[y_fit_real_coor_pix, x_fit_real_coor_pix, 1] = counter
-            self.column_circumference_mat = mat_op.draw_circle(self.column_circumference_mat, x_fit_pix, y_fit_pix,
-                                                               self.r)
 
             logger.debug(str(counter) + ': (' + str(x_fit_real_coor) + ', ' + str(y_fit_real_coor) + ') | (' + str(
                 pos[1]) + ', ' + str(pos[0]) + ')')
@@ -497,9 +414,8 @@ class SuchSoftware:
             else:
                 logger.error('Invalid search_type')
 
-        self.column_circumference_mat = mat_op.gen_de_framed_mat(self.column_circumference_mat, self.r + self.overhead)
-        self.search_mat = mat_op.gen_de_framed_mat(self.search_mat, self.r + self.overhead)
-        self.im_mat = mat_op.gen_de_framed_mat(self.im_mat, self.r + self.overhead)
+        self.search_mat = utils.gen_de_framed_mat(self.search_mat, self.r + self.overhead)
+        self.im_mat = utils.gen_de_framed_mat(self.im_mat, self.r + self.overhead)
         self.calc_avg_gamma()
         self.summarize_stats()
         logger.info('Column detection complete! Found {} columns.'.format(self.num_columns))
@@ -1115,11 +1031,11 @@ class SuchSoftware:
         """Calculate average intensity for every vertex based on image information.
 
         """
-        if self.num_columns > 0:
-            temp_mat = mat_op.gen_framed_mat(self.im_mat, self.r)
+        if self.graph.order > 0:
+            temp_mat = utils.gen_framed_mat(self.im_mat, self.r)
             for vertex in self.graph.vertices:
-                vertex.avg_gamma, vertex.peak_gamma = mat_op.average(temp_mat, int(vertex.im_coor_x + self.r),
-                                                                     int(vertex.im_coor_y + self.r), self.r)
+                vertex.avg_gamma, vertex.peak_gamma = utils.circular_average(temp_mat, int(vertex.im_coor_x + self.r),
+                                                                             int(vertex.im_coor_y + self.r), self.r)
 
     def summarize_stats(self):
         """Summarize current stats about the project file.
@@ -1127,11 +1043,6 @@ class SuchSoftware:
         """
 
         logger.info('Summarizing stats...')
-
-        self.graph.refresh_graph()
-
-        self.avg_peak_gamma = 0
-        self.avg_avg_gamma = 0
 
         self.number_percentage_si = 0.0
         self.number_percentage_cu = 0.0
@@ -1148,22 +1059,6 @@ class SuchSoftware:
         self.precipitate_number_percentage_ag = 0.0
         self.precipitate_number_percentage_mg = 0.0
         self.precipitate_number_percentage_un = 0.0
-
-        self.avg_si_peak_gamma = 0.0
-        self.avg_cu_peak_gamma = 0.0
-        self.avg_zn_peak_gamma = 0.0
-        self.avg_al_peak_gamma = 0.0
-        self.avg_ag_peak_gamma = 0.0
-        self.avg_mg_peak_gamma = 0.0
-        self.avg_un_peak_gamma = 0.0
-
-        self.avg_si_avg_gamma = 0.0
-        self.avg_cu_avg_gamma = 0.0
-        self.avg_zn_avg_gamma = 0.0
-        self.avg_al_avg_gamma = 0.0
-        self.avg_ag_avg_gamma = 0.0
-        self.avg_mg_avg_gamma = 0.0
-        self.avg_un_avg_gamma = 0.0
 
         self.num_si = 0
         self.num_cu = 0
@@ -1188,14 +1083,9 @@ class SuchSoftware:
             for vertex in self.graph.vertices:
                 if not vertex.is_edge_column and not vertex.void:
 
-                    self.avg_peak_gamma += vertex.peak_gamma
-                    self.avg_avg_gamma += vertex.avg_gamma
-
                     if vertex.species_index == 0:
                         self.num_si += 1
                         self.number_percentage_si += 1
-                        self.avg_si_peak_gamma += vertex.peak_gamma
-                        self.avg_si_avg_gamma += vertex.avg_gamma
                         if vertex.is_in_precipitate:
                             self.num_precipitate_columns += 1
                             self.num_precipitate_si += 1
@@ -1203,8 +1093,6 @@ class SuchSoftware:
                     elif vertex.species_index == 1:
                         self.num_cu += 1
                         self.number_percentage_cu += 1
-                        self.avg_cu_peak_gamma += vertex.peak_gamma
-                        self.avg_cu_avg_gamma += vertex.avg_gamma
                         if vertex.is_in_precipitate:
                             self.num_precipitate_columns += 1
                             self.num_precipitate_cu += 1
@@ -1212,8 +1100,6 @@ class SuchSoftware:
                     elif vertex.species_index == 2:
                         self.num_zn += 1
                         self.number_percentage_zn += 1
-                        self.avg_zn_peak_gamma += vertex.peak_gamma
-                        self.avg_zn_avg_gamma += vertex.avg_gamma
                         if vertex.is_in_precipitate:
                             self.num_precipitate_columns += 1
                             self.num_precipitate_zn += 1
@@ -1221,8 +1107,6 @@ class SuchSoftware:
                     elif vertex.species_index == 3:
                         self.num_al += 1
                         self.number_percentage_al += 1
-                        self.avg_al_peak_gamma += vertex.peak_gamma
-                        self.avg_al_avg_gamma += vertex.avg_gamma
                         if vertex.is_in_precipitate:
                             self.num_precipitate_columns += 1
                             self.num_precipitate_al += 1
@@ -1230,8 +1114,6 @@ class SuchSoftware:
                     elif vertex.species_index == 4:
                         self.num_ag += 1
                         self.number_percentage_ag += 1
-                        self.avg_ag_peak_gamma += vertex.peak_gamma
-                        self.avg_ag_avg_gamma += vertex.avg_gamma
                         if vertex.is_in_precipitate:
                             self.num_precipitate_columns += 1
                             self.num_precipitate_ag += 1
@@ -1239,8 +1121,6 @@ class SuchSoftware:
                     elif vertex.species_index == 5:
                         self.num_mg += 1
                         self.number_percentage_mg += 1
-                        self.avg_mg_peak_gamma += vertex.peak_gamma
-                        self.avg_mg_avg_gamma += vertex.avg_gamma
                         if vertex.is_in_precipitate:
                             self.num_precipitate_columns += 1
                             self.num_precipitate_mg += 1
@@ -1248,45 +1128,12 @@ class SuchSoftware:
                     elif vertex.species_index == 6:
                         self.num_un += 1
                         self.number_percentage_un += 1
-                        self.avg_un_peak_gamma += vertex.peak_gamma
-                        self.avg_un_avg_gamma += vertex.avg_gamma
                         if vertex.is_in_precipitate:
                             self.num_precipitate_columns += 1
                             self.num_precipitate_un += 1
                             self.precipitate_number_percentage_un += 1
                     else:
                         logger.warning('Unexpected behaviour in core.SuchSoftware.summarize_stats()')
-
-            self.avg_peak_gamma = self.avg_peak_gamma / self.num_columns
-            self.avg_avg_gamma = self.avg_avg_gamma / self.num_columns
-
-            if not self.num_si == 0:
-                self.avg_si_peak_gamma = self.avg_si_peak_gamma / self.num_si
-                self.avg_si_avg_gamma = self.avg_si_avg_gamma / self.num_si
-
-            if not self.num_cu == 0:
-                self.avg_cu_peak_gamma = self.avg_cu_peak_gamma / self.num_cu
-                self.avg_cu_avg_gamma = self.avg_cu_avg_gamma / self.num_cu
-
-            if not self.num_zn == 0:
-                self.avg_zn_peak_gamma = self.avg_zn_peak_gamma / self.num_zn
-                self.avg_zn_avg_gamma = self.avg_zn_avg_gamma / self.num_zn
-
-            if not self.num_al == 0:
-                self.avg_al_peak_gamma = self.avg_al_peak_gamma / self.num_al
-                self.avg_al_avg_gamma = self.avg_al_avg_gamma / self.num_al
-
-            if not self.num_ag == 0:
-                self.avg_ag_peak_gamma = self.avg_ag_peak_gamma / self.num_ag
-                self.avg_ag_avg_gamma = self.avg_ag_avg_gamma / self.num_ag
-
-            if not self.num_mg == 0:
-                self.avg_mg_peak_gamma = self.avg_mg_peak_gamma / self.num_mg
-                self.avg_mg_avg_gamma = self.avg_mg_avg_gamma / self.num_mg
-
-            if not self.num_un == 0:
-                self.avg_un_peak_gamma = self.avg_un_peak_gamma / self.num_un
-                self.avg_un_avg_gamma = self.avg_un_avg_gamma / self.num_un
 
             self.number_percentage_si = self.number_percentage_si / self.num_columns
             self.number_percentage_cu = self.number_percentage_cu / self.num_columns
@@ -1321,27 +1168,13 @@ class SuchSoftware:
 
         self.search_mat = self.im_mat
         if self.num_columns > 0:
-            self.search_mat = mat_op.gen_framed_mat(self.search_mat, self.r + self.overhead)
+            self.search_mat = utils.gen_framed_mat(self.search_mat, self.r + self.overhead)
             for i in range(0, self.num_columns):
-                self.search_mat = mat_op.delete_pixels(self.search_mat,
+                self.search_mat = utils.delete_pixels(self.search_mat,
                                                        self.graph.vertices[i].im_coor_x + self.r + self.overhead,
                                                        self.graph.vertices[i].im_coor_y + self.r + self.overhead,
                                                        self.r + self.overhead)
-            self.search_mat = mat_op.gen_de_framed_mat(self.search_mat, self.r + self.overhead)
-
-    def redraw_circumference_mat(self):
-        """Redraw the circumference matrix. DEPRECATED"""
-
-        self.column_circumference_mat = np.zeros((self.im_height, self.im_width), dtype=type(self.im_mat))
-        if self.num_columns > 0:
-            self.column_circumference_mat = mat_op.gen_framed_mat(self.column_circumference_mat, self.r + self.overhead)
-            for x in range(0, self.num_columns):
-                self.column_circumference_mat = mat_op.draw_circle(self.column_circumference_mat,
-                                                                   int(self.graph.vertices[x].im_coor_x + self.r + self.overhead),
-                                                                   int(self.graph.vertices[x].im_coor_y + self.r + self.overhead),
-                                                                   self.r)
-            self.column_circumference_mat = mat_op.gen_de_framed_mat(self.column_circumference_mat, self.r +
-                                                                     self.overhead)
+            self.search_mat = utils.gen_de_framed_mat(self.search_mat, self.r + self.overhead)
 
     def redraw_centre_mat(self):
         """Redraw the centre matrix."""

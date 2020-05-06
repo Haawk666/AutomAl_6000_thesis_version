@@ -6,7 +6,7 @@ interface."""
 import core
 import GUI_elements
 import GUI_settings
-import mat_op
+import utils
 import statistics
 # External imports:
 from PyQt5 import QtWidgets, QtGui, QtCore
@@ -185,9 +185,9 @@ class MainUI(QtWidgets.QMainWindow):
 
     def update_central_widget(self):
         if self.project_instance is not None:
-            mat_op.im_out_static(self.project_instance.im_mat.astype(np.float64), 'Images\Outputs\Buffers\\raw_image.png')
-            mat_op.im_out_static(self.project_instance.search_mat.astype(np.float64), 'Images\Outputs\Buffers\search_image.png')
-            mat_op.im_out_static(self.project_instance.fft_im_mat.astype(np.float64), 'Images\Outputs\Buffers\FFT.png')
+            utils.im_out_static(self.project_instance.im_mat.astype(np.float64), 'Images\Outputs\Buffers\\raw_image.png')
+            utils.im_out_static(self.project_instance.search_mat.astype(np.float64), 'Images\Outputs\Buffers\search_image.png')
+            utils.im_out_static(self.project_instance.fft_im_mat.astype(np.float64), 'Images\Outputs\Buffers\FFT.png')
             void = False
         else:
             void = True
@@ -393,7 +393,7 @@ class MainUI(QtWidgets.QMainWindow):
                 else:
                     self.project_instance.debug_mode = False
                     self.terminal_window.handler.set_mode(False)
-                self.project_instance.graph.active_model = statistics.DataManager.load(self.project_instance.graph.active_model.save_filename)
+                self.project_instance.graph.active_model = statistics.VertexDataManager.load(self.project_instance.graph.active_model.save_filename)
                 self.control_instance = None
                 self.savefile = filename[0]
                 self.update_display()
@@ -1160,7 +1160,7 @@ class MainUI(QtWidgets.QMainWindow):
         if self.project_instance is not None:
             GUI_elements.PlotModels(ui_obj=self, model=self.project_instance.graph.active_model)
         else:
-            GUI_elements.PlotModels(ui_obj=self, model=statistics.DataManager.load('default_model'))
+            GUI_elements.PlotModels(ui_obj=self, model=statistics.VertexDataManager.load('default_model'))
 
     def btn_save_log_trigger(self):
         filename = QtWidgets.QFileDialog.getSaveFileName(self, 'Save log-file', '')
