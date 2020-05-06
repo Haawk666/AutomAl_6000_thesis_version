@@ -2776,8 +2776,10 @@ class PlotModels(QtWidgets.QDialog):
         self.btn_load_model.clicked.connect(self.btn_load_model_trigger)
         self.btn_dual_plot = QtWidgets.QPushButton('Plot')
         self.btn_dual_plot.clicked.connect(self.btn_dual_plot_trigger)
-        self.btn_plot_all = QtWidgets.QPushButton('Plot')
+        self.btn_plot_all = QtWidgets.QPushButton('Plot fitted normal distributions')
         self.btn_plot_all.clicked.connect(self.btn_plot_all_trigger)
+        self.btn_plot_z_scores = QtWidgets.QPushButton('Plot z-scores')
+        self.btn_plot_z_scores.clicked.connect(self.btn_plot_z_scores_trigger)
         self.btn_plot_pca = QtWidgets.QPushButton('Plot')
         self.btn_plot_pca.clicked.connect(self.btn_plot_pca_trigger)
         self.btn_plot_single = QtWidgets.QPushButton('Plot')
@@ -2873,6 +2875,11 @@ class PlotModels(QtWidgets.QDialog):
         layout.addWidget(self.btn_plot_all)
         layout.addStretch()
         grp_plot_all_layout.addLayout(layout)
+        layout = QtWidgets.QHBoxLayout()
+        layout.addStretch()
+        layout.addWidget(self.btn_plot_z_scores)
+        layout.addStretch()
+        grp_plot_all_layout.addLayout(layout)
         grp_plot_all.setLayout(grp_plot_all_layout)
 
         grp_plot_pca_layout = QtWidgets.QVBoxLayout()
@@ -2947,6 +2954,9 @@ class PlotModels(QtWidgets.QDialog):
 
     def btn_plot_all_trigger(self):
         self.model.plot_all()
+
+    def btn_plot_z_scores_trigger(self):
+        self.model.z_plot()
 
     def btn_plot_pca_trigger(self):
         if self.cmb_pca_setting.currentText() == 'Show categories':

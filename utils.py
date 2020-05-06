@@ -83,6 +83,11 @@ def y_line(slope, b, x):
     return slope * x + b
 
 
+def z_score(x, mean, var):
+    z = (x - mean) / np.sqrt(var)
+    return z
+
+
 def normal_dist(x, mean, var):
     dist = (x - mean)**2
     if not var == 0:

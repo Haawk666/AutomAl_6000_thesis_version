@@ -273,6 +273,9 @@ class DataManager:
         if 'theta_min' in self.keys:
             attributes.append('theta_min')
             units.append('(radians)')
+        if 'theta_angle_variance' in self.keys:
+            attributes.append('theta_angle_variance')
+            units.append('(radians)')
         if 'theta_angle_mean' in self.keys:
             attributes.append('theta_angle_mean')
             units.append('(radians)')
@@ -463,7 +466,6 @@ class DataManager:
         plt.show()
 
     def plot_all(self):
-
         fig = plt.figure(constrained_layout=True)
         gs = GridSpec(3, 3, figure=fig)
         ax = [
@@ -500,6 +502,43 @@ class DataManager:
             ax[attr_index].legend()
 
         fig.suptitle('Composite model component normal distributions')
+
+        plt.show()
+
+    def z_plot(self):
+        fig = plt.figure(constrained_layout=True)
+        gs = GridSpec(3, 3, figure=fig)
+        ax = [
+            fig.add_subplot(gs[0, 0]),
+            fig.add_subplot(gs[0, 1]),
+            fig.add_subplot(gs[0, 2]),
+            fig.add_subplot(gs[1, 0]),
+            fig.add_subplot(gs[1, 1]),
+            fig.add_subplot(gs[1, 2]),
+            fig.add_subplot(gs[2, 0]),
+            fig.add_subplot(gs[2, 1]),
+            fig.add_subplot(gs[2, 2])
+        ]
+        ax = ax[0:len(self.attribute_keys)]
+
+        for attr_index, attr_key in enumerate(self.attribute_keys):
+
+            for c, category in enumerate(self.category_titles):
+                mean = self.composite_model[c].means[attr_index]
+                var = self.composite_model[c].variances[attr_index]
+                ax[attr_index].scatter(
+                    self.matrix_data[c][attr_index, :],
+                    utils.z_score(self.matrix_data[c][attr_index, :], mean, var),
+                    c=self.colours[c],
+                    label='{}'.format(category),
+                    s=1
+                )
+
+            ax[attr_index].set_title('{} z-scores'.format(attr_key))
+            ax[attr_index].set_xlabel('{}'.format(attr_key))
+            ax[attr_index].legend()
+
+        fig.suptitle('Composite model attribute z-scores')
 
         plt.show()
 
