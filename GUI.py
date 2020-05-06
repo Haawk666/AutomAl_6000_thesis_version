@@ -393,6 +393,7 @@ class MainUI(QtWidgets.QMainWindow):
                 else:
                     self.project_instance.debug_mode = False
                     self.terminal_window.handler.set_mode(False)
+                self.project_instance.graph.active_model = statistics.DataManager.load(self.project_instance.graph.active_model.save_filename)
                 self.control_instance = None
                 self.savefile = filename[0]
                 self.update_display()

@@ -10,6 +10,7 @@ import GUI
 import utils
 import statistics
 # External imports:
+import copy
 from PyQt5 import QtWidgets, QtGui, QtCore
 import pathlib
 import os
@@ -1915,7 +1916,7 @@ class DataExportWizard(QtWidgets.QDialog):
 
         self.ui_obj = ui_obj
 
-        self.setWindowTitle('Data export wizard')
+        self.setWindowTitle('Calculate model parameters wizard')
 
         self.btn_next = QtWidgets.QPushButton('Next')
         self.btn_next.clicked.connect(self.btn_next_trigger)
@@ -1930,12 +1931,9 @@ class DataExportWizard(QtWidgets.QDialog):
 
         self.widget_frame_0 = QtWidgets.QWidget()
         self.widget_frame_1 = QtWidgets.QWidget()
-        self.widget_frame_2_a = QtWidgets.QWidget()
-        self.widget_frame_2_b = QtWidgets.QWidget()
-        self.widget_frame_3_a = QtWidgets.QWidget()
-        self.widget_frame_3_b = QtWidgets.QWidget()
-        self.widget_frame_4_a = QtWidgets.QWidget()
-        self.widget_frame_4_b = QtWidgets.QWidget()
+        self.widget_frame_2 = QtWidgets.QWidget()
+        self.widget_frame_3 = QtWidgets.QWidget()
+        self.widget_frame_4 = QtWidgets.QWidget()
 
         # Frame 0
         self.lbl_file = QtWidgets.QLabel('Export data from current project or enter a list of projects')
@@ -1945,17 +1943,10 @@ class DataExportWizard(QtWidgets.QDialog):
         self.btn_add_files = QtWidgets.QPushButton('Add files')
 
         # Frame 1
-        self.lbl_select_data = QtWidgets.QLabel('Select the target format for data-export.')
-        self.combo_1 = QtWidgets.QComboBox()
+        self.lbl_select_categories = QtWidgets.QLabel('Select the desired categorization')
+        self.cmb_categorization = QtWidgets.QComboBox()
 
-        # Frame 2 a
-        self.lbl_customize_1 = QtWidgets.QLabel('Select column-centered data or edge-centered data:')
-        self.combo_2 = QtWidgets.QComboBox()
-
-        # Frame 2 b
-        self.lbl_not_implemented = QtWidgets.QLabel('This option has not been implemented yet!')
-
-        # Frame 3 a
+        # Frame 2
         self.list_1 = QtWidgets.QListWidget()
         self.list_2 = QtWidgets.QListWidget()
         self.btn_list_1_up = QtWidgets.QPushButton('Move up')
@@ -1973,37 +1964,21 @@ class DataExportWizard(QtWidgets.QDialog):
         self.lbl_included_data = QtWidgets.QLabel('Included data-columns:')
         self.lbl_available_data = QtWidgets.QLabel('Available data-columns:')
 
-        # Frame 3 b
-        self.list_3 = QtWidgets.QListWidget()
-        self.list_4 = QtWidgets.QListWidget()
-        self.btn_list_3_up = QtWidgets.QPushButton('Move up')
-        self.btn_list_3_up.clicked.connect(self.btn_list_3_up_trigger)
-        self.btn_list_3_down = QtWidgets.QPushButton('Move down')
-        self.btn_list_3_down.clicked.connect(self.btn_list_3_down_trigger)
-        self.btn_list_4_up = QtWidgets.QPushButton('Move up')
-        self.btn_list_4_up.clicked.connect(self.btn_list_4_up_trigger)
-        self.btn_list_4_down = QtWidgets.QPushButton('Move down')
-        self.btn_list_4_down.clicked.connect(self.btn_list_4_down_trigger)
-        self.btn_add_2 = QtWidgets.QPushButton('Add')
-        self.btn_add_2.clicked.connect(self.btn_add_2_item_trigger)
-        self.btn_remove_2 = QtWidgets.QPushButton('Remove')
-        self.btn_remove_2.clicked.connect(self.btn_remove_2_item_trigger)
-        self.lbl_included_data_2 = QtWidgets.QLabel('Included data-columns:')
-        self.lbl_available_data_2 = QtWidgets.QLabel('Available data-columns:')
+        # Frame 3
+        self.lbl_filter = QtWidgets.QLabel(
+            'Set exclusionn filter: (Columns with checked properties will not be included)')
+        self.chb_edge_columns = QtWidgets.QCheckBox('Exclude edge columns')
+        self.chb_matrix_columns = QtWidgets.QCheckBox('Exclude matrix columns')
+        self.chb_particle_columns = QtWidgets.QCheckBox('Exclude particle columns')
+        self.chb_hidden_columns = QtWidgets.QCheckBox('Exclude columns that are set as hidden in the overlay')
+        self.chb_flag_1 = QtWidgets.QCheckBox('Exclude columns where flag 1 is set to True')
+        self.chb_flag_2 = QtWidgets.QCheckBox('Exclude columns where flag 2 is set to True')
+        self.chb_flag_3 = QtWidgets.QCheckBox('Exclude columns where flag 3 is set to True')
+        self.chb_flag_4 = QtWidgets.QCheckBox('Exclude columns where flag 4 is set to True')
 
-        # Frame 4 a
-        self.lbl_filter = QtWidgets.QLabel('Set inclusion filter: (Columns with unchecked properties will not be included)')
-        self.chb_edge_columns = QtWidgets.QCheckBox('Include edge columns')
-        self.chb_matrix_columns = QtWidgets.QCheckBox('Include aluminium matrix columns')
-        self.chb_hidden_columns = QtWidgets.QCheckBox('Include columns that are set to be hidden in the overlay')
-        self.chb_flag_1 = QtWidgets.QCheckBox('Include columns where flag 1 is set to True')
-        self.chb_flag_2 = QtWidgets.QCheckBox('Include columns where flag 2 is set to True')
-        self.chb_flag_3 = QtWidgets.QCheckBox('Include columns where flag 3 is set to True')
-        self.chb_flag_4 = QtWidgets.QCheckBox('Include columns where flag 4 is set to True')
-
-        # Frame 4 b
-        self.lbl_filter_2 = QtWidgets.QLabel('Set inclusion filter: (Columns with unchecked properties will not be included)')
-        self.chb_edge_edges = QtWidgets.QCheckBox('Include edges that are associated with one or two edge columns')
+        # Frame 4
+        self.chb_recalculate_graphs = QtWidgets.QCheckBox(
+            'Recalculate graph data before compiling data (might be very slow)')
 
         self.step = 0
         self.state_list = []
@@ -2040,15 +2015,16 @@ class DataExportWizard(QtWidgets.QDialog):
         self.widget_frame_0.setLayout(h_layout)
 
     def page_1_layout(self):
-        self.combo_1.addItem('.csv')
-        self.combo_1.addItem('.svg')
+        self.cmb_categorization.addItem('advanced')
+        self.cmb_categorization.addItem('simple')
+        self.cmb_categorization.addItem('none')
 
         h_layout = QtWidgets.QHBoxLayout()
         v_layout = QtWidgets.QVBoxLayout()
 
         v_layout.addStretch()
-        v_layout.addWidget(self.lbl_select_data)
-        v_layout.addWidget(self.combo_1)
+        v_layout.addWidget(self.lbl_select_categories)
+        v_layout.addWidget(self.cmb_categorization)
         v_layout.addStretch()
 
         h_layout.addStretch()
@@ -2057,59 +2033,35 @@ class DataExportWizard(QtWidgets.QDialog):
 
         self.widget_frame_1.setLayout(h_layout)
 
-    def page_2_a_layout(self):
-        self.combo_2.addItem('Column-centered')
-        self.combo_2.addItem('Edge_centered')
-
-        h_layout = QtWidgets.QHBoxLayout()
-        v_layout = QtWidgets.QVBoxLayout()
-
-        v_layout.addStretch()
-        v_layout.addWidget(self.lbl_customize_1)
-        v_layout.addWidget(self.combo_2)
-        v_layout.addStretch()
-
-        h_layout.addStretch()
-        h_layout.addLayout(v_layout)
-        h_layout.addStretch()
-
-        self.widget_frame_2_a.setLayout(h_layout)
-
-    def page_2_b_layout(self):
-        h_layout = QtWidgets.QHBoxLayout()
-        v_layout = QtWidgets.QVBoxLayout()
-
-        v_layout.addStretch()
-        v_layout.addWidget(self.lbl_not_implemented)
-        v_layout.addStretch()
-
-        h_layout.addLayout(v_layout)
-
-        self.widget_frame_2_b.setLayout(h_layout)
-
-    def page_3_a_layout(self):
-        self.list_2.addItems(['id',
-                              'index',
-                              'species',
-                              'peak gamma',
-                              'average gamma',
-                              'normalized peak gamma',
-                              'normalized average gamma',
-                              'real x',
-                              'real y',
-                              'real z',
-                              'spatial x',
-                              'spatial y',
-                              'spatial z',
-                              'image x',
-                              'image y',
-                              'level',
-                              'alpha min',
-                              'alpha max',
-                              'theta min',
-                              'theta max',
-                              'theta average',
-                              'red-shift'])
+    def page_2_layout(self):
+        self.list_2.addItems([
+            'i',
+            'r',
+            'species_index',
+            'species_variant',
+            'advanced_category_index',
+            'n',
+            'peak_gamma',
+            'avg_gamma',
+            'normalized_peak_gamma',
+            'normalized_avg_gamma',
+            'im_coor_x',
+            'im_coor_y',
+            'im_coor_z',
+            'spatial_coor_x',
+            'spatial_coor_y',
+            'spatial_coor_z',
+            'zeta',
+            'alpha_min',
+            'alpha_max',
+            'theta_min',
+            'theta_max',
+            'theta_angle_variance',
+            'theta_angle_mean',
+            'redshift',
+            'avg_redshift',
+            'avg_central_separation'
+        ])
 
         h_layout = QtWidgets.QHBoxLayout()
         v_layout_1 = QtWidgets.QVBoxLayout()
@@ -2145,60 +2097,17 @@ class DataExportWizard(QtWidgets.QDialog):
         h_layout.addLayout(v_layout_4)
         h_layout.addLayout(v_layout_5)
 
-        self.widget_frame_3_a.setLayout(h_layout)
+        self.widget_frame_2.setLayout(h_layout)
 
-    def page_3_b_layout(self):
-        self.list_4.addItem('Unique edge index')
-        self.list_4.addItem('Projected length')
-        self.list_4.addItem('Real length')
-        self.list_4.addItem('Atomic species a')
-        self.list_4.addItem('Atomic species b')
-        self.list_4.addItem('Deviation from expected hard-sphere distance')
-
-        h_layout = QtWidgets.QHBoxLayout()
-        v_layout_1 = QtWidgets.QVBoxLayout()
-        v_layout_2 = QtWidgets.QVBoxLayout()
-        v_layout_3 = QtWidgets.QVBoxLayout()
-        v_layout_4 = QtWidgets.QVBoxLayout()
-        v_layout_5 = QtWidgets.QVBoxLayout()
-
-        v_layout_1.addStretch()
-        v_layout_1.addWidget(self.btn_list_3_up)
-        v_layout_1.addWidget(self.btn_list_3_down)
-        v_layout_1.addStretch()
-
-        v_layout_2.addWidget(self.lbl_included_data_2)
-        v_layout_2.addWidget(self.list_3)
-
-        v_layout_3.addStretch()
-        v_layout_3.addWidget(self.btn_add_2)
-        v_layout_3.addWidget(self.btn_remove_2)
-        v_layout_3.addStretch()
-
-        v_layout_4.addWidget(self.lbl_available_data_2)
-        v_layout_4.addWidget(self.list_4)
-
-        v_layout_5.addStretch()
-        v_layout_5.addWidget(self.btn_list_4_up)
-        v_layout_5.addWidget(self.btn_list_4_down)
-        v_layout_5.addStretch()
-
-        h_layout.addLayout(v_layout_1)
-        h_layout.addLayout(v_layout_2)
-        h_layout.addLayout(v_layout_3)
-        h_layout.addLayout(v_layout_4)
-        h_layout.addLayout(v_layout_5)
-
-        self.widget_frame_3_b.setLayout(h_layout)
-
-    def page_4_a_layout(self):
-        self.chb_edge_columns.setChecked(False)
-        self.chb_matrix_columns.setChecked(True)
-        self.chb_hidden_columns.setChecked(True)
-        self.chb_flag_1.setChecked(True)
-        self.chb_flag_2.setChecked(True)
-        self.chb_flag_3.setChecked(True)
-        self.chb_flag_4.setChecked(True)
+    def page_3_layout(self):
+        self.chb_edge_columns.setChecked(True)
+        self.chb_matrix_columns.setChecked(False)
+        self.chb_particle_columns.setChecked(False)
+        self.chb_hidden_columns.setChecked(False)
+        self.chb_flag_1.setChecked(False)
+        self.chb_flag_2.setChecked(False)
+        self.chb_flag_3.setChecked(False)
+        self.chb_flag_4.setChecked(False)
 
         h_layout = QtWidgets.QHBoxLayout()
         v_layout = QtWidgets.QVBoxLayout()
@@ -2207,6 +2116,7 @@ class DataExportWizard(QtWidgets.QDialog):
         v_layout.addWidget(self.lbl_filter)
         v_layout.addWidget(self.chb_edge_columns)
         v_layout.addWidget(self.chb_matrix_columns)
+        v_layout.addWidget(self.chb_particle_columns)
         v_layout.addWidget(self.chb_hidden_columns)
         v_layout.addWidget(self.chb_flag_1)
         v_layout.addWidget(self.chb_flag_2)
@@ -2218,22 +2128,14 @@ class DataExportWizard(QtWidgets.QDialog):
         h_layout.addLayout(v_layout)
         h_layout.addStretch()
 
-        self.widget_frame_4_a.setLayout(h_layout)
+        self.widget_frame_3.setLayout(h_layout)
 
-    def page_4_b_layout(self):
-        h_layout = QtWidgets.QHBoxLayout()
+    def page_4_layout(self):
+        self.chb_recalculate_graphs.setChecked(False)
         v_layout = QtWidgets.QVBoxLayout()
-
+        v_layout.addWidget(self.chb_recalculate_graphs)
         v_layout.addStretch()
-        v_layout.addWidget(self.lbl_filter_2)
-        v_layout.addWidget(self.chb_edge_edges)
-        v_layout.addStretch()
-
-        h_layout.addStretch()
-        h_layout.addLayout(v_layout)
-        h_layout.addStretch()
-
-        self.widget_frame_4_b.setLayout(h_layout)
+        self.widget_frame_4.setLayout(v_layout)
 
     def set_layout(self):
         self.btn_layout.addStretch()
@@ -2248,28 +2150,39 @@ class DataExportWizard(QtWidgets.QDialog):
         self.page_1_layout()
         self.stack_layout.addWidget(self.widget_frame_1)
 
-        self.page_2_a_layout()
-        self.stack_layout.addWidget(self.widget_frame_2_a)
+        self.page_2_layout()
+        self.stack_layout.addWidget(self.widget_frame_2)
 
-        self.page_2_b_layout()
-        self.stack_layout.addWidget(self.widget_frame_2_b)
+        self.page_3_layout()
+        self.stack_layout.addWidget(self.widget_frame_3)
 
-        self.page_3_a_layout()
-        self.stack_layout.addWidget(self.widget_frame_3_a)
-
-        self.page_3_b_layout()
-        self.stack_layout.addWidget(self.widget_frame_3_b)
-
-        self.page_4_a_layout()
-        self.stack_layout.addWidget(self.widget_frame_4_a)
-
-        self.page_4_b_layout()
-        self.stack_layout.addWidget(self.widget_frame_4_b)
+        self.page_4_layout()
+        self.stack_layout.addWidget(self.widget_frame_4)
 
         self.top_layout.addLayout(self.stack_layout)
         self.top_layout.addLayout(self.btn_layout)
 
         self.setLayout(self.top_layout)
+
+    def btn_add_files_trigger(self):
+        prompt = QtWidgets.QFileDialog()
+        prompt.setFileMode(QtWidgets.QFileDialog.ExistingFiles)
+        if prompt.exec_():
+            filenames = prompt.selectedFiles()
+        else:
+            filenames = None
+        if filenames is not None:
+            for file_ in filenames:
+                exlusive = True
+                for i in range(self.lst_files.count()):
+                    if file_ == self.lst_files.item(i).text():
+                        exlusive = False
+                if exlusive:
+                    self.lst_files.addItem(file_)
+
+    def rbtn_current_project_trigger(self, state):
+        self.lst_files.setDisabled(state)
+        self.btn_add_files.setDisabled(state)
 
     def btn_list_2_up_trigger(self):
         if self.list_2.currentItem() is not None:
@@ -2317,497 +2230,48 @@ class DataExportWizard(QtWidgets.QDialog):
             self.list_2.addItem(self.list_1.currentItem().text())
             self.list_1.takeItem(self.list_1.row(self.list_1.currentItem()))
 
-    def btn_list_3_up_trigger(self):
-        if self.list_3.currentItem() is not None:
-            text = self.list_3.currentItem().text()
-            index = self.list_3.currentRow()
-            if not index == 0:
-                self.list_3.takeItem(self.list_3.row(self.list_3.currentItem()))
-                self.list_3.insertItem(index - 1, text)
-                self.list_3.setCurrentRow(index - 1)
-
-    def btn_list_3_down_trigger(self):
-        if self.list_3.currentItem() is not None:
-            text = self.list_3.currentItem().text()
-            index = self.list_3.currentRow()
-            if not index == self.list_3.count() - 1:
-                self.list_3.takeItem(self.list_3.row(self.list_3.currentItem()))
-                self.list_3.insertItem(index + 1, text)
-                self.list_3.setCurrentRow(index + 1)
-
-    def btn_list_4_up_trigger(self):
-        if self.list_4.currentItem() is not None:
-            text = self.list_4.currentItem().text()
-            index = self.list_4.currentRow()
-            if not index == 0:
-                self.list_4.takeItem(self.list_4.row(self.list_4.currentItem()))
-                self.list_4.insertItem(index - 1, text)
-                self.list_4.setCurrentRow(index - 1)
-
-    def btn_list_4_down_trigger(self):
-        if self.list_4.currentItem() is not None:
-            text = self.list_4.currentItem().text()
-            index = self.list_4.currentRow()
-            if not index == self.list_4.count() - 1:
-                self.list_4.takeItem(self.list_4.row(self.list_4.currentItem()))
-                self.list_4.insertItem(index + 1, text)
-                self.list_4.setCurrentRow(index + 1)
-
-    def btn_add_2_item_trigger(self):
-        if self.list_4.currentItem() is not None:
-            self.list_3.addItem(self.list_4.currentItem().text())
-            self.list_4.takeItem(self.list_4.row(self.list_4.currentItem()))
-
-    def btn_remove_2_item_trigger(self):
-        if self.list_3.currentItem() is not None:
-            self.list_4.addItem(self.list_3.currentItem().text())
-            self.list_3.takeItem(self.list_3.row(self.list_3.currentItem()))
-
-    def btn_add_files_trigger(self):
-        prompt = QtWidgets.QFileDialog()
-        prompt.setFileMode(QtWidgets.QFileDialog.ExistingFiles)
-        if prompt.exec_():
-            filenames = prompt.selectedFiles()
-        else:
-            filenames = None
-        if filenames is not None:
-            for file_ in filenames:
-                exlusive = True
-                for i in range(self.lst_files.count()):
-                    if file_ == self.lst_files.item(i).text():
-                        exlusive = False
-                if exlusive:
-                    self.lst_files.addItem(file_)
-
-    def rbtn_current_project_trigger(self, state):
-        self.lst_files.setDisabled(state)
-        self.btn_add_files.setDisabled(state)
-
-    def export(self):
+    def calc(self):
         self.close()
         self.ui_obj.sys_message('Working...')
-        if self.rbtn_list_of_projects.isChecked():
-            files = ''
-            for i in range(self.lst_files.count()):
-                if not i == self.lst_files.count() - 1:
-                    files += self.lst_files.item(i).text() + '\n'
-                else:
-                    files += self.lst_files.item(i).text()
-        else:
-            files = self.ui_obj.savefile
 
-        filename = QtWidgets.QFileDialog.getSaveFileName(self, "Select output file", '', "Comma separated file (*.csv)")
+        filename = QtWidgets.QFileDialog.getSaveFileName(self, "Save model as", '', ".csv")
         if filename[0]:
-            if self.combo_1.currentIndex() == 0:
-                if self.combo_2.currentIndex() == 0:
-
-                    keys = []
-                    for i in range(self.list_1.count()):
-                        keys.append(self.list_1.item(i).text())
-
-                    outstream = export_module.VertexExport(files, keys)
-                    outstream.accumulate_data(exclude_edges=not self.chb_edge_columns.isChecked(),
-                                              exclude_matrix=not self.chb_matrix_columns.isChecked(),
-                                              exclude_hidden=not self.chb_hidden_columns.isChecked(),
-                                              exclude_1=not self.chb_flag_1.isChecked(),
-                                              exclude_2=not self.chb_flag_2.isChecked(),
-                                              exclude_3=not self.chb_flag_3.isChecked(),
-                                              exclude_4=not self.chb_flag_4.isChecked())
-                    outstream.export(filename[0])
-            else:
-                logger.error('Unexpected!')
-            GUI.logger.info('Successfully exported {}'.format(filename[0]))
-        self.ui_obj.sys_message('Ready.')
-
-    def get_next_frame(self):
-        next_frame = 0
-        if self.stack_layout.currentIndex() == 0:
-            next_frame = 1
-        elif self.stack_layout.currentIndex() == 1:
-            if self.combo_1.currentIndex() == 0:
-                next_frame = 2
-            else:
-                next_frame = 3
-                self.btn_next.setText('Abort')
-        elif self.stack_layout.currentIndex() == 2:
-            if self.combo_2.currentIndex() == 0:
-                next_frame = 4
-            else:
-                next_frame = 5
-        elif self.stack_layout.currentIndex() == 3:
-            next_frame = -1
-        elif self.stack_layout.currentIndex() == 4:
-            next_frame = 6
-            self.btn_next.setText('Export')
-        elif self.stack_layout.currentIndex() == 5:
-            next_frame = 7
-            self.btn_next.setText('Export')
-        elif self.stack_layout.currentIndex() == 6:
-            next_frame = -2
-        elif self.stack_layout.currentIndex() == 7:
-            next_frame = -2
-        else:
-            logger.error('Error!')
-            self.close()
-
-        return next_frame
-
-    def get_previous_frame(self):
-        previous_frame = 0
-        if self.stack_layout.currentIndex() == 0:
-            previous_frame = -1
-        elif self.stack_layout.currentIndex() == 1:
-            previous_frame = 0
-        elif self.stack_layout.currentIndex() == 2:
-            previous_frame = 1
-        elif self.stack_layout.currentIndex() == 3:
-            previous_frame = 1
-            self.btn_next.setText('Next')
-        elif self.stack_layout.currentIndex() == 4:
-            previous_frame = 2
-        elif self.stack_layout.currentIndex() == 5:
-            previous_frame = 2
-        elif self.stack_layout.currentIndex() == 6:
-            previous_frame = 4
-            self.btn_next.setText('Next')
-        elif self.stack_layout.currentIndex() == 7:
-            previous_frame = 5
-            self.btn_next.setText('Next')
-        else:
-            logger.error('Error!')
-            self.close()
-
-        return previous_frame
-
-    def btn_next_trigger(self):
-        next_frame = self.get_next_frame()
-        if next_frame == -2:
-            self.export()
-        elif next_frame == -1:
-            self.close()
-        else:
-            self.stack_layout.setCurrentIndex(next_frame)
-
-    def btn_back_trigger(self):
-        previous_frame = self.get_previous_frame()
-        if previous_frame == -1:
-            self.close()
-        else:
-            self.stack_layout.setCurrentIndex(previous_frame)
-
-    def btn_cancel_trigger(self):
-        self.close()
-
-
-class PlotWizard(QtWidgets.QDialog):
-
-    def __init__(self, *args, ui_obj=None):
-        super().__init__(*args)
-
-        self.ui_obj = ui_obj
-
-        self.setWindowTitle('Plot wizard')
-
-        self.btn_next = QtWidgets.QPushButton('Next')
-        self.btn_next.clicked.connect(self.btn_next_trigger)
-        self.btn_back = QtWidgets.QPushButton('Back')
-        self.btn_back.clicked.connect(self.btn_back_trigger)
-        self.btn_cancel = QtWidgets.QPushButton('Cancel')
-        self.btn_cancel.clicked.connect(self.btn_cancel_trigger)
-
-        self.btn_layout = QtWidgets.QHBoxLayout()
-        self.stack_layout = QtWidgets.QStackedLayout()
-        self.top_layout = QtWidgets.QVBoxLayout()
-
-        self.widget_frame_1 = QtWidgets.QWidget()
-        self.widget_frame_2 = QtWidgets.QWidget()
-        self.widget_frame_3 = QtWidgets.QWidget()
-
-        # Frame 1
-        self.lbl_file = QtWidgets.QLabel('Plot data from current project or enter a list of projects')
-        self.rbtn_current_project = QtWidgets.QRadioButton('Current project')
-        self.rbtn_list_of_projects = QtWidgets.QRadioButton('Enter list of projects files')
-        self.lst_files = QtWidgets.QListWidget()
-        self.btn_add_files = QtWidgets.QPushButton('Add files')
-
-        # Frame 2
-        self.lbl_choose_predifined_plots = QtWidgets.QLabel('Select predefined plots to generate:\n'
-                                                            '(For custom plots, use the data export wizard to create a csv file and plot from that with a script.)')
-        self.list_1 = QtWidgets.QListWidget()
-        self.list_2 = QtWidgets.QListWidget()
-        self.btn_add = QtWidgets.QPushButton('Add')
-        self.btn_add.clicked.connect(self.btn_add_item_trigger)
-        self.btn_remove = QtWidgets.QPushButton('Remove')
-        self.btn_remove.clicked.connect(self.btn_remove_item_trigger)
-        self.lbl_included_data = QtWidgets.QLabel('Generate plots:')
-        self.lbl_available_data = QtWidgets.QLabel('Available plots:')
-
-        # Frame 3
-        self.lbl_filter = QtWidgets.QLabel('Set inclusion filter: (Columns with unchecked properties will not be included in the plots)')
-        self.chb_edge_columns = QtWidgets.QCheckBox('Include edge columns')
-        self.chb_particle_columns = QtWidgets.QCheckBox('Include particle columns')
-        self.chb_matrix_columns = QtWidgets.QCheckBox('Include aluminium matrix columns')
-        self.chb_hidden_columns = QtWidgets.QCheckBox('Include columns that are set to be hidden in the overlay')
-        self.chb_flag_1 = QtWidgets.QCheckBox('Include columns where flag 1 is set to True')
-        self.chb_flag_2 = QtWidgets.QCheckBox('Include columns where flag 2 is set to True')
-        self.chb_flag_3 = QtWidgets.QCheckBox('Include columns where flag 3 is set to True')
-        self.chb_flag_4 = QtWidgets.QCheckBox('Include columns where flag 4 is set to True')
-
-        self.set_layout()
-        self.setMinimumWidth(800)
-        self.exec_()
-
-    def set_page_1_layout(self):
-
-        h_layout = QtWidgets.QHBoxLayout()
-        v_layout = QtWidgets.QVBoxLayout()
-
-        v_layout.addStretch()
-        v_layout.addWidget(self.lbl_file)
-        v_layout.addWidget(self.rbtn_current_project)
-        v_layout.addWidget(self.rbtn_list_of_projects)
-        v_layout.addWidget(self.lst_files)
-        v_layout.addWidget(self.btn_add_files)
-        v_layout.addStretch()
-
-        h_layout.addStretch()
-        h_layout.addLayout(v_layout)
-        h_layout.addStretch()
-
-        self.rbtn_current_project.setChecked(True)
-        self.rbtn_list_of_projects.setChecked(False)
-        self.lst_files.setDisabled(True)
-        self.btn_add_files.setDisabled(True)
-
-        self.lst_files.setMinimumWidth(500)
-
-        self.rbtn_current_project.toggled.connect(self.rbtn_current_project_trigger)
-        self.btn_add_files.clicked.connect(self.btn_add_files_trigger)
-
-        self.widget_frame_1.setLayout(h_layout)
-
-    def set_page_2_layout(self):
-
-        self.list_2.addItem('Central alpha min-max scatter-plot')
-        self.list_2.addItem('Central theta min-max scatter-plot')
-        self.list_2.addItem('Mean central theta, exclusive')
-        self.list_2.addItem('Fitted relative z-intensity distributions')
-        self.list_2.addItem('Fitted normalized z-intensity distributions')
-        self.list_2.addItem('Inter-atomic distances distributions')
-        self.list_2.addItem('Inter-atomic distances box-plot')
-        self.list_2.addItem('Inter-atomic distances scatter-plot')
-        self.list_2.addItem('Inter-atomic distances all plots')
-        self.list_2.addItem('Exotic plots')
-        self.list_2.addItem('Summary plot-page')
-
-        h_layout_1 = QtWidgets.QHBoxLayout()
-        h_layout_2 = QtWidgets.QHBoxLayout()
-        v_layout_1 = QtWidgets.QVBoxLayout()
-        v_layout_2 = QtWidgets.QVBoxLayout()
-        v_layout_3 = QtWidgets.QVBoxLayout()
-        top_layout = QtWidgets.QVBoxLayout()
-
-        v_layout_1.addWidget(self.lbl_included_data)
-        v_layout_1.addWidget(self.list_1)
-
-        v_layout_2.addStretch()
-        v_layout_2.addWidget(self.btn_add)
-        v_layout_2.addWidget(self.btn_remove)
-        v_layout_2.addStretch()
-
-        v_layout_3.addWidget(self.lbl_available_data)
-        v_layout_3.addWidget(self.list_2)
-
-        h_layout_1.addLayout(v_layout_1)
-        h_layout_1.addLayout(v_layout_2)
-        h_layout_1.addLayout(v_layout_3)
-
-        h_layout_2.addStretch()
-        h_layout_2.addWidget(self.lbl_choose_predifined_plots)
-        h_layout_2.addStretch()
-
-        top_layout.addLayout(h_layout_2)
-        top_layout.addLayout(h_layout_1)
-
-        self.widget_frame_2.setLayout(top_layout)
-
-    def set_page_3_layout(self):
-        self.chb_edge_columns.setChecked(False)
-        self.chb_matrix_columns.setChecked(True)
-        self.chb_particle_columns.setChecked(True)
-        self.chb_hidden_columns.setChecked(True)
-        self.chb_flag_1.setChecked(True)
-        self.chb_flag_2.setChecked(True)
-        self.chb_flag_3.setChecked(True)
-        self.chb_flag_4.setChecked(True)
-
-        h_layout = QtWidgets.QHBoxLayout()
-        v_layout = QtWidgets.QVBoxLayout()
-
-        v_layout.addStretch()
-        v_layout.addWidget(self.lbl_filter)
-        v_layout.addWidget(self.chb_edge_columns)
-        v_layout.addWidget(self.chb_matrix_columns)
-        v_layout.addWidget(self.chb_particle_columns)
-        v_layout.addWidget(self.chb_hidden_columns)
-        v_layout.addWidget(self.chb_flag_1)
-        v_layout.addWidget(self.chb_flag_2)
-        v_layout.addWidget(self.chb_flag_3)
-        v_layout.addWidget(self.chb_flag_4)
-        v_layout.addStretch()
-
-        h_layout.addStretch()
-        h_layout.addLayout(v_layout)
-        h_layout.addStretch()
-
-        self.widget_frame_3.setLayout(h_layout)
-
-    def set_layout(self):
-        self.btn_layout.addStretch()
-        self.btn_layout.addWidget(self.btn_cancel)
-        self.btn_layout.addWidget(self.btn_back)
-        self.btn_layout.addWidget(self.btn_next)
-        self.btn_layout.addStretch()
-
-        self.set_page_1_layout()
-        self.stack_layout.addWidget(self.widget_frame_1)
-
-        self.set_page_2_layout()
-        self.stack_layout.addWidget(self.widget_frame_2)
-
-        self.set_page_3_layout()
-        self.stack_layout.addWidget(self.widget_frame_3)
-
-        self.top_layout.addLayout(self.stack_layout)
-        self.top_layout.addLayout(self.btn_layout)
-
-        self.setLayout(self.top_layout)
-
-    def complete(self):
-        self.close()
-        logger.info('Starting plotting sequence...')
-        self.ui_obj.sys_message('Working...')
-        if self.rbtn_list_of_projects.isChecked():
-            files = ''
-            for i in range(self.lst_files.count()):
-                if not i == self.lst_files.count() - 1:
-                    files += self.lst_files.item(i).text() + '\n'
-                else:
-                    files += self.lst_files.item(i).text()
-        else:
-            files = self.ui_obj.savefile
-        for j in range(self.list_1.count()):
-            if self.list_1.item(j).text() == 'Central alpha min-max scatter-plot':
-                plot = plotting_module.MinMax(files, angle_mode='alpha')
-                plot.accumulate_data(exclude_edges=not self.chb_edge_columns.isChecked(),
-                                     exclude_matrix=not self.chb_matrix_columns.isChecked(),
-                                     exclude_particle=not self.chb_particle_columns.isChecked(),
-                                     exclude_hidden=not self.chb_hidden_columns.isChecked(),
-                                     exclude_1=not self.chb_flag_1.isChecked(),
-                                     exclude_2=not self.chb_flag_2.isChecked(),
-                                     exclude_3=not self.chb_flag_3.isChecked(),
-                                     exclude_4=not self.chb_flag_4.isChecked())
-                plot.plot()
-            elif self.list_1.item(j).text() == 'Central theta min-max scatter-plot':
-                plot = plotting_module.MinMax(files, angle_mode='theta')
-                plot.accumulate_data(exclude_edges=not self.chb_edge_columns.isChecked(),
-                                     exclude_matrix=not self.chb_matrix_columns.isChecked(),
-                                     exclude_particle=not self.chb_particle_columns.isChecked(),
-                                     exclude_hidden=not self.chb_hidden_columns.isChecked(),
-                                     exclude_1=not self.chb_flag_1.isChecked(),
-                                     exclude_2=not self.chb_flag_2.isChecked(),
-                                     exclude_3=not self.chb_flag_3.isChecked(),
-                                     exclude_4=not self.chb_flag_4.isChecked())
-                plot.plot()
-            elif self.list_1.item(j).text() == 'Mean central theta, exclusive':
-                plot = plotting_module.ThetaMean(files)
-                plot.accumulate_data(exclude_edges=not self.chb_edge_columns.isChecked(),
-                                     exclude_matrix=not self.chb_matrix_columns.isChecked(),
-                                     exclude_particle=not self.chb_particle_columns.isChecked(),
-                                     exclude_hidden=not self.chb_hidden_columns.isChecked(),
-                                     exclude_1=not self.chb_flag_1.isChecked(),
-                                     exclude_2=not self.chb_flag_2.isChecked(),
-                                     exclude_3=not self.chb_flag_3.isChecked(),
-                                     exclude_4=not self.chb_flag_4.isChecked())
-                plot.plot()
-            elif self.list_1.item(j).text() == 'Fitted relative z-intensity distributions':
-                plot = plotting_module.Gamma(files)
-                plot.accumulate_data(exclude_edges=not self.chb_edge_columns.isChecked(),
-                                     exclude_matrix=not self.chb_matrix_columns.isChecked(),
-                                     exclude_particle=not self.chb_particle_columns.isChecked(),
-                                     exclude_hidden=not self.chb_hidden_columns.isChecked(),
-                                     exclude_1=not self.chb_flag_1.isChecked(),
-                                     exclude_2=not self.chb_flag_2.isChecked(),
-                                     exclude_3=not self.chb_flag_3.isChecked(),
-                                     exclude_4=not self.chb_flag_4.isChecked())
-                plot.plot()
-            elif self.list_1.item(j).text() == 'Fitted normalized z-intensity distributions':
-                plot = plotting_module.Gamma(files, normalized_mode=True)
-                plot.accumulate_data(exclude_edges=not self.chb_edge_columns.isChecked(),
-                                     exclude_matrix=not self.chb_matrix_columns.isChecked(),
-                                     exclude_particle=not self.chb_particle_columns.isChecked(),
-                                     exclude_hidden=not self.chb_hidden_columns.isChecked(),
-                                     exclude_1=not self.chb_flag_1.isChecked(),
-                                     exclude_2=not self.chb_flag_2.isChecked(),
-                                     exclude_3=not self.chb_flag_3.isChecked(),
-                                     exclude_4=not self.chb_flag_4.isChecked())
-                plot.plot()
-            elif self.list_1.item(j).text() == 'Inter-atomic distances distributions' or \
-                    self.list_1.item(j).text() == 'Inter-atomic distances box-plot' or \
-                    self.list_1.item(j).text() == 'Inter-atomic distances scatter-plot' or \
-                    self.list_1.item(j).text() == 'Inter-atomic distances all plots':
-                plot = plotting_module.InterAtomicDistances(files, distance_mode='spatial', include_plane=True, include_close=True)
-                plot.accumulate_data(exclude_edges=not self.chb_edge_columns.isChecked(),
-                                     exclude_matrix=not self.chb_matrix_columns.isChecked(),
-                                     exclude_particle=not self.chb_particle_columns.isChecked(),
-                                     exclude_hidden=not self.chb_hidden_columns.isChecked(),
-                                     exclude_1=not self.chb_flag_1.isChecked(),
-                                     exclude_2=not self.chb_flag_2.isChecked(),
-                                     exclude_3=not self.chb_flag_3.isChecked(),
-                                     exclude_4=not self.chb_flag_4.isChecked())
-                if self.list_1.item(j).text() == 'Inter-atomic distances box-plot':
-                    plot.plot(type_='box')
-                elif self.list_1.item(j).text() == 'Inter-atomic distances scatter-plot':
-                    plot.plot(type_='scatter')
-                elif self.list_1.item(j).text() == 'Inter-atomic distances all plots':
-                    plot.plot(type_='all')
-                else:
-                    plot.plot()
-            elif self.list_1.item(j).text() == 'Summary plot-page':
-                params.calculate_params(files, exclude_edges=True, exclude_matrix=False, exclude_particle=False, exclude_hidden=False,
-                     exclude_1=False, exclude_2=False, exclude_3=False, exclude_4=False, plot=True)
-        logger.info('Plotting complete.')
-        self.ui_obj.sys_message('Ready.')
-
-    def btn_add_files_trigger(self):
-        prompt = QtWidgets.QFileDialog()
-        prompt.setFileMode(QtWidgets.QFileDialog.ExistingFiles)
-        if prompt.exec_():
-            filenames = prompt.selectedFiles()
-        else:
-            filenames = None
-        if filenames is not None:
-            for file_ in filenames:
-                exlusive = True
+            # Prepare string with filenames
+            if self.rbtn_list_of_projects.isChecked():
+                files = ''
                 for i in range(self.lst_files.count()):
-                    if file_ == self.lst_files.item(i).text():
-                        exlusive = False
-                if exlusive:
-                    self.lst_files.addItem(file_)
-
-    def rbtn_current_project_trigger(self, state):
-        self.lst_files.setDisabled(state)
-        self.btn_add_files.setDisabled(state)
-
-    def btn_add_item_trigger(self):
-        if self.list_2.currentItem() is not None:
-            self.list_1.addItem(self.list_2.currentItem().text())
-            self.list_2.takeItem(self.list_2.row(self.list_2.currentItem()))
-
-    def btn_remove_item_trigger(self):
-        if self.list_1.currentItem() is not None:
-            self.list_2.addItem(self.list_1.currentItem().text())
-            self.list_1.takeItem(self.list_1.row(self.list_1.currentItem()))
+                    if not i == self.lst_files.count() - 1:
+                        files += self.lst_files.item(i).text() + '\n'
+                    else:
+                        files += self.lst_files.item(i).text()
+            else:
+                files = self.ui_obj.savefile
+            # Prepare filter
+            filter_ = {
+                'exclude_edge_columns': self.chb_edge_columns.isChecked(),
+                'exclude_matrix_columns': self.chb_matrix_columns.isChecked(),
+                'exclude_particle_columns': self.chb_particle_columns.isChecked(),
+                'exclude_hidden_columns': self.chb_hidden_columns.isChecked(),
+                'exclude_flag_1_columns': self.chb_flag_1.isChecked(),
+                'exclude_flag_2_columns': self.chb_flag_2.isChecked(),
+                'exclude_flag_3_columns': self.chb_flag_3.isChecked(),
+                'exclude_flag_4_columns': self.chb_flag_4.isChecked()
+            }
+            # Prepare keys
+            keys = []
+            export_keys = []
+            for i in range(self.list_1.count()):
+                export_keys.append(self.list_1.item(i).text())
+            keys = copy.deepcopy(export_keys)
+            if self.cmb_categorization.currentText() == 'advanced' and 'advanced_category_index' not in keys:
+                keys.append('advanced_category_index')
+            if self.cmb_categorization.currentText() == 'simple' and 'species_index' not in export_keys:
+                keys.append('species_index')
+            # Initate manager
+            manager = statistics.DataManager(files, filter_=filter_, save_filename=filename[0], recalc=self.chb_recalculate_graphs.isChecked(), keys=keys, categorization=self.cmb_categorization.currentText())
+            manager.export_csv(filename[0] + filename[1], export_keys)
+            GUI.logger.info('Successfully exported data to {}'.format(filename[0]))
+        self.ui_obj.sys_message('Ready.')
 
     def get_next_frame(self):
         next_frame = 0
@@ -2815,8 +2279,12 @@ class PlotWizard(QtWidgets.QDialog):
             next_frame = 1
         elif self.stack_layout.currentIndex() == 1:
             next_frame = 2
-            self.btn_next.setText('Plot')
         elif self.stack_layout.currentIndex() == 2:
+            next_frame = 3
+        elif self.stack_layout.currentIndex() == 3:
+            next_frame = 4
+            self.btn_next.setText('Calcuate!')
+        elif self.stack_layout.currentIndex() == 4:
             next_frame = -2
         else:
             logger.error('Error!')
@@ -2832,7 +2300,10 @@ class PlotWizard(QtWidgets.QDialog):
             previous_frame = 0
         elif self.stack_layout.currentIndex() == 2:
             previous_frame = 1
-            self.btn_next.setText('Next')
+        elif self.stack_layout.currentIndex() == 3:
+            previous_frame = 2
+        elif self.stack_layout.currentIndex() == 4:
+            previous_frame = 3
         else:
             logger.error('Error!')
             self.close()
@@ -2842,292 +2313,7 @@ class PlotWizard(QtWidgets.QDialog):
     def btn_next_trigger(self):
         next_frame = self.get_next_frame()
         if next_frame == -2:
-            self.complete()
-        elif next_frame == -1:
-            self.close()
-        else:
-            self.stack_layout.setCurrentIndex(next_frame)
-
-    def btn_back_trigger(self):
-        previous_frame = self.get_previous_frame()
-        if previous_frame == -1:
-            self.close()
-        else:
-            self.stack_layout.setCurrentIndex(previous_frame)
-
-    def btn_cancel_trigger(self):
-        self.close()
-
-
-class PcaWizard(QtWidgets.QDialog):
-
-    def __init__(self, *args, ui_obj=None):
-        super().__init__(*args)
-
-        self.ui_obj = ui_obj
-
-        self.setWindowTitle('PCA wizard')
-
-        self.btn_next = QtWidgets.QPushButton('Next')
-        self.btn_next.clicked.connect(self.btn_next_trigger)
-        self.btn_back = QtWidgets.QPushButton('Back')
-        self.btn_back.clicked.connect(self.btn_back_trigger)
-        self.btn_cancel = QtWidgets.QPushButton('Cancel')
-        self.btn_cancel.clicked.connect(self.btn_cancel_trigger)
-
-        self.btn_layout = QtWidgets.QHBoxLayout()
-        self.stack_layout = QtWidgets.QStackedLayout()
-        self.top_layout = QtWidgets.QVBoxLayout()
-
-        self.widget_frame_1 = QtWidgets.QWidget()
-        self.widget_frame_2 = QtWidgets.QWidget()
-        self.widget_frame_3 = QtWidgets.QWidget()
-
-        # Frame 1
-        self.lbl_file = QtWidgets.QLabel('PCA on data from current project or enter a list of projects')
-        self.rbtn_current_project = QtWidgets.QRadioButton('Current project')
-        self.rbtn_list_of_projects = QtWidgets.QRadioButton('Enter list of projects files')
-        self.lst_files = QtWidgets.QListWidget()
-        self.btn_add_files = QtWidgets.QPushButton('Add files')
-
-        # Frame 2
-        self.list_1 = QtWidgets.QListWidget()
-        self.list_2 = QtWidgets.QListWidget()
-        self.btn_add = QtWidgets.QPushButton('Add')
-        self.btn_add.clicked.connect(self.btn_add_item_trigger)
-        self.btn_remove = QtWidgets.QPushButton('Remove')
-        self.btn_remove.clicked.connect(self.btn_remove_item_trigger)
-        self.lbl_included_data = QtWidgets.QLabel('Included attributes:')
-        self.lbl_available_data = QtWidgets.QLabel('Available attributes:')
-
-        # Frame 3
-        self.lbl_filter = QtWidgets.QLabel('Set inclusion filter: (Columns with unchecked properties will not be included in the plots)')
-        self.chb_edge_columns = QtWidgets.QCheckBox('Include edge columns')
-        self.chb_matrix_columns = QtWidgets.QCheckBox('Include aluminium matrix columns')
-        self.chb_hidden_columns = QtWidgets.QCheckBox('Include columns that are set to be hidden in the overlay')
-        self.chb_flag_1 = QtWidgets.QCheckBox('Include columns where flag 1 is set to True')
-        self.chb_flag_2 = QtWidgets.QCheckBox('Include columns where flag 2 is set to True')
-        self.chb_flag_3 = QtWidgets.QCheckBox('Include columns where flag 3 is set to True')
-        self.chb_flag_4 = QtWidgets.QCheckBox('Include columns where flag 4 is set to True')
-
-        self.set_layout()
-        self.setMinimumWidth(800)
-        self.exec_()
-
-    def set_page_1_layout(self):
-
-        h_layout = QtWidgets.QHBoxLayout()
-        v_layout = QtWidgets.QVBoxLayout()
-
-        v_layout.addStretch()
-        v_layout.addWidget(self.lbl_file)
-        v_layout.addWidget(self.rbtn_current_project)
-        v_layout.addWidget(self.rbtn_list_of_projects)
-        v_layout.addWidget(self.lst_files)
-        v_layout.addWidget(self.btn_add_files)
-        v_layout.addStretch()
-
-        h_layout.addStretch()
-        h_layout.addLayout(v_layout)
-        h_layout.addStretch()
-
-        self.rbtn_current_project.setChecked(True)
-        self.rbtn_list_of_projects.setChecked(False)
-        self.lst_files.setDisabled(True)
-        self.btn_add_files.setDisabled(True)
-
-        self.lst_files.setMinimumWidth(500)
-
-        self.rbtn_current_project.toggled.connect(self.rbtn_current_project_trigger)
-        self.btn_add_files.clicked.connect(self.btn_add_files_trigger)
-
-        self.widget_frame_1.setLayout(h_layout)
-
-    def set_page_2_layout(self):
-
-        self.list_2.addItems(['id',
-                              'index',
-                              'h index',
-                              'peak gamma',
-                              'average gamma',
-                              'normalized peak gamma',
-                              'normalized average gamma',
-                              'theta variance',
-                              'theta min',
-                              'theta max',
-                              'reduced theta mean',
-                              'alpha min',
-                              'alpha max'])
-
-        h_layout = QtWidgets.QHBoxLayout()
-        v_layout_2 = QtWidgets.QVBoxLayout()
-        v_layout_3 = QtWidgets.QVBoxLayout()
-        v_layout_4 = QtWidgets.QVBoxLayout()
-
-        v_layout_2.addWidget(self.lbl_included_data)
-        v_layout_2.addWidget(self.list_1)
-
-        v_layout_3.addStretch()
-        v_layout_3.addWidget(self.btn_add)
-        v_layout_3.addWidget(self.btn_remove)
-        v_layout_3.addStretch()
-
-        v_layout_4.addWidget(self.lbl_available_data)
-        v_layout_4.addWidget(self.list_2)
-
-        h_layout.addLayout(v_layout_2)
-        h_layout.addLayout(v_layout_3)
-        h_layout.addLayout(v_layout_4)
-
-        self.widget_frame_2.setLayout(h_layout)
-
-    def set_page_3_layout(self):
-        self.chb_edge_columns.setChecked(False)
-        self.chb_matrix_columns.setChecked(True)
-        self.chb_hidden_columns.setChecked(True)
-        self.chb_flag_1.setChecked(True)
-        self.chb_flag_2.setChecked(True)
-        self.chb_flag_3.setChecked(True)
-        self.chb_flag_4.setChecked(True)
-
-        h_layout = QtWidgets.QHBoxLayout()
-        v_layout = QtWidgets.QVBoxLayout()
-
-        v_layout.addStretch()
-        v_layout.addWidget(self.lbl_filter)
-        v_layout.addWidget(self.chb_edge_columns)
-        v_layout.addWidget(self.chb_matrix_columns)
-        v_layout.addWidget(self.chb_hidden_columns)
-        v_layout.addWidget(self.chb_flag_1)
-        v_layout.addWidget(self.chb_flag_2)
-        v_layout.addWidget(self.chb_flag_3)
-        v_layout.addWidget(self.chb_flag_4)
-        v_layout.addStretch()
-
-        h_layout.addStretch()
-        h_layout.addLayout(v_layout)
-        h_layout.addStretch()
-
-        self.widget_frame_3.setLayout(h_layout)
-
-    def set_layout(self):
-        self.btn_layout.addStretch()
-        self.btn_layout.addWidget(self.btn_cancel)
-        self.btn_layout.addWidget(self.btn_back)
-        self.btn_layout.addWidget(self.btn_next)
-        self.btn_layout.addStretch()
-
-        self.set_page_1_layout()
-        self.stack_layout.addWidget(self.widget_frame_1)
-
-        self.set_page_2_layout()
-        self.stack_layout.addWidget(self.widget_frame_2)
-
-        self.set_page_3_layout()
-        self.stack_layout.addWidget(self.widget_frame_3)
-
-        self.top_layout.addLayout(self.stack_layout)
-        self.top_layout.addLayout(self.btn_layout)
-
-        self.setLayout(self.top_layout)
-
-    def complete(self):
-        self.close()
-        logger.info('Starting PCA...')
-        self.ui_obj.sys_message('Working...')
-        if self.rbtn_list_of_projects.isChecked():
-            files = ''
-            for i in range(self.lst_files.count()):
-                if not i == self.lst_files.count() - 1:
-                    files += self.lst_files.item(i).text() + '\n'
-                else:
-                    files += self.lst_files.item(i).text()
-        else:
-            files = self.ui_obj.savefile
-
-        keys = []
-        for j in range(self.list_1.count()):
-            keys.append(self.list_1.item(j).text().replace(' ', '_'))
-
-        vertex_pca = data_module.VertexNumericData(files, keys)
-        vertex_pca.accumulate_data(**{'exclude_edges': not self.chb_edge_columns.isChecked(),
-                                      'exclude_matrix': not self.chb_matrix_columns.isChecked(),
-                                      'exclude_hidden': not self.chb_hidden_columns.isChecked(),
-                                      'exclude_1': not self.chb_flag_1.isChecked(),
-                                      'exclude_2': not self.chb_flag_2.isChecked(),
-                                      'exclude_3': not self.chb_flag_3.isChecked(),
-                                      'exclude_4': not self.chb_flag_4.isChecked()})
-        vertex_pca.normalize_attribute_data()
-        vertex_pca.principal_component_analysis()
-        vertex_pca.plot()
-
-        logger.info('PCA complete.')
-        self.ui_obj.sys_message('Ready.')
-
-    def btn_add_files_trigger(self):
-        prompt = QtWidgets.QFileDialog()
-        prompt.setFileMode(QtWidgets.QFileDialog.ExistingFiles)
-        if prompt.exec_():
-            filenames = prompt.selectedFiles()
-        else:
-            filenames = None
-        if filenames is not None:
-            for file_ in filenames:
-                exlusive = True
-                for i in range(self.lst_files.count()):
-                    if file_ == self.lst_files.item(i).text():
-                        exlusive = False
-                if exlusive:
-                    self.lst_files.addItem(file_)
-
-    def rbtn_current_project_trigger(self, state):
-        self.lst_files.setDisabled(state)
-        self.btn_add_files.setDisabled(state)
-
-    def btn_add_item_trigger(self):
-        if self.list_2.currentItem() is not None:
-            self.list_1.addItem(self.list_2.currentItem().text())
-            self.list_2.takeItem(self.list_2.row(self.list_2.currentItem()))
-
-    def btn_remove_item_trigger(self):
-        if self.list_1.currentItem() is not None:
-            self.list_2.addItem(self.list_1.currentItem().text())
-            self.list_1.takeItem(self.list_1.row(self.list_1.currentItem()))
-
-    def get_next_frame(self):
-        next_frame = 0
-        if self.stack_layout.currentIndex() == 0:
-            next_frame = 1
-        elif self.stack_layout.currentIndex() == 1:
-            next_frame = 2
-            self.btn_next.setText('Analyze')
-        elif self.stack_layout.currentIndex() == 2:
-            next_frame = -2
-        else:
-            logger.error('Error!')
-            self.close()
-
-        return next_frame
-
-    def get_previous_frame(self):
-        previous_frame = 0
-        if self.stack_layout.currentIndex() == 0:
-            previous_frame = -1
-        elif self.stack_layout.currentIndex() == 1:
-            previous_frame = 0
-        elif self.stack_layout.currentIndex() == 2:
-            previous_frame = 1
-            self.btn_next.setText('Next')
-        else:
-            logger.error('Error!')
-            self.close()
-
-        return previous_frame
-
-    def btn_next_trigger(self):
-        next_frame = self.get_next_frame()
-        if next_frame == -2:
-            self.complete()
+            self.calc()
         elif next_frame == -1:
             self.close()
         else:
@@ -3167,6 +2353,8 @@ class CalcModels(QtWidgets.QDialog):
         self.widget_frame_0 = QtWidgets.QWidget()
         self.widget_frame_1 = QtWidgets.QWidget()
         self.widget_frame_2 = QtWidgets.QWidget()
+        self.widget_frame_3 = QtWidgets.QWidget()
+        self.widget_frame_4 = QtWidgets.QWidget()
 
         # Frame 0
         self.lbl_file = QtWidgets.QLabel('Calc model from current project or enter a list of projects')
@@ -3176,20 +2364,40 @@ class CalcModels(QtWidgets.QDialog):
         self.btn_add_files = QtWidgets.QPushButton('Add files')
 
         # Frame 1
-        self.lbl_select_data = QtWidgets.QLabel('Select plots')
-        self.chb_plot_data = QtWidgets.QCheckBox('Plot data')
-        self.chb_plot_pca = QtWidgets.QCheckBox('Plot PCA')
-        self.chb_plot_model_components = QtWidgets.QCheckBox('Plot model summary')
+        self.lbl_select_categories = QtWidgets.QLabel('Select the desired categorization')
+        self.cmb_categorization = QtWidgets.QComboBox()
 
         # Frame 2
-        self.lbl_filter = QtWidgets.QLabel('Set inclusion filter: (Columns with unchecked properties will not be included)')
-        self.chb_edge_columns = QtWidgets.QCheckBox('Include edge columns')
-        self.chb_matrix_columns = QtWidgets.QCheckBox('Include aluminium matrix columns')
-        self.chb_hidden_columns = QtWidgets.QCheckBox('Include columns that are set to be hidden in the overlay')
-        self.chb_flag_1 = QtWidgets.QCheckBox('Include columns where flag 1 is set to True')
-        self.chb_flag_2 = QtWidgets.QCheckBox('Include columns where flag 2 is set to True')
-        self.chb_flag_3 = QtWidgets.QCheckBox('Include columns where flag 3 is set to True')
-        self.chb_flag_4 = QtWidgets.QCheckBox('Include columns where flag 4 is set to True')
+        self.list_1 = QtWidgets.QListWidget()
+        self.list_2 = QtWidgets.QListWidget()
+        self.btn_list_1_up = QtWidgets.QPushButton('Move up')
+        self.btn_list_1_up.clicked.connect(self.btn_list_1_up_trigger)
+        self.btn_list_1_down = QtWidgets.QPushButton('Move down')
+        self.btn_list_1_down.clicked.connect(self.btn_list_1_down_trigger)
+        self.btn_list_2_up = QtWidgets.QPushButton('Move up')
+        self.btn_list_2_up.clicked.connect(self.btn_list_2_up_trigger)
+        self.btn_list_2_down = QtWidgets.QPushButton('Move down')
+        self.btn_list_2_down.clicked.connect(self.btn_list_2_down_trigger)
+        self.btn_add = QtWidgets.QPushButton('Add')
+        self.btn_add.clicked.connect(self.btn_add_item_trigger)
+        self.btn_remove = QtWidgets.QPushButton('Remove')
+        self.btn_remove.clicked.connect(self.btn_remove_item_trigger)
+        self.lbl_included_data = QtWidgets.QLabel('Included data-columns:')
+        self.lbl_available_data = QtWidgets.QLabel('Available data-columns:')
+
+        # Frame 3
+        self.lbl_filter = QtWidgets.QLabel('Set exclusionn filter: (Columns with checked properties will not be included)')
+        self.chb_edge_columns = QtWidgets.QCheckBox('Exclude edge columns')
+        self.chb_matrix_columns = QtWidgets.QCheckBox('Exclude matrix columns')
+        self.chb_particle_columns = QtWidgets.QCheckBox('Exclude particle columns')
+        self.chb_hidden_columns = QtWidgets.QCheckBox('Exclude columns that are set as hidden in the overlay')
+        self.chb_flag_1 = QtWidgets.QCheckBox('Exclude columns where flag 1 is set to True')
+        self.chb_flag_2 = QtWidgets.QCheckBox('Exclude columns where flag 2 is set to True')
+        self.chb_flag_3 = QtWidgets.QCheckBox('Exclude columns where flag 3 is set to True')
+        self.chb_flag_4 = QtWidgets.QCheckBox('Exclude columns where flag 4 is set to True')
+
+        # Frame 4
+        self.chb_recalculate_graphs = QtWidgets.QCheckBox('Recalculate graph data before compiling data (might be very slow)')
 
         self.step = 0
         self.state_list = []
@@ -3226,18 +2434,16 @@ class CalcModels(QtWidgets.QDialog):
         self.widget_frame_0.setLayout(h_layout)
 
     def page_1_layout(self):
-        self.chb_plot_data.setChecked(True)
-        self.chb_plot_pca.setChecked(False)
-        self.chb_plot_model_components.setChecked(True)
+        self.cmb_categorization.addItem('advanced')
+        self.cmb_categorization.addItem('simple')
+        self.cmb_categorization.addItem('none')
 
         h_layout = QtWidgets.QHBoxLayout()
         v_layout = QtWidgets.QVBoxLayout()
 
         v_layout.addStretch()
-        v_layout.addWidget(self.lbl_select_data)
-        v_layout.addWidget(self.chb_plot_data)
-        v_layout.addWidget(self.chb_plot_pca)
-        v_layout.addWidget(self.chb_plot_model_components)
+        v_layout.addWidget(self.lbl_select_categories)
+        v_layout.addWidget(self.cmb_categorization)
         v_layout.addStretch()
 
         h_layout.addStretch()
@@ -3247,13 +2453,80 @@ class CalcModels(QtWidgets.QDialog):
         self.widget_frame_1.setLayout(h_layout)
 
     def page_2_layout(self):
-        self.chb_edge_columns.setChecked(False)
-        self.chb_matrix_columns.setChecked(True)
-        self.chb_hidden_columns.setChecked(True)
-        self.chb_flag_1.setChecked(True)
-        self.chb_flag_2.setChecked(True)
-        self.chb_flag_3.setChecked(True)
-        self.chb_flag_4.setChecked(True)
+        self.list_2.addItems([
+            'i',
+            'r',
+            'species_index',
+            'species_variant',
+            'advanced_category_index',
+            'n',
+            'peak_gamma',
+            'avg_gamma',
+            'normalized_peak_gamma',
+            'normalized_avg_gamma',
+            'im_coor_x',
+            'im_coor_y',
+            'im_coor_z',
+            'spatial_coor_x',
+            'spatial_coor_y',
+            'spatial_coor_z',
+            'zeta',
+            'alpha_min',
+            'alpha_max',
+            'theta_min',
+            'theta_max',
+            'theta_angle_variance',
+            'theta_angle_mean',
+            'redshift',
+            'avg_redshift',
+            'avg_central_separation'
+        ])
+
+        h_layout = QtWidgets.QHBoxLayout()
+        v_layout_1 = QtWidgets.QVBoxLayout()
+        v_layout_2 = QtWidgets.QVBoxLayout()
+        v_layout_3 = QtWidgets.QVBoxLayout()
+        v_layout_4 = QtWidgets.QVBoxLayout()
+        v_layout_5 = QtWidgets.QVBoxLayout()
+
+        v_layout_1.addStretch()
+        v_layout_1.addWidget(self.btn_list_1_up)
+        v_layout_1.addWidget(self.btn_list_1_down)
+        v_layout_1.addStretch()
+
+        v_layout_2.addWidget(self.lbl_included_data)
+        v_layout_2.addWidget(self.list_1)
+
+        v_layout_3.addStretch()
+        v_layout_3.addWidget(self.btn_add)
+        v_layout_3.addWidget(self.btn_remove)
+        v_layout_3.addStretch()
+
+        v_layout_4.addWidget(self.lbl_available_data)
+        v_layout_4.addWidget(self.list_2)
+
+        v_layout_5.addStretch()
+        v_layout_5.addWidget(self.btn_list_2_up)
+        v_layout_5.addWidget(self.btn_list_2_down)
+        v_layout_5.addStretch()
+
+        h_layout.addLayout(v_layout_1)
+        h_layout.addLayout(v_layout_2)
+        h_layout.addLayout(v_layout_3)
+        h_layout.addLayout(v_layout_4)
+        h_layout.addLayout(v_layout_5)
+
+        self.widget_frame_2.setLayout(h_layout)
+
+    def page_3_layout(self):
+        self.chb_edge_columns.setChecked(True)
+        self.chb_matrix_columns.setChecked(False)
+        self.chb_particle_columns.setChecked(False)
+        self.chb_hidden_columns.setChecked(False)
+        self.chb_flag_1.setChecked(False)
+        self.chb_flag_2.setChecked(False)
+        self.chb_flag_3.setChecked(False)
+        self.chb_flag_4.setChecked(False)
 
         h_layout = QtWidgets.QHBoxLayout()
         v_layout = QtWidgets.QVBoxLayout()
@@ -3262,6 +2535,7 @@ class CalcModels(QtWidgets.QDialog):
         v_layout.addWidget(self.lbl_filter)
         v_layout.addWidget(self.chb_edge_columns)
         v_layout.addWidget(self.chb_matrix_columns)
+        v_layout.addWidget(self.chb_particle_columns)
         v_layout.addWidget(self.chb_hidden_columns)
         v_layout.addWidget(self.chb_flag_1)
         v_layout.addWidget(self.chb_flag_2)
@@ -3273,7 +2547,14 @@ class CalcModels(QtWidgets.QDialog):
         h_layout.addLayout(v_layout)
         h_layout.addStretch()
 
-        self.widget_frame_2.setLayout(h_layout)
+        self.widget_frame_3.setLayout(h_layout)
+
+    def page_4_layout(self):
+        self.chb_recalculate_graphs.setChecked(False)
+        v_layout = QtWidgets.QVBoxLayout()
+        v_layout.addWidget(self.chb_recalculate_graphs)
+        v_layout.addStretch()
+        self.widget_frame_4.setLayout(v_layout)
 
     def set_layout(self):
         self.btn_layout.addStretch()
@@ -3290,6 +2571,12 @@ class CalcModels(QtWidgets.QDialog):
 
         self.page_2_layout()
         self.stack_layout.addWidget(self.widget_frame_2)
+
+        self.page_3_layout()
+        self.stack_layout.addWidget(self.widget_frame_3)
+
+        self.page_4_layout()
+        self.stack_layout.addWidget(self.widget_frame_4)
 
         self.top_layout.addLayout(self.stack_layout)
         self.top_layout.addLayout(self.btn_layout)
@@ -3316,36 +2603,91 @@ class CalcModels(QtWidgets.QDialog):
         self.lst_files.setDisabled(state)
         self.btn_add_files.setDisabled(state)
 
-    def export(self):
+    def btn_list_2_up_trigger(self):
+        if self.list_2.currentItem() is not None:
+            text = self.list_2.currentItem().text()
+            index = self.list_2.currentRow()
+            if not index == 0:
+                self.list_2.takeItem(self.list_2.row(self.list_2.currentItem()))
+                self.list_2.insertItem(index - 1, text)
+                self.list_2.setCurrentRow(index - 1)
+
+    def btn_list_2_down_trigger(self):
+        if self.list_2.currentItem() is not None:
+            text = self.list_2.currentItem().text()
+            index = self.list_2.currentRow()
+            if not index == self.list_2.count() - 1:
+                self.list_2.takeItem(self.list_2.row(self.list_2.currentItem()))
+                self.list_2.insertItem(index + 1, text)
+                self.list_2.setCurrentRow(index + 1)
+
+    def btn_list_1_up_trigger(self):
+        if self.list_1.currentItem() is not None:
+            text = self.list_1.currentItem().text()
+            index = self.list_1.currentRow()
+            if not index == 0:
+                self.list_1.takeItem(self.list_1.row(self.list_1.currentItem()))
+                self.list_1.insertItem(index - 1, text)
+                self.list_1.setCurrentRow(index - 1)
+
+    def btn_list_1_down_trigger(self):
+        if self.list_1.currentItem() is not None:
+            text = self.list_1.currentItem().text()
+            index = self.list_1.currentRow()
+            if not index == self.list_1.count() - 1:
+                self.list_1.takeItem(self.list_1.row(self.list_1.currentItem()))
+                self.list_1.insertItem(index + 1, text)
+                self.list_1.setCurrentRow(index + 1)
+
+    def btn_add_item_trigger(self):
+        if self.list_2.currentItem() is not None:
+            self.list_1.addItem(self.list_2.currentItem().text())
+            self.list_2.takeItem(self.list_2.row(self.list_2.currentItem()))
+
+    def btn_remove_item_trigger(self):
+        if self.list_1.currentItem() is not None:
+            self.list_2.addItem(self.list_1.currentItem().text())
+            self.list_1.takeItem(self.list_1.row(self.list_1.currentItem()))
+
+    def calc(self):
         self.close()
         self.ui_obj.sys_message('Working...')
-        if self.rbtn_list_of_projects.isChecked():
-            files = ''
-            for i in range(self.lst_files.count()):
-                if not i == self.lst_files.count() - 1:
-                    files += self.lst_files.item(i).text() + '\n'
-                else:
-                    files += self.lst_files.item(i).text()
-        else:
-            files = self.ui_obj.savefile
 
         filename = QtWidgets.QFileDialog.getSaveFileName(self, "Save model as", '', "")
         if filename[0]:
-            filter = [self.chb_edge_columns.isChecked(),
-                      self.chb_matrix_columns.isChecked(),
-                      self.chb_hidden_columns.isChecked(),
-                      self.chb_flag_1.isChecked(),
-                      self.chb_flag_2.isChecked(),
-                      self.chb_flag_3.isChecked(),
-                      self.chb_flag_4.isChecked()]
-            manager = statistics.DataManager(files, filter_=filter, save_filename=filename, recalc=False)
+            # Prepare string with filenames
+            if self.rbtn_list_of_projects.isChecked():
+                files = ''
+                for i in range(self.lst_files.count()):
+                    if not i == self.lst_files.count() - 1:
+                        files += self.lst_files.item(i).text() + '\n'
+                    else:
+                        files += self.lst_files.item(i).text()
+            else:
+                files = self.ui_obj.savefile
+            # Prepare filter
+            filter_ = {
+                'exclude_edge_columns': self.chb_edge_columns.isChecked(),
+                'exclude_matrix_columns': self.chb_matrix_columns.isChecked(),
+                'exclude_particle_columns': self.chb_particle_columns.isChecked(),
+                'exclude_hidden_columns': self.chb_hidden_columns.isChecked(),
+                'exclude_flag_1_columns': self.chb_flag_1.isChecked(),
+                'exclude_flag_2_columns': self.chb_flag_2.isChecked(),
+                'exclude_flag_3_columns': self.chb_flag_3.isChecked(),
+                'exclude_flag_4_columns': self.chb_flag_4.isChecked()
+            }
+            # Prepare keys
+            keys = []
+            for i in range(self.list_1.count()):
+                keys.append(self.list_1.item(i).text())
+            if self.cmb_categorization.currentText() == 'advanced' and 'advanced_category_index' not in keys:
+                keys.append('advanced_category_index')
+            if self.cmb_categorization.currentText() == 'simple' and 'species_index' not in keys:
+                keys.append('species_index')
+            # Initate manager
+            manager = statistics.DataManager(files, filter_=filter_, save_filename=filename[0], recalc=self.chb_recalculate_graphs.isChecked(), keys=keys, categorization=self.cmb_categorization.currentText())
             manager.save()
             GUI.logger.info('Successfully saved model parameters to {}'.format(filename[0]))
-            if self.chb_plot_data:
-                manager.single_plot(0)
-                manager.dual_plot(0, 1)
-                manager.dual_plot('normalized_avg_gamma', 'avg_central_separation')
-                manager.model_plot()
         self.ui_obj.sys_message('Ready.')
 
     def get_next_frame(self):
@@ -3354,8 +2696,12 @@ class CalcModels(QtWidgets.QDialog):
             next_frame = 1
         elif self.stack_layout.currentIndex() == 1:
             next_frame = 2
-            self.btn_next.setText('Calcuate!')
         elif self.stack_layout.currentIndex() == 2:
+            next_frame = 3
+        elif self.stack_layout.currentIndex() == 3:
+            next_frame = 4
+            self.btn_next.setText('Calcuate!')
+        elif self.stack_layout.currentIndex() == 4:
             next_frame = -2
         else:
             logger.error('Error!')
@@ -3371,6 +2717,10 @@ class CalcModels(QtWidgets.QDialog):
             previous_frame = 0
         elif self.stack_layout.currentIndex() == 2:
             previous_frame = 1
+        elif self.stack_layout.currentIndex() == 3:
+            previous_frame = 2
+        elif self.stack_layout.currentIndex() == 4:
+            previous_frame = 3
         else:
             logger.error('Error!')
             self.close()
@@ -3380,7 +2730,7 @@ class CalcModels(QtWidgets.QDialog):
     def btn_next_trigger(self):
         next_frame = self.get_next_frame()
         if next_frame == -2:
-            self.export()
+            self.calc()
         elif next_frame == -1:
             self.close()
         else:
@@ -3438,9 +2788,8 @@ class PlotModels(QtWidgets.QDialog):
         self.cmb_single_attribute = QtWidgets.QComboBox()
         self.cmb_pca_setting = QtWidgets.QComboBox()
 
-        self.cmb_pca_setting.addItem('Advanced')
-        self.cmb_pca_setting.addItem('Simple')
-        self.cmb_pca_setting.addItem('None')
+        self.cmb_pca_setting.addItem('Show categories')
+        self.cmb_pca_setting.addItem('No categories')
 
         self.set_layout()
         self.exec_()
@@ -3462,13 +2811,8 @@ class PlotModels(QtWidgets.QDialog):
         gen_string += 'Total size, n = {}\n'.format(self.model.uncategorized_normal_dist.n)
         gen_string += 'Data gathered from {} images\n'.format(number_of_files)
         gen_string += 'Filter:\n'
-        gen_string += '    Include edge columns: {}\n'.format(self.model.filter_[0])
-        gen_string += '    Include matrix columns: {}\n'.format(self.model.filter_[1])
-        gen_string += '    Include hidden columns: {}\n'.format(self.model.filter_[2])
-        gen_string += '    Include flag 1: {}\n'.format(self.model.filter_[3])
-        gen_string += '    Include flag 2: {}\n'.format(self.model.filter_[4])
-        gen_string += '    Include flag 3: {}\n'.format(self.model.filter_[5])
-        gen_string += '    Include flag 4: {}\n'.format(self.model.filter_[6])
+        for key, value in self.model.filter_.items():
+            gen_string += '    {}: {}\n'.format(key, value)
         self.lbl_size.setText(gen_string)
         attr_string = ''
         for attribute in self.model.attribute_keys:
@@ -3602,10 +2946,13 @@ class PlotModels(QtWidgets.QDialog):
         self.model.dual_plot(self.cmb_attribute_1.currentText(), self.cmb_attribute_2.currentText())
 
     def btn_plot_all_trigger(self):
-        self.model.model_plot()
+        self.model.plot_all()
 
     def btn_plot_pca_trigger(self):
-        self.model.plot_pca
+        if self.cmb_pca_setting.currentText() == 'Show categories':
+            self.model.plot_pca(show_category=True)
+        else:
+            self.model.plot_pca(show_category=False)
 
     def btn_plot_single_trigger(self):
         self.model.single_plot(self.cmb_single_attribute.currentText())

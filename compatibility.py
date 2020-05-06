@@ -596,10 +596,19 @@ def convert(obj, old_version, version):
     elif old_version == [0, 0, 12]:
         obj.active_model = statistics.DataManager.load('default_model')
         obj.graph.active_model = obj.active_model
+        for vertex in obj.graph.vertices:
+            vertex.avg_redshift = 0
         fresh_obj = obj
 
     elif old_version == [0, 0, 13]:
         obj.graph.active_model = obj.active_model
+        for vertex in obj.graph.vertices:
+            vertex.avg_redshift = 0
+        fresh_obj = obj
+
+    elif old_version == [0, 0, 14]:
+        for vertex in obj.graph.vertices:
+            vertex.avg_redshift = 0
         fresh_obj = obj
 
     else:

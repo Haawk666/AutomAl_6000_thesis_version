@@ -60,18 +60,15 @@ class Vertex:
         # model-analysis
         self.probability_vector = [0, 0, 0, 0, 0, 0, 1]
         self.confidence = 0
+
         self.alpha_model = [0, 0, 0, 0, 0, 0, 1]
         self.advanced_alpha_model = [0, 0, 0, 0, 0, 0, 0]
         self.alpha_confidence = 0
-        self.theta_model = [0, 0, 0, 0, 0, 0, 1]
-        self.advanced_theta_model = [0, 0, 0, 0, 0, 0, 0]
-        self.theta_confidence = 0
-        self.gamma_model = [0, 0, 0, 0, 0, 0, 1]
-        self.advanced_gamma_model = [0, 0, 0, 0, 0, 0, 0]
-        self.gamma_confidence = 0
+
         self.model = [0, 0, 0, 0, 0, 0, 1]
         self.advanced_model = [0, 0, 0, 0, 0, 0, 0]
         self.model_confidence = 0
+
         self.weighted_model = [0, 0, 0, 0, 0, 0, 1]
         self.advanced_weighted_model = [0, 0, 0, 0, 0, 0, 0]
         self.weighted_confidence = 0
@@ -89,6 +86,7 @@ class Vertex:
         self.normalized_avg_gamma = avg_gamma
         self.redshift = 0
         self.redshift_variance = 0
+        self.avg_redshift = 0
         self.avg_central_separation = 0
 
         # Local graph mapping
@@ -140,20 +138,6 @@ class Vertex:
         string += ' ]\n'
         string += '            Prediction: {}\n'.format(self.species_strings[self.alpha_model.index(max(self.alpha_model))])
         string += '            Confidence: {}\n'.format(self.alpha_confidence)
-        string += '        Theta model: ['
-        for t in self.theta_model:
-            string += ' {:.3f}'.format(t)
-        string += ' ]\n'
-        string += '            Prediction: {}\n'.format(
-            self.species_strings[self.theta_model.index(max(self.theta_model))])
-        string += '            Confidence: {}\n'.format(self.theta_confidence)
-        string += '        Gamma model: ['
-        for g in self.gamma_model:
-            string += ' {:.3f}'.format(g)
-        string += ' ]\n'
-        string += '            Prediction: {}\n'.format(
-            self.species_strings[self.gamma_model.index(max(self.gamma_model))])
-        string += '            Confidence: {}\n'.format(self.gamma_confidence)
         string += '        Model: ['
         for m in self.model:
             string += ' {:.3f}'.format(m)
@@ -242,6 +226,32 @@ class Vertex:
 
     def determine_species_from_species_index(self):
         self.reset_probability_vector(bias=self.species_index)
+
+    @ staticmethod
+    def determine_simple_from_advanced_model(advanced_model):
+        simple = [
+            advanced_model[0] + advanced_model[1],
+            advanced_model[2],
+            0,
+            advanced_model[3] + advanced_model[4],
+            0,
+            advanced_model[5] + advanced_model[6],
+            0
+        ]
+        return simple
+
+    @ staticmethod
+    def determine_advanced_from_simple_model(simple_model):
+        advanced = [
+            simple_model[0] / 2,
+            simple_model[0] / 2,
+            simple_model[1],
+            simple_model[3] / 2,
+            simple_model[3] / 2,
+            simple_model[5] / 2,
+            simple_model[5] / 2
+        ]
+        return advanced
 
     def increment_species_index(self):
         if self.species_index == 5 or self.species_index == 6:
@@ -1000,6 +1010,7 @@ class AtomicGraph:
                     counter += 1
                 if not counter == 0:
                     vertex.avg_central_separation /= counter
+                    vertex.avg_redshift = vertex.redshift / counter
                 self.total_redshift += vertex.redshift
                 if vertex.is_in_precipitate:
                     self.particle_redshift += vertex.redshift
@@ -1016,35 +1027,59 @@ class AtomicGraph:
     def calc_model_predictions(self):
         for vertex in self.vertices:
             if not vertex.void:
-                args = [vertex.alpha_max, vertex.alpha_min]
-                vertex.advanced_alpha_model = self.active_model.calc_alpha_prediction(args)
-                vertex.alpha_model = [
-                    vertex.advanced_alpha_model[0] + vertex.advanced_alpha_model[1],
-                    vertex.advanced_alpha_model[2],
-                    0,
-                    vertex.advanced_alpha_model[3] + vertex.advanced_alpha_model[4],
-                    0,
-                    vertex.advanced_alpha_model[5] + vertex.advanced_alpha_model[6],
-                    0
-                ]
-                args += [
-                    vertex.theta_max,
-                    vertex.theta_min,
-                    vertex.theta_angle_mean,
-                    vertex.normalized_peak_gamma,
-                    vertex.normalized_avg_gamma,
-                    vertex.avg_central_separation
-                ]
-                vertex.advanced_model = self.active_model.calc_prediction(args)
-                vertex.model = [
-                    vertex.advanced_model[0] + vertex.advanced_model[1],
-                    vertex.advanced_model[2],
-                    0,
-                    vertex.advanced_model[3] + vertex.advanced_model[4],
-                    0,
-                    vertex.advanced_model[5] + vertex.advanced_model[6],
-                    0
-                ]
+                alpha_dict = {
+                    'alpha_max': vertex.alpha_max,
+                    'alpha_min': vertex.alpha_min
+                }
+                model_dict = {
+                    'alpha_max': vertex.alpha_max,
+                    'alpha_min': vertex.alpha_min,
+                    'theta_max': vertex.theta_max,
+                    'theta_min': vertex.theta_min,
+                    'theta_angle_mean': vertex.theta_angle_mean,
+                    'normalized_peak_gamma': vertex.normalized_peak_gamma,
+                    'normalized_avg_gamma': vertex.normalized_avg_gamma
+                }
+                alpha_result = self.active_model.calc_prediction(alpha_dict)
+                model_result = self.active_model.calc_prediction(model_dict)
+                if self.active_model.categorization == 'advanced':
+                    vertex.advanced_alpha_model = [
+                        alpha_result['Si_1'],
+                        alpha_result['Si_2'],
+                        alpha_result['Cu'],
+                        alpha_result['Al_1'],
+                        alpha_result['Al_2'],
+                        alpha_result['Mg_1'],
+                        alpha_result['Mg_2'],
+                    ]
+                    vertex.alpha_model = Vertex.determine_simple_from_advanced_model(vertex.advanced_alpha_model)
+                    vertex.advanced_model = [
+                        model_result['Si_1'],
+                        model_result['Si_2'],
+                        model_result['Cu'],
+                        model_result['Al_1'],
+                        model_result['Al_2'],
+                        model_result['Mg_1'],
+                        model_result['Mg_2'],
+                    ]
+                    vertex.model = Vertex.determine_simple_from_advanced_model(vertex.advanced_model)
+                elif self.active_model.categorization == 'simple':
+                    vertex.alpha_model = [
+                        alpha_result['Si'],
+                        alpha_result['Cu'],
+                        alpha_result['Al'],
+                        alpha_result['Mg']
+                    ]
+                    vertex.advanced_alpha_model = Vertex.determine_advanced_from_simple_model(vertex.alpha_model)
+                    vertex.model = [
+                        model_result['Si'],
+                        model_result['Cu'],
+                        model_result['Al'],
+                        model_result['Mg']
+                    ]
+                    vertex.advanced_model = Vertex.determine_advanced_from_simple_model(vertex.model)
+                else:
+                    logger.error('Unknown categorization')
 
     def refresh_graph(self):
         logger.info('Refreshing graph...')
@@ -1101,51 +1136,45 @@ class AtomicGraph:
                     vertex.advanced_category_index = 2
 
     def calc_condensed_property_data(self, filter_=None, recalc=True, keys=None):
+
         if filter_ is None:
-            filter_ = [False, True, True, True, True, True, True]
+            filter_ = {
+                'exclude_edge_columns': True,
+                'exclude_matrix_columns': False,
+                'exclude_particle_columns': False,
+                'exclude_hidden_columns': False,
+                'exclude_flag_1_columns': False,
+                'exclude_flag_2_columns': False,
+                'exclude_flag_3_columns': False,
+                'exclude_flag_4_columns': False
+            }
+
         if keys is None:
-            keys = ['species_index', 'species_variant', 'advanced_category_index', 'alpha_max', 'alpha_min', 'theta_max', 'theta_min',
-                'theta_angle_mean', 'normalized_peak_gamma', 'normalized_avg_gamma', 'avg_central_separation'
+            keys = [
+                'species_index', 'species_variant', 'advanced_category_index', 'alpha_max', 'alpha_min', 'theta_max',
+                'theta_min', 'theta_angle_mean', 'normalized_peak_gamma', 'normalized_avg_gamma',
+                'avg_central_separation'
             ]
+
         if recalc:
             self.refresh_graph()
+
         data = []
         for vertex in self.vertices:
             if not vertex.void:
-                vertex_filter = [vertex.is_edge_column, vertex.is_in_precipitate, vertex.show_in_overlay,
-                                 vertex.flag_1, vertex.flag_2, vertex.flag_3, vertex.flag_4]
-                if not (not filter_[0] and vertex_filter[0]):
-                    if not (not filter_[1] and vertex_filter[1]):
-                        if not (not filter_[2] and vertex_filter[2]):
-                            if not (not filter_[3] and vertex_filter[3]):
-                                if not (not filter_[4] and vertex_filter[4]):
-                                    if not (not filter_[5] and vertex_filter[5]):
-                                        if not (not filter_[6] and vertex_filter[6]):
+                if not (filter_['exclude_edge_columns'] and vertex.is_edge_column):
+                    if not (filter_['exclude_matrix_columns'] and not vertex.is_in_precipitate):
+                        if not (filter_['exclude_particle_columns'] and vertex.is_in_precipitate):
+                            if not (filter_['exclude_hidden_columns'] and not vertex.show_in_overlay):
+                                if not (filter_['exclude_flag_1_columns'] and vertex.flag_1):
+                                    if not (filter_['exclude_flag_2_columns'] and vertex.flag_2):
+                                        if not (filter_['exclude_flag_3_columns'] and vertex.flag_3):
+                                            if not (filter_['exclude_flag_4_columns'] and vertex.flag_4):
 
-                                            data_item = {}
-                                            if 'species_index' in keys:
-                                                data_item['species_index'] = vertex.species_index
-                                            if 'species_variant' in keys:
-                                                data_item['species_variant'] = vertex.species_variant
-                                            if 'advanced_category_index' in keys:
-                                                data_item['advanced_category_index'] =vertex.advanced_category_index
-                                            if 'alpha_max' in keys:
-                                                data_item['alpha_max'] = vertex.alpha_max
-                                            if 'alpha_min' in keys:
-                                                data_item['alpha_min'] = vertex.alpha_min
-                                            if 'theta_max' in keys:
-                                                data_item['theta_max'] = vertex.theta_max
-                                            if 'theta_min' in keys:
-                                                data_item['theta_min'] = vertex.theta_min
-                                            if 'theta_angle_mean' in keys:
-                                                data_item['theta_angle_mean'] = vertex.theta_angle_mean
-                                            if 'normalized_peak_gamma' in keys:
-                                                data_item['normalized_peak_gamma'] = vertex.normalized_peak_gamma
-                                            if 'normalized_avg_gamma' in keys:
-                                                data_item['normalized_avg_gamma'] = vertex.normalized_avg_gamma
-                                            if 'avg_central_separation' in keys:
-                                                data_item['avg_central_separation'] = vertex.avg_central_separation
-                                            data.append(data_item)
+                                                data_item = {}
+                                                for key in keys:
+                                                    data_item[key] = eval('vertex.{}'.format(key))
+                                                data.append(data_item)
 
         return data
 

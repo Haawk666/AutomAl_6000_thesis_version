@@ -2,11 +2,11 @@
 methods that can gather model parameters from sets of overlay files. The default model parameters used here are
 gathered from the images in the validation data set. See automal.org for more details."""
 
-
+# Internal imports
 import core
 import utils
-import default_models
-
+# External imports
+import csv
 from matplotlib import pyplot as plt
 from matplotlib.gridspec import GridSpec
 import numpy as np
@@ -19,12 +19,13 @@ logger.setLevel(logging.DEBUG)
 
 class MultivariateNormalDist:
 
-    def __init__(self, data, category_title):
+    def __init__(self, data, category_title, attribute_keys):
 
         # k is the dimensionality of the data, n is the number of data-points
         (self.k, self.n) = data.shape
         # Title of category is mandatory
         self.category_title = category_title
+        self.attribute_keys = attribute_keys
 
         # The mean of each dimension
         self.means = []
@@ -37,8 +38,8 @@ class MultivariateNormalDist:
         # Determinant of the covariance matrix
         self.covar_matrix_determinant = 0
         # Eigen-things of the covariance matrix
-        self.covar_matrix_eigenvalues = []
-        self.covar_matrix_eigenvectors = []
+        self.covar_matrix_eigenvalues = None
+        self.covar_matrix_eigenvectors = None
 
         self.calc_params(data)
 
@@ -47,28 +48,22 @@ class MultivariateNormalDist:
         self.means = []
         self.variances = []
         for dimension in range(0, self.k):
-            if not self.n == 0:
-                mean = np.sum(data[dimension, :]) / self.n
-            else:
-                mean = 0
-            var = 0
-            for data_item in data[dimension, :]:
-                var += (data_item - mean)**2
-            if not self.n < 2:
-                var = var / (self.n - 1)
-            else:
-                var = np.infty
+            mean = utils.mean_val(data[dimension, :])
+            var = utils.variance(data[dimension, :])
             self.means.append(mean)
             self.variances.append(var)
 
         for dimension_1 in range(0, self.k):
             for dimension_2 in range(0, self.k):
-
+                covar = 0
                 for data_index in range(0, self.n):
                     factor_1 = data[dimension_1, data_index] - self.means[dimension_1]
                     factor_2 = data[dimension_2, data_index] - self.means[dimension_2]
-                    self.covar_matrix[dimension_1, dimension_2] += factor_1 * factor_2
-                self.covar_matrix[dimension_1, dimension_2] /= self.n - 1
+                    covar += factor_1 * factor_2
+                covar /= self.n - 1
+                if dimension_1 == dimension_2 and covar < 0.00000000001:
+                    covar = 0.0001
+                self.covar_matrix[dimension_1, dimension_2] = covar
 
         self.covar_matrix_determinant = np.linalg.det(self.covar_matrix)
         self.inverse_covar_matrix = np.linalg.inv(self.covar_matrix)
@@ -77,8 +72,28 @@ class MultivariateNormalDist:
         self.covar_matrix_eigenvalues = self.covar_matrix_eigenvalues[idx]
         self.covar_matrix_eigenvectors = self.covar_matrix_eigenvectors[:, idx]
 
-    def prediction(self, args):
-        prob = utils.multivariate_normal_dist(args, self.means, self.covar_matrix_determinant, self.inverse_covar_matrix)
+    def get_partial_model(self, attr_indices):
+        new_means = self.means[attr_indices]
+        attr_indices = np.array(attr_indices)
+        new_covar_matrix = np.array(self.covar_matrix[attr_indices, attr_indices])
+        new_inverse_covar_matrix = np.linalg.inv(new_covar_matrix)
+        new_covar_matrix_determinant = np.linalg.det(new_covar_matrix)
+        return new_means, new_covar_matrix_determinant, new_inverse_covar_matrix
+
+    def prediction(self, dict_):
+        args = []
+        kwargs = []
+        attr_indices = []
+        for key in self.attribute_keys:
+            if key in dict_:
+                args.append(dict_[key])
+                kwargs.append(key)
+                attr_indices.append(self.attribute_keys.index(key))
+        if len(kwargs) == len(self.attribute_keys):
+            prob = utils.multivariate_normal_dist(args, self.means, self.covar_matrix_determinant, self.inverse_covar_matrix)
+        else:
+            new_means, new_covar_matrix_determinant, new_inverse_covar_matrix = self.get_partial_model(kwargs)
+            prob = utils.multivariate_normal_dist(args, new_means, new_covar_matrix_determinant, new_inverse_covar_matrix)
         return prob
 
 
@@ -172,7 +187,16 @@ class DataManager:
     def __init__(self, files, filter_=None, keys=None, save_filename='model', categorization='advanced', recalc=False):
 
         if filter_ is None:
-            self.filter_ = [False, True, True, True, True, True, True]
+            self.filter_ = {
+                'exclude_edge_columns': True,
+                'exclude_matrix_columns': False,
+                'exclude_particle_columns': False,
+                'exclude_hidden_columns': False,
+                'exclude_flag_1_columns': False,
+                'exclude_flag_2_columns': False,
+                'exclude_flag_3_columns': False,
+                'exclude_flag_4_columns': False
+            }
         else:
             self.filter_ = filter_
 
@@ -183,6 +207,9 @@ class DataManager:
             self.keys = keys
         self.attribute_keys, self.attribute_units = self.determine_attribute_keys()
         self.k = len(self.attribute_keys)
+        self.pc_keys = []
+        for i in range(0, self.k):
+            self.pc_keys.append('PC {}'.format(i))
 
         self.files = files
         self.save_filename = save_filename
@@ -208,27 +235,28 @@ class DataManager:
         self.num_data_categories = len(self.category_titles)
 
         self.matrix_data = self.vectorize_data()
-        self.concatenated_matrix_data = self.concatenate_categories()
-        self.normalized_concatenated_matrix_data = np.array(self.concatenated_matrix_data)
-
-        self.uncategorized_normal_dist = MultivariateNormalDist(self.concatenated_matrix_data, 'All categories')
-
-        self.norm_data()
-        self.normalized_uncategorized_normal_dist = MultivariateNormalDist(self.normalized_concatenated_matrix_data, 'All categories')
-
         self.composite_model = []
-        self.alpha_model = []
-        self.avg_central_separation_model = []
-
         for c, category_data in enumerate(self.matrix_data):
-            self.composite_model.append(MultivariateNormalDist(category_data, self.category_titles[c]))
-            if 'alpha_max' in self.attribute_keys and 'alpha_min' in self.attribute_keys:
-                max_index = self.attribute_keys.index('alpha_max')
-                min_index = self.attribute_keys.index('alpha_min')
-                self.alpha_model.append(MultivariateNormalDist(category_data[np.array([max_index, min_index]), :], self.category_titles[c]))
-            if 'avg_central_separation' in self.attribute_keys:
-                attr_index = self.attribute_keys.index('avg_central_separation')
-                self.avg_central_separation_model.append(MultivariateNormalDist(category_data[attr_index, :].reshape(1, category_data[attr_index, :].shape[0]), self.category_titles[c]))
+            self.composite_model.append(MultivariateNormalDist(category_data, self.category_titles[c], self.attribute_keys))
+
+        self.concatenated_matrix_data = self.concatenate_categories()
+        self.uncategorized_normal_dist = MultivariateNormalDist(self.concatenated_matrix_data, 'All categories', self.attribute_keys)
+
+        self.normalized_concatenated_matrix_data = np.array(self.concatenated_matrix_data)
+        self.normalized_matrix_data = []
+        for category_data in self.matrix_data:
+            self.normalized_matrix_data.append(np.array(category_data))
+        self.norm_data()
+        self.normalized_uncategorized_normal_dist = MultivariateNormalDist(self.normalized_concatenated_matrix_data, 'All categories', self.attribute_keys)
+        self.pca_feature_vector = self.normalized_uncategorized_normal_dist.covar_matrix_eigenvectors.T
+        self.composed_uncategorized_data = np.matmul(self.pca_feature_vector, self.normalized_concatenated_matrix_data)
+        self.composed_data = []
+        for normalized_category_data in self.normalized_matrix_data:
+            self.composed_data.append(np.matmul(self.pca_feature_vector, normalized_category_data))
+        self.composed_uncategorized_normal_dist = MultivariateNormalDist(self.composed_uncategorized_data, 'Column', self.pc_keys)
+        self.composed_normal_dist = []
+        for c, composed_category_data in enumerate(self.composed_data):
+            self.composed_normal_dist.append(MultivariateNormalDist(composed_category_data, self.category_titles[c], self.pc_keys))
 
     def determine_attribute_keys(self):
         attributes = []
@@ -257,6 +285,12 @@ class DataManager:
         if 'avg_central_separation' in self.keys:
             attributes.append('avg_central_separation')
             units.append('nm')
+        if 'redshift' in self.keys:
+            attributes.append('redshift')
+            units.append('nm')
+        if 'avg_redshift' in self.keys:
+            attributes.append('avg_redshift')
+            units.append('nm')
         return attributes, units
 
     def collect_data(self):
@@ -277,7 +311,7 @@ class DataManager:
             for h, attribute in enumerate(self.attribute_keys):
                 if self.categorization == 'advanced':
                     data[data_item['advanced_category_index']][h].append(data_item[attribute])
-                else:
+                elif self.categorization == 'simple':
                     if data_item['species_index'] == 0:
                         category_index = 0
                     elif data_item['species_index'] == 1:
@@ -290,6 +324,8 @@ class DataManager:
                         logger.error('Error in category assignment!')
                         category_index = 4
                     data[category_index][h].append(data_item[attribute])
+                elif self.categorization == 'none':
+                    data[0][h].append(data_item[attribute])
         matrix_data = []
         for category_data in data:
             matrix_data.append(np.array(category_data))
@@ -300,34 +336,26 @@ class DataManager:
         for i, category in enumerate(self.category_titles):
             if not i == 0:
                 concatenated_data = np.concatenate((concatenated_data, self.matrix_data[i]), axis=1)
-        print(concatenated_data.shape)
         return concatenated_data
 
     def norm_data(self):
+        # Normalize uncategorized data
         for attr_index, attr_key in enumerate(self.attribute_keys):
             mean = self.uncategorized_normal_dist.means[attr_index]
             for data_item in self.normalized_concatenated_matrix_data[attr_index, :]:
                 data_item -= mean
-
-    def calc_prediction(self, args):
-        prediction = []
+        # Normalize categorized data
         for c, category in enumerate(self.category_titles):
-            prediction.append(self.composite_model[c].prediction(args))
-        prediction = utils.normalize_list(prediction, 1)
-        return prediction
+            for attr_index, attr_key, in enumerate(self.attribute_keys):
+                mean = self.composite_model[c].means[attr_index]
+                for data_item in self.normalized_matrix_data[c][attr_index, :]:
+                    data_item -= mean
 
-    def calc_alpha_prediction(self, args):
-        prediction = []
+    def calc_prediction(self, dict_):
+        prediction = {}
         for c, category in enumerate(self.category_titles):
-            prediction.append(self.alpha_model[c].prediction(args))
-        prediction = utils.normalize_list(prediction, 1)
-        return prediction
-
-    def calc_avg_central_separation_prediction(self, arg):
-        prediction = []
-        for c, category in enumerate(self.category_titles):
-            prediction.append(self.avg_central_separation_model[c].prediction(arg))
-        prediction = utils.normalize_list(prediction, 1)
+            prediction[category] = self.composite_model[c].prediction(dict_)
+        prediction = utils.normalize_dict(prediction, 1)
         return prediction
 
     def single_plot(self, attr):
@@ -396,7 +424,7 @@ class DataManager:
             ax_attr_1.plot(
                 line_1,
                 utils.normal_dist(line_1, mean, var),
-                self.colours[c],
+                c=self.colours[c],
                 label='{} ($\mu$ = {:.2f}, $\sigma^2$ = {:.2f})'.format(category, mean, var)
             )
 
@@ -434,7 +462,7 @@ class DataManager:
 
         plt.show()
 
-    def model_plot(self):
+    def plot_all(self):
 
         fig = plt.figure(constrained_layout=True)
         gs = GridSpec(3, 3, figure=fig)
@@ -475,8 +503,117 @@ class DataManager:
 
         plt.show()
 
-    def plot_pca(self):
-        pass
+    def plot_pca(self, show_category=True):
+        attr_1_key = 'PC 1'
+        attr_1_index = 0
+        attr_2_key = 'PC 2'
+        attr_2_index = 1
+
+        attr_1_min_val, attr_2_min_val = self.composed_uncategorized_data[attr_1_index, :].min(), self.composed_uncategorized_data[attr_2_index, :].min()
+        attr_1_max_val, attr_2_max_val = self.composed_uncategorized_data[attr_1_index, :].max(), self.composed_uncategorized_data[attr_2_index, :].max()
+
+        line_1 = np.linspace(attr_1_min_val, attr_1_max_val, 1000)
+        line_2 = np.linspace(attr_2_min_val, attr_2_max_val, 1000)
+
+        fig = plt.figure(constrained_layout=True)
+        gs = GridSpec(2, 2, figure=fig)
+        ax_attr_1 = fig.add_subplot(gs[0, 0])
+        ax_attr_2 = fig.add_subplot(gs[1, 0])
+        ax_scatter = fig.add_subplot(gs[:, 1])
+
+        if show_category:
+
+            for c, category in enumerate(self.category_titles):
+                mean = self.composed_normal_dist[c].means[attr_1_index]
+                var = self.composed_normal_dist[c].variances[attr_1_index]
+                ax_attr_1.plot(
+                    line_1,
+                    utils.normal_dist(line_1, mean, var),
+                    c=self.colours[c],
+                    label='{} ($\mu$ = {:.2f}, $\sigma^2$ = {:.2f})'.format(category, mean, var)
+                )
+
+            ax_attr_1.set_title('{} fitted density'.format(attr_1_key))
+            ax_attr_1.set_xlabel('{}'.format(attr_1_key))
+            ax_attr_1.legend()
+
+            for c, category in enumerate(self.category_titles):
+                mean = self.composed_normal_dist[c].means[attr_2_index]
+                var = self.composed_normal_dist[c].variances[attr_2_index]
+                ax_attr_2.plot(
+                    line_2,
+                    utils.normal_dist(line_2, mean, var),
+                    c=self.colours[c],
+                    label='{} ($\mu$ = {:.2f}, $\sigma^2$ = {:.2f})'.format(category, mean, var)
+                )
+
+            ax_attr_2.set_title('{} fitted density'.format(attr_2_key))
+            ax_attr_2.set_xlabel('{}'.format(attr_2_key))
+            ax_attr_2.legend()
+
+            for c, category in enumerate(self.category_titles):
+                ax_scatter.scatter(
+                    self.composed_data[c][attr_1_index, :],
+                    self.composed_data[c][attr_2_index, :],
+                    c=self.colours[c],
+                    label='{}'.format(category),
+                    s=8
+                )
+
+            ax_scatter.set_title('Scatter-plot of {} vs {}'.format(attr_1_key, attr_2_key))
+            ax_scatter.set_xlabel('{}'.format(attr_1_key))
+            ax_scatter.set_ylabel('{}'.format(attr_2_key))
+            ax_scatter.legend()
+
+        else:
+
+            mean = self.composed_uncategorized_normal_dist.means[attr_1_index]
+            var = self.composed_uncategorized_normal_dist.variances[attr_1_index]
+            ax_attr_1.plot(
+                line_1,
+                utils.normal_dist(line_1, mean, var),
+                c='k',
+                label='{} ($\mu$ = {:.2f}, $\sigma^2$ = {:.2f})'.format('Column', mean, var)
+            )
+
+            ax_attr_1.set_title('{} fitted density'.format(attr_1_key))
+            ax_attr_1.set_xlabel('{} {}'.format(attr_1_key, self.attribute_units[attr_1_index]))
+            ax_attr_1.legend()
+
+            mean = self.composed_uncategorized_normal_dist.means[attr_2_index]
+            var = self.composed_uncategorized_normal_dist.variances[attr_2_index]
+            ax_attr_2.plot(
+                line_2,
+                utils.normal_dist(line_2, mean, var),
+                c='k',
+                label='{} ($\mu$ = {:.2f}, $\sigma^2$ = {:.2f})'.format('Column', mean, var)
+            )
+
+            ax_attr_2.set_title('{} fitted density'.format(attr_2_key))
+            ax_attr_2.set_xlabel('{}'.format(attr_2_key))
+            ax_attr_2.legend()
+
+            ax_scatter.scatter(
+                self.composed_uncategorized_data[attr_1_index, :],
+                self.composed_uncategorized_data[attr_2_index, :],
+                c='k',
+                label='{}'.format('Column'),
+                s=8
+            )
+
+            ax_scatter.set_title('Scatter-plot of {} vs {}'.format(attr_1_key, attr_2_key))
+            ax_scatter.set_xlabel('{}'.format(attr_1_key))
+            ax_scatter.set_ylabel('{}'.format(attr_2_key))
+            ax_scatter.legend()
+
+        plt.show()
+
+    def export_csv(self, filename, kwargs):
+        with open(filename, mode='w', newline='') as csv_file:
+            writer = csv.DictWriter(csv_file, kwargs, delimiter=',', extrasaction='ignore')
+            writer.writeheader()
+            for dict_ in self.original_dict_data:
+                writer.writerow(dict_)
 
     def save(self):
         with open(self.save_filename, 'wb') as f:

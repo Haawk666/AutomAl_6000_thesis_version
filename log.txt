@@ -1,5 +1,14 @@
 GUI: Welcome to AutomAl 6000 by Haakon Tvedt
 GUI: GUI version: 0.0.2
-GUI: core version: 0.0.14
+GUI: core version: 0.0.15
 GUI: Build version: Alpha 1.0
 ------------------------
+core: Loaded C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_a/_model_008_ready
+core: Loaded C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_a/_model_012a_ready
+core: Loaded C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_a/_model_018_Ba_ready
+core: Loaded C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_a/_model_023_ready
+core: Loaded C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_a/_model_030_ready
+core: Loaded C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_a/_model_haakon_009_ready
+core: Loaded C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_a/_model_haakon_012a_ready
+core: Loaded C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_a/_model_haakon_016_ready
+GUI: Successfully saved model parameters to F:/AACC/default_model

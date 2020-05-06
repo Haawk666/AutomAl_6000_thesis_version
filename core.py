@@ -98,7 +98,7 @@ class SuchSoftware:
     """
 
     # Version
-    version = [0, 0, 14]
+    version = [0, 0, 15]
 
     # Number of elements in the probability vectors
     num_selections = 7
@@ -242,8 +242,7 @@ class SuchSoftware:
         self.overhead = int(6 * (self.r / 10))
 
         # Initialize an empty graph
-        self.active_model = statistics.DataManager.load('default_model')
-        self.graph = graph_2.AtomicGraph(self.scale, self.active_model)
+        self.graph = graph_2.AtomicGraph(self.scale, statistics.DataManager.load('default_model'))
 
         logger.info('Generated instance from {}'.format(filename_full))
 
