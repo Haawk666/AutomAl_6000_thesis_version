@@ -16,12 +16,14 @@ logger.setLevel(logging.DEBUG)
 
 class Vertex:
 
-    species_strings = ['Si', 'Cu', 'Zn', 'Al', 'Ag', 'Mg', 'Un']
-    species_symmetry = [3, 3, 3, 4, 4, 5, 3]
+    # Standard AutomAl 6000 class header:
+    advanced_category_string = {0: 'Si_1', 1: 'Si_2', 2: 'Si_3', 3: 'Cu', 4: 'Al_1', 5: 'Al_2', 6: 'Mg_1', 7: 'Mg_2'}
+    species_string = {0: 'Si', 1: 'Cu', 2: 'Al', 3: 'Mg', 4: 'Un'}
+    symmetry = {'Si': 3, 'Cu': 3, 'Al': 4, 'Mg': 5, 'Un': 3}
+    atomic_radii = {'Si': 117.5, 'Cu': 127.81, 'Al': 143.0, 'Mg': 160.0, 'Ag': 144.5, 'Zn': 133.25, 'Un': 200.0}
     al_lattice_const = 404.95
 
-    def __init__(self, index, im_coor_x, im_coor_y, r, peak_gamma, avg_gamma, scale,
-                 zeta=0, atomic_species='Un', species_index=6, void=False):
+    def __init__(self, index, im_coor_x, im_coor_y, r, scale, zeta=0, species_index=6, void=False):
 
         # Index
         self.i = index
@@ -29,21 +31,21 @@ class Vertex:
         # Some properties
         self.r = r
         self.zeta = zeta
-        self.scale = scale
-        self.peak_gamma = peak_gamma
-        self.avg_gamma = avg_gamma
-        self.atomic_species = atomic_species
+        self.peak_gamma = 0
+        self.avg_gamma = 0
         self.species_index = species_index
         self.species_variant = 0
         self.advanced_category_index = 0
 
         # Position
+        self.scale = scale
+        self.zeta = zeta
         self.im_coor_x = im_coor_x
         self.im_coor_y = im_coor_y
         self.im_coor_z = zeta
         self.spatial_coor_x = im_coor_x * scale
         self.spatial_coor_y = im_coor_y * scale
-        self.spatial_coor_z = zeta * 0.5 * 404.95
+        self.spatial_coor_z = zeta * 0.5 * self.al_lattice_const
 
         # Some settings
         self.is_in_precipitate = False
@@ -62,20 +64,21 @@ class Vertex:
         self.flag_9 = False
 
         # model-analysis
-        self.probability_vector = [0, 0, 0, 0, 0, 0, 1]
+        self.probability_vector = [0, 0, 0, 0, 1]
         self.confidence = 0
+        self.advanced_probability_vector = [0, 0, 0, 0, 0, 0, 0, 0]
 
-        self.alpha_model = [0, 0, 0, 0, 0, 0, 1]
-        self.advanced_alpha_model = [0, 0, 0, 0, 0, 0, 0]
+        self.alpha_probability_vector = [0, 0, 0, 0, 1]
         self.alpha_confidence = 0
+        self.advanced_alpha_probability_vector = [0, 0, 0, 0, 0, 0, 0, 0]
 
-        self.model = [0, 0, 0, 0, 0, 0, 1]
-        self.advanced_model = [0, 0, 0, 0, 0, 0, 0]
-        self.model_confidence = 0
+        self.composite_probability_vector = [0, 0, 0, 0, 1]
+        self.composite_confidence = 0
+        self.advanced_composite_probability_vector = [0, 0, 0, 0, 0, 0, 0, 0]
 
-        self.weighted_model = [0, 0, 0, 0, 0, 0, 1]
-        self.advanced_weighted_model = [0, 0, 0, 0, 0, 0, 0]
+        self.weighted_probability_vector = [0, 0, 0, 0, 1]
         self.weighted_confidence = 0
+        self.advanced_weighted_probability_vector = [0, 0, 0, 0, 0, 0, 0, 0]
 
         # Model variables
         self.alpha_angles = []
@@ -86,8 +89,8 @@ class Vertex:
         self.theta_min = 0
         self.theta_angle_variance = 0
         self.theta_angle_mean = 0
-        self.normalized_peak_gamma = peak_gamma
-        self.normalized_avg_gamma = avg_gamma
+        self.normalized_peak_gamma = 0
+        self.normalized_avg_gamma = 0
         self.redshift = 0
         self.redshift_variance = 0
         self.avg_redshift = 0
@@ -95,16 +98,16 @@ class Vertex:
 
         # Local graph mapping
         self.district = []
-        self.out_neighbourhood = []
-        self.in_neighbourhood = []
-        self.neighbourhood = []
-        self.anti_neighbourhood = []
-        self.partners = []
-        self.semi_partners = []
-        self.out_semi_partners = []
-        self.in_semi_partners = []
+        self.out_neighbourhood = set()
+        self.in_neighbourhood = set()
+        self.neighbourhood = set()
+        self.anti_neighbourhood = set()
+        self.partners = set()
+        self.semi_partners = set()
+        self.out_semi_partners = set()
+        self.in_semi_partners = set()
 
-        # Vertex parameters
+        # Graph parameters
         self.n = 3
         self.in_degree = 0
         self.out_degree = 0
@@ -137,10 +140,10 @@ class Vertex:
         string += '            Prediction: {}\n'.format(self.species_strings[self.species_index])
         string += '            Confidence: {}\n'.format(self.confidence)
         string += '        Alpha model: ['
-        for a in self.alpha_model:
+        for a in self.alpha_probability_vector:
             string += ' {:.3f}'.format(a)
         string += ' ]\n'
-        string += '            Prediction: {}\n'.format(self.species_strings[self.alpha_model.index(max(self.alpha_model))])
+        string += '            Prediction: {}\n'.format(self.species_strings[self.alpha_probability_vector.index(max(self.alpha_probability_vector))])
         string += '            Confidence: {}\n'.format(self.alpha_confidence)
         string += '        Model: ['
         for m in self.model:
@@ -215,18 +218,16 @@ class Vertex:
         self.probability_vector = [a / sum(self.probability_vector) for a in self.probability_vector]
 
     def reset_probability_vector(self, bias=-1):
-        self.probability_vector = [1, 1, 1, 1, 1, 1, 1]
-        if bias == -1:
-            self.probability_vector[6] = 1.1
-        elif bias in [0, 1, 2, 3, 4, 5, 6]:
-            self.probability_vector[bias] = 1.1
+        self.probability_vector = [1, 1, 1, 1, 1]
+        if not bias in [-1, 0, 1, 2, 3, 4]:
+            bias = -1
+        self.probability_vector[bias] = 1.1
         self.normalize_probability_vector()
         self.determine_species_from_probability_vector()
 
     def determine_species_from_probability_vector(self):
         self.species_index = self.probability_vector.index(max(self.probability_vector))
-        self.atomic_species = Vertex.species_strings[self.species_index]
-        self.n = Vertex.species_symmetry[self.species_index]
+        self.n = Vertex.symmetry[Vertex.species_string[self.species_index]]
 
     def determine_species_from_species_index(self):
         self.reset_probability_vector(bias=self.species_index)
@@ -258,7 +259,7 @@ class Vertex:
         return advanced
 
     def increment_species_index(self):
-        if self.species_index == 5 or self.species_index == 6:
+        if self.species_index == 3 or self.species_index == 4:
             return False
         else:
             self.species_index += 1
@@ -324,9 +325,11 @@ class Vertex:
 
 class Arc:
 
-    species_strings = ['Si', 'Cu', 'Zn', 'Al', 'Ag', 'Mg', 'Un']
-    atomic_radii = [117.5, 127.81, 133.25, 143.0, 144.5, 160.0, 200.0]
-    species_symmetry = [3, 3, 3, 4, 4, 5, 3]
+    # Standard AutomAl 6000 class header:
+    advanced_category_string = {0: 'Si_1', 1: 'Si_2', 2: 'Si_3', 3: 'Cu', 4: 'Al_1', 5: 'Al_2', 6: 'Mg_1', 7: 'Mg_2'}
+    species_string = {0: 'Si', 1: 'Cu', 2: 'Al', 3: 'Mg', 4: 'Un'}
+    symmetry = {'Si': 3, 'Cu': 3, 'Al': 4, 'Mg': 5, 'Un': 3}
+    atomic_radii = {'Si': 117.5, 'Cu': 127.81, 'Al': 143.0, 'Mg': 160.0, 'Ag': 144.5, 'Zn': 133.25, 'Un': 200.0}
     al_lattice_const = 404.95
 
     def __init__(self, j, vertex_a, vertex_b):
@@ -336,14 +339,14 @@ class Arc:
         self.vertex_b = vertex_b
 
         if vertex_a.i in vertex_b.out_neighbourhood:
-            self.is_reciprocated = True
+            self.dual_arc = True
         else:
-            self.is_reciprocated = False
+            self.dual_arc = False
 
         if vertex_a.zeta == vertex_b.zeta:
-            self.is_same_plane = True
+            self.co_planar = True
         else:
-            self.is_same_plane = False
+            self.co_planar = False
 
         self.im_separation = 0
         self.im_projected_separation = 0
@@ -363,23 +366,24 @@ class Arc:
         pos_j = self.vertex_b.spatial_pos()
         self.spatial_separation = np.sqrt((pos_i[0] - pos_j[0]) ** 2 + (pos_i[1] - pos_j[1]) ** 2 + (pos_i[2] - pos_j[2]) ** 2)
         self.spatial_projected_separation = np.sqrt((pos_i[0] - pos_j[0]) ** 2 + (pos_i[1] - pos_j[1]) ** 2)
-        radii_1 = self.atomic_radii[self.vertex_a.species_index]
-        radii_2 = self.atomic_radii[self.vertex_b.species_index]
+        radii_1 = self.atomic_radii[self.species_string[self.vertex_a.species_index]]
+        radii_2 = self.atomic_radii[self.species_string[self.vertex_a.species_index]]
         self.hard_sphere_separation = radii_1 + radii_2
         self.redshift = self.hard_sphere_separation - self.spatial_separation
 
 
 class AtomicGraph:
 
-    species_strings = ['Si', 'Cu', 'Zn', 'Al', 'Ag', 'Mg', 'Un']
-    atomic_radii = [117.5, 127.81, 133.25, 143.0, 144.5, 160.0, 200.0]
-    species_symmetry = [3, 3, 3, 4, 4, 5, 3]
+    # Standard AutomAl 6000 class header:
+    advanced_category_string = {0: 'Si_1', 1: 'Si_2', 2: 'Si_3', 3: 'Cu', 4: 'Al_1', 5: 'Al_2', 6: 'Mg_1', 7: 'Mg_2'}
+    species_string = {0: 'Si', 1: 'Cu', 2: 'Al', 3: 'Mg', 4: 'Un'}
+    symmetry = {'Si': 3, 'Cu': 3, 'Al': 4, 'Mg': 5, 'Un': 3}
+    atomic_radii = {'Si': 117.5, 'Cu': 127.81, 'Al': 143.0, 'Mg': 160.0, 'Ag': 144.5, 'Zn': 133.25, 'Un': 200.0}
     al_lattice_const = 404.95
 
     def __init__(self, scale, active_model=None, district_size=8):
 
         self.vertices = []
-        self.vertex_indices = []
         self.arcs = []
         self.arc_indices = []
         self.anti_arcs = []
@@ -394,7 +398,7 @@ class AtomicGraph:
         self.district_size = district_size
 
         if active_model is None:
-            self.active_model = statistics.VertexDataManager.load('default_model')
+            self.active_model = 'default_model'
         else:
             self.active_model = active_model
 
@@ -429,17 +433,21 @@ class AtomicGraph:
         string = self.vertices[i].report()
         return string
 
-    def add_vertex(self, vertex):
-        self.vertices.append(vertex)
-        if not vertex.i == len(self.vertices) - 1:
-            logger.error('Vertex index out of sync! Overwriting index! (This is indicative of something going awry!)')
-            vertex.i = len(self.vertices) - 1
-        self.vertex_indices.append(vertex.i)
+    def add_vertex(self, new_vertex):
+        for i, vertex in enumerate(self.vertices):
+            if vertex.void:
+                vertex = new_vertex
+                vertex.i = i
+                break
+        else:
+            self.vertices.append(new_vertex)
+            if not new_vertex.i == len(self.vertices) - 1:
+                logger.warning('Vertex index out of sync! Overwriting index! (This is indicative of something going awry!)')
+                new_vertex.i = len(self.vertices) - 1
         self.order += 1
 
     def remove_vertex(self, i):
         logger.info('Removing vertex {}'.format(i))
-
         # Find all vertices that have i in its district and re_write their districts:
         for vertex in self.vertices:
             if i in vertex.district:
@@ -451,11 +459,8 @@ class AtomicGraph:
                         break
 
         # Replace vertex with void vertex
-        new_vertex = Vertex(i, 0, 0, self.vertices[i].r, self.vertices[i].peak_gamma, self.vertices[i].avg_gamma, self.scale, void=True)
-        new_vertex.is_edge_column = True
-        new_vertex.show_in_overlay = False
-        new_vertex.is_set_by_user = True
-        self.vertices[i] = new_vertex
+        self.vertices[i].void = True
+        self.num_void_vertices += 1
 
         # Remap district sets all over the graph
         self.map_districts()
@@ -477,13 +482,6 @@ class AtomicGraph:
         for index in vertex_indices:
             vertices.append(self.vertices[index])
         return vertices
-
-    def get_only_non_void_vertex_indices(self):
-        non_void = []
-        for vertex in self.vertices:
-            if not vertex.void:
-                non_void.append(vertex.i)
-        return non_void
 
     def get_alpha_angles(self, i, prioritize_friendly=False):
         pivot = (self.vertices[i].im_coor_x, self.vertices[i].im_coor_y)

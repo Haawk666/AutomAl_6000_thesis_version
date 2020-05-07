@@ -300,7 +300,7 @@ class VertexDataManager:
     def collect_data(self):
         data = []
         for file in self.files.splitlines(keepends=False):
-            instance = core.SuchSoftware.load(file)
+            instance = core.Project.load(file)
             image_data = instance.graph.calc_condensed_property_data(filter_=self.filter_, recalc=self.recalc, keys=self.keys)
             data += image_data
         return data

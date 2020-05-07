@@ -1540,7 +1540,7 @@ class ControlWindow(QtWidgets.QWidget):
             self.lbl_column_y_pos.setText('y: {}'.format(vertex.im_coor_y))
             self.lbl_column_peak_gamma.setText('Peak gamma: {}'.format(vertex.peak_gamma))
             self.lbl_column_avg_gamma.setText('Avg gamma: {}'.format(vertex.avg_gamma))
-            self.lbl_column_species.setText('Atomic species: {}'.format(vertex.atomic_species))
+            self.lbl_column_species.setText('Atomic species: VOID')
             self.lbl_column_level.setText('Level: {}'.format(vertex.zeta))
             self.lbl_confidence.setText('Confidence: VOID')
             self.lbl_symmetry_confidence.setText('Symmetry confidence: VOID')
@@ -1610,7 +1610,7 @@ class ControlWindow(QtWidgets.QWidget):
             self.lbl_std_4.setText('Standard deviation 4: ')
             self.lbl_std_5.setText('Standard deviation 5: ')
             self.lbl_std_8.setText('Standard deviation 8: ')
-            self.lbl_cert_threshold.setText('Certainty threshold: {}'.format(self.ui_obj.project_instance.certainty_threshold))
+            self.lbl_cert_threshold.setText('Certainty threshold: VOID')
 
             self.lbl_atomic_radii.setText('Approx atomic radii (pixels): {}'.format(self.ui_obj.project_instance.r))
             self.lbl_overhead_radii.setText('Overhead (pixels): {}'.format(self.ui_obj.project_instance.overhead))
@@ -1619,7 +1619,7 @@ class ControlWindow(QtWidgets.QWidget):
             self.lbl_search_size.setText('Search size: {}'.format(self.ui_obj.project_instance.search_size))
             self.lbl_scale.setText('Scale (pm / pixel): {}'.format(self.ui_obj.project_instance.scale))
 
-            self.lbl_alloy.setText(self.ui_obj.project_instance.alloy_string())
+            self.lbl_alloy.setText(self.ui_obj.project_instance.alloy_string[self.ui_obj.project_instance.alloy])
 
             if self.ui_obj.selected_column == -1:
                 self.deselect_column()

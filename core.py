@@ -12,6 +12,7 @@ import statistics
 import numpy as np
 import dm3_lib as dm3
 import sys
+import copy
 import pickle
 import logging
 # Instantiate logger
@@ -19,7 +20,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
-class SuchSoftware:
+class Project:
     """The main API through which to build and access the data extracted from HAADF-STEM images.
 
     :param filename_full: The full path and/or relative path and filename of the .dm3 image to import. A project can
@@ -96,17 +97,21 @@ class SuchSoftware:
     """
 
     # Version
-    version = [0, 0, 15]
+    version = [0, 1, 0]
 
-    # Number of elements in the probability vectors
-    num_selections = 7
+    # District size
+    district_size = 8
 
-    # Number of closest neighbours that are included in local search-spaces
-    map_size = 8
+    alloy_string = {
+        0: 'Al-Mg-Si-(Cu)',
+        1: 'Al-Mg-Si'
+    }
 
-    species_strings = ['Si', 'Cu', 'Zn', 'Al', 'Ag', 'Mg', 'Un']
-    atomic_radii = [117.5, 127.81, 133.25, 143.0, 144.5, 160.0, 200.0]
-    species_symmetry = [3, 3, 3, 4, 4, 5, 3]
+    # Standard AutomAl 6000 class header:
+    advanced_category_string = {0: 'Si_1', 1: 'Si_2', 2: 'Si_3', 3: 'Cu', 4: 'Al_1', 5: 'Al_2', 6: 'Mg_1', 7: 'Mg_2'}
+    species_string = {0: 'Si', 1: 'Cu', 2: 'Al', 3: 'Mg', 4: 'Un'}
+    symmetry = {'Si': 3, 'Cu': 3, 'Al': 4, 'Mg': 5, 'Un': 3}
+    atomic_radii = {'Si': 117.5, 'Cu': 127.81, 'Al': 143.0, 'Mg': 160.0, 'Ag': 144.5, 'Zn': 133.25, 'Un': 200.0}
     al_lattice_const = 404.95
 
     def __init__(self, filename_full, debug_obj=None):
@@ -129,57 +134,23 @@ class SuchSoftware:
         # 0 = Al-Si-Mg-Cu
         # 1 = Al-Si-Mg
         self.alloy = 0
-        self.alloy_mat = np.ndarray([SuchSoftware.num_selections], dtype=int)
-        self.set_alloy_mat()
 
+        self.im_meta_data = {}
         if not (filename_full == 'Empty' or filename_full == 'empty'):
             dm3f = dm3.DM3(self.filename_full)
             self.im_mat = dm3f.imagedata
-            (self.scale, junk) = dm3f.pxsize
-            self.scale = 1000 * self.scale
+            (self.scale, _) = dm3f.pxsize
+            self.scale = 1000 * self.scale  # Scale is now in nm/pixel
             self.im_mat = utils.normalize_static(self.im_mat)
             (self.im_height, self.im_width) = self.im_mat.shape
             self.fft_im_mat = utils.gen_fft(self.im_mat)
 
         # Data matrices:
-        self.search_mat = self.im_mat
-        self.column_centre_mat = np.zeros((self.im_height, self.im_width, 2), dtype=type(self.im_mat))
+        self.search_mat = copy.deepcopy(self.im_mat)
+        self.column_centre_mat = np.zeros((self.im_height, self.im_width, 2))
 
         # Counting and statistical variables
         self.num_columns = 0
-        self.num_precipitate_columns = 0
-
-        self.num_al = 0
-        self.num_mg = 0
-        self.num_si = 0
-        self.num_cu = 0
-        self.num_ag = 0
-        self.num_zn = 0
-        self.num_un = 0
-
-        self.num_precipitate_si = 0
-        self.num_precipitate_cu = 0
-        self.num_precipitate_zn = 0
-        self.num_precipitate_al = 0
-        self.num_precipitate_ag = 0
-        self.num_precipitate_mg = 0
-        self.num_precipitate_un = 0
-
-        self.number_percentage_si = 0.0
-        self.number_percentage_cu = 0.0
-        self.number_percentage_zn = 0.0
-        self.number_percentage_al = 0.0
-        self.number_percentage_ag = 0.0
-        self.number_percentage_mg = 0.0
-        self.number_percentage_un = 0.0
-
-        self.precipitate_number_percentage_si = 0.0
-        self.precipitate_number_percentage_cu = 0.0
-        self.precipitate_number_percentage_zn = 0.0
-        self.precipitate_number_percentage_al = 0.0
-        self.precipitate_number_percentage_ag = 0.0
-        self.precipitate_number_percentage_mg = 0.0
-        self.precipitate_number_percentage_un = 0.0
 
         # These are hyper-parameters of the algorithms. See the documentation.
         self.threshold = 0.2586
@@ -188,7 +159,7 @@ class SuchSoftware:
         self.overhead = int(6 * (self.r / 10))
 
         # Initialize an empty graph
-        self.graph = graph_2.AtomicGraph(self.scale, statistics.VertexDataManager.load('default_model'))
+        self.graph = graph_2.AtomicGraph(self.scale, None)
 
         logger.info('Generated instance from {}'.format(filename_full))
 
@@ -205,57 +176,12 @@ class SuchSoftware:
             string += '    ' + line
         string += '    General:\n'
         string += '        Number of columns: {}\n'.format(self.num_columns)
-        string += '        Number of particle columns: {}\n'.format(self.num_precipitate_columns)
-        string += '    Image composition:\n'
-        string += '        Number of Si-columns: {}\n'.format(self.num_si)
-        string += '        Number of Cu-columns: {}\n'.format(self.num_cu)
-        # string += '        Number of Zn-columns: {}\n'.format(self.num_zn)
-        string += '        Number of Al-columns: {}\n'.format(self.num_al)
-        # string += '        Number of Ag-columns: {}\n'.format(self.num_ag)
-        string += '        Number of Mg-columns: {}\n'.format(self.num_mg)
-        string += '        Number of Un-columns: {}\n'.format(self.num_un)
-        string += '        Number percentage of Si: {:.4f}\n'.format(self.number_percentage_si)
-        string += '        Number percentage of Cu: {:.4f}\n'.format(self.number_percentage_cu)
-        # string += '        Number percentage of Zn: {:.4f}\n'.format(self.number_percentage_zn)
-        string += '        Number percentage of Al: {:.4f}\n'.format(self.number_percentage_al)
-        # string += '        Number percentage of Ag: {:.4f}\n'.format(self.number_percentage_ag)
-        string += '        Number percentage of Mg: {:.4f}\n'.format(self.number_percentage_mg)
-        string += '        Number percentage of Un: {:.4f}\n'.format(self.number_percentage_un)
-        string += '    Particle composition:\n'
-        string += '        Number of precipitate Si-columns: {}\n'.format(self.num_precipitate_si)
-        string += '        Number of precipitate Cu-columns: {}\n'.format(self.num_precipitate_cu)
-        # string += '        Number of precipitate Zn-columns: {}\n'.format(self.num_precipitate_zn)
-        string += '        Number of precipitate Al-columns: {}\n'.format(self.num_precipitate_al)
-        # string += '        Number of precipitate Ag-columns: {}\n'.format(self.num_precipitate_ag)
-        string += '        Number of precipitate Mg-columns: {}\n'.format(self.num_precipitate_mg)
-        string += '        Number of precipitate Un-columns: {}\n'.format(self.num_precipitate_un)
-        string += '        Number percentage of precipitate Si: {:.4f}\n'.format(self.precipitate_number_percentage_si)
-        string += '        Number percentage of precipitate Cu: {:.4f}\n'.format(self.precipitate_number_percentage_cu)
-        # string += '        Number percentage of precipitate Zn: {:.4f}\n'.format(self.precipitate_number_percentage_zn)
-        string += '        Number percentage of precipitate Al: {:.4f}\n'.format(self.precipitate_number_percentage_al)
-        # string += '        Number percentage of precipitate Ag: {:.4f}\n'.format(self.precipitate_number_percentage_ag)
-        string += '        Number percentage of precipitate Mg: {:.4f}\n'.format(self.precipitate_number_percentage_mg)
-        string += '        Number percentage of precipitate Un: {:.4f}\n'.format(self.precipitate_number_percentage_un)
 
         if supress_log:
             return string
         else:
             logger.info(string)
             return None
-
-    def alloy_string(self):
-        """Get a string representation of the currently active alloy matrix.
-
-        :return: string representation of the currently active alloy
-        :rtype: string
-
-        """
-        if self.alloy == 0:
-            return 'Alloy: Al-Mg-Si-(Cu)'
-        elif self.alloy == 1:
-            return 'Alloy: Al-Mg-Si'
-        else:
-            return 'Alloy: Unknown'
 
     def vertex_report(self, i, supress_log=False):
         string = self.graph.vertices[i].report()
@@ -264,38 +190,6 @@ class SuchSoftware:
         else:
             logger.info(string)
             return None
-
-    def set_alloy_mat(self):
-        """Set the alloy vector field of the project, :code:`self.alloy_mat`, based on the value of :code:`self.alloy`.
-
-        This function will set the alloy vector based on the field :code:`self.alloy`. The interpretation of the alloy vector is
-        that each element is 0 or 1 depending on weather the corresponding element is present in the image. The
-        corresponding elements are [Si, Cu, Zn, Al, Ag, Mg, Un], where Un is a placeholder for an *Unknown* element. As
-        an example, the alloy vector for Al-Mg-Si would be [1, 0, 0, 1, 0, 1, 0]. The currently implemented alloys are:
-
-        ===================     ==================================  ===============
-        :code:`self.alloy`      :code:`self.alloy_mat`              Alloy
-        ===================     ==================================  ===============
-        0                       [1, 1, 0, 1, 0, 1, 0]               Al-Mg-Si-(Cu)
-        1                       [1, 0, 0, 1, 0, 1, 0]               Al-Mg-Si
-        ===================     ==================================  ===============
-
-        """
-
-        if self.alloy == 0:
-            for x in range(0, SuchSoftware.num_selections):
-                if x == 2 or x == 4:
-                    self.alloy_mat[x] = 0
-                else:
-                    self.alloy_mat[x] = 1
-        elif self.alloy == 1:
-            for x in range(0, SuchSoftware.num_selections):
-                if x == 2 or x == 4 or x == 1:
-                    self.alloy_mat[x] = 0
-                else:
-                    self.alloy_mat[x] = 1
-        else:
-            logger.error('Could not set alloy vector. Unknown alloy')
 
     def save(self, filename_full):
         """Save the current project as a pickle file.
@@ -323,7 +217,7 @@ class SuchSoftware:
         :type filename_full: string
 
         :return: project instance.
-        :rtype: core.SuchSoftware
+        :rtype: core.Project
 
         """
         with open(filename_full, 'rb') as f:
@@ -333,9 +227,9 @@ class SuchSoftware:
                 obj = None
                 logger.error('Failed to load save-file!')
             else:
-                if not obj.version_saved == SuchSoftware.version:
+                if not obj.version_saved == Project.version:
                     logger.info('Attempted to load un-compatible save-file. Running conversion script...')
-                    obj = compatibility.convert(obj, obj.version_saved, SuchSoftware.version)
+                    obj = compatibility.convert(obj, obj.version_saved, Project.version)
                     if obj is None:
                         logger.error('Conversion unsuccessful!')
                         logger.error('Failed to load save-file!')
@@ -402,7 +296,6 @@ class SuchSoftware:
                 pos[1]) + ', ' + str(pos[0]) + ')')
 
             self.num_columns += 1
-            self.num_un += 1
             counter += 1
 
             if search_type == 's':
@@ -1041,125 +934,7 @@ class SuchSoftware:
         """Summarize current stats about the project file.
 
         """
-
-        logger.info('Summarizing stats...')
-
-        self.number_percentage_si = 0.0
-        self.number_percentage_cu = 0.0
-        self.number_percentage_zn = 0.0
-        self.number_percentage_al = 0.0
-        self.number_percentage_ag = 0.0
-        self.number_percentage_mg = 0.0
-        self.number_percentage_un = 0.0
-
-        self.precipitate_number_percentage_si = 0.0
-        self.precipitate_number_percentage_cu = 0.0
-        self.precipitate_number_percentage_zn = 0.0
-        self.precipitate_number_percentage_al = 0.0
-        self.precipitate_number_percentage_ag = 0.0
-        self.precipitate_number_percentage_mg = 0.0
-        self.precipitate_number_percentage_un = 0.0
-
-        self.num_si = 0
-        self.num_cu = 0
-        self.num_zn = 0
-        self.num_al = 0
-        self.num_ag = 0
-        self.num_mg = 0
-        self.num_un = 0
-
-        self.num_precipitate_si = 0
-        self.num_precipitate_cu = 0
-        self.num_precipitate_zn = 0
-        self.num_precipitate_al = 0
-        self.num_precipitate_ag = 0
-        self.num_precipitate_mg = 0
-        self.num_precipitate_un = 0
-
-        self.num_precipitate_columns = 0
-
-        if self.num_columns > 0:
-
-            for vertex in self.graph.vertices:
-                if not vertex.is_edge_column and not vertex.void:
-
-                    if vertex.species_index == 0:
-                        self.num_si += 1
-                        self.number_percentage_si += 1
-                        if vertex.is_in_precipitate:
-                            self.num_precipitate_columns += 1
-                            self.num_precipitate_si += 1
-                            self.precipitate_number_percentage_si += 1
-                    elif vertex.species_index == 1:
-                        self.num_cu += 1
-                        self.number_percentage_cu += 1
-                        if vertex.is_in_precipitate:
-                            self.num_precipitate_columns += 1
-                            self.num_precipitate_cu += 1
-                            self.precipitate_number_percentage_cu += 1
-                    elif vertex.species_index == 2:
-                        self.num_zn += 1
-                        self.number_percentage_zn += 1
-                        if vertex.is_in_precipitate:
-                            self.num_precipitate_columns += 1
-                            self.num_precipitate_zn += 1
-                            self.precipitate_number_percentage_zn += 1
-                    elif vertex.species_index == 3:
-                        self.num_al += 1
-                        self.number_percentage_al += 1
-                        if vertex.is_in_precipitate:
-                            self.num_precipitate_columns += 1
-                            self.num_precipitate_al += 1
-                            self.precipitate_number_percentage_al += 1
-                    elif vertex.species_index == 4:
-                        self.num_ag += 1
-                        self.number_percentage_ag += 1
-                        if vertex.is_in_precipitate:
-                            self.num_precipitate_columns += 1
-                            self.num_precipitate_ag += 1
-                            self.precipitate_number_percentage_ag += 1
-                    elif vertex.species_index == 5:
-                        self.num_mg += 1
-                        self.number_percentage_mg += 1
-                        if vertex.is_in_precipitate:
-                            self.num_precipitate_columns += 1
-                            self.num_precipitate_mg += 1
-                            self.precipitate_number_percentage_mg += 1
-                    elif vertex.species_index == 6:
-                        self.num_un += 1
-                        self.number_percentage_un += 1
-                        if vertex.is_in_precipitate:
-                            self.num_precipitate_columns += 1
-                            self.num_precipitate_un += 1
-                            self.precipitate_number_percentage_un += 1
-                    else:
-                        logger.warning('Unexpected behaviour in core.SuchSoftware.summarize_stats()')
-
-            self.number_percentage_si = self.number_percentage_si / self.num_columns
-            self.number_percentage_cu = self.number_percentage_cu / self.num_columns
-            self.number_percentage_zn = self.number_percentage_zn / self.num_columns
-            self.number_percentage_al = self.number_percentage_al / self.num_columns
-            self.number_percentage_ag = self.number_percentage_ag / self.num_columns
-            self.number_percentage_mg = self.number_percentage_mg / self.num_columns
-            self.number_percentage_un = self.number_percentage_un / self.num_columns
-
-            if not self.num_precipitate_columns == 0:
-                self.precipitate_number_percentage_si =\
-                    self.precipitate_number_percentage_si / self.num_precipitate_columns
-                self.precipitate_number_percentage_cu =\
-                    self.precipitate_number_percentage_cu / self.num_precipitate_columns
-                self.precipitate_number_percentage_zn =\
-                    self.precipitate_number_percentage_zn / self.num_precipitate_columns
-                self.precipitate_number_percentage_al =\
-                    self.precipitate_number_percentage_al / self.num_precipitate_columns
-                self.precipitate_number_percentage_ag =\
-                    self.precipitate_number_percentage_ag / self.num_precipitate_columns
-                self.precipitate_number_percentage_mg =\
-                    self.precipitate_number_percentage_mg / self.num_precipitate_columns
-                self.precipitate_number_percentage_un =\
-                    self.precipitate_number_percentage_un / self.num_precipitate_columns
-
-        logger.info('Collected stats.')
+        pass
 
     def redraw_search_mat(self):
         """Redraw the search matrix.
@@ -1185,22 +960,5 @@ class SuchSoftware:
                 self.column_centre_mat[int(vertex.im_coor_y), int(vertex.im_coor_x), 0] = 1
                 self.column_centre_mat[int(vertex.im_coor_y), int(vertex.im_coor_x), 1] = vertex.i
 
-    def reset_graph(self):
-        """Reset the graph.
-
-        """
-        self.graph = graph_2.AtomicGraph(self.scale)
-        self.num_columns = 0
-        self.redraw_centre_mat()
-        self.redraw_circumference_mat()
-        self.redraw_search_mat()
-        self.summarize_stats()
-
-    def reset_vertex_properties(self):
-        """Reset all vertex properties.
-
-        """
-        self.graph.reset_vertex_properties()
-        self.summarize_stats()
 
 

@@ -1,5 +1,4 @@
 """Module containing the graph untangling algorithm by Haakon Tvedt."""
-import graph
 import graph_2
 import logging
 # Instantiate logger:

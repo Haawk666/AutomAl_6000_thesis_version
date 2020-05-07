@@ -141,7 +141,7 @@ class MainUI(QtWidgets.QMainWindow):
         # Intro
         logger.info('Welcome to AutomAl 6000 by Haakon Tvedt')
         logger.info('GUI version: {}.{}.{}'.format(self.version[0], self.version[1], self.version[2]))
-        logger.info('core version: {}.{}.{}'.format(core.SuchSoftware.version[0], core.SuchSoftware.version[1], core.SuchSoftware.version[2]))
+        logger.info('core version: {}.{}.{}'.format(core.Project.version[0], core.Project.version[1], core.Project.version[2]))
         logger.info('Build version: Alpha 1.0\n------------------------')
 
     # ----------
@@ -374,7 +374,7 @@ class MainUI(QtWidgets.QMainWindow):
         filename = QtWidgets.QFileDialog.getOpenFileName(self, 'Select dm3', '')
         if filename[0]:
             self.sys_message('Working...')
-            self.project_instance = core.SuchSoftware(filename[0])
+            self.project_instance = core.Project(filename[0])
             self.control_instance = None
             self.update_display()
         else:
@@ -385,7 +385,7 @@ class MainUI(QtWidgets.QMainWindow):
         if filename[0]:
             logger.info('Opening file {}'.format(filename[0]))
             self.sys_message('Working...')
-            self.project_instance = core.SuchSoftware.load(filename[0])
+            self.project_instance = core.Project.load(filename[0])
             if self.project_instance is not None:
                 if self.control_window.debug_box.visible:
                     self.project_instance.debug_mode = True
@@ -393,7 +393,6 @@ class MainUI(QtWidgets.QMainWindow):
                 else:
                     self.project_instance.debug_mode = False
                     self.terminal_window.handler.set_mode(False)
-                self.project_instance.graph.active_model = statistics.VertexDataManager.load(self.project_instance.graph.active_model.save_filename)
                 self.control_instance = None
                 self.savefile = filename[0]
                 self.update_display()
@@ -625,7 +624,7 @@ class MainUI(QtWidgets.QMainWindow):
     def menu_set_control_file_trigger(self):
         filename = QtWidgets.QFileDialog.getOpenFileName(self, 'Open control file', '')
         if filename[0]:
-            self.control_instance = core.SuchSoftware.load(filename[0])
+            self.control_instance = core.Project.load(filename[0])
             if self.control_instance is not None:
                 self.project_instance.debug_mode = False
             else:
@@ -1077,12 +1076,12 @@ class MainUI(QtWidgets.QMainWindow):
         # GUI_elements.PlotWizard(ui_obj=self)
 
     def btn_print_distances_trigger(self):
-        si_radii = core.SuchSoftware.si_radii
-        cu_radii = core.SuchSoftware.cu_radii
-        zn_radii = core.SuchSoftware.zn_radii
-        al_radii = core.SuchSoftware.al_radii
-        ag_radii = core.SuchSoftware.ag_radii
-        mg_radii = core.SuchSoftware.mg_radii
+        si_radii = core.Project.si_radii
+        cu_radii = core.Project.cu_radii
+        zn_radii = core.Project.zn_radii
+        al_radii = core.Project.al_radii
+        ag_radii = core.Project.ag_radii
+        mg_radii = core.Project.mg_radii
 
         si_si = 2 * si_radii
         si_cu = si_radii + cu_radii
