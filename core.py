@@ -149,7 +149,7 @@ class Project:
         self.search_mat = copy.deepcopy(self.im_mat)
         self.column_centre_mat = np.zeros((self.im_height, self.im_width, 2))
 
-        # Counting and statistical variables
+        # Counting and statistical variables.
         self.num_columns = 0
 
         # These are hyper-parameters of the algorithms. See the documentation.
@@ -946,9 +946,9 @@ class Project:
             self.search_mat = utils.gen_framed_mat(self.search_mat, self.r + self.overhead)
             for i in range(0, self.num_columns):
                 self.search_mat = utils.delete_pixels(self.search_mat,
-                                                       self.graph.vertices[i].im_coor_x + self.r + self.overhead,
-                                                       self.graph.vertices[i].im_coor_y + self.r + self.overhead,
-                                                       self.r + self.overhead)
+                                                      int(self.graph.vertices[i].im_coor_x + self.r + self.overhead),
+                                                      int(self.graph.vertices[i].im_coor_y + self.r + self.overhead),
+                                                      self.r + self.overhead)
             self.search_mat = utils.gen_de_framed_mat(self.search_mat, self.r + self.overhead)
 
     def redraw_centre_mat(self):

@@ -36,6 +36,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.previous_selected_column = -1
         self.selection_history = []
         self.perturb_mode = False
+        self.lock_views = False
 
         # Create menu bar
         self.menu = GUI_elements.MenuBar(self.menuBar(), self)
@@ -89,15 +90,15 @@ class MainUI(QtWidgets.QMainWindow):
         self.gs_fft = GUI_elements.RawImage(ui_obj=self, background=self.no_graphic)
 
         # gv = QGraphicsView
-        self.gv_raw_image = GUI_elements.ZoomGraphicsView(self.gs_raw_image, ui_obj=self, trigger_func=self.key_press_trigger)
-        self.gv_atomic_positions = GUI_elements.ZoomGraphicsView(self.gs_atomic_positions, ui_obj=self, trigger_func=self.key_press_trigger)
-        self.gv_overlay_composition = GUI_elements.ZoomGraphicsView(self.gs_overlay_composition, ui_obj=self, trigger_func=self.key_press_trigger)
-        self.gv_atomic_graph = GUI_elements.ZoomGraphicsView(self.gs_atomic_graph, ui_obj=self, trigger_func=self.key_press_trigger)
-        self.gv_atomic_sub_graph = GUI_elements.ZoomGraphicsView(self.gs_atomic_sub_graph, ui_obj=self, trigger_func=self.key_press_trigger)
-        self.gv_anti_graph = GUI_elements.ZoomGraphicsView(self.gs_anti_graph, ui_obj=self, trigger_func=self.key_press_trigger)
-        self.gv_info_graph = GUI_elements.ZoomGraphicsView(self.gs_info_graph, ui_obj=self, trigger_func=self.key_press_trigger)
-        self.gv_search_matrix = GUI_elements.ZoomGraphicsView(self.gs_search_matrix, ui_obj=self, trigger_func=self.key_press_trigger)
-        self.gv_fft = GUI_elements.ZoomGraphicsView(self.gs_fft, ui_obj=self, trigger_func=self.key_press_trigger)
+        self.gv_raw_image = GUI_elements.ZoomGraphicsView(self.gs_raw_image, ui_obj=self, trigger_func=self.key_press_trigger, tab_index=0)
+        self.gv_atomic_positions = GUI_elements.ZoomGraphicsView(self.gs_atomic_positions, ui_obj=self, trigger_func=self.key_press_trigger, tab_index=1)
+        self.gv_overlay_composition = GUI_elements.ZoomGraphicsView(self.gs_overlay_composition, ui_obj=self, trigger_func=self.key_press_trigger, tab_index=2)
+        self.gv_atomic_graph = GUI_elements.ZoomGraphicsView(self.gs_atomic_graph, ui_obj=self, trigger_func=self.key_press_trigger, tab_index=3)
+        self.gv_atomic_sub_graph = GUI_elements.ZoomGraphicsView(self.gs_atomic_sub_graph, ui_obj=self, trigger_func=self.key_press_trigger, tab_index=4)
+        self.gv_anti_graph = GUI_elements.ZoomGraphicsView(self.gs_anti_graph, ui_obj=self, trigger_func=self.key_press_trigger, tab_index=5)
+        self.gv_info_graph = GUI_elements.ZoomGraphicsView(self.gs_info_graph, ui_obj=self, trigger_func=self.key_press_trigger, tab_index=6)
+        self.gv_search_matrix = GUI_elements.ZoomGraphicsView(self.gs_search_matrix, ui_obj=self, trigger_func=self.key_press_trigger, tab_index=7)
+        self.gv_fft = GUI_elements.ZoomGraphicsView(self.gs_fft, ui_obj=self, trigger_func=self.key_press_trigger, tab_index=8)
 
         self.gv_list = [
                             self.gv_raw_image,
@@ -158,21 +159,19 @@ class MainUI(QtWidgets.QMainWindow):
             # Update control window info:
             self.control_window.lbl_column_species.setText(
                 'Atomic species: ' + self.project_instance.graph.vertices[self.selected_column].atomic_species)
-            self.control_window.lbl_confidence.setText(
-                'Confidence: ' + str(self.project_instance.graph.vertices[self.selected_column].confidence))
             self.control_window.draw_histogram()
             self.control_window.lbl_prob_vector.setText('Probability vector: {}'.format(self.project_instance.graph.vertices[self.selected_column].probability_vector))
 
-    def set_level(self, level):
+    def set_level(self, zeta):
         """Set level of selected column"""
         if self.project_instance is not None and not self.selected_column == -1:
             # Update relevant graphics:
-            self.project_instance.graph.vertices[self.selected_column].level = level
+            self.project_instance.graph.vertices[self.selected_column].zeta = zeta
             self.gs_overlay_composition.interactive_overlay_objects[self.selected_column].set_style()
             self.gs_atomic_graph.interactive_vertex_objects[self.selected_column].set_style()
             self.gs_atomic_graph.redraw_neighbourhood(self.selected_column)
             # Update control window info:
-            self.control_window.lbl_column_level.setText('Level: {}'.format(level))
+            self.control_window.lbl_column_level.setText('Level: {}'.format(zeta))
 
     # ----------
     # Self state methods:
@@ -1180,6 +1179,13 @@ class MainUI(QtWidgets.QMainWindow):
     # ----------
     # Checkbox triggers:
     # ----------
+
+    def chb_lock_views_trigger(self, state):
+        if state:
+            self.btn_align_views_trigger()
+            self.lock_views = True
+        else:
+            self.lock_views = False
 
     def chb_toggle_positions_trigger(self, state):
         if self.project_instance is not None:

@@ -65,6 +65,7 @@ btn_pca = 'Launch a principle component analysis (PCA) from a wizard'
 btn_calc_models = 'Calculate model parameters with the help of a wizard'
 btn_plot_models = 'Display various plots of any of the constructed statistical models'
 
+chb_lock_views = 'Lock the different tabs together to always display the same area'
 chb_toggle_positions = 'Toggle the overlay of atomic positions'
 chb_show_graphic_updates = 'Determines whether the graphical representation of the data will update while the\n' \
                            'algorithm is running. This will slow down the process significantly, but could\n' \
@@ -155,7 +156,8 @@ control_window_btn_list = [btn_show_stats,
                            btn_calc_models,
                            btn_plot_models]
 
-control_window_chb_list = [chb_toggle_positions,
+control_window_chb_list = [chb_lock_views,
+                           chb_toggle_positions,
                            chb_show_graphic_updates,
                            chb_precipitate_column,
                            chb_show,

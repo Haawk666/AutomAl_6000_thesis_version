@@ -33,6 +33,7 @@ class Vertex:
         self.zeta = zeta
         self.peak_gamma = 0
         self.avg_gamma = 0
+        self.atomic_species = 'Un'
         self.species_index = species_index
         self.species_variant = 0
         self.advanced_category_index = 0
@@ -227,7 +228,8 @@ class Vertex:
 
     def determine_species_from_probability_vector(self):
         self.species_index = self.probability_vector.index(max(self.probability_vector))
-        self.n = Vertex.symmetry[Vertex.species_string[self.species_index]]
+        self.atomic_species = Vertex.species_string[self.species_index]
+        self.n = Vertex.symmetry[self.atomic_species]
 
     def determine_species_from_species_index(self):
         self.reset_probability_vector(bias=self.species_index)
@@ -461,10 +463,18 @@ class AtomicGraph:
         # Replace vertex with void vertex
         self.vertices[i].void = True
         self.num_void_vertices += 1
+        self.reduced_order -= 1
 
         # Remap district sets all over the graph
         self.map_districts()
         self.summarize_stats()
+
+    def get_non_void_vertices(self):
+        vertices = []
+        for vertex in self.vertices:
+            if not vertex.void:
+                vertices.append(vertex)
+        return vertices
 
     def get_arc(self, i, j):
         result = None

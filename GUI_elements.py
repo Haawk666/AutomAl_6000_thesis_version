@@ -77,12 +77,13 @@ class AtomicPositions(QtWidgets.QGraphicsScene):
         self.interactive_position_objects = []
         if self.ui_obj.project_instance is not None:
             for vertex in self.ui_obj.project_instance.graph.vertices:
-                self.interactive_position_objects.append(GUI_custom_components.InteractivePosColumn(self.ui_obj, vertex.i, 2 * vertex.r))
-                self.addItem(self.interactive_position_objects[-1])
-                if not self.ui_obj.control_window.chb_toggle_positions.isChecked():
-                    self.interactive_position_objects[-1].hide()
-                else:
-                    self.interactive_position_objects[-1].show()
+                if not vertex.void:
+                    self.interactive_position_objects.append(GUI_custom_components.InteractivePosColumn(self.ui_obj, vertex.i, 2 * vertex.r))
+                    self.addItem(self.interactive_position_objects[-1])
+                    if not self.ui_obj.control_window.chb_toggle_positions.isChecked():
+                        self.interactive_position_objects[-1].hide()
+                    else:
+                        self.interactive_position_objects[-1].show()
 
 
 class OverlayComposition(QtWidgets.QGraphicsScene):
@@ -124,12 +125,13 @@ class OverlayComposition(QtWidgets.QGraphicsScene):
         self.interactive_overlay_objects = []
         if self.ui_obj.project_instance is not None:
             for vertex in self.ui_obj.project_instance.graph.vertices:
-                self.interactive_overlay_objects.append(GUI_custom_components.InteractiveOverlayColumn(self.ui_obj, vertex.i, vertex.r))
-                self.addItem(self.interactive_overlay_objects[-1])
-                if vertex.show_in_overlay:
-                    self.interactive_overlay_objects[-1].show()
-                else:
-                    self.interactive_overlay_objects[-1].hide()
+                if not vertex.void:
+                    self.interactive_overlay_objects.append(GUI_custom_components.InteractiveOverlayColumn(self.ui_obj, vertex.i, vertex.r))
+                    self.addItem(self.interactive_overlay_objects[-1])
+                    if vertex.show_in_overlay:
+                        self.interactive_overlay_objects[-1].show()
+                    else:
+                        self.interactive_overlay_objects[-1].hide()
 
 
 class AtomicGraph(QtWidgets.QGraphicsScene):
@@ -201,8 +203,9 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
         """Redraws all column elements."""
         self.interactive_vertex_objects = []
         for vertex in self.ui_obj.project_instance.graph.vertices:
-            self.interactive_vertex_objects.append(GUI_custom_components.InteractiveGraphColumn(self.ui_obj, vertex.i, vertex.r, self.scale_factor))
-            self.addItem(self.interactive_vertex_objects[-1])
+            if not vertex.void:
+                self.interactive_vertex_objects.append(GUI_custom_components.InteractiveGraphColumn(self.ui_obj, vertex.i, vertex.r, self.scale_factor))
+                self.addItem(self.interactive_vertex_objects[-1])
 
     def re_draw_edges(self):
         """Redraws all edge elements."""
@@ -307,7 +310,7 @@ class InfoGraph(QtWidgets.QGraphicsScene):
         self.interactive_vertex_objects = []
         if not len(self.ui_obj.project_instance.graph.find_intersects()) > 0:
             self.ui_obj.project_instance.graph.map_friends()
-            for vertex in self.ui_obj.project_instance.graph.vertices:
+            for vertex in self.ui_obj.project_instance.graph.get_non_void_vertices():
                 if len(vertex.neighbour_indices) > 0:
                     well_defined = True
                     if not vertex.is_edge_column and not vertex.set_by_user:
@@ -532,7 +535,7 @@ class AntiGraph(QtWidgets.QGraphicsScene):
     def re_draw_vertices(self):
         """Redraws all column elements."""
         self.interactive_vertex_objects = []
-        for vertex in self.graph.vertices:
+        for vertex in self.graph.get_non_void_vertices():
             self.interactive_vertex_objects.append(GUI_custom_components.InteractiveGraphColumn(self.ui_obj, vertex.i, vertex.r, self.scale_factor))
             self.addItem(self.interactive_vertex_objects[-1])
 
@@ -575,7 +578,7 @@ class AntiGraph(QtWidgets.QGraphicsScene):
                 self.edges[-1].setZValue(-2)
 
     def toggle_level_0(self, on):
-        for vertex in self.graph.vertices:
+        for vertex in self.graph.get_non_void_vertices():
             if vertex.zeta == 0:
                 if on:
                     self.interactive_vertex_objects[vertex.i].show()
@@ -589,7 +592,7 @@ class AntiGraph(QtWidgets.QGraphicsScene):
                     self.edges[m].hide()
 
     def toggle_level_1(self, on):
-        for vertex in self.graph.vertices:
+        for vertex in self.graph.get_non_void_vertices():
             if vertex.zeta == 1:
                 if on:
                     self.interactive_vertex_objects[vertex.i].show()
@@ -606,12 +609,13 @@ class AntiGraph(QtWidgets.QGraphicsScene):
 class ZoomGraphicsView(QtWidgets.QGraphicsView):
     """An adaptation of QtWidgets.QGraphicsView that supports zooming"""
 
-    def __init__(self, parent=None, ui_obj=None, trigger_func=None):
+    def __init__(self, parent=None, ui_obj=None, trigger_func=None, tab_index=0):
         super(ZoomGraphicsView, self).__init__(parent)
         self.ui_obj = ui_obj
         self.trigger_func = trigger_func
+        self.tab_index = tab_index
 
-    def wheelEvent(self, event):
+    def wheelEvent(self, event, relay=True):
 
         modifier = QtWidgets.QApplication.keyboardModifiers()
         if modifier == QtCore.Qt.ShiftModifier:
@@ -644,6 +648,11 @@ class ZoomGraphicsView(QtWidgets.QGraphicsView):
         else:
 
             super(ZoomGraphicsView, self).wheelEvent(event)
+
+        if self.ui_obj.lock_views and relay:
+            for i, zgv in enumerate(self.ui_obj.gv_list):
+                if not i == self.tab_index:
+                    zgv.wheelEvent(event, relay=False)
 
     def keyPressEvent(self, event):
         if self.trigger_func is not None:
@@ -734,7 +743,7 @@ class ControlWindow(QtWidgets.QWidget):
 
         # Prob. Vector graphic:
         self.height = 130
-        self.width = 200
+        self.width = 160
 
         self.probGraphicView = QtWidgets.QGraphicsView()
 
@@ -754,6 +763,9 @@ class ControlWindow(QtWidgets.QWidget):
         self.draw_histogram()
 
         # Labels
+        self.lbl_filename = QtWidgets.QLabel('Filename: ')
+        self.lbl_location = QtWidgets.QLabel('Location: ')
+
         self.lbl_num_detected_columns = QtWidgets.QLabel('Number of detected columns: ')
         self.lbl_image_width = QtWidgets.QLabel('Image width (pixels): ')
         self.lbl_image_height = QtWidgets.QLabel('Image height (pixels): ')
@@ -802,6 +814,8 @@ class ControlWindow(QtWidgets.QWidget):
         self.lbl_sub_graph_order = QtWidgets.QLabel('Sub-graph order: ')
 
         # Checkboxes
+        self.chb_lock_views = QtWidgets.QCheckBox('Lock views')
+
         self.chb_toggle_positions = QtWidgets.QCheckBox('Show column position overlay')
 
         self.chb_show_graphic_updates = QtWidgets.QCheckBox('Show graphic updates (slow)')
@@ -872,6 +886,8 @@ class ControlWindow(QtWidgets.QWidget):
         overlay_layout.addLayout(overlay_layout_right)
         overlay_layout.addStretch()
 
+        self.chb_lock_views.setChecked(False)
+
         self.chb_toggle_positions.setChecked(True)
 
         self.chb_show_graphic_updates.setChecked(False)
@@ -910,6 +926,8 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_scalebar.setChecked(True)
         self.chb_0_plane.setChecked(True)
         self.chb_1_plane.setChecked(True)
+
+        self.chb_lock_views.toggled.connect(self.ui_obj.chb_lock_views_trigger)
 
         self.chb_toggle_positions.toggled.connect(self.ui_obj.chb_toggle_positions_trigger)
 
@@ -950,6 +968,8 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_1_plane.toggled.connect(self.ui_obj.chb_1_plane_trigger)
 
         # The Set values buttons
+        self.btn_
+
         self.btn_set_threshold_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_threshold_trigger, label=self.lbl_detection_threshold)
         self.btn_set_search_size_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_search_size_trigger, label=self.lbl_search_size)
         self.btn_set_scale_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_scale_trigger, label=self.lbl_scale)
@@ -975,25 +995,30 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_set_move.setDisabled(True)
 
         # other buttons
-        self.btn_show_stats = GUI_custom_components.SmallButton('Stats', self, trigger_func=self.ui_obj.btn_show_stats_trigger)
-        self.btn_show_source = GUI_custom_components.SmallButton('Source', self, trigger_func=self.ui_obj.btn_view_image_title_trigger)
+        self.btn_new_project = GUI_custom_components.MediumButton('Import dm3', self, trigger_func=self.ui_obj.btn_new_project_trigger)
+        self.btn_open_project = GUI_custom_components.MediumButton('Open', self, trigger_func=self.ui_obj.btn_open_project_trigger)
+        self.btn_save_project = GUI_custom_components.MediumButton('Save', self, trigger_func=self.ui_obj.btn_save_project_trigger)
+        self.btn_close_project = GUI_custom_components.MediumButton('Close', self, trigger_func=self.ui_obj.btn_close_project_trigger)
+
+        self.btn_show_stats = GUI_custom_components.MediumButton('Stats', self, trigger_func=self.ui_obj.btn_show_stats_trigger)
+        self.btn_show_source = GUI_custom_components.MediumButton('Source', self, trigger_func=self.ui_obj.btn_view_image_title_trigger)
         self.btn_align_views = GUI_custom_components.MediumButton('Align views', self, trigger_func=self.ui_obj.btn_align_views_trigger)
         self.btn_export = GUI_custom_components.MediumButton('Export data', self, trigger_func=self.ui_obj.btn_export_overlay_image_trigger)
-        self.btn_start_alg_1 = GUI_custom_components.SmallButton('Start', self, trigger_func=self.ui_obj.btn_continue_detection_trigger)
-        self.btn_reset_alg_1 = GUI_custom_components.SmallButton('Reset', self, trigger_func=self.ui_obj.btn_restart_detection_trigger)
-        self.btn_start_alg_2 = GUI_custom_components.SmallButton('Start', self, trigger_func=self.ui_obj.btn_continue_analysis_trigger)
-        self.btn_reset_alg_2 = GUI_custom_components.SmallButton('Reset', self, trigger_func=self.ui_obj.btn_restart_analysis_trigger)
-        self.btn_invert_lvl_alg_2 = GUI_custom_components.SmallButton('Invert lvl', self, trigger_func=self.ui_obj.btn_invert_levels_trigger)
+        self.btn_start_alg_1 = GUI_custom_components.MediumButton('Start', self, trigger_func=self.ui_obj.btn_continue_detection_trigger)
+        self.btn_reset_alg_1 = GUI_custom_components.MediumButton('Reset', self, trigger_func=self.ui_obj.btn_restart_detection_trigger)
+        self.btn_start_alg_2 = GUI_custom_components.MediumButton('Start', self, trigger_func=self.ui_obj.btn_continue_analysis_trigger)
+        self.btn_reset_alg_2 = GUI_custom_components.MediumButton('Reset', self, trigger_func=self.ui_obj.btn_restart_analysis_trigger)
+        self.btn_invert_lvl_alg_2 = GUI_custom_components.MediumButton('Invert lvl', self, trigger_func=self.ui_obj.btn_invert_levels_trigger)
         self.btn_set_variant = GUI_custom_components.MediumButton('Set variant', self, trigger_func=self.ui_obj.btn_set_variant_trigger)
-        self.btn_delete = GUI_custom_components.SmallButton('Delete', self, trigger_func=self.ui_obj.btn_delete_trigger)
-        self.btn_print_details = GUI_custom_components.SmallButton('Print', self, trigger_func=self.ui_obj.btn_print_details_trigger)
-        self.btn_snap = GUI_custom_components.SmallButton('Show', self, trigger_func=self.ui_obj.btn_snap_trigger)
+        self.btn_delete = GUI_custom_components.MediumButton('Delete', self, trigger_func=self.ui_obj.btn_delete_trigger)
+        self.btn_print_details = GUI_custom_components.MediumButton('Print', self, trigger_func=self.ui_obj.btn_print_details_trigger)
+        self.btn_snap = GUI_custom_components.MediumButton('Show', self, trigger_func=self.ui_obj.btn_snap_trigger)
         self.btn_sub = GUI_custom_components.MediumButton('Build sub-graph', self, trigger_func=self.ui_obj.btn_gen_sub_graph)
         self.btn_refresh_graph = GUI_custom_components.MediumButton('Refresh', self, trigger_func=self.ui_obj.btn_refresh_graph_trigger)
         self.btn_refresh_mesh = GUI_custom_components.MediumButton('Refresh mesh', self, trigger_func=self.ui_obj.btn_refresh_mesh_trigger)
-        self.btn_deselect = GUI_custom_components.SmallButton('Deselect', self, trigger_func=self.ui_obj.btn_deselect_trigger)
-        self.btn_new = GUI_custom_components.SmallButton('New', self, trigger_func=self.ui_obj.btn_new_column_trigger)
-        self.btn_set_style = GUI_custom_components.MediumButton('Set overlay style', self, trigger_func=self.ui_obj.btn_set_style_trigger)
+        self.btn_deselect = GUI_custom_components.MediumButton('Deselect', self, trigger_func=self.ui_obj.btn_deselect_trigger)
+        self.btn_new = GUI_custom_components.MediumButton('New', self, trigger_func=self.ui_obj.btn_new_column_trigger)
+        self.btn_set_style = GUI_custom_components.MediumButton('Configure', self, trigger_func=self.ui_obj.btn_set_style_trigger)
         self.btn_set_indices = GUI_custom_components.MediumButton('Set neighbours', self, trigger_func=self.ui_obj.btn_set_indices_trigger)
         self.btn_test = GUI_custom_components.MediumButton('Test', self, trigger_func=self.ui_obj.btn_test_trigger)
         self.btn_crash = GUI_custom_components.MediumButton('Crash program', self, trigger_func=self.ui_obj.btn_crash_trigger)
@@ -1087,6 +1112,7 @@ class ControlWindow(QtWidgets.QWidget):
         # Group boxes
         self.image_box_layout = QtWidgets.QVBoxLayout()
         self.image_box_layout.addLayout(btn_image_btns_layout)
+        self.image_box_layout.addWidget(self.chb_lock_views)
         self.image_box_layout.addWidget(self.lbl_image_width)
         self.image_box_layout.addWidget(self.lbl_image_height)
         self.image_box_layout.addWidget(self.lbl_num_detected_columns)
@@ -1265,6 +1291,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_list.append(self.btn_calc_models)
         self.btn_list.append(self.btn_plot_models)
 
+        self.chb_list.append(self.chb_lock_views)
         self.chb_list.append(self.chb_toggle_positions)
         self.chb_list.append(self.chb_show_graphic_updates)
         self.chb_list.append(self.chb_precipitate_column)
@@ -1353,19 +1380,15 @@ class ControlWindow(QtWidgets.QWidget):
 
             si_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].probability_vector[0])
             cu_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].probability_vector[1])
-            zn_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].probability_vector[2])
-            al_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].probability_vector[3])
-            ag_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].probability_vector[4])
-            mg_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].probability_vector[5])
-            un_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].probability_vector[6])
+            al_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].probability_vector[2])
+            mg_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].probability_vector[3])
+            un_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].probability_vector[4])
 
         else:
 
             si_box_height = 0
             cu_box_height = 0
-            zn_box_height = 0
             al_box_height = 0
-            ag_box_height = 0
             mg_box_height = 0
             un_box_height = 0
 
@@ -1408,23 +1431,6 @@ class ControlWindow(QtWidgets.QWidget):
         cu_number.setY(100 - box_height - 10)
 
         x_box = box_seperation + 2 * box_displacement
-        box_height = zn_box_height
-        zn_box = QtWidgets.QGraphicsRectItem(0, 0, box_width, box_height)
-        zn_box.setBrush(GUI_settings.brush_zn)
-        zn_box.setX(x_box)
-        zn_box.setY(100 - box_height)
-        zn_text = QtWidgets.QGraphicsSimpleTextItem()
-        zn_text.setText('Zn')
-        zn_text.setFont(GUI_settings.font_tiny)
-        zn_text.setX(x_box + 2)
-        zn_text.setY(100 + 4)
-        zn_number = QtWidgets.QGraphicsSimpleTextItem()
-        zn_number.setText(str(box_height / 100))
-        zn_number.setFont(GUI_settings.font_tiny)
-        zn_number.setX(x_box - 1)
-        zn_number.setY(100 - box_height - 10)
-
-        x_box = box_seperation + 3 * box_displacement
         box_height = al_box_height
         al_box = QtWidgets.QGraphicsRectItem(0, 0, box_width, box_height)
         al_box.setBrush(GUI_settings.brush_al)
@@ -1441,24 +1447,7 @@ class ControlWindow(QtWidgets.QWidget):
         al_number.setX(x_box - 1)
         al_number.setY(100 - box_height - 10)
 
-        x_box = box_seperation + 4 * box_displacement
-        box_height = ag_box_height
-        ag_box = QtWidgets.QGraphicsRectItem(0, 0, box_width, box_height)
-        ag_box.setBrush(GUI_settings.brush_ag)
-        ag_box.setX(x_box)
-        ag_box.setY(100 - box_height)
-        ag_text = QtWidgets.QGraphicsSimpleTextItem()
-        ag_text.setText('Ag')
-        ag_text.setFont(GUI_settings.font_tiny)
-        ag_text.setX(x_box + 2)
-        ag_text.setY(100 + 4)
-        ag_number = QtWidgets.QGraphicsSimpleTextItem()
-        ag_number.setText(str(box_height / 100))
-        ag_number.setFont(GUI_settings.font_tiny)
-        ag_number.setX(x_box - 1)
-        ag_number.setY(100 - box_height - 10)
-
-        x_box = box_seperation + 5 * box_displacement
+        x_box = box_seperation + 3 * box_displacement
         box_height = mg_box_height
         mg_box = QtWidgets.QGraphicsRectItem(0, 0, box_width, box_height)
         mg_box.setBrush(GUI_settings.brush_mg)
@@ -1475,7 +1464,7 @@ class ControlWindow(QtWidgets.QWidget):
         mg_number.setX(x_box - 1)
         mg_number.setY(100 - box_height - 10)
 
-        x_box = box_seperation + 6 * box_displacement
+        x_box = box_seperation + 4 * box_displacement
         box_height = un_box_height
         un_box = QtWidgets.QGraphicsRectItem(0, 0, box_width, box_height)
         un_box.setBrush(GUI_settings.brush_un)
@@ -1498,25 +1487,19 @@ class ControlWindow(QtWidgets.QWidget):
 
         probGraphicScene.addItem(si_box)
         probGraphicScene.addItem(cu_box)
-        probGraphicScene.addItem(zn_box)
         probGraphicScene.addItem(al_box)
-        probGraphicScene.addItem(ag_box)
         probGraphicScene.addItem(mg_box)
         probGraphicScene.addItem(un_box)
 
         probGraphicScene.addItem(si_text)
         probGraphicScene.addItem(cu_text)
-        probGraphicScene.addItem(zn_text)
         probGraphicScene.addItem(al_text)
-        probGraphicScene.addItem(ag_text)
         probGraphicScene.addItem(mg_text)
         probGraphicScene.addItem(un_text)
 
         probGraphicScene.addItem(si_number)
         probGraphicScene.addItem(cu_number)
-        probGraphicScene.addItem(zn_number)
         probGraphicScene.addItem(al_number)
-        probGraphicScene.addItem(ag_number)
         probGraphicScene.addItem(mg_number)
         probGraphicScene.addItem(un_number)
 
@@ -1540,7 +1523,7 @@ class ControlWindow(QtWidgets.QWidget):
             self.lbl_column_y_pos.setText('y: {}'.format(vertex.im_coor_y))
             self.lbl_column_peak_gamma.setText('Peak gamma: {}'.format(vertex.peak_gamma))
             self.lbl_column_avg_gamma.setText('Avg gamma: {}'.format(vertex.avg_gamma))
-            self.lbl_column_species.setText('Atomic species: VOID')
+            self.lbl_column_species.setText('Atomic species: {}'.format(vertex.atomic_species))
             self.lbl_column_level.setText('Level: {}'.format(vertex.zeta))
             self.lbl_confidence.setText('Confidence: VOID')
             self.lbl_symmetry_confidence.setText('Symmetry confidence: VOID')
