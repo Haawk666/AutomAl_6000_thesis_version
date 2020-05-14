@@ -101,16 +101,16 @@ class MainUI(QtWidgets.QMainWindow):
         self.gv_fft = GUI_elements.ZoomGraphicsView(self.gs_fft, ui_obj=self, trigger_func=self.key_press_trigger, tab_index=8)
 
         self.gv_list = [
-                            self.gv_raw_image,
-                            self.gv_atomic_positions,
-                            self.gv_overlay_composition,
-                            self.gv_atomic_graph,
-                            self.gv_atomic_sub_graph,
-                            self.gv_anti_graph,
-                            self.gv_info_graph,
-                            self.gv_search_matrix,
-                            self.gv_fft
-                        ]
+            self.gv_raw_image,
+            self.gv_atomic_positions,
+            self.gv_overlay_composition,
+            self.gv_atomic_graph,
+            self.gv_atomic_sub_graph,
+            self.gv_anti_graph,
+            self.gv_info_graph,
+            self.gv_search_matrix,
+            self.gv_fft
+        ]
 
         # Set up tabs for central widget
         self.tabs = QtWidgets.QTabWidget()
@@ -444,6 +444,12 @@ class MainUI(QtWidgets.QMainWindow):
         self.update_display()
         self.sys_message('Ready.')
 
+    def menu_toggle_project_control_trigger(self, state):
+        if state:
+            self.control_window.project_box.set_visible()
+        else:
+            self.control_window.project_box.set_hidden()
+
     def menu_toggle_image_control_trigger(self, state):
         if state:
             self.control_window.image_box.set_visible()
@@ -709,6 +715,13 @@ class MainUI(QtWidgets.QMainWindow):
     # Set button triggers:
     # ----------
 
+    def btn_set_model_trigger(self):
+        if self.project_instance is not None:
+            model_filename = QtWidgets.QFileDialog.getOpenFileName(self, "Load model", '', "")
+            if model_filename[0]:
+                self.project_instance.graph.active_model = model_filename[0]
+            self.control_window.lbl_model.setText('Model: {}'.format(self.project_instance.graph.active_model))
+
     def btn_set_threshold_trigger(self):
         if self.project_instance is not None:
             threshold, ok_pressed = QtWidgets.QInputDialog.getDouble(self, "Set", "Threshold value (decimal between 0 and 1):", self.project_instance.threshold, 0, 1, 5)
@@ -747,33 +760,12 @@ class MainUI(QtWidgets.QMainWindow):
                 elif item == 'Al-Mg-Si':
                     self.project_instance.alloy = 1
                 self.project_instance.set_alloy_mat()
-                self.control_window.lbl_alloy.setText(self.project_instance.alloy_string())
+                self.control_window.lbl_alloy.setText('Alloy: {}'.format(self.project_instance.alloy_string[self.project_instance.alloy]))
 
     def btn_set_start_trigger(self):
         if self.project_instance is not None and not self.selected_column == -1:
             self.project_instance.starting_index = self.selected_column
             self.control_window.lbl_starting_index.setText('Default starting index: {}'.format(self.project_instance.starting_index))
-
-    def btn_set_std_1_trigger(self):
-        pass
-
-    def btn_set_std_2_trigger(self):
-        pass
-
-    def btn_set_std_3_trigger(self):
-        pass
-
-    def btn_set_std_4_trigger(self):
-        pass
-
-    def btn_set_std_5_trigger(self):
-        pass
-
-    def btn_set_std_8_trigger(self):
-        pass
-
-    def btn_set_cert_threshold_trigger(self):
-        pass
 
     def btn_find_column_trigger(self):
         if self.project_instance is not None:
@@ -841,6 +833,18 @@ class MainUI(QtWidgets.QMainWindow):
     # ----------
     # Other button triggers:
     # ----------
+
+    def btn_new_project_trigger(self):
+        pass
+
+    def btn_open_project_trigger(self):
+        pass
+
+    def btn_save_project_trigger(self):
+        pass
+
+    def btn_close_project_trigger(self):
+        pass
 
     def btn_cancel_move_trigger(self):
         self.control_window.mode_move(False)

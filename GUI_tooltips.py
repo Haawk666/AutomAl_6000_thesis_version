@@ -2,6 +2,8 @@
 """Module container for tooltip strings"""
 
 
+btn_set_model = 'Set the model associated with this project. This might effect the results of the column\n' \
+                'characterization.'
 btn_set_threshold_layout = 'Set the threshold value (between 0 and 1). If the maximum pixel value of the search\n' \
                             'matrix is below this value, column detection will stop searching. A good starting\n' \
                             'value to try for most images is for instance 0,3.'
@@ -12,13 +14,6 @@ btn_set_alloy_layout = 'Set the alloy being studied. (Which species that are exp
                        'thus used in the model)'
 btn_set_start_layout = 'Set a default starting column for the column charaterization. Used to study deterministic\n' \
                        'results when testing the algorithms'
-btn_set_std_1_layout = 'DEPRECATED'
-btn_set_std_2_layout = 'DEPRECATED'
-btn_set_std_3_layout = 'DEPRECATED'
-btn_set_std_4_layout = 'DEPRECATED'
-btn_set_std_5_layout = 'DEPRECATED'
-btn_set_std_8_layout = 'DEPRECATED'
-btn_set_cert_threshold_layout = 'DEPRECATED'
 btn_find_column_layout = 'Select column by index reference.'
 btn_set_species_layout = 'Manually determine the atomic species of the selected column.'
 btn_set_level_layout = 'Manually set the z-height of the selected column.'
@@ -28,6 +23,10 @@ btn_set_sub_graph_order_layout = 'Set the order of the sub-graph.. Options are: 
 btn_cancel_move = 'Cancel the column position'
 btn_set_move = 'Accept the new column position'
 
+btn_new_project = 'Start a new project by importing a dm3 image.'
+btn_open_project = 'Open a project previously saved with AutomAl 6000'
+btn_save_project = 'Save current project as AutomAl 6000 project file'
+btn_close_project = 'Close the current project'
 btn_show_stats = 'Show a numerical summary of the image.'
 btn_show_source = 'Show the full path and filename of the original image this project was created from\n' \
                   '(in case you forgot;)'
@@ -105,91 +104,97 @@ chb_scalebar = 'Toggle scalebar'
 chb_0_plane = 'Toggle all 0 plane columns'
 chb_1_plane = 'Toggle all 1/2 plane columns'
 
-control_window_set_list = [btn_set_threshold_layout,
-                           btn_set_search_size_layout,
-                           btn_set_scale_layout,
-                           btn_set_alloy_layout,
-                           btn_set_start_layout,
-                           btn_set_std_1_layout,
-                           btn_set_std_2_layout,
-                           btn_set_std_3_layout,
-                           btn_set_std_4_layout,
-                           btn_set_std_5_layout,
-                           btn_set_std_8_layout,
-                           btn_set_cert_threshold_layout,
-                           btn_find_column_layout,
-                           btn_set_species_layout,
-                           btn_set_level_layout,
-                           btn_set_sub_graph_layout,
-                           btn_set_sub_graph_order_layout]
+control_window_set_list = [
+    btn_set_model,
+    btn_set_threshold_layout,
+    btn_set_search_size_layout,
+    btn_set_scale_layout,
+    btn_set_alloy_layout,
+    btn_set_start_layout,
+    btn_find_column_layout,
+    btn_set_species_layout,
+    btn_set_level_layout,
+    btn_set_sub_graph_layout,
+    btn_set_sub_graph_order_layout
+]
 
-control_window_move_list = [btn_cancel_move,
-                            btn_set_move]
+control_window_move_list = [
+    btn_cancel_move,
+    btn_set_move
+]
 
-control_window_btn_list = [btn_show_stats,
-                           btn_show_source,
-                           btn_align_views,
-                           btn_export,
-                           btn_start_alg_1,
-                           btn_reset_alg_1,
-                           btn_start_alg_2,
-                           btn_reset_alg_2,
-                           btn_invert_lvl_alg_2,
-                           btn_set_variant,
-                           btn_delete,
-                           btn_print_details,
-                           btn_snap,
-                           btn_sub,
-                           btn_refresh_graph,
-                           btn_refresh_mesh,
-                           btn_deselect,
-                           btn_new,
-                           btn_set_style,
-                           btn_set_indices,
-                           btn_test,
-                           btn_crash,
-                           btn_plot,
-                           btn_print_distances,
-                           btn_build_anti_graph,
-                           btn_build_info_graph,
-                           btn_pca,
-                           btn_calc_models,
-                           btn_plot_models]
+control_window_btn_list = [
+    btn_new_project,
+    btn_open_project,
+    btn_save_project,
+    btn_close_project,
+    btn_show_stats,
+    btn_show_source,
+    btn_align_views,
+    btn_export,
+    btn_start_alg_1,
+    btn_reset_alg_1,
+    btn_start_alg_2,
+    btn_reset_alg_2,
+    btn_invert_lvl_alg_2,
+    btn_set_variant,
+    btn_delete,
+    btn_print_details,
+    btn_snap,
+    btn_sub,
+    btn_refresh_graph,
+    btn_refresh_mesh,
+    btn_deselect,
+    btn_new,
+    btn_set_style,
+    btn_set_indices,
+    btn_test,
+    btn_crash,
+    btn_plot,
+    btn_print_distances,
+    btn_build_anti_graph,
+    btn_build_info_graph,
+    btn_pca,
+    btn_calc_models,
+    btn_plot_models
+]
 
-control_window_chb_list = [chb_lock_views,
-                           chb_toggle_positions,
-                           chb_show_graphic_updates,
-                           chb_precipitate_column,
-                           chb_show,
-                           chb_move,
-                           chb_perturb_mode,
-                           chb_enable_ruler,
-                           chb_graph,
-                           chb_toggle_mesh,
-                           chb_show_level_0,
-                           chb_show_level_1,
-                           chb_raw_image,
-                           chb_black_background,
-                           chb_structures,
-                           chb_boarders,
-                           chb_si_columns,
-                           chb_si_network,
-                           chb_mg_columns,
-                           chb_particle,
-                           chb_al_columns,
-                           chb_al_network,
-                           chb_cu_columns,
-                           chb_cu_network,
-                           chb_ag_columns,
-                           chb_ag_network,
-                           chb_un_columns,
-                           chb_columns,
-                           chb_al_mesh,
-                           chb_neighbours,
-                           chb_legend,
-                           chb_scalebar,
-                           chb_0_plane,
-                           chb_1_plane]
+control_window_chb_list = [
+    chb_lock_views,
+    chb_toggle_positions,
+    chb_show_graphic_updates,
+    chb_precipitate_column,
+    chb_show,
+    chb_move,
+    chb_perturb_mode,
+    chb_enable_ruler,
+    chb_graph,
+    chb_toggle_mesh,
+    chb_show_level_0,
+    chb_show_level_1,
+    chb_raw_image,
+    chb_black_background,
+    chb_structures,
+    chb_boarders,
+    chb_si_columns,
+    chb_si_network,
+    chb_mg_columns,
+    chb_particle,
+    chb_al_columns,
+    chb_al_network,
+    chb_cu_columns,
+    chb_cu_network,
+    chb_ag_columns,
+    chb_ag_network,
+    chb_un_columns,
+    chb_columns,
+    chb_al_mesh,
+    chb_neighbours,
+    chb_legend,
+    chb_scalebar,
+    chb_0_plane,
+    chb_1_plane
+]
 
 btn_save_log = 'Save the log contents to text-file.'
 btn_clear_log = 'Empty the contents of the log.'

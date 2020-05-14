@@ -765,19 +765,13 @@ class ControlWindow(QtWidgets.QWidget):
         # Labels
         self.lbl_filename = QtWidgets.QLabel('Filename: ')
         self.lbl_location = QtWidgets.QLabel('Location: ')
+        self.lbl_model = QtWidgets.QLabel('Model: ')
 
         self.lbl_num_detected_columns = QtWidgets.QLabel('Number of detected columns: ')
         self.lbl_image_width = QtWidgets.QLabel('Image width (pixels): ')
         self.lbl_image_height = QtWidgets.QLabel('Image height (pixels): ')
 
         self.lbl_starting_index = QtWidgets.QLabel('Default starting index: ')
-        self.lbl_std_1 = QtWidgets.QLabel('Standard deviation 1: ')
-        self.lbl_std_2 = QtWidgets.QLabel('Standard deviation 2: ')
-        self.lbl_std_3 = QtWidgets.QLabel('Standard deviation 3: ')
-        self.lbl_std_4 = QtWidgets.QLabel('Standard deviation 4: ')
-        self.lbl_std_5 = QtWidgets.QLabel('Standard deviation 5: ')
-        self.lbl_std_8 = QtWidgets.QLabel('Standard deviation 8: ')
-        self.lbl_cert_threshold = QtWidgets.QLabel('Certainty threshold: ')
 
         self.lbl_atomic_radii = QtWidgets.QLabel('Approx atomic radii (pixels): ')
         self.lbl_overhead_radii = QtWidgets.QLabel('Overhead (pixels): ')
@@ -968,25 +962,17 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_1_plane.toggled.connect(self.ui_obj.chb_1_plane_trigger)
 
         # The Set values buttons
-        self.btn_
-
+        self.btn_set_model_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_model_trigger, label=self.lbl_model)
         self.btn_set_threshold_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_threshold_trigger, label=self.lbl_detection_threshold)
         self.btn_set_search_size_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_search_size_trigger, label=self.lbl_search_size)
         self.btn_set_scale_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_scale_trigger, label=self.lbl_scale)
         self.btn_set_alloy_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_alloy_trigger, label=self.lbl_alloy)
         self.btn_set_start_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_start_trigger, label=self.lbl_starting_index)
-        self.btn_set_std_1_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_std_1_trigger, label=self.lbl_std_1)
-        self.btn_set_std_2_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_std_2_trigger, label=self.lbl_std_2)
-        self.btn_set_std_3_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_std_3_trigger, label=self.lbl_std_3)
-        self.btn_set_std_4_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_std_4_trigger, label=self.lbl_std_4)
-        self.btn_set_std_5_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_std_5_trigger, label=self.lbl_std_5)
-        self.btn_set_std_8_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_std_8_trigger, label=self.lbl_std_8)
-        self.btn_set_cert_threshold_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_cert_threshold_trigger, label=self.lbl_cert_threshold)
         self.btn_find_column_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_find_column_trigger, label=self.lbl_column_index)
         self.btn_set_species_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_species_trigger, label=self.lbl_column_species)
         self.btn_set_level_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_level_trigger, label=self.lbl_column_level)
-        self.btn_set_sub_graph_type = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_sub_graph_type_trigger, label=self.lbl_sub_graph_type)
-        self.btn_set_sub_graph_order = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_sub_graph_order_trigger, label=self.lbl_sub_graph_order)
+        self.btn_set_sub_graph_type_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_sub_graph_type_trigger, label=self.lbl_sub_graph_type)
+        self.btn_set_sub_graph_order_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_sub_graph_order_trigger, label=self.lbl_sub_graph_order)
 
         # Move buttons
         self.btn_cancel_move = GUI_custom_components.SmallButton('Cancel', self, trigger_func=self.ui_obj.btn_cancel_move_trigger)
@@ -1031,6 +1017,18 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_plot_models = GUI_custom_components.MediumButton('Plot model', self, trigger_func=self.ui_obj.btn_plot_models_trigger)
 
         # Button layouts
+        btn_project_layout = QtWidgets.QVBoxLayout()
+        layout = QtWidgets.QHBoxLayout()
+        layout.addWidget(self.btn_new_project)
+        layout.addWidget(self.btn_open_project)
+        layout.addWidget(self.btn_save_project)
+        layout.addStretch()
+        btn_project_layout.addLayout(layout)
+        layout = QtWidgets.QHBoxLayout()
+        layout.addWidget(self.btn_close_project)
+        layout.addStretch()
+        btn_project_layout.addLayout(layout)
+
         btn_move_control_layout = QtWidgets.QHBoxLayout()
         btn_move_control_layout.addWidget(self.chb_move)
         btn_move_control_layout.addWidget(self.btn_cancel_move)
@@ -1110,6 +1108,14 @@ class ControlWindow(QtWidgets.QWidget):
         btn_analysis_layout.addLayout(btn_analysis_layout_2)
 
         # Group boxes
+        self.project_box_layout = QtWidgets.QVBoxLayout()
+        self.project_box_layout.addLayout(btn_project_layout)
+        self.project_box_layout.addLayout(self.btn_set_model_layout)
+        self.project_box_layout.addWidget(self.lbl_filename)
+        self.project_box_layout.addWidget(self.lbl_location)
+        self.project_box = GUI_custom_components.GroupBox('Active project', menu_action=self.ui_obj.menu.toggle_project_control_action)
+        self.project_box.setLayout(self.project_box_layout)
+
         self.image_box_layout = QtWidgets.QVBoxLayout()
         self.image_box_layout.addLayout(btn_image_btns_layout)
         self.image_box_layout.addWidget(self.chb_lock_views)
@@ -1122,13 +1128,6 @@ class ControlWindow(QtWidgets.QWidget):
         self.debug_box_layout = QtWidgets.QVBoxLayout()
         self.debug_box_layout.addLayout(btn_debug_btns_layout)
         self.debug_box_layout.addLayout(self.btn_set_start_layout)
-        self.debug_box_layout.addLayout(self.btn_set_std_1_layout)
-        self.debug_box_layout.addLayout(self.btn_set_std_2_layout)
-        self.debug_box_layout.addLayout(self.btn_set_std_3_layout)
-        self.debug_box_layout.addLayout(self.btn_set_std_4_layout)
-        self.debug_box_layout.addLayout(self.btn_set_std_5_layout)
-        self.debug_box_layout.addLayout(self.btn_set_std_8_layout)
-        self.debug_box_layout.addLayout(self.btn_set_cert_threshold_layout)
         self.debug_box = GUI_custom_components.GroupBox('Advanced debug mode', menu_action=self.ui_obj.menu.advanced_debug_mode_action)
         self.debug_box.setLayout(self.debug_box_layout)
 
@@ -1160,16 +1159,12 @@ class ControlWindow(QtWidgets.QWidget):
         self.column_box_layout.addWidget(self.lbl_column_y_pos)
         self.column_box_layout.addWidget(self.lbl_column_peak_gamma)
         self.column_box_layout.addWidget(self.lbl_column_avg_gamma)
-        self.column_box_layout.addWidget(self.lbl_confidence)
-        self.column_box_layout.addWidget(self.lbl_symmetry_confidence)
-        self.column_box_layout.addWidget(self.lbl_level_confidence)
         self.column_box_layout.addWidget(self.lbl_prob_vector)
         self.column_box_layout.addLayout(self.probGraphicLayout)
         self.column_box_layout.addWidget(self.chb_precipitate_column)
         self.column_box_layout.addWidget(self.chb_show)
         self.column_box_layout.addLayout(btn_move_control_layout)
         self.column_box_layout.addWidget(self.lbl_neighbours)
-        self.column_box_layout.addWidget(self.lbl_central_variance)
         self.column_box = GUI_custom_components.GroupBox('Selected column', menu_action=self.ui_obj.menu.toggle_column_control_action)
         self.column_box.setLayout(self.column_box_layout)
 
@@ -1180,17 +1175,13 @@ class ControlWindow(QtWidgets.QWidget):
         self.graph_box_layout.addWidget(self.chb_graph)
         self.graph_box_layout.addWidget(self.chb_toggle_mesh)
         self.graph_box_layout.addWidget(self.lbl_chi)
-        self.graph_box_layout.addWidget(self.lbl_avg_species_confidence)
-        self.graph_box_layout.addWidget(self.lbl_avg_symmetry_confidence)
-        self.graph_box_layout.addWidget(self.lbl_avg_level_confidence)
-        self.graph_box_layout.addWidget(self.lbl_avg_variance)
         self.graph_box = GUI_custom_components.GroupBox('Atomic graph', menu_action=self.ui_obj.menu.toggle_graph_control_action)
         self.graph_box.setLayout(self.graph_box_layout)
 
         self.sub_graphs_box_layout = QtWidgets.QVBoxLayout()
         self.sub_graphs_box_layout.addLayout(btn_sub_graphs_layout)
-        self.sub_graphs_box_layout.addLayout(self.btn_set_sub_graph_type)
-        self.sub_graphs_box_layout.addLayout(self.btn_set_sub_graph_order)
+        self.sub_graphs_box_layout.addLayout(self.btn_set_sub_graph_type_layout)
+        self.sub_graphs_box_layout.addLayout(self.btn_set_sub_graph_order_layout)
         self.sub_graphs_box = GUI_custom_components.GroupBox('Sub-graphs', menu_action=self.ui_obj.menu.toggle_sub_graphs_control_action)
         self.sub_graphs_box.setLayout(self.sub_graphs_box_layout)
 
@@ -1219,6 +1210,7 @@ class ControlWindow(QtWidgets.QWidget):
 
         # Top level layout
         self.info_display_layout = QtWidgets.QVBoxLayout()
+        self.info_display_layout.addWidget(self.project_box)
         self.info_display_layout.addWidget(self.image_box)
         self.info_display_layout.addWidget(self.debug_box)
         self.info_display_layout.addWidget(self.alg_1_box)
@@ -1240,27 +1232,25 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_list = []
         self.chb_list = []
 
+        self.set_btn_list.append(self.btn_set_model_layout.itemAt(0).widget())
         self.set_btn_list.append(self.btn_set_threshold_layout.itemAt(0).widget())
         self.set_btn_list.append(self.btn_set_search_size_layout.itemAt(0).widget())
         self.set_btn_list.append(self.btn_set_scale_layout.itemAt(0).widget())
         self.set_btn_list.append(self.btn_set_alloy_layout.itemAt(0).widget())
         self.set_btn_list.append(self.btn_set_start_layout.itemAt(0).widget())
-        self.set_btn_list.append(self.btn_set_std_1_layout.itemAt(0).widget())
-        self.set_btn_list.append(self.btn_set_std_2_layout.itemAt(0).widget())
-        self.set_btn_list.append(self.btn_set_std_3_layout.itemAt(0).widget())
-        self.set_btn_list.append(self.btn_set_std_4_layout.itemAt(0).widget())
-        self.set_btn_list.append(self.btn_set_std_5_layout.itemAt(0).widget())
-        self.set_btn_list.append(self.btn_set_std_8_layout.itemAt(0).widget())
-        self.set_btn_list.append(self.btn_set_cert_threshold_layout.itemAt(0).widget())
         self.set_btn_list.append(self.btn_find_column_layout.itemAt(0).widget())
         self.set_btn_list.append(self.btn_set_species_layout.itemAt(0).widget())
         self.set_btn_list.append(self.btn_set_level_layout.itemAt(0).widget())
-        self.set_btn_list.append(self.btn_set_sub_graph_type.itemAt(0).widget())
-        self.set_btn_list.append(self.btn_set_sub_graph_order.itemAt(0).widget())
+        self.set_btn_list.append(self.btn_set_sub_graph_type_layout.itemAt(0).widget())
+        self.set_btn_list.append(self.btn_set_sub_graph_order_layout.itemAt(0).widget())
 
         self.btn_move_list.append(self.btn_cancel_move)
         self.btn_move_list.append(self.btn_set_move)
 
+        self.btn_list.append(self.btn_new_project)
+        self.btn_list.append(self.btn_open_project)
+        self.btn_list.append(self.btn_save_project)
+        self.btn_list.append(self.btn_close_project)
         self.btn_list.append(self.btn_show_stats)
         self.btn_list.append(self.btn_show_source)
         self.btn_list.append(self.btn_align_views)
@@ -1525,12 +1515,8 @@ class ControlWindow(QtWidgets.QWidget):
             self.lbl_column_avg_gamma.setText('Avg gamma: {}'.format(vertex.avg_gamma))
             self.lbl_column_species.setText('Atomic species: {}'.format(vertex.atomic_species))
             self.lbl_column_level.setText('Level: {}'.format(vertex.zeta))
-            self.lbl_confidence.setText('Confidence: VOID')
-            self.lbl_symmetry_confidence.setText('Symmetry confidence: VOID')
-            self.lbl_level_confidence.setText('Level confidence: VOID')
             self.lbl_neighbours.setText('Nearest neighbours: {}'.format(vertex.district))
 
-            self.lbl_central_variance.setText('Central angle variance: {}'.format(vertex.theta_angle_variance))
             self.lbl_alpha_max = QtWidgets.QLabel('Alpha max: {}'.format(vertex.alpha_max))
             self.lbl_alpha_min = QtWidgets.QLabel('Alpha min: {}'.format(vertex.alpha_min))
 
@@ -1570,11 +1556,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.lbl_column_avg_gamma.setText('Avg gamma: ')
         self.lbl_column_species.setText('Atomic species: ')
         self.lbl_column_level.setText('Level: ')
-        self.lbl_confidence.setText('Confidence: ')
-        self.lbl_symmetry_confidence.setText('Symmetry confidence: ')
-        self.lbl_level_confidence.setText('Level confidence: ')
         self.lbl_neighbours.setText('Nearest neighbours: ')
-        self.lbl_central_variance.setText('Central angle variance: ')
         self.lbl_alpha_max = QtWidgets.QLabel('Alpha max: ')
         self.lbl_alpha_min = QtWidgets.QLabel('Alpha min: ')
 
@@ -1587,13 +1569,6 @@ class ControlWindow(QtWidgets.QWidget):
             self.lbl_image_height.setText('Image height (pixels): {}'.format(self.ui_obj.project_instance.im_height))
 
             self.lbl_starting_index.setText('Default starting index: {}'.format(self.ui_obj.project_instance.starting_index))
-            self.lbl_std_1.setText('Standard deviation 1: ')
-            self.lbl_std_2.setText('Standard deviation 2: ')
-            self.lbl_std_3.setText('Standard deviation 3: ')
-            self.lbl_std_4.setText('Standard deviation 4: ')
-            self.lbl_std_5.setText('Standard deviation 5: ')
-            self.lbl_std_8.setText('Standard deviation 8: ')
-            self.lbl_cert_threshold.setText('Certainty threshold: VOID')
 
             self.lbl_atomic_radii.setText('Approx atomic radii (pixels): {}'.format(self.ui_obj.project_instance.r))
             self.lbl_overhead_radii.setText('Overhead (pixels): {}'.format(self.ui_obj.project_instance.overhead))
@@ -1610,10 +1585,6 @@ class ControlWindow(QtWidgets.QWidget):
                 self.select_column()
 
             self.lbl_chi.setText('Chi: {}'.format(self.ui_obj.project_instance.graph.chi))
-            self.lbl_avg_species_confidence.setText('Average species confidence: VOID')
-            self.lbl_avg_symmetry_confidence.setText('Average symmetry confidence: VOID')
-            self.lbl_avg_level_confidence.setText('Average level confidence: VOID')
-            self.lbl_avg_variance.setText('Average angle variance: VOID')
 
         else:
 
@@ -1637,19 +1608,9 @@ class ControlWindow(QtWidgets.QWidget):
         self.lbl_alloy.setText('Alloy: ')
 
         self.lbl_starting_index.setText('Default starting index: ')
-        self.lbl_std_1.setText('Standard deviation 1: ')
-        self.lbl_std_2.setText('Standard deviation 2: ')
-        self.lbl_std_3.setText('Standard deviation 3: ')
-        self.lbl_std_4.setText('Standard deviation 4: ')
-        self.lbl_std_5.setText('Standard deviation 5: ')
-        self.lbl_std_8.setText('Standard deviation 8: ')
         self.lbl_cert_threshold.setText('Certainty threshold: ')
 
         self.lbl_chi.setText('Chi: ')
-        self.lbl_avg_species_confidence.setText('Average species confidence: ')
-        self.lbl_avg_symmetry_confidence.setText('Average symmetry confidence: ')
-        self.lbl_avg_level_confidence.setText('Average level confidence: ')
-        self.lbl_avg_variance.setText('Average angle variance: ')
 
 
 class MenuBar:
@@ -1694,6 +1655,9 @@ class MenuBar:
         view_image_title_action = QtWidgets.QAction('View path of original image', self.ui_obj)
         show_stats_action = QtWidgets.QAction('Show image statistics', self.ui_obj)
         update_display_action = QtWidgets.QAction('Update display', self.ui_obj)
+        self.toggle_project_control_action = QtWidgets.QAction('Show project controls', self.ui_obj)
+        self.toggle_project_control_action.setCheckable(True)
+        self.toggle_project_control_action.setChecked(True)
         self.toggle_image_control_action = QtWidgets.QAction('Show image controls', self.ui_obj)
         self.toggle_image_control_action.setCheckable(True)
         self.toggle_image_control_action.setChecked(True)
@@ -1779,6 +1743,7 @@ class MenuBar:
         view.addAction(show_stats_action)
         view.addAction(update_display_action)
         view.addSeparator()
+        view.addAction(self.toggle_project_control_action)
         view.addAction(self.toggle_image_control_action)
         view.addAction(self.toggle_alg_1_control_action)
         view.addAction(self.toggle_alg_2_control_action)
@@ -1835,6 +1800,7 @@ class MenuBar:
         view_image_title_action.triggered.connect(self.ui_obj.menu_view_image_title_trigger)
         show_stats_action.triggered.connect(self.ui_obj.menu_show_stats_trigger)
         update_display_action.triggered.connect(self.ui_obj.menu_update_display)
+        self.toggle_project_control_action.triggered.connect(self.ui_obj.menu_toggle_project_control_trigger)
         self.toggle_image_control_action.triggered.connect(self.ui_obj.menu_toggle_image_control_trigger)
         self.toggle_alg_1_control_action.triggered.connect(self.ui_obj.menu_toggle_alg_1_control_trigger)
         self.toggle_alg_2_control_action.triggered.connect(self.ui_obj.menu_toggle_alg_2_control_trigger)
@@ -2739,7 +2705,10 @@ class PlotModels(QtWidgets.QDialog):
 
         self.setWindowTitle('Display model details')
 
-        self.model = model
+        if model:
+            self.model = statistics.VertexDataManager.load(model)
+        else:
+            self.model = statistics.VertexDataManager.load('default_model')
 
         self.lbl_viewing_model = QtWidgets.QLabel('')
         self.lbl_categories = QtWidgets.QLabel('')
