@@ -316,18 +316,7 @@ class VertexDataManager:
                 if self.categorization == 'advanced':
                     data[data_item['advanced_category_index']][h].append(data_item[attribute])
                 elif self.categorization == 'simple':
-                    if data_item['species_index'] == 0:
-                        category_index = 0
-                    elif data_item['species_index'] == 1:
-                        category_index = 1
-                    elif data_item['species_index'] == 3:
-                        category_index = 2
-                    elif data_item['species_index'] == 5:
-                        category_index = 3
-                    else:
-                        logger.error('Error in category assignment!')
-                        category_index = 4
-                    data[category_index][h].append(data_item[attribute])
+                    data[data_item['species_index']][h].append(data_item[attribute])
                 elif self.categorization == 'none':
                     data[0][h].append(data_item[attribute])
         matrix_data = []
