@@ -17,13 +17,46 @@ logger.setLevel(logging.DEBUG)
 class Vertex:
 
     # Standard AutomAl 6000 class header:
-    advanced_category_string = {0: 'Si_1', 1: 'Si_2', 2: 'Si_3', 3: 'Cu', 4: 'Al_1', 5: 'Al_2', 6: 'Mg_1', 7: 'Mg_2'}
-    species_string = {0: 'Si', 1: 'Cu', 2: 'Al', 3: 'Mg', 4: 'Un'}
-    symmetry = {'Si': 3, 'Cu': 3, 'Al': 4, 'Mg': 5, 'Un': 3}
-    atomic_radii = {'Si': 117.5, 'Cu': 127.81, 'Al': 143.0, 'Mg': 160.0, 'Ag': 144.5, 'Zn': 133.25, 'Un': 200.0}
+    advanced_category_string = {
+        0: 'Si_1',
+        1: 'Si_2',
+        2: 'Si_3',
+        3: 'Cu',
+        4: 'Al_1',
+        5: 'Al_2',
+        6: 'Mg_1',
+        7: 'Mg_2'
+    }
+
+    species_string = {
+        0: 'Si',
+        1: 'Cu',
+        2: 'Al',
+        3: 'Mg',
+        4: 'Un'
+    }
+
+    symmetry = {
+        'Si': 3,
+        'Cu': 3,
+        'Al': 4,
+        'Mg': 5,
+        'Un': 3
+    }
+
+    atomic_radii = {
+        'Si': 117.5,
+        'Cu': 127.81,
+        'Al': 143.0,
+        'Mg': 160.0,
+        'Ag': 144.5,
+        'Zn': 133.25,
+        'Un': 200.0
+    }
+
     al_lattice_const = 404.95
 
-    def __init__(self, index, im_coor_x, im_coor_y, r, scale, zeta=0, species_index=6, void=False):
+    def __init__(self, index, im_coor_x, im_coor_y, r, scale, zeta=0, species_index=4, void=False):
 
         # Index
         self.i = index
@@ -33,7 +66,7 @@ class Vertex:
         self.zeta = zeta
         self.peak_gamma = 0
         self.avg_gamma = 0
-        self.atomic_species = 'Un'
+        self.atomic_species = Vertex.species_string[species_index]
         self.species_index = species_index
         self.species_variant = 0
         self.advanced_category_index = 0
@@ -138,28 +171,21 @@ class Vertex:
         for prob in self.probability_vector:
             string += ' {:.3f}'.format(prob)
         string += ' ]\n'
-        string += '            Prediction: {}\n'.format(self.species_strings[self.species_index])
+        string += '            Prediction: {}\n'.format(self.atomic_species)
         string += '            Confidence: {}\n'.format(self.confidence)
         string += '        Alpha model: ['
         for a in self.alpha_probability_vector:
             string += ' {:.3f}'.format(a)
         string += ' ]\n'
-        string += '            Prediction: {}\n'.format(self.species_strings[self.alpha_probability_vector.index(max(self.alpha_probability_vector))])
+        string += '            Prediction: {}\n'.format(Vertex.species_string[self.alpha_probability_vector.index(max(self.alpha_probability_vector))])
         string += '            Confidence: {}\n'.format(self.alpha_confidence)
         string += '        Model: ['
-        for m in self.model:
+        for m in self.composite_probability_vector:
             string += ' {:.3f}'.format(m)
         string += ' ]\n'
         string += '            Prediction: {}\n'.format(
-            self.species_strings[self.model.index(max(self.model))])
-        string += '            Confidence: {}\n'.format(self.model_confidence)
-        string += '        Weighted model: ['
-        for w in self.weighted_model:
-            string += ' {:.3f}'.format(w)
-        string += ' ]\n'
-        string += '            Prediction: {}\n'.format(
-            self.species_strings[self.weighted_model.index(max(self.weighted_model))])
-        string += '            Confidence: {}\n'.format(self.weighted_confidence)
+            Vertex.species_string[self.composite_probability_vector.index(max(self.composite_probability_vector))])
+        string += '            Confidence: {}\n'.format(self.composite_confidence)
         string += '    Graph parameters:\n'
         string += '        In-degree: {}\n'.format(self.in_degree)
         string += '        Out-degree: {}\n'.format(self.out_degree)
@@ -220,7 +246,7 @@ class Vertex:
 
     def reset_probability_vector(self, bias=-1):
         self.probability_vector = [1, 1, 1, 1, 1]
-        if not bias in [-1, 0, 1, 2, 3, 4]:
+        if bias not in [-1, 0, 1, 2, 3, 4]:
             bias = -1
         self.probability_vector[bias] = 1.1
         self.normalize_probability_vector()
@@ -466,7 +492,7 @@ class AtomicGraph:
         self.reduced_order -= 1
 
         # Remap district sets all over the graph
-        self.map_districts()
+        self.build_maps()
         self.summarize_stats()
 
     def get_non_void_vertices(self):
@@ -571,8 +597,8 @@ class AtomicGraph:
         return projected_separation
 
     def get_hard_sphere_separation(self, i, j):
-        radii_1 = self.atomic_radii[self.vertices[i].species_index]
-        radii_2 = self.atomic_radii[self.vertices[j].species_index]
+        radii_1 = self.atomic_radii[self.vertices[i].atomic_species]
+        radii_2 = self.atomic_radii[self.vertices[j].atomic_species]
         return radii_1 + radii_2
 
     def get_adjacency_matrix(self):
@@ -803,50 +829,43 @@ class AtomicGraph:
             vertex.out_degree = len(vertex.out_neighbourhood)
             vertex.degree = len(vertex.neighbourhood)
 
-    def map_districts(self, search_extended_district=False):
+    def build_maps(self, search_extended_district=False):
         # Determine out_neighbourhoods:
         for vertex in self.vertices:
-            vertex.out_neighbourhood = []
+            vertex.out_neighbourhood = set()
             if not vertex.void:
-                vertex.out_neighbourhood = vertex.district[:vertex.n]
+                for out_neighbour in vertex.district[:vertex.n]:
+                    vertex.out_neighbourhood.add(out_neighbour)
         # Determine in_neighbourhoods:
         for vertex in self.vertices:
-            vertex.in_neighbourhood = []
+            vertex.in_neighbourhood = set()
             if not vertex.void:
                 for candidate in self.vertices:
                     if vertex.i in candidate.out_neighbourhood:
-                        vertex.in_neighbourhood.append(candidate.i)
+                        vertex.in_neighbourhood.add(candidate.i)
         # Determine neighbourhood:
         for vertex in self.vertices:
-            vertex.neighbourhood = []
+            vertex.neighbourhood = set()
             if not vertex.void:
-                vertex.neighbourhood = copy.deepcopy(vertex.out_neighbourhood)
-                for in_neighbour in vertex.in_neighbourhood:
-                    if in_neighbour not in vertex.neighbourhood:
-                        vertex.neighbourhood.append(in_neighbour)
+                vertex.neighbourhood = vertex.out_neighbourhood.union(vertex.in_neighbourhood)
         # Determine anti_neighbourhood:
         for vertex in self.vertices:
-            vertex.anti_neighbourhood = []
+            vertex.anti_neighbourhood = set()
             if not vertex.void:
                 for citizen in vertex.district:
                     if citizen not in vertex.neighbourhood:
-                        vertex.anti_neighbourhood.append(citizen)
+                        vertex.anti_neighbourhood.add(citizen)
         # Determine partners and semi-partners:
         for vertex in self.vertices:
-            vertex.partners = []
-            vertex.semi_partners = []
-            vertex.in_semi_partners = []
-            vertex.out_semi_partners = []
+            vertex.partners = set()
+            vertex.semi_partners = set()
+            vertex.in_semi_partners = set()
+            vertex.out_semi_partners = set()
             if not vertex.void:
-                for neighbour in vertex.neighbourhood:
-                    if neighbour in vertex.in_neighbourhood and neighbour in vertex.out_neighbourhood:
-                        vertex.partners.append(neighbour)
-                    else:
-                        vertex.semi_partners.append(neighbour)
-                        if neighbour in vertex.in_neighbourhood:
-                            vertex.in_semi_partners.append(neighbour)
-                        else:
-                            vertex.out_semi_partners.append(neighbour)
+                vertex.partners = vertex.out_neighbourhood.intersection(vertex.in_neighbourhood)
+                vertex.semi_partners = vertex.neighbourhood - vertex.partners
+                vertex.out_semi_partners = vertex.semi_partners.intersection(vertex.out_neighbourhood)
+                vertex.in_semi_partners = vertex.semi_partners.intersection(vertex.in_neighbourhood)
 
                 vertex.in_degree = len(vertex.in_neighbourhood)
                 vertex.out_degree = len(vertex.out_neighbourhood)
@@ -1096,15 +1115,15 @@ class AtomicGraph:
     def refresh_graph(self):
         logger.info('Refreshing graph...')
         logger.info('    Mapping districts')
-        self.map_districts(search_extended_district=True)
+        self.build_maps(search_extended_district=True)
         logger.info('    Calculating vertex parameters')
         self.calc_all_parameters()
         logger.info('    Evaluating species variants')
         self.evaluate_sub_categories()
-        logger.info('    Calculating model predictions')
-        self.calc_model_predictions()
-        logger.info('    Mapping meshes')
-        self.map_meshes(0)
+        # logger.info('    Calculating model predictions')
+        # self.calc_model_predictions()
+        # logger.info('    Mapping meshes')
+        # self.map_meshes(0)
         logger.info('    Mapping arcs')
         self.map_arcs()
         logger.info('    Summarizing graph stats')
@@ -1212,30 +1231,30 @@ class AtomicGraph:
         :type i: int
 
         """
-
+        print('debug 1')
         if not len(self.vertices[i].district) == 0:
             self.meshes = []
             self.mesh_indices = []
             sub_graph_0 = self.get_column_centered_subgraph(i)
             mesh_0 = sub_graph_0.meshes[0]
             mesh_0.mesh_index = self.determine_temp_index(mesh_0)
-
+            print('debug 2')
             self.meshes.append(mesh_0)
             self.mesh_indices.append(mesh_0.mesh_index)
-
-            sys.setrecursionlimit(10000)
+            print('debug 3')
+            sys.setrecursionlimit(100000)
             self.walk_mesh_edges(mesh_0)
-
+            print('debug 4')
             new_indices = [i for i in range(0, len(self.mesh_indices))]
 
             for k, mesh in enumerate(self.meshes):
                 for j, neighbour in enumerate(mesh.surrounding_meshes):
                     mesh.surrounding_meshes[j] = self.mesh_indices.index(neighbour)
                 mesh.mesh_index = self.mesh_indices.index(mesh.mesh_index)
-
+            print('debug 5')
             self.mesh_indices = new_indices
 
-    def walk_mesh_edges(self, mesh):
+    def walk_mesh_edges(self, mesh, counter=0):
         for k, corner in enumerate(vertex.i for vertex in mesh.vertices):
             new_mesh = self.get_mesh(corner, mesh.vertices[k - 1].i, 0)
             has_edge_columns = False
@@ -1250,7 +1269,10 @@ class AtomicGraph:
                     new_mesh.calc_cm()
                     self.meshes.append(new_mesh)
                     self.mesh_indices.append(tmp_index)
-                    self.walk_mesh_edges(new_mesh)
+                    print(counter)
+                    if counter == 1395:
+                        print(mesh)
+                    self.walk_mesh_edges(new_mesh, counter=(counter + 1))
 
     @staticmethod
     def determine_temp_index(mesh):
@@ -1466,7 +1488,7 @@ class SubGraph:
     def sort_meshes(self):
         new_list = []
         for mesh in self.meshes:
-            if mesh.vertex_indices[1] == self.vertices[0].out_neighbourhood[0]:
+            if mesh.vertex_indices[1] == self.vertices[0].district[0]:
                 new_list.append(mesh)
                 break
         closed = False
@@ -1552,7 +1574,6 @@ class AntiGraph:
 
         self.graph = graph
         self.vertices = copy.deepcopy(graph.vertices)
-        self.vertex_indices = copy.deepcopy(graph.vertex_indices)
         self.arcs = []
         self.size = 0
 
@@ -1567,7 +1588,7 @@ class AntiGraph:
         self.graph = AtomicGraph(self.graph.scale)
         for vertex in self.vertices:
             self.graph.add_vertex(vertex)
-        self.graph.map_districts()
+        self.graph.build_maps()
         self.graph.summarize_stats()
 
     def map_arcs(self):
@@ -1580,5 +1601,6 @@ class AntiGraph:
                         arc = Arc(len(self.arcs), vertex, out_neighbour)
                         self.arcs.append(arc)
                         self.size += 1
+
 
 

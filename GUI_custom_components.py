@@ -129,22 +129,14 @@ class InteractiveOverlayColumn(InteractiveColumn):
                 if self.vertex.zeta == 0:
                     self.setBrush(self.brush_cu)
             elif self.vertex.species_index == 2:
-                self.setPen(self.pen_zn)
-                if self.vertex.zeta == 0:
-                    self.setBrush(self.brush_zn)
-            elif self.vertex.species_index == 3:
                 self.setPen(self.pen_al)
                 if self.vertex.zeta == 0:
                     self.setBrush(self.brush_al)
-            elif self.vertex.species_index == 4:
-                self.setPen(self.pen_ag)
-                if self.vertex.zeta == 0:
-                    self.setBrush(self.brush_ag)
-            elif self.vertex.species_index == 5:
+            elif self.vertex.species_index == 3:
                 self.setPen(self.pen_mg)
                 if self.vertex.zeta == 0:
                     self.setBrush(self.brush_mg)
-            elif self.vertex.species_index == 6:
+            elif self.vertex.species_index == 4:
                 self.setPen(self.pen_un)
                 if self.vertex.zeta == 0:
                     self.setBrush(self.brush_un)
@@ -185,17 +177,15 @@ class InteractiveGraphColumn(InteractiveColumn):
 
 class Arrow(QtWidgets.QGraphicsItemGroup):
 
-    def __init__(self, *args, i=0, j=1, p1=(0, 0), p2=(1, 1), r=1, scale_factor=1, consistent=False, dislocation=False, chb=None):
+    def __init__(self, *args, i=0, j=1, p1=(0, 0), p2=(1, 1), r=1, scale_factor=1, dual_arc=False, co_planar=False):
         super().__init__(*args)
 
         self.inconsistent_pen = GUI_settings.pen_inconsistent_edge
         self.dislocation_pen = GUI_settings.pen_dislocation_edge
         self.normal_pen = GUI_settings.pen_edge
 
-        self.chb = chb
-
-        self.consistent = consistent
-        self.dislocation = dislocation
+        self.dual_arc = dual_arc
+        self.co_planar = co_planar
         self.scale_factor = scale_factor
         self.r = r
         self.p1 = p1
@@ -208,11 +198,11 @@ class Arrow(QtWidgets.QGraphicsItemGroup):
         self.set_style()
 
     def set_style(self):
-        if self.consistent and not self.dislocation:
+        if self.dual_arc and not self.co_planar:
             self.childItems()[0].setPen(self.normal_pen)
             self.childItems()[0].show()
             self.childItems()[1].hide()
-        elif self.dislocation and self.consistent:
+        elif self.dual_arc and self.co_planar:
             self.childItems()[0].setPen(self.dislocation_pen)
             self.childItems()[0].show()
             self.childItems()[1].setPen(self.dislocation_pen)
@@ -222,14 +212,6 @@ class Arrow(QtWidgets.QGraphicsItemGroup):
             self.childItems()[0].show()
             self.childItems()[1].setPen(self.inconsistent_pen)
             self.childItems()[1].show()
-
-        if self.chb is not None:
-            if not self.chb.isChecked() and not self.consistent:
-                self.hide()
-            else:
-                self.show()
-        else:
-            self.show()
 
     def make_arrow_obj(self):
 
@@ -425,6 +407,15 @@ class Overlay(QtWidgets.QWidget):
             self.killTimer(self.timer)
             self.hide()
 
+
+class RgbaSelector(QtWidgets.QGridLayout):
+
+    def __init__(self, *args):
+        super().__init__(*args)
+
+        self.r_box = QtWidgets.Q
+
+
 # ----------
 # Convenience re-implementations:
 # ----------
@@ -515,4 +506,5 @@ class GroupBox(QtWidgets.QGroupBox):
 
     def mouseDoubleClickEvent(self, *args):
         self.toggle()
+
 

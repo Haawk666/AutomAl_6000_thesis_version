@@ -118,6 +118,7 @@ class Project:
 
         self.filename_full = filename_full
         self.im_mat = None
+        self.fft_im_mat = None
         self.scale = 1
         self.im_height = 0
         self.im_width = 0
@@ -134,6 +135,7 @@ class Project:
         # 0 = Al-Si-Mg-Cu
         # 1 = Al-Si-Mg
         self.alloy = 0
+        self.alloy_mat = [1, 1, 1, 1, 0]
 
         self.im_meta_data = {}
         if not (filename_full == 'Empty' or filename_full == 'empty'):
@@ -229,16 +231,23 @@ class Project:
             else:
                 if not obj.version_saved == Project.version:
                     logger.info('Attempted to load un-compatible save-file. Running conversion script...')
-                    obj = compatibility.convert(obj, obj.version_saved, Project.version)
+                    obj = compatibility.convert(obj, obj.version_saved)
                     if obj is None:
-                        logger.error('Conversion unsuccessful!')
-                        logger.error('Failed to load save-file!')
+                        logger.error('Conversion unsuccessful, failed to load save-file!')
                     else:
-                        logger.info('Conversion successful!')
-                        logger.info('Loaded {}'.format(filename_full))
+                        logger.info('Conversion successful, loaded {}'.format(filename_full))
                 else:
                     logger.info('Loaded {}'.format(filename_full))
         return obj
+
+    def set_alloy_mat(self):
+        if self.alloy == 0:
+            self.alloy_mat = [1, 1, 1, 1, 0]
+        elif self.alloy == 1:
+            self.alloy_mat = [1, 0, 1, 1, 0]
+        else:
+            logger.info('Unknown alloy index! Using index 0')
+            self.alloy_mat = [1, 1, 1, 1, 0]
 
     def column_detection(self, search_type='s'):
         """Column detection algorithm.
@@ -376,7 +385,7 @@ class Project:
                 ind = distances.argmin()
                 temp_indices[k] = indices[ind]
                 temp_distances[k] = distances[ind]
-                distances[ind] = distances.max() + k + 1
+                distances[ind] = distances.max() + 100
 
             indices = temp_indices
             distances = temp_distances
@@ -483,8 +492,6 @@ class Project:
                 ui_obj.update_graph()
             # Search for intersections
             self.column_characterization(starting_index, search_type=14, ui_obj=ui_obj)
-            # Map subsets:
-            self.column_characterization(starting_index, search_type=21)
             # Summarize:
             logger.info('Summarizing stats.')
             self.graph.refresh_graph()
@@ -540,9 +547,8 @@ class Project:
             # Run spatial mapping
             logger.info('Mapping spatial locality...')
             self.redraw_centre_mat()
-            self.redraw_circumference_mat()
             for i in range(0, self.num_columns):
-                self.graph.vertices[i].district, _ = self.find_nearest(i, self.map_size)
+                self.graph.vertices[i].district, _ = self.find_nearest(i, 8)
             self.column_characterization(starting_index, search_type=18)
             logger.info('Spatial mapping complete.')
 
@@ -569,7 +575,7 @@ class Project:
             # Experimental level determination
             logger.info('Running experimental level definition algorithm....')
             self.graph.reset_all_flags()
-            self.graph.map_districts()
+            self.graph.build_maps()
             graph_op.naive_determine_z(self.graph, starting_index, self.graph.vertices[starting_index].zeta)
             graph_op.revise_z(self.graph)
             graph_op.revise_z(self.graph)
@@ -596,7 +602,7 @@ class Project:
                         chi_before = self.graph.chi
                         logger.info('Looking for type {}:'.format(type_num))
                         logger.info('Chi: {}'.format(chi_before))
-                        self.graph.map_districts()
+                        self.graph.build_maps()
 
                         num_types, changes = untangling.untangle(self.graph, type_num, strong=False, ui_obj=ui_obj, aggressive=True)
 
@@ -654,7 +660,7 @@ class Project:
                         chi_before = self.graph.chi
                         logger.info('Looking for type {}:'.format(type_num))
                         logger.info('Chi: {}'.format(chi_before))
-                        self.graph.map_districts()
+                        self.graph.build_maps()
 
                         num_types, changes = untangling.untangle(self.graph, type_num, strong=False, ui_obj=ui_obj)
 
@@ -712,7 +718,7 @@ class Project:
                         chi_before = self.graph.chi
                         logger.info('Looking for type {}:'.format(type_num))
                         logger.info('Chi: {}'.format(chi_before))
-                        self.graph.map_districts()
+                        self.graph.build_maps()
 
                         num_types, changes = untangling.untangle(self.graph, type_num, strong=False, ui_obj=ui_obj)
 
@@ -770,7 +776,7 @@ class Project:
                         self.column_characterization(starting_index, search_type=14)
                         logger.info('Looking for type {}:'.format(type_num))
                         logger.info('Chi: {}'.format(chi_before))
-                        self.graph.map_districts()
+                        self.graph.build_maps()
 
                         num_types, changes = untangling.untangle(self.graph, type_num, strong=True)
 
@@ -829,7 +835,7 @@ class Project:
             # not_removed, strong_intersections, ww, ss = graph_op.remove_intersections(self.graph)
             graph_op.experimental_remove_intersections(self.graph)
             intersections = self.graph.find_intersections()
-            self.graph.map_districts()
+            self.graph.build_maps()
             if ui_obj is not None:
                 ui_obj.update_overlay()
                 ui_obj.update_graph()
@@ -847,7 +853,7 @@ class Project:
             logger.info('Running experimental angle analysis')
             for vertex in self.graph.vertices:
                 if not vertex.is_edge_column and not vertex.is_set_by_user and not vertex.void:
-                    vertex.probability_vector = graph_op.base_angle_score(self.graph, vertex.i)
+                    vertex.probability_vector = legacy_items.base_angle_score(self.graph, vertex.i)
                     vertex.determine_species_from_probability_vector()
             logger.info('Angle analysis complete!')
 
@@ -880,13 +886,13 @@ class Project:
         elif search_type == 21:
             # Sort neighbours
             logger.info('Sorting neighbours...')
-            self.graph.map_districts()
+            self.graph.build_maps()
             logger.info('Neighbours sorted')
 
         elif search_type == 22:
             # product predictions
             logger.info('Apply product predictions')
-            self.graph.map_districts()
+            self.graph.build_maps()
             probs = []
             for i in range(0, self.num_columns):
                 if not self.graph.vertices[i].is_set_by_user and not self.graph.vertices[i].is_edge_column:
@@ -897,13 +903,13 @@ class Project:
                 if not self.graph.vertices[i].is_set_by_user and not self.graph.vertices[i].is_edge_column:
                     self.graph.vertices[i].probability_vector = probs[i]
                     self.graph.vertices[i].determine_species_from_probability_vector()
-            self.graph.map_districts()
+            self.graph.build_maps()
             logger.info('Applied product predictions!')
 
         elif search_type == 23:
             # Model predictions
             logger.info('Apply model predictions')
-            self.graph.map_districts()
+            self.graph.build_maps()
             probs = []
             for i in range(0, self.num_columns):
                 if not self.graph.vertices[i].is_set_by_user and not self.graph.vertices[i].is_edge_column:
@@ -914,7 +920,7 @@ class Project:
                 if not self.graph.vertices[i].is_set_by_user and not self.graph.vertices[i].is_edge_column:
                     self.graph.vertices[i].probability_vector = probs[i]
                     self.graph.vertices[i].determine_species_from_probability_vector()
-            self.graph.map_districts()
+            self.graph.build_maps()
             logger.info('Applied model predictions!')
 
         else:

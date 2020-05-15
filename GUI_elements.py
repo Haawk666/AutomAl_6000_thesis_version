@@ -216,7 +216,7 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
 
         for vertex_a in self.ui_obj.project_instance.graph.vertices:
             inner_edges = []
-            for n, vertex_b in enumerate(self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(vertex_a.district)):
+            for n, vertex_b in enumerate(self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(vertex_a.out_neighbourhood)):
                 p1 = vertex_a.im_pos()
                 p2 = vertex_b.im_pos()
                 consistent = vertex_b.partner_query(vertex_a.i)
@@ -226,12 +226,11 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
                     dislocation = False
                 inner_edges.append(GUI_custom_components.Arrow(i=vertex_a.i, j=vertex_b.i, p1=p1, p2=p2,
                                                                r=self.ui_obj.project_instance.r,
-                                                               scale_factor=self.scale_factor, consistent=consistent,
-                                                               dislocation=dislocation,
-                                                               chb=self.ui_obj.control_window.chb_graph))
-                self.addItem(inner_edges[-1])
-                if n >= vertex_a.n:
+                                                               scale_factor=self.scale_factor, dual_arc=consistent,
+                                                               co_planar=dislocation))
+                if not self.ui_obj.control_window.chb_graph and (dislocation or not consistent):
                     inner_edges[-1].hide()
+                self.addItem(inner_edges[-1])
             self.edges.append(inner_edges)
 
     def re_draw_mesh_details(self):
@@ -254,7 +253,7 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
             self.removeItem(edge_item)
         self.edges[i] = []
         vertex_a = self.ui_obj.project_instance.graph.vertices[i]
-        for n, vertex_b in enumerate(self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(self.ui_obj.project_instance.graph.vertices[vertex_a.i].district)):
+        for n, vertex_b in enumerate(self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(vertex_a.out_neighbourhood)):
             p1 = vertex_a.im_pos()
             p1 = (p1[0], p1[1])
             p2 = vertex_b.im_pos()
@@ -264,13 +263,14 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
                 dislocation = True
             else:
                 dislocation = False
-            self.edges[i].append(GUI_custom_components.Arrow(i=vertex_a.i, j=vertex_b.i, p1=p1, p2=p2,
-                                                             r=self.ui_obj.project_instance.r,
-                                                             scale_factor=self.scale_factor, consistent=consistent,
-                                                             dislocation=dislocation,
-                                                             chb=self.ui_obj.control_window.chb_graph))
+            self.edges[i].append(GUI_custom_components.Arrow(
+                i=vertex_a.i, j=vertex_b.i, p1=p1, p2=p2,
+                r=self.ui_obj.project_instance.r,
+                scale_factor=self.scale_factor, dual_arc=consistent,
+                co_planar=dislocation
+            ))
             self.addItem(self.edges[i][-1])
-            if n >= vertex_a.n:
+            if not self.ui_obj.control_window.chb_graph and (dislocation or not consistent):
                 self.edges[i][-1].hide()
 
     def redraw_neighbourhood(self, i):
@@ -468,11 +468,11 @@ class AtomicSubGraph(QtWidgets.QGraphicsScene):
     def re_draw_edges(self):
         """Redraws all edge elements."""
         for edge in self.sub_graph.arcs:
-            consistent = edge.is_reciprocated
-            dislocation = edge.is_same_plane
+            consistent = edge.dual_arc
+            dislocation = edge.co_planar
             p1 = edge.vertex_a.im_pos()
             p2 = edge.vertex_b.im_pos()
-            self.edges.append(GUI_custom_components.Arrow(i=edge.vertex_a.i, j=edge.vertex_b.i, p1=p1, p2=p2, r=self.ui_obj.project_instance.r, scale_factor=self.scale_factor, consistent=consistent, dislocation=dislocation))
+            self.edges.append(GUI_custom_components.Arrow(i=edge.vertex_a.i, j=edge.vertex_b.i, p1=p1, p2=p2, r=self.ui_obj.project_instance.r, scale_factor=self.scale_factor, dual_arc=consistent, co_planar=dislocation))
             self.addItem(self.edges[-1])
 
     def label_angles(self, angle_vectors=False):
@@ -614,6 +614,58 @@ class ZoomGraphicsView(QtWidgets.QGraphicsView):
         self.ui_obj = ui_obj
         self.trigger_func = trigger_func
         self.tab_index = tab_index
+
+    def translate_w(self, amount, relay=True):
+
+        # Set Anchors
+        self.setTransformationAnchor(QtWidgets.QGraphicsView.NoAnchor)
+        self.setResizeAnchor(QtWidgets.QGraphicsView.NoAnchor)
+
+        self.translate(0, amount)
+
+        if self.ui_obj.lock_views and relay:
+            for i, zgv in enumerate(self.ui_obj.gv_list):
+                if not i == self.tab_index:
+                    zgv.translate_w(amount, relay=False)
+
+    def translate_s(self, amount, relay=True):
+
+        # Set Anchors
+        self.setTransformationAnchor(QtWidgets.QGraphicsView.NoAnchor)
+        self.setResizeAnchor(QtWidgets.QGraphicsView.NoAnchor)
+
+        self.translate(0, -amount)
+
+        if self.ui_obj.lock_views and relay:
+            for i, zgv in enumerate(self.ui_obj.gv_list):
+                if not i == self.tab_index:
+                    zgv.translate_s(amount, relay=False)
+
+    def translate_d(self, amount, relay=True):
+
+        # Set Anchors
+        self.setTransformationAnchor(QtWidgets.QGraphicsView.NoAnchor)
+        self.setResizeAnchor(QtWidgets.QGraphicsView.NoAnchor)
+
+        self.translate(-amount, 0)
+
+        if self.ui_obj.lock_views and relay:
+            for i, zgv in enumerate(self.ui_obj.gv_list):
+                if not i == self.tab_index:
+                    zgv.translate_d(amount, relay=False)
+
+    def translate_a(self, amount, relay=True):
+
+        # Set Anchors
+        self.setTransformationAnchor(QtWidgets.QGraphicsView.NoAnchor)
+        self.setResizeAnchor(QtWidgets.QGraphicsView.NoAnchor)
+
+        self.translate(amount, 0)
+
+        if self.ui_obj.lock_views and relay:
+            for i, zgv in enumerate(self.ui_obj.gv_list):
+                if not i == self.tab_index:
+                    zgv.translate_a(amount, relay=False)
 
     def wheelEvent(self, event, relay=True):
 
@@ -765,7 +817,7 @@ class ControlWindow(QtWidgets.QWidget):
         # Labels
         self.lbl_filename = QtWidgets.QLabel('Filename: ')
         self.lbl_location = QtWidgets.QLabel('Location: ')
-        self.lbl_model = QtWidgets.QLabel('Model: ')
+        self.lbl_model = QtWidgets.QLabel('Associated model: ')
 
         self.lbl_num_detected_columns = QtWidgets.QLabel('Number of detected columns: ')
         self.lbl_image_width = QtWidgets.QLabel('Image width (pixels): ')
@@ -1110,9 +1162,9 @@ class ControlWindow(QtWidgets.QWidget):
         # Group boxes
         self.project_box_layout = QtWidgets.QVBoxLayout()
         self.project_box_layout.addLayout(btn_project_layout)
-        self.project_box_layout.addLayout(self.btn_set_model_layout)
         self.project_box_layout.addWidget(self.lbl_filename)
         self.project_box_layout.addWidget(self.lbl_location)
+        self.project_box_layout.addLayout(self.btn_set_model_layout)
         self.project_box = GUI_custom_components.GroupBox('Active project', menu_action=self.ui_obj.menu.toggle_project_control_action)
         self.project_box.setLayout(self.project_box_layout)
 
@@ -1564,6 +1616,14 @@ class ControlWindow(QtWidgets.QWidget):
 
         if self.ui_obj.project_instance is not None:
 
+            self.lbl_model.setText('Associated model: {}'.format(self.ui_obj.project_instance.graph.active_model))
+            if self.ui_obj.savefile:
+                self.lbl_filename.setText('Filename: {}'.format(os.path.split(self.ui_obj.savefile)[1]))
+                self.lbl_location.setText('Location: {}'.format(os.path.split(self.ui_obj.savefile)[0]))
+            else:
+                self.lbl_filename.setText('Filename: ')
+                self.lbl_location.setText('Location: ')
+
             self.lbl_num_detected_columns.setText('Number of detected columns: {}'.format(self.ui_obj.project_instance.num_columns))
             self.lbl_image_width.setText('Image width (pixels): {}'.format(self.ui_obj.project_instance.im_width))
             self.lbl_image_height.setText('Image height (pixels): {}'.format(self.ui_obj.project_instance.im_height))
@@ -1594,6 +1654,10 @@ class ControlWindow(QtWidgets.QWidget):
 
         self.deselect_column()
 
+        self.lbl_model.setText('Associated model: ')
+        self.lbl_filename.setText('Filename: ')
+        self.lbl_location.setText('Location: ')
+
         self.lbl_num_detected_columns.setText('Number of detected columns: ')
         self.lbl_image_width.setText('Image width (pixels): ')
         self.lbl_image_height.setText('Image height (pixels): ')
@@ -1608,7 +1672,6 @@ class ControlWindow(QtWidgets.QWidget):
         self.lbl_alloy.setText('Alloy: ')
 
         self.lbl_starting_index.setText('Default starting index: ')
-        self.lbl_cert_threshold.setText('Certainty threshold: ')
 
         self.lbl_chi.setText('Chi: ')
 
@@ -2744,6 +2807,235 @@ class PlotModels(QtWidgets.QDialog):
 
         self.cmb_pca_setting.addItem('Show categories')
         self.cmb_pca_setting.addItem('No categories')
+
+        self.set_layout()
+        self.exec_()
+
+    def set_layout(self):
+        # Fill info into widgets:
+        self.lbl_viewing_model.setText('Model: {}'.format(self.model.save_filename))
+        if self.ui_obj.project_instance is not None:
+            if self.model.save_filename == self.ui_obj.project_instance.graph.active_model.save_filename:
+                self.btn_activate_model.setDisabled(True)
+            else:
+                self.btn_activate_model.setDisabled(False)
+        else:
+            self.btn_activate_model.setDisabled(True)
+        number_of_files = 0
+        for file in self.model.files.splitlines(keepends=False):
+            number_of_files += 1
+        gen_string = ''
+        gen_string += 'Total size, n = {}\n'.format(self.model.uncategorized_normal_dist.n)
+        gen_string += 'Data gathered from {} images\n'.format(number_of_files)
+        gen_string += 'Filter:\n'
+        for key, value in self.model.filter_.items():
+            gen_string += '    {}: {}\n'.format(key, value)
+        self.lbl_size.setText(gen_string)
+        attr_string = ''
+        for attribute in self.model.attribute_keys:
+            self.cmb_attribute_1.addItem(attribute)
+            self.cmb_attribute_2.addItem(attribute)
+            self.cmb_single_attribute.addItem(attribute)
+            attr_string += '{}\n'.format(attribute)
+        self.lbl_attributes.setText('{}'.format(attr_string))
+        cat_string = ''
+        for c, category_key in enumerate(self.model.category_titles):
+            cat_string += '{}\t\tn = {}\n'.format(category_key, self.model.composite_model[c].n)
+        self.lbl_categories.setText('{}'.format(cat_string))
+
+        # Create group boxes:
+        grp_set_model = QtWidgets.QGroupBox('Select model')
+        grp_dual_plot = QtWidgets.QGroupBox('Dual plot')
+        grp_plot_all = QtWidgets.QGroupBox('Plot all model attributes densities')
+        grp_plot_pca = QtWidgets.QGroupBox('Plot 2 first principle components')
+        grp_categorization = QtWidgets.QGroupBox('Data categories ({}):'.format(self.model.num_data_categories))
+        grp_attributes = QtWidgets.QGroupBox('Data attributes ({}):'.format(self.model.k))
+        grp_general = QtWidgets.QGroupBox('General:')
+        grp_single_plot = QtWidgets.QGroupBox('Plot attribute model distributions')
+
+        # Create group layouts:
+        grp_set_model_layout = QtWidgets.QVBoxLayout()
+        grp_set_model_layout.addWidget(self.lbl_viewing_model)
+        layout = QtWidgets.QHBoxLayout()
+        layout.addStretch()
+        layout.addWidget(self.btn_activate_model)
+        layout.addStretch()
+        grp_set_model_layout.addLayout(layout)
+        layout = QtWidgets.QHBoxLayout()
+        layout.addStretch()
+        layout.addWidget(self.btn_load_model)
+        layout.addStretch()
+        grp_set_model_layout.addLayout(layout)
+        grp_set_model.setLayout(grp_set_model_layout)
+
+        grp_dual_plot_layout = QtWidgets.QVBoxLayout()
+        layout = QtWidgets.QHBoxLayout()
+        layout.addWidget(self.lbl_attribute_1)
+        layout.addWidget(self.cmb_attribute_1)
+        grp_dual_plot_layout.addLayout(layout)
+        layout = QtWidgets.QHBoxLayout()
+        layout.addWidget(self.lbl_attribute_2)
+        layout.addWidget(self.cmb_attribute_2)
+        grp_dual_plot_layout.addLayout(layout)
+        layout = QtWidgets.QHBoxLayout()
+        layout.addStretch()
+        layout.addWidget(self.btn_dual_plot)
+        layout.addStretch()
+        grp_dual_plot_layout.addLayout(layout)
+        grp_dual_plot.setLayout(grp_dual_plot_layout)
+
+        grp_plot_all_layout = QtWidgets.QVBoxLayout()
+        layout = QtWidgets.QHBoxLayout()
+        layout.addStretch()
+        layout.addWidget(self.btn_plot_all)
+        layout.addStretch()
+        grp_plot_all_layout.addLayout(layout)
+        layout = QtWidgets.QHBoxLayout()
+        layout.addStretch()
+        layout.addWidget(self.btn_plot_z_scores)
+        layout.addStretch()
+        grp_plot_all_layout.addLayout(layout)
+        grp_plot_all.setLayout(grp_plot_all_layout)
+
+        grp_plot_pca_layout = QtWidgets.QVBoxLayout()
+        layout = QtWidgets.QHBoxLayout()
+        layout.addWidget(self.lbl_pca_categories)
+        layout.addWidget(self.cmb_pca_setting)
+        grp_plot_pca_layout.addLayout(layout)
+        layout = QtWidgets.QHBoxLayout()
+        layout.addStretch()
+        layout.addWidget(self.btn_plot_pca)
+        layout.addStretch()
+        grp_plot_pca_layout.addLayout(layout)
+        grp_plot_pca.setLayout(grp_plot_pca_layout)
+
+        grp_categorization_layout = QtWidgets.QVBoxLayout()
+        grp_categorization_layout.addWidget(self.lbl_categories)
+        grp_categorization.setLayout(grp_categorization_layout)
+
+        grp_attributes_layout = QtWidgets.QVBoxLayout()
+        grp_attributes_layout.addWidget(self.lbl_attributes)
+        grp_attributes.setLayout(grp_attributes_layout)
+
+        grp_single_plot_layout = QtWidgets.QVBoxLayout()
+        layout = QtWidgets.QHBoxLayout()
+        layout.addWidget(self.lbl_single_attribute)
+        layout.addWidget(self.cmb_single_attribute)
+        grp_single_plot_layout.addLayout(layout)
+        layout = QtWidgets.QHBoxLayout()
+        layout.addStretch()
+        layout.addWidget(self.btn_plot_single)
+        layout.addStretch()
+        grp_single_plot_layout.addLayout(layout)
+        grp_single_plot.setLayout(grp_single_plot_layout)
+
+        grp_general_layout = QtWidgets.QVBoxLayout()
+        grp_general_layout.addWidget(self.lbl_size)
+        grp_general.setLayout(grp_general_layout)
+
+        # Set top layout:
+        grid = QtWidgets.QGridLayout()
+        grid.addWidget(grp_set_model, 0, 0)
+        grid.addWidget(grp_general, 1, 0)
+        grid.addWidget(grp_categorization, 2, 0)
+        grid.addWidget(grp_attributes, 3, 0)
+        grid.addWidget(grp_single_plot, 0, 1)
+        grid.addWidget(grp_dual_plot, 1, 1)
+        grid.addWidget(grp_plot_all, 2, 1)
+        grid.addWidget(grp_plot_pca, 3, 1)
+
+        top_layout = QtWidgets.QVBoxLayout()
+        top_layout.addLayout(grid)
+        layout = QtWidgets.QHBoxLayout()
+        layout.addStretch()
+        layout.addWidget(self.btn_quit)
+        layout.addStretch()
+        top_layout.addLayout(layout)
+
+        self.setLayout(top_layout)
+
+    def btn_activate_model_trigger(self):
+        self.ui_obj.project_instance.active_model = self.model
+        self.ui_obj.graph.active_model = self.model
+
+    def btn_load_model_trigger(self):
+        filename = QtWidgets.QFileDialog.getOpenFileName(self, "Load model", '', "")
+        if filename[0]:
+            self.close()
+            PlotModels(ui_obj=self.ui_obj, model=statistics.VertexDataManager.load(filename[0]))
+
+    def btn_dual_plot_trigger(self):
+        self.model.dual_plot(self.cmb_attribute_1.currentText(), self.cmb_attribute_2.currentText())
+
+    def btn_plot_all_trigger(self):
+        self.model.plot_all()
+
+    def btn_plot_z_scores_trigger(self):
+        self.model.z_plot()
+
+    def btn_plot_pca_trigger(self):
+        if self.cmb_pca_setting.currentText() == 'Show categories':
+            self.model.plot_pca(show_category=True)
+        else:
+            self.model.plot_pca(show_category=False)
+
+    def btn_plot_single_trigger(self):
+        self.model.single_plot(self.cmb_single_attribute.currentText())
+
+    def btn_quit_trigger(self):
+        self.close()
+
+
+class CustomizeOverlay(QtWidgets.QDialog):
+
+    def __init__(self, *args, ui_obj=None):
+        super().__init__(*args)
+
+        self.ui_obj = ui_obj
+
+        self.setWindowTitle('Customize overlay')
+
+        # Dialog buttons:
+        self.btn_set_default = QtWidgets.QPushButton('Restore default')
+        self.btn_apply_changes = QtWidgets.QPushButton('Apply changes')
+        self.btn_cancel_changes = QtWidgets.QPushButton('Cancel')
+        self.dialog_btn_layout = QtWidgets.QHBoxLayout
+        self.dialog_btn_layout.addStretch()
+        self.dialog_btn_layout.addWidget(self.btn_apply_changes)
+        self.dialog_btn_layout.addWidget(self.btn_cancel_changes)
+        self.dialog_btn_layout.addWidget(self.btn_set_default)
+        self.dialog_btn_layout.addStretch()
+
+        # Layout elements:
+        self.cmb_categorization = QtWidgets.QComboBox()
+        self.cmb_categorization.addItem('Simple')
+
+        # Simple categorization:
+        self.lbl_si = QtWidgets.QLabel('Si')
+        self.lbl_cu = QtWidgets.QLabel('Cu')
+        self.lbl_al = QtWidgets.QLabel('Al')
+        self.lbl_Mg = QtWidgets.QLabel('Mg')
+        self.lbl_un = QtWidgets.QLabel('Un')
+
+        self.lbl_shape = QtWidgets.QLabel('Shape')
+        self.lbl_color_1 = QtWidgets.QLabel('Primary color ()')
+        self.lbl_color_2 = QtWidgets.QLabel('Secondary color')
+        self.lbl_radius = QtWidgets.QLabel('Radius/Size')
+        self.lbl_visible = QtWidgets.QLabel('Show/hide')
+        self.lbl_preview = QtWidgets.QLabel('Preview')
+
+        self.cmb_si_shape = QtWidgets.QComboBox()
+        self.cmb_si_shape.addItem('Circle')
+        self.cmb_cu_shape = QtWidgets.QComboBox()
+        self.cmb_cu_shape.addItem('Circle')
+        self.cmb_al_shape = QtWidgets.QComboBox()
+        self.cmb_al_shape.addItem('Circle')
+        self.cmb_mg_shape = QtWidgets.QComboBox()
+        self.cmb_mg_shape.addItem('Circle')
+        self.cmb_un_shape = QtWidgets.QComboBox()
+        self.cmb_un_shape.addItem('Circle')
+
+
 
         self.set_layout()
         self.exec_()

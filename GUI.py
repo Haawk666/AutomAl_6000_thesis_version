@@ -225,6 +225,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.gv_overlay_composition.setScene(self.gs_overlay_composition)
 
     def update_graph(self):
+        # Do not change scale factor, many bugs activate if scale is not 1!
         self.gs_atomic_graph = GUI_elements.AtomicGraph(ui_obj=self, scale_factor=2)
         self.gv_atomic_graph.setScene(self.gs_atomic_graph)
 
@@ -305,65 +306,92 @@ class MainUI(QtWidgets.QMainWindow):
 
     def keyPressEvent(self, event):
         """Handles key-presses when central widget has focus. Used to switch between tabs"""
-        if event.key() == QtCore.Qt.Key_X:
-            if self.tabs.currentIndex() == 6:
-                self.tabs.setCurrentIndex(0)
-            else:
-                self.tabs.setCurrentIndex(self.tabs.currentIndex() + 1)
-        if event.key() == QtCore.Qt.Key_Z:
-            if self.tabs.currentIndex() == 0:
-                self.tabs.setCurrentIndex(6)
-            else:
-                self.tabs.setCurrentIndex(self.tabs.currentIndex() - 1)
+        self.key_press_trigger(event.key())
 
     def key_press_trigger(self, key):
         """Process key-press events from graphic elements"""
-        if self.project_instance is not None and not self.selected_column == -1:
-            if self.tabs.currentIndex() == 0:
-                pass
-            if self.tabs.currentIndex() == 1 or self.tabs.currentIndex() == 2 or self.tabs.currentIndex() == 3:
-                if key == QtCore.Qt.Key_1:
+        if self.project_instance is not None:
+            if key == QtCore.Qt.Key_1:
+                if not self.selected_column == -1:
                     self.project_instance.graph.vertices[self.selected_column].is_set_by_user = True
                     self.set_species(0)
-                elif key == QtCore.Qt.Key_2:
+            elif key == QtCore.Qt.Key_2:
+                if not self.selected_column == -1:
                     self.project_instance.graph.vertices[self.selected_column].is_set_by_user = True
                     self.set_species(1)
-                elif key == QtCore.Qt.Key_3:
+            elif key == QtCore.Qt.Key_3:
+                if not self.selected_column == -1:
+                    self.project_instance.graph.vertices[self.selected_column].is_set_by_user = True
+                    self.set_species(2)
+            elif key == QtCore.Qt.Key_4:
+                if not self.selected_column == -1:
                     self.project_instance.graph.vertices[self.selected_column].is_set_by_user = True
                     self.set_species(3)
-                elif key == QtCore.Qt.Key_4:
-                    self.project_instance.graph.vertices[self.selected_column].is_set_by_user = True
-                    self.set_species(5)
-                elif key == QtCore.Qt.Key_Plus:
+            elif key == QtCore.Qt.Key_Plus:
+                if not self.selected_column == -1:
                     self.set_level(self.project_instance.graph.vertices[self.selected_column].anti_level())
-                elif key == QtCore.Qt.Key_W and self.control_window.chb_move.isChecked():
+            elif key == QtCore.Qt.Key_W:
+                if self.control_window.chb_move.isChecked():
                     self.gs_atomic_positions.interactive_position_objects[self.selected_column].moveBy(0.0, -1.0)
-                elif key == QtCore.Qt.Key_S and self.control_window.chb_move.isChecked():
+                else:
+                    self.gv_list[self.tabs.currentIndex()].translate_w(10)
+            elif key == QtCore.Qt.Key_S:
+                if self.control_window.chb_move.isChecked():
                     self.gs_atomic_positions.interactive_position_objects[self.selected_column].moveBy(0.0, 1.0)
-                elif key == QtCore.Qt.Key_A and self.control_window.chb_move.isChecked():
+                else:
+                    self.gv_list[self.tabs.currentIndex()].translate_s(10)
+            elif key == QtCore.Qt.Key_A:
+                if self.control_window.chb_move.isChecked():
                     self.gs_atomic_positions.interactive_position_objects[self.selected_column].moveBy(-1.0, 0.0)
-                elif key == QtCore.Qt.Key_D and self.control_window.chb_move.isChecked():
+                else:
+                    self.gv_list[self.tabs.currentIndex()].translate_a(10)
+            elif key == QtCore.Qt.Key_D:
+                if self.control_window.chb_move.isChecked():
                     self.gs_atomic_positions.interactive_position_objects[self.selected_column].moveBy(1.0, 0.0)
-                elif key == QtCore.Qt.Key_F1:
+                else:
+                    self.gv_list[self.tabs.currentIndex()].translate_d(10)
+            elif key == QtCore.Qt.Key_E:
+                self.btn_align_views_trigger()
+            elif key == QtCore.Qt.Key_Z:
+                if self.tabs.currentIndex() == 0:
+                    self.tabs.setCurrentIndex(8)
+                else:
+                    self.tabs.setCurrentIndex(self.tabs.currentIndex() - 1)
+            elif key == QtCore.Qt.Key_X:
+                if self.tabs.currentIndex() == 8:
+                    self.tabs.setCurrentIndex(0)
+                else:
+                    self.tabs.setCurrentIndex(self.tabs.currentIndex() + 1)
+            elif key == QtCore.Qt.Key_F1:
+                if not self.selected_column == -1:
                     self.project_instance.graph.vertices[self.selected_column].flag_1 = not self.project_instance.graph.vertices[self.selected_column].flag_1
                     logger.info('vertex {}, flag 1 set to {}'.format(self.selected_column, self.project_instance.graph.vertices[self.selected_column].flag_1))
-                elif key == QtCore.Qt.Key_F2:
+            elif key == QtCore.Qt.Key_F2:
+                if not self.selected_column == -1:
                     self.project_instance.graph.vertices[self.selected_column].flag_2 = not self.project_instance.graph.vertices[self.selected_column].flag_2
                     logger.info('vertex {}, flag 2 set to {}'.format(self.selected_column, self.project_instance.graph.vertices[self.selected_column].flag_2))
-                elif key == QtCore.Qt.Key_F3:
+            elif key == QtCore.Qt.Key_F3:
+                if not self.selected_column == -1:
                     self.project_instance.graph.vertices[self.selected_column].flag_3 = not self.project_instance.graph.vertices[self.selected_column].flag_3
                     logger.info('vertex {}, flag 3 set to {}'.format(self.selected_column, self.project_instance.graph.vertices[self.selected_column].flag_3))
-                elif key == QtCore.Qt.Key_F4:
+            elif key == QtCore.Qt.Key_F4:
+                if not self.selected_column == -1:
                     self.project_instance.graph.vertices[self.selected_column].flag_4 = not self.project_instance.graph.vertices[self.selected_column].flag_4
                     logger.info('vertex {}, flag 4 set to {}'.format(self.selected_column, self.project_instance.graph.vertices[self.selected_column].flag_4))
-                elif key == QtCore.Qt.Key_P:
+            elif key == QtCore.Qt.Key_Space:
+                if self.tabs.currentIndex() == 3:
                     self.control_window.chb_perturb_mode.toggle()
-            if self.tabs.currentIndex() == 4:
-                pass
-            if self.tabs.currentIndex() == 5:
-                pass
-            if self.tabs.currentIndex() == 6:
-                pass
+            elif key == QtCore.Qt.Key_R:
+                if not self.selected_column == -1:
+                    self.btn_show_stats_trigger()
+            elif key == QtCore.Qt.Key_P:
+                if self.control_window.chb_move.isChecked():
+                    self.chb_enable_move_trigger(False)
+                else:
+                    self.chb_enable_move_trigger(True)
+            elif key == QtCore.Qt.Key_Enter:
+                if self.control_window.chb_move.isChecked():
+                    self.btn_set_position_trigger()
 
     # ----------
     # Menu triggers:
@@ -374,6 +402,7 @@ class MainUI(QtWidgets.QMainWindow):
         if filename[0]:
             self.sys_message('Working...')
             self.project_instance = core.Project(filename[0])
+            self.savefile = None
             self.control_instance = None
             self.update_display()
         else:
@@ -781,15 +810,15 @@ class MainUI(QtWidgets.QMainWindow):
             item, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Species", items, 0, False)
             if ok_pressed and item:
                 if item == 'Al':
-                    h = 3
+                    h = 2
                 elif item == 'Si':
                     h = 0
                 elif item == 'Mg':
-                    h = 5
+                    h = 3
                 elif item == 'Cu':
                     h = 1
                 else:
-                    h = 6
+                    h = 4
                 self.set_species(h)
 
     def btn_set_level_trigger(self):
@@ -835,16 +864,18 @@ class MainUI(QtWidgets.QMainWindow):
     # ----------
 
     def btn_new_project_trigger(self):
-        pass
+        self.menu_new_trigger()
 
     def btn_open_project_trigger(self):
-        pass
+        self.menu_open_trigger()
 
     def btn_save_project_trigger(self):
-        pass
+        if self.project_instance is not None:
+            self.menu_save_trigger()
 
     def btn_close_project_trigger(self):
-        pass
+        if self.project_instance is not None:
+            self.menu_close_trigger()
 
     def btn_cancel_move_trigger(self):
         self.control_window.mode_move(False)
@@ -870,18 +901,12 @@ class MainUI(QtWidgets.QMainWindow):
     def btn_align_views_trigger(self):
         tab = self.tabs.currentIndex()
         coor = self.gv_list[tab].mapToScene(self.gv_list[tab].viewport().rect().center())
-        coor_2 = 2 * coor
         transform = self.gv_list[tab].transform()
         for i, gv in enumerate(self.gv_list):
-            if i in [0, 1, 2, 7, 8]:
+            if i in [0, 1, 2, 3, 7, 8]:
                 gv.resetTransform()
                 gv.setTransform(transform)
                 gv.centerOn(coor)
-            else:
-                gv.resetTransform()
-                gv.setTransform(transform)
-                gv.scale(0.5, 0.5)
-                gv.centerOn(coor_2)
 
     def btn_export_overlay_image_trigger(self):
         GUI_elements.DataExportWizard(ui_obj=self)
@@ -908,7 +933,7 @@ class MainUI(QtWidgets.QMainWindow):
             self.btn_continue_detection_trigger()
 
     def btn_continue_analysis_trigger(self):
-        if self.project_instance is not None and not self.selected_column == -1:
+        if self.project_instance is not None:
 
             strings = ['0 - Full column characterization algorithm',
                        '1 - Basic mappings...',
@@ -944,10 +969,18 @@ class MainUI(QtWidgets.QMainWindow):
                     if string == strings[k]:
                         choice = k
                 if not choice == -1:
-                    if self.control_window.chb_show_graphic_updates.isChecked():
-                        self.project_instance.column_characterization(self.selected_column, choice, ui_obj=self)
+                    if self.selected_column == -1:
+                        if self.project_instance.starting_index is not None:
+                            starting_column = self.project_instance.starting_index
+                        else:
+                            starting_column = 0
                     else:
-                        self.project_instance.column_characterization(self.selected_column, choice)
+                        starting_column = self.selected_column
+
+                    if self.control_window.chb_show_graphic_updates.isChecked():
+                        self.project_instance.column_characterization(starting_column, choice, ui_obj=self)
+                    else:
+                        self.project_instance.column_characterization(starting_column, choice)
                     self.update_display()
                 else:
                     logger.error('Invalid selection. Was not able to start column detection.')
@@ -1026,7 +1059,7 @@ class MainUI(QtWidgets.QMainWindow):
             if self.project_instance.num_columns > 0:
                 if len(self.project_instance.graph.vertices[0].district) > 0:
                     if not self.selected_column == -1:
-                        self.project_instance.graph.map_districts()
+                        self.project_instance.graph.build_maps()
                         sub_graph = self.project_instance.graph.get_column_centered_subgraph(self.selected_column)
                         self.gs_atomic_sub_graph = GUI_elements.AtomicSubGraph(ui_obj=self, sub_graph=sub_graph, scale_factor=4)
                         self.gv_atomic_sub_graph.setScene(self.gs_atomic_sub_graph)
