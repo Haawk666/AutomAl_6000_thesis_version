@@ -10,6 +10,7 @@ from matplotlib import pyplot as plt
 from matplotlib.gridspec import GridSpec
 import numpy as np
 import pickle
+import copy
 import logging
 # Instantiate logger:
 logger = logging.getLogger(__name__)
@@ -40,7 +41,11 @@ class MultivariateNormalDist:
         self.covar_matrix_eigenvalues = None
         self.covar_matrix_eigenvectors = None
 
-        self.calc_params(data)
+        if self.n > 1:
+            self.calc_params(data)
+        else:
+            self.means = [0] * self.k
+            self.variances = [1] * self.k
 
     def calc_params(self, data):
         """Two pass algorithm"""
@@ -60,12 +65,15 @@ class MultivariateNormalDist:
                     factor_2 = data[dimension_2, data_index] - self.means[dimension_2]
                     covar += factor_1 * factor_2
                 covar /= self.n - 1
-                if dimension_1 == dimension_2 and covar < 0.00000000001:
+                if dimension_1 == dimension_2 and covar < 0.0000000001:
                     covar = 0.0001
                 self.covar_matrix[dimension_1, dimension_2] = covar
 
         self.covar_matrix_determinant = np.linalg.det(self.covar_matrix)
-        self.inverse_covar_matrix = np.linalg.inv(self.covar_matrix)
+        if not self.covar_matrix_determinant == 0:
+            self.inverse_covar_matrix = np.linalg.inv(self.covar_matrix)
+        else:
+            self.inverse_covar_matrix = copy.deepcopy(self.covar_matrix)
         self.covar_matrix_eigenvalues, self.covar_matrix_eigenvectors = np.linalg.eig(self.covar_matrix)
         idx = np.argsort(self.covar_matrix_eigenvalues)[::-1]
         self.covar_matrix_eigenvalues = self.covar_matrix_eigenvalues[idx]
@@ -185,7 +193,7 @@ class VertexDataManager:
 
     """
 
-    def __init__(self, files, filter_=None, keys=None, save_filename='model', categorization='advanced', recalc=False):
+    def __init__(self, files, filter_=None, keys=None, category_key='advanced_category_index', save_filename='model', recalc=False):
 
         if filter_ is None:
             self.filter_ = {
@@ -202,8 +210,8 @@ class VertexDataManager:
             self.filter_ = filter_
 
         if keys is None:
-            self.keys = ['advanced_category_index', 'alpha_max', 'alpha_min', 'theta_max', 'theta_min',
-                         'theta_angle_mean', 'normalized_peak_gamma', 'normalized_avg_gamma', 'avg_central_separation']
+            self.keys = ['alpha_max', 'alpha_min', 'theta_max', 'theta_min',
+                         'theta_angle_mean', 'normalized_peak_gamma', 'normalized_avg_gamma']
         else:
             self.keys = keys
         self.attribute_keys, self.attribute_units = self.determine_attribute_keys()
@@ -216,23 +224,32 @@ class VertexDataManager:
         self.save_filename = save_filename
         self.recalc = recalc
 
+        self.category_key = category_key
+
         self.original_dict_data = self.collect_data()
         self.n = len(self.original_dict_data)
 
-        self.categorization = categorization
-        if self.categorization == 'advanced':
+        self.custom_categories = False
+        if self.category_key == 'advanced_category_index':
             self.category_titles = ['Si_1', 'Si_2', 'Cu', 'Al_1', 'Al_2', 'Mg_1', 'Mg_2']
             self.colours = ['r', 'k', 'y', 'g', 'mediumseagreen', 'm', 'plum']
-        elif self.categorization == 'simple':
+        elif self.category_key == 'species_index':
             self.category_titles = ['Si', 'Cu', 'Al', 'Mg']
             self.colours = ['r', 'y', 'g', 'm']
-        elif self.categorization == 'none':
+        elif self.category_key == 'none':
             self.category_titles = ['Column']
             self.colours = ['k']
         else:
-            self.category_titles = ['Si', 'Cu', 'Al', 'Mg']
-            self.colours = ['r', 'y', 'g', 'm']
-            logger.warning('Unrecognized categorization. Using \'simple\'...')
+            self.category_titles = []
+            self.colours = ['r', 'k', 'y', 'g', 'mediumseagreen', 'm', 'plum']
+            values = set()
+            for item in self.original_dict_data:
+                values.add(item[self.category_key])
+            for value in values:
+                self.category_titles.append('{} = {}'.format(self.category_key, value))
+            self.num_data_categories = len(self.category_titles)
+            self.colours = self.colours[0:self.num_data_categories]
+            self.custom_categories = True
         self.num_data_categories = len(self.category_titles)
 
         self.matrix_data = self.vectorize_data()
@@ -301,7 +318,9 @@ class VertexDataManager:
         data = []
         for file in self.files.splitlines(keepends=False):
             instance = core.Project.load(file)
-            image_data = instance.graph.calc_condensed_property_data(filter_=self.filter_, recalc=self.recalc, keys=self.keys)
+            all_keys = copy.deepcopy(self.attribute_keys)
+            all_keys.append(self.category_key)
+            image_data = instance.graph.calc_condensed_property_data(filter_=self.filter_, recalc=self.recalc, keys=all_keys)
             data += image_data
         return data
 
@@ -313,12 +332,10 @@ class VertexDataManager:
                 data[category].append([])
         for data_item in self.original_dict_data:
             for h, attribute in enumerate(self.attribute_keys):
-                if self.categorization == 'advanced':
-                    data[data_item['advanced_category_index']][h].append(data_item[attribute])
-                elif self.categorization == 'simple':
-                    data[data_item['species_index']][h].append(data_item[attribute])
-                elif self.categorization == 'none':
-                    data[0][h].append(data_item[attribute])
+                if self.custom_categories:
+                    data[self.category_titles.index('{} = {}'.format(self.category_key, data_item[self.category_key]))][h].append(data_item[attribute])
+                else:
+                    data[data_item[self.category_key]][h].append(data_item[attribute])
         matrix_data = []
         for category_data in data:
             matrix_data.append(np.array(category_data))

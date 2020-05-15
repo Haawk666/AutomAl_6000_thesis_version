@@ -56,7 +56,7 @@ def base_angle_score(graph_obj, i, apply=True):
 
         cf = [a * b for a, b in zip(cf_min, cf_max)]
         probs = utils.normalize_list(cf)
-        sum_probs = [probs[1] + probs[2], probs[0], probs[3], probs[4] + probs[5] - 0.8, 0]
+        sum_probs = [probs[1] + probs[2], probs[0], probs[3], probs[4] + probs[5], 0]
 
         return utils.normalize_list(sum_probs)
 
@@ -67,7 +67,7 @@ def base_angle_score(graph_obj, i, apply=True):
 
 def precipitate_controller(graph, i):
 
-    graph.particle_boarder = []
+    graph.particle_boarder_indices = []
 
     graph.reset_all_flags()
 
@@ -93,54 +93,53 @@ def precipitate_controller(graph, i):
 def sort_boarder(graph):
 
     temp_boarder = deepcopy(graph.particle_boarder_indices)
-    selected = []
-    for y in range(0, len(graph.particle_boarder_indices)):
-        selected.append(False)
-    next_index = 0
-    index = 0
-    cont_var = True
-    selected[0] = True
+    if len(temp_boarder) > 1:
+        selected = []
+        for y in range(0, len(graph.particle_boarder_indices)):
+            selected.append(False)
+        next_index = 0
+        index = 0
+        cont_var = True
+        selected[0] = True
 
-    while cont_var:
+        while cont_var:
 
-        distance = 1000000
+            distance = 1000000
 
-        for x in range(0, len(graph.particle_boarder_indices)):
+            for x in range(0, len(graph.particle_boarder_indices)):
 
-            current_distance = graph.get_projected_image_separation(graph.particle_boarder_indices[x], temp_boarder[index])
+                current_distance = graph.get_projected_image_separation(graph.particle_boarder_indices[x], temp_boarder[index])
 
-            if current_distance < distance and not temp_boarder[index] == graph.particle_boarder_indices[x] and not selected[x]:
-                distance = current_distance
-                next_index = x
+                if current_distance < distance and not temp_boarder[index] == graph.particle_boarder_indices[x] and not selected[x]:
+                    distance = current_distance
+                    next_index = x
 
-        selected[next_index] = True
-        index = index + 1
+            selected[next_index] = True
+            index = index + 1
 
-        temp_boarder[index] = graph.particle_boarder_indices[next_index]
+            temp_boarder[index] = graph.particle_boarder_indices[next_index]
 
-        if index == len(graph.particle_boarder_indices) - 1:
-            cont_var = False
+            if index == len(graph.particle_boarder_indices) - 1:
+                cont_var = False
 
-        graph.particle_boarder_indices = deepcopy(temp_boarder)
+            graph.particle_boarder_indices = deepcopy(temp_boarder)
 
 
 def precipitate_finder(graph, i):
 
-    indices, distances, n = graph.get_spatial_district(i, n=graph.vertices[i].n, return_separations=True)
-
     graph.vertices[i].flag_1 = True
 
-    for x in range(0, n):
+    for partner in graph.vertices[i].partners:
 
-        if not graph.vertices[indices[x]].species_index == 3:
+        if not graph.vertices[partner].species_index == 2:
 
-            if not graph.vertices[indices[x]].species_index == 6:
+            if not graph.vertices[partner].species_index == 4:
                 graph.vertices[i].flag_2 = True
 
         else:
 
-            if not graph.vertices[indices[x]].flag_1:
-                precipitate_finder(graph, indices[x])
+            if not graph.vertices[partner].flag_1:
+                precipitate_finder(graph, partner)
 
 
 def define_levels(graph, i, level=0):

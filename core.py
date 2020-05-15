@@ -294,7 +294,7 @@ class Project:
 
             self.search_mat = utils.delete_pixels(self.search_mat, x_fit_pix, y_fit_pix, self.r + self.overhead)
 
-            vertex = graph_2.Vertex(counter, x_fit_real_coor, y_fit_real_coor, self.r, max_val, 0, self.scale)
+            vertex = graph_2.Vertex(counter, x_fit_real_coor, y_fit_real_coor, self.r, self.scale)
             vertex.reset_probability_vector(bias=6)
             self.graph.add_vertex(vertex)
 

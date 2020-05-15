@@ -1152,29 +1152,28 @@ class AtomicGraph:
     def evaluate_sub_categories(self):
         for vertex in self.vertices:
             if not vertex.void:
-                if vertex.species_index == 3:
+                if vertex.species_index == 2:
                     if vertex.is_in_precipitate:
                         vertex.species_variant = 2
-                        vertex.advanced_category_index = 4
+                        vertex.advanced_category_index = 3
                     else:
                         vertex.species_variant = 1
-                        vertex.advanced_category_index = 3
+                        vertex.advanced_category_index = 4
                 elif vertex.species_index == 0:
                     sub_graph = self.get_column_centered_subgraph(vertex.i)
                     for mesh in sub_graph.meshes:
                         if mesh.order == 4:
                             if mesh.vertices[0].species_index == 0 and\
-                                    mesh.vertices[1].species_index == 5 and\
+                                    mesh.vertices[1].species_index == 3 and\
                                     mesh.vertices[2].species_index == 1 and\
-                                    mesh.vertices[3].species_index == 5 and\
-                                    mesh.order == 4:
+                                    mesh.vertices[3].species_index == 3:
                                 vertex.species_variant = 2
                                 vertex.advanced_category_index = 1
                                 break
                     else:
                         vertex.species_variant = 1
                         vertex.advanced_category_index = 0
-                elif vertex.species_index == 5:
+                elif vertex.species_index == 3:
                     if vertex.alpha_max < 3.175:
                         vertex.species_variant = 1
                         vertex.advanced_category_index = 5

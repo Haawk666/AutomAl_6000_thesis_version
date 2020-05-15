@@ -1197,7 +1197,7 @@ class MainUI(QtWidgets.QMainWindow):
         if self.project_instance is not None:
             GUI_elements.PlotModels(ui_obj=self, model=self.project_instance.graph.active_model)
         else:
-            GUI_elements.PlotModels(ui_obj=self, model=statistics.VertexDataManager.load('default_model'))
+            GUI_elements.PlotModels(ui_obj=self, model='default_model')
 
     def btn_save_log_trigger(self):
         filename = QtWidgets.QFileDialog.getSaveFileName(self, 'Save log-file', '')

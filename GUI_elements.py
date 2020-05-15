@@ -2400,8 +2400,8 @@ class CalcModels(QtWidgets.QDialog):
         self.btn_add_files = QtWidgets.QPushButton('Add files')
 
         # Frame 1
-        self.lbl_select_categories = QtWidgets.QLabel('Select the desired categorization')
-        self.cmb_categorization = QtWidgets.QComboBox()
+        self.lbl_nominal_data = QtWidgets.QLabel('Select a nominal data type to categorize by: ')
+        self.cmb_nominal_data = QtWidgets.QComboBox()
 
         # Frame 2
         self.list_1 = QtWidgets.QListWidget()
@@ -2418,8 +2418,8 @@ class CalcModels(QtWidgets.QDialog):
         self.btn_add.clicked.connect(self.btn_add_item_trigger)
         self.btn_remove = QtWidgets.QPushButton('Remove')
         self.btn_remove.clicked.connect(self.btn_remove_item_trigger)
-        self.lbl_included_data = QtWidgets.QLabel('Included data-columns:')
-        self.lbl_available_data = QtWidgets.QLabel('Available data-columns:')
+        self.lbl_included_data = QtWidgets.QLabel('Included attributes:')
+        self.lbl_available_data = QtWidgets.QLabel('Available attributes:')
 
         # Frame 3
         self.lbl_filter = QtWidgets.QLabel('Set exclusionn filter: (Columns with checked properties will not be included)')
@@ -2441,7 +2441,7 @@ class CalcModels(QtWidgets.QDialog):
         self.set_layout()
         self.exec_()
 
-    def page_0_layout(self):
+    def frame_0_layout(self):
         h_layout = QtWidgets.QHBoxLayout()
         v_layout = QtWidgets.QVBoxLayout()
 
@@ -2469,17 +2469,26 @@ class CalcModels(QtWidgets.QDialog):
 
         self.widget_frame_0.setLayout(h_layout)
 
-    def page_1_layout(self):
-        self.cmb_categorization.addItem('advanced')
-        self.cmb_categorization.addItem('simple')
-        self.cmb_categorization.addItem('none')
+    def frame_1_layout(self):
+
+        self.cmb_nominal_data.addItems([
+            'species_index',
+            'species_variant',
+            'advanced_category_index',
+            'n',
+            'zeta',
+            'flag_1',
+            'flag_2',
+            'flag_3',
+            'flag_4'
+        ])
 
         h_layout = QtWidgets.QHBoxLayout()
         v_layout = QtWidgets.QVBoxLayout()
 
         v_layout.addStretch()
-        v_layout.addWidget(self.lbl_select_categories)
-        v_layout.addWidget(self.cmb_categorization)
+        v_layout.addWidget(self.lbl_nominal_data)
+        v_layout.addWidget(self.cmb_nominal_data)
         v_layout.addStretch()
 
         h_layout.addStretch()
@@ -2488,31 +2497,18 @@ class CalcModels(QtWidgets.QDialog):
 
         self.widget_frame_1.setLayout(h_layout)
 
-    def page_2_layout(self):
+    def frame_2_layout(self):
         self.list_2.addItems([
-            'i',
-            'r',
-            'species_index',
-            'species_variant',
-            'advanced_category_index',
-            'n',
             'peak_gamma',
             'avg_gamma',
             'normalized_peak_gamma',
             'normalized_avg_gamma',
-            'im_coor_x',
-            'im_coor_y',
-            'im_coor_z',
-            'spatial_coor_x',
-            'spatial_coor_y',
-            'spatial_coor_z',
-            'zeta',
             'alpha_min',
             'alpha_max',
             'theta_min',
             'theta_max',
-            'theta_angle_variance',
             'theta_angle_mean',
+            'theta_angle_variance',
             'redshift',
             'avg_redshift',
             'avg_central_separation'
@@ -2554,7 +2550,7 @@ class CalcModels(QtWidgets.QDialog):
 
         self.widget_frame_2.setLayout(h_layout)
 
-    def page_3_layout(self):
+    def frame_3_layout(self):
         self.chb_edge_columns.setChecked(True)
         self.chb_matrix_columns.setChecked(False)
         self.chb_particle_columns.setChecked(False)
@@ -2585,7 +2581,7 @@ class CalcModels(QtWidgets.QDialog):
 
         self.widget_frame_3.setLayout(h_layout)
 
-    def page_4_layout(self):
+    def frame_4_layout(self):
         self.chb_recalculate_graphs.setChecked(False)
         v_layout = QtWidgets.QVBoxLayout()
         v_layout.addWidget(self.chb_recalculate_graphs)
@@ -2599,19 +2595,19 @@ class CalcModels(QtWidgets.QDialog):
         self.btn_layout.addWidget(self.btn_next)
         self.btn_layout.addStretch()
 
-        self.page_0_layout()
+        self.frame_0_layout()
         self.stack_layout.addWidget(self.widget_frame_0)
 
-        self.page_1_layout()
+        self.frame_1_layout()
         self.stack_layout.addWidget(self.widget_frame_1)
 
-        self.page_2_layout()
+        self.frame_2_layout()
         self.stack_layout.addWidget(self.widget_frame_2)
 
-        self.page_3_layout()
+        self.frame_3_layout()
         self.stack_layout.addWidget(self.widget_frame_3)
 
-        self.page_4_layout()
+        self.frame_4_layout()
         self.stack_layout.addWidget(self.widget_frame_4)
 
         self.top_layout.addLayout(self.stack_layout)
@@ -2685,6 +2681,14 @@ class CalcModels(QtWidgets.QDialog):
             self.list_2.addItem(self.list_1.currentItem().text())
             self.list_1.takeItem(self.list_1.row(self.list_1.currentItem()))
 
+    def chb_custom_categories_trigger(self, state):
+        if state:
+            self.cmb_categorization.setDisabled(True)
+            self.cmb_nominal_data.setDisabled(False)
+        else:
+            self.cmb_categorization.setDisabled(False)
+            self.cmb_nominal_data.setDisabled(True)
+
     def calc(self):
         self.close()
         self.ui_obj.sys_message('Working...')
@@ -2713,15 +2717,20 @@ class CalcModels(QtWidgets.QDialog):
                 'exclude_flag_4_columns': self.chb_flag_4.isChecked()
             }
             # Prepare keys
-            keys = []
+            attr_keys = []
             for i in range(self.list_1.count()):
-                keys.append(self.list_1.item(i).text())
-            if self.cmb_categorization.currentText() == 'advanced' and 'advanced_category_index' not in keys:
-                keys.append('advanced_category_index')
-            if self.cmb_categorization.currentText() == 'simple' and 'species_index' not in keys:
-                keys.append('species_index')
+                attr_keys.append(self.list_1.item(i).text())
+            cat_key = self.cmb_nominal_data.currentText()
+
             # Initate manager
-            manager = statistics.VertexDataManager(files, filter_=filter_, save_filename=filename[0], recalc=self.chb_recalculate_graphs.isChecked(), keys=keys, categorization=self.cmb_categorization.currentText())
+            manager = statistics.VertexDataManager(
+                files,
+                filter_=filter_,
+                save_filename=filename[0],
+                recalc=self.chb_recalculate_graphs.isChecked(),
+                keys=attr_keys,
+                category_key=cat_key
+            )
             manager.save()
             GUI.logger.info('Successfully saved model parameters to {}'.format(filename[0]))
         self.ui_obj.sys_message('Ready.')
@@ -2839,7 +2848,7 @@ class PlotModels(QtWidgets.QDialog):
         # Fill info into widgets:
         self.lbl_viewing_model.setText('Model: {}'.format(self.model.save_filename))
         if self.ui_obj.project_instance is not None:
-            if self.model.save_filename == self.ui_obj.project_instance.graph.active_model.save_filename:
+            if self.model.save_filename == self.ui_obj.project_instance.graph.active_model:
                 self.btn_activate_model.setDisabled(True)
             else:
                 self.btn_activate_model.setDisabled(False)
@@ -2979,14 +2988,13 @@ class PlotModels(QtWidgets.QDialog):
         self.setLayout(top_layout)
 
     def btn_activate_model_trigger(self):
-        self.ui_obj.project_instance.active_model = self.model
-        self.ui_obj.graph.active_model = self.model
+        self.ui_obj.project_instance.graph.active_model = self.model.save_filename
 
     def btn_load_model_trigger(self):
         filename = QtWidgets.QFileDialog.getOpenFileName(self, "Load model", '', "")
         if filename[0]:
             self.close()
-            PlotModels(ui_obj=self.ui_obj, model=statistics.VertexDataManager.load(filename[0]))
+            PlotModels(ui_obj=self.ui_obj, model=filename[0])
 
     def btn_dual_plot_trigger(self):
         self.model.dual_plot(self.cmb_attribute_1.currentText(), self.cmb_attribute_2.currentText())
