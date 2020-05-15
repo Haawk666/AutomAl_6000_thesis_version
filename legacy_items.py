@@ -56,7 +56,7 @@ def base_angle_score(graph_obj, i, apply=True):
 
         cf = [a * b for a, b in zip(cf_min, cf_max)]
         probs = utils.normalize_list(cf)
-        sum_probs = [probs[1] + probs[2], probs[0], probs[3], probs[4] + probs[5] - 0.2, 0]
+        sum_probs = [probs[1] + probs[2], probs[0], probs[3], probs[4] + probs[5] - 0.8, 0]
 
         return utils.normalize_list(sum_probs)
 

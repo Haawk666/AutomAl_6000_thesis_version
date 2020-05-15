@@ -355,7 +355,7 @@ class Project:
 
                     if self.column_centre_mat[y, x, 0] == 1:
                         j = self.column_centre_mat[y, x, 1]
-                        dist = self.graph.get_projected_separation(i, j)
+                        dist = self.graph.get_projected_image_separation(i, j)
                         if num_found >= n:
                             if dist < distances.max():
                                 ind = distances.argmax()
@@ -866,7 +866,7 @@ class Project:
             self.find_edge_columns()
             for vertex in self.graph.vertices:
                 if vertex.is_edge_column and not vertex.is_set_by_user:
-                    vertex.reset_probability_vector(bias=3)
+                    vertex.reset_probability_vector(bias=2)
             logger.info('Found edge columns.')
 
         elif search_type == 19:

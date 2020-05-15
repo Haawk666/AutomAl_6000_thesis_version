@@ -153,7 +153,7 @@ class MainUI(QtWidgets.QMainWindow):
         """Set atomic species of selected column"""
         if self.project_instance is not None and not self.selected_column == -1:
             # Update relevant graphics:
-            self.project_instance.graph.vertices[self.selected_column].set_species_from_species_index(h)
+            self.project_instance.graph.set_species_from_species_index(self.selected_column, h)
             self.gs_overlay_composition.interactive_overlay_objects[self.selected_column].set_style()
             self.gs_atomic_graph.redraw_neighbourhood(self.selected_column)
             # Update control window info:

@@ -410,10 +410,54 @@ class Overlay(QtWidgets.QWidget):
 
 class RgbaSelector(QtWidgets.QGridLayout):
 
-    def __init__(self, *args):
+    def __init__(self, *args, r=100, g=100, b=100, a=100):
         super().__init__(*args)
 
-        self.r_box = QtWidgets.Q
+        self.r_box = QtWidgets.QSpinBox()
+        self.r_box.setMaximum(255)
+        self.r_box.setMinimum(0)
+        if 0 <= r <= 255:
+            self.r_box.setValue(r)
+        else:
+            self.r_box.setValue(100)
+
+        self.g_box = QtWidgets.QSpinBox()
+        self.g_box.setMaximum(255)
+        self.g_box.setMinimum(0)
+        if 0 <= g <= 255:
+            self.g_box.setValue(g)
+        else:
+            self.g_box.setValue(100)
+
+        self.b_box = QtWidgets.QSpinBox()
+        self.b_box.setMaximum(255)
+        self.b_box.setMinimum(0)
+        if 0 <= b <= 255:
+            self.b_box.setValue(b)
+        else:
+            self.b_box.setValue(100)
+
+        self.a_box = QtWidgets.QSpinBox()
+        self.a_box.setMaximum(255)
+        self.a_box.setMinimum(0)
+        if 0 <= a <= 255:
+            self.a_box.setValue(a)
+        else:
+            self.a_box.setValue(100)
+
+        self.lbl_r = QtWidgets.QLabel('R:')
+        self.lbl_g = QtWidgets.QLabel('G:')
+        self.lbl_b = QtWidgets.QLabel('B:')
+        self.lbl_a = QtWidgets.QLabel('A:')
+
+        self.addWidget(self.lbl_r, 0, 0)
+        self.addWidget(self.lbl_g, 0, 1)
+        self.addWidget(self.lbl_b, 0, 2)
+        self.addWidget(self.lbl_a, 0, 3)
+        self.addWidget(self.r_box, 1, 0)
+        self.addWidget(self.g_box, 1, 1)
+        self.addWidget(self.b_box, 1, 2)
+        self.addWidget(self.a_box, 1, 3)
 
 
 # ----------

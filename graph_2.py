@@ -350,6 +350,12 @@ class Vertex:
         else:
             return False
 
+    def anti_zeta(self):
+        if self.zeta == 0:
+            return 1
+        else:
+            return 0
+
 
 class Arc:
 
@@ -579,8 +585,8 @@ class AtomicGraph:
         return separation
 
     def get_projected_image_separation(self, i, j):
-        pos_i = self.vertices[i].spatial_pos()
-        pos_j = self.vertices[j].spatial_pos()
+        pos_i = self.vertices[i].im_pos()
+        pos_j = self.vertices[j].im_pos()
         projected_separation = np.sqrt((pos_i[0] - pos_j[0]) ** 2 + (pos_i[1] - pos_j[1]) ** 2)
         return projected_separation
 
@@ -600,6 +606,12 @@ class AtomicGraph:
         radii_1 = self.atomic_radii[self.vertices[i].atomic_species]
         radii_2 = self.atomic_radii[self.vertices[j].atomic_species]
         return radii_1 + radii_2
+
+    def get_im_separation_from_spatial_separation(self, spatial_searation):
+        return spatial_searation / self.scale
+
+    def get_spatial_separation_from_im_separation(self, im_separation):
+        return im_separation * self.scale
 
     def get_adjacency_matrix(self):
         self.summarize_stats()
@@ -739,6 +751,15 @@ class AtomicGraph:
             vectors.append(vector)
         return corners, angles, vectors
 
+    def set_zeta(self, i, zeta):
+        self.vertices[i].zeta = zeta
+
+    def set_species(self, i, species_index):
+        self.vertices[i].set_species_from_species_index(species_index)
+        closed_district = copy.deepcopy(self.vertices[i].district)
+        closed_district.append(i)
+        self.build_local_map(closed_district)
+
     @staticmethod
     def rebase(corners, next_, j, append=True):
         for k, corner in enumerate(corners):
@@ -785,49 +806,47 @@ class AtomicGraph:
             vertex.flag_9 = False
         logger.info('All flags reset!')
 
-    def map_district(self, i, search_extended_district=False):
-        vertex = self.vertices[i]
-        print(i)
+    def build_local_map(self, indices, search_extended_district=False):
+        # Determine out_neighbourhoods:
+        for vertex in self.get_vertex_objects_from_indices(indices):
+            vertex.out_neighbourhood = set()
+            if not vertex.void:
+                for out_neighbour in vertex.district[:vertex.n]:
+                    vertex.out_neighbourhood.add(out_neighbour)
+        # Determine in_neighbourhoods:
+        for vertex in self.get_vertex_objects_from_indices(indices):
+            vertex.in_neighbourhood = set()
+            if not vertex.void:
+                for candidate in self.vertices:
+                    if vertex.i in candidate.out_neighbourhood:
+                        vertex.in_neighbourhood.add(candidate.i)
+        # Determine neighbourhood:
+        for vertex in self.get_vertex_objects_from_indices(indices):
+            vertex.neighbourhood = set()
+            if not vertex.void:
+                vertex.neighbourhood = vertex.out_neighbourhood.union(vertex.in_neighbourhood)
+        # Determine anti_neighbourhood:
+        for vertex in self.get_vertex_objects_from_indices(indices):
+            vertex.anti_neighbourhood = set()
+            if not vertex.void:
+                for citizen in vertex.district:
+                    if citizen not in vertex.neighbourhood:
+                        vertex.anti_neighbourhood.add(citizen)
+        # Determine partners and semi-partners:
+        for vertex in self.get_vertex_objects_from_indices(indices):
+            vertex.partners = set()
+            vertex.semi_partners = set()
+            vertex.in_semi_partners = set()
+            vertex.out_semi_partners = set()
+            if not vertex.void:
+                vertex.partners = vertex.out_neighbourhood.intersection(vertex.in_neighbourhood)
+                vertex.semi_partners = vertex.neighbourhood - vertex.partners
+                vertex.out_semi_partners = vertex.semi_partners.intersection(vertex.out_neighbourhood)
+                vertex.in_semi_partners = vertex.semi_partners.intersection(vertex.in_neighbourhood)
 
-        if not vertex.void:
-            # Determine out-neighbourhood
-            vertex.out_neighbourhood = vertex.district[:vertex.n]
-
-            # determine in-neighbourhood
-            vertex.in_neighbourhood = []
-            if not search_extended_district:
-                for co_citizen in self.get_vertex_objects_from_indices(vertex.district):
-                    if i in co_citizen.district[:co_citizen.n]:
-                        vertex.in_neighbourhood.append(co_citizen.i)
-            else:
-                for co_citizen in self.vertices:
-                    if i in co_citizen.district[:co_citizen.n]:
-                        vertex.in_neighbourhood.append(co_citizen.i)
-
-            # Determine neighbourhood
-            vertex.neighbourhood = vertex.out_neighbourhood
-            for in_neighbour in vertex.in_neighbourhood:
-                if in_neighbour not in vertex.neighbourhood:
-                    vertex.neighbourhood.append(in_neighbour)
-
-            # Determine anti-neighbourhood
-            vertex.anti_neighbourhood = []
-            for co_citizen in vertex.district:
-                if co_citizen not in vertex.neighbourhood:
-                    vertex.anti_neighbourhood.append(co_citizen)
-
-            # Determine partners and anti-partners
-            vertex.partners = []
-            vertex.semi_partners = []
-            for neighbour in vertex.neighbourhood:
-                if neighbour in vertex.in_neighbourhood and neighbour in vertex.out_neighbourhood:
-                    vertex.partners.append(neighbour)
-                else:
-                    vertex.semi_partners.append(neighbour)
-
-            vertex.in_degree = len(vertex.in_neighbourhood)
-            vertex.out_degree = len(vertex.out_neighbourhood)
-            vertex.degree = len(vertex.neighbourhood)
+                vertex.in_degree = len(vertex.in_neighbourhood)
+                vertex.out_degree = len(vertex.out_neighbourhood)
+                vertex.degree = len(vertex.neighbourhood)
 
     def build_maps(self, search_extended_district=False):
         # Determine out_neighbourhoods:
@@ -873,9 +892,9 @@ class AtomicGraph:
 
     def permute_j_k(self, i, j, k):
         if self.vertices[i].permute_j_k(j, k):
-            self.map_district(i)
-            self.map_district(j)
-            self.map_district(k)
+            closed_district = copy.deepcopy(self.vertices[i].district)
+            closed_district.append(i)
+            self.build_local_map(closed_district)
 
     def weak_remove_edge(self, i, j, aggressive=False):
 
@@ -977,7 +996,7 @@ class AtomicGraph:
 
         if self.vertices[i].permute_j_k(j, self.vertices[i].out_neighbourhood[-1]):
             if self.vertices[i].decrement_species_index():
-                self.map_district(i)
+                self.build_local_map(i)
                 return True
             else:
                 return False

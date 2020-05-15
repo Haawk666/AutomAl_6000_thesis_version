@@ -9,7 +9,7 @@ logger.setLevel(logging.DEBUG)
 
 def naive_determine_z(graph_obj, i, level):
     graph_obj.vertices[i].flag_1 = True
-    graph_obj.set_level(i, level)
+    graph_obj.set_zeta(i, level)
 
     next_level = 0
     if level == 0:
@@ -17,26 +17,26 @@ def naive_determine_z(graph_obj, i, level):
     elif level == 1:
         next_level = 0
 
-    for j in graph_obj.vertices[i].true_partner_indices:
+    for j in graph_obj.vertices[i].partners:
         if not graph_obj.vertices[j].flag_1:
             if graph_obj.vertices[j].is_edge_column:
-                graph_obj.set_level(j, next_level)
+                graph_obj.set_zeta(j, next_level)
             else:
                 naive_determine_z(graph_obj, j, next_level)
 
 
 def revise_z(graph_obj):
     for vertex in graph_obj.vertices:
-        if not vertex.is_edge_column and not vertex.set_by_user:
+        if not vertex.is_edge_column and not vertex.is_set_by_user:
             agree = 0
             disagree = 0
-            for true_partner in vertex.true_partner_indices:
-                if graph_obj.vertices[true_partner].level == vertex.level:
+            for true_partner in vertex.partners:
+                if graph_obj.vertices[true_partner].zeta == vertex.zeta:
                     disagree += 1
                 else:
                     agree += 1
             if disagree > agree:
-                vertex.level = vertex.anti_level()
+                vertex.zeta = vertex.anti_zeta()
 
 
 def determine_z_heights(graph_obj, i, level):

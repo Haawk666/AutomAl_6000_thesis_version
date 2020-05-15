@@ -10,6 +10,7 @@ import GUI
 import utils
 import statistics
 # External imports:
+import configparser
 import copy
 from PyQt5 import QtWidgets, QtGui, QtCore
 import pathlib
@@ -144,7 +145,9 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
         self.ui_obj = ui_obj
         self.scale_factor = scale_factor
         self.interactive_vertex_objects = []
-        self.edges = []
+        self.dual_arcs = []
+        self.single_arcs = []
+        self.arcs = []
         self.mesh_details = []
         self.background_image = background
         if self.background_image is not None:
@@ -156,7 +159,7 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
     def perturb_edge(self, i, j, k, permute_data=True, center_view=False):
         """Finds the edge from i to j, and makes it point from i to k."""
         if permute_data:
-            self.ui_obj.project_instance.graph.vertices[i].permute_j_k(j, k)
+            self.ui_obj.project_instance.graph.permute_j_k(i, j, k)
         self.redraw_star(i)
         for n, edge in enumerate(self.edges[j]):
             if edge.j == i:
@@ -186,7 +189,7 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
             dislocation = True
         else:
             dislocation = False
-        if m >= vertex_a.n():
+        if m >= vertex_a.n:
             partner = False
         else:
             partner = True
@@ -209,29 +212,48 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
 
     def re_draw_edges(self):
         """Redraws all edge elements."""
-        for inner_edges in self.edges:
+        self.arcs = []
+        # Draw all dual arcs:
+        for inner_edges in self.dual_arcs:
             for edge_item in inner_edges:
                 self.removeItem(edge_item)
-        self.edges = []
+        self.dual_arcs = []
 
         for vertex_a in self.ui_obj.project_instance.graph.vertices:
             inner_edges = []
-            for n, vertex_b in enumerate(self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(vertex_a.out_neighbourhood)):
+            for vertex_b in self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(vertex_a.partners):
                 p1 = vertex_a.im_pos()
                 p2 = vertex_b.im_pos()
-                consistent = vertex_b.partner_query(vertex_a.i)
                 if vertex_a.zeta == vertex_b.zeta:
-                    dislocation = True
+                    co_planar = True
                 else:
-                    dislocation = False
+                    co_planar = False
                 inner_edges.append(GUI_custom_components.Arrow(i=vertex_a.i, j=vertex_b.i, p1=p1, p2=p2,
                                                                r=self.ui_obj.project_instance.r,
-                                                               scale_factor=self.scale_factor, dual_arc=consistent,
-                                                               co_planar=dislocation))
-                if not self.ui_obj.control_window.chb_graph and (dislocation or not consistent):
-                    inner_edges[-1].hide()
+                                                               scale_factor=self.scale_factor, dual_arc=True,
+                                                               co_planar=co_planar))
                 self.addItem(inner_edges[-1])
-            self.edges.append(inner_edges)
+            self.dual_arcs.append(inner_edges)
+            self.arcs.append(inner_edges)
+
+        # Draw all single arcs:
+        for inner_edges in self.single_arcs:
+            for edge_item in inner_edges:
+                self.removeItem(edge_item)
+        self.single_arcs = []
+
+        for vertex_a in self.ui_obj.project_instance.graph.vertices:
+            inner_edges = []
+            for vertex_b in self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(vertex_a.out_semi_partners):
+                p1 = vertex_a.im_pos()
+                p2 = vertex_b.im_pos()
+                inner_edges.append(GUI_custom_components.Arrow(i=vertex_a.i, j=vertex_b.i, p1=p1, p2=p2,
+                                                               r=self.ui_obj.project_instance.r,
+                                                               scale_factor=self.scale_factor, dual_arc=False,
+                                                               co_planar=False))
+                self.addItem(inner_edges[-1])
+            self.single_arcs.append(inner_edges)
+            self.arcs.append(inner_edges)
 
     def re_draw_mesh_details(self):
         """Redraws all mesh details"""
@@ -249,29 +271,48 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
                 detail.hide()
 
     def redraw_star(self, i):
-        for edge_item in self.edges[i]:
+        # Dual arcs:
+        for edge_item in self.dual_arcs[i]:
             self.removeItem(edge_item)
-        self.edges[i] = []
+        self.dual_arcs[i] = []
+        self.single_arcs[i] = []
+        self.arcs[i] = []
         vertex_a = self.ui_obj.project_instance.graph.vertices[i]
-        for n, vertex_b in enumerate(self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(vertex_a.out_neighbourhood)):
+        for vertex_b in self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(vertex_a.partners):
             p1 = vertex_a.im_pos()
             p1 = (p1[0], p1[1])
             p2 = vertex_b.im_pos()
             p2 = (p2[0], p2[1])
-            consistent = vertex_b.partner_query(vertex_a.i)
             if vertex_a.zeta == vertex_b.zeta:
-                dislocation = True
+                co_planar = True
             else:
-                dislocation = False
-            self.edges[i].append(GUI_custom_components.Arrow(
+                co_planar = False
+            self.dual_arcs[i].append(GUI_custom_components.Arrow(
                 i=vertex_a.i, j=vertex_b.i, p1=p1, p2=p2,
                 r=self.ui_obj.project_instance.r,
-                scale_factor=self.scale_factor, dual_arc=consistent,
-                co_planar=dislocation
+                scale_factor=self.scale_factor, dual_arc=True,
+                co_planar=co_planar
             ))
-            self.addItem(self.edges[i][-1])
-            if not self.ui_obj.control_window.chb_graph and (dislocation or not consistent):
-                self.edges[i][-1].hide()
+            self.arcs[i].append(self.dual_arcs[i][-1])
+            self.addItem(self.dual_arcs[i][-1])
+
+        for edge_item in self.single_arcs[i]:
+            self.removeItem(edge_item)
+        self.single_arcs[i] = []
+        for vertex_b in self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(vertex_a.out_semi_partners):
+            p1 = vertex_a.im_pos()
+            p1 = (p1[0], p1[1])
+            p2 = vertex_b.im_pos()
+            p2 = (p2[0], p2[1])
+            self.single_arcs[i].append(GUI_custom_components.Arrow(
+                i=vertex_a.i, j=vertex_b.i, p1=p1, p2=p2,
+                r=self.ui_obj.project_instance.r,
+                scale_factor=self.scale_factor, dual_arc=False,
+                co_planar=False
+            ))
+            self.addItem(self.single_arcs[i][-1])
+            if not self.ui_obj.control_window.chb_graph:
+                self.single_arcs[i][-1].hide()
 
     def redraw_neighbourhood(self, i):
         self.redraw_star(i)
@@ -2995,10 +3036,16 @@ class CustomizeOverlay(QtWidgets.QDialog):
 
         self.setWindowTitle('Customize overlay')
 
+        self.parser = configparser.ConfigParser()
+        self.read('config.ini')
+
         # Dialog buttons:
         self.btn_set_default = QtWidgets.QPushButton('Restore default')
+        self.btn_set_default.clicked.connect(self.btn_set_default_trigger)
         self.btn_apply_changes = QtWidgets.QPushButton('Apply changes')
+        self.btn_apply_changes.clicked.connect(self.btn_apply_changes_trigger)
         self.btn_cancel_changes = QtWidgets.QPushButton('Cancel')
+        self.btn_cancel_changes.clicked.connect(self.btn_cancel_changes_trigger)
         self.dialog_btn_layout = QtWidgets.QHBoxLayout
         self.dialog_btn_layout.addStretch()
         self.dialog_btn_layout.addWidget(self.btn_apply_changes)
@@ -3020,9 +3067,11 @@ class CustomizeOverlay(QtWidgets.QDialog):
         self.lbl_shape = QtWidgets.QLabel('Shape')
         self.lbl_color_1 = QtWidgets.QLabel('Primary color ()')
         self.lbl_color_2 = QtWidgets.QLabel('Secondary color')
-        self.lbl_radius = QtWidgets.QLabel('Radius/Size')
+        self.lbl_radius_1 = QtWidgets.QLabel('Primary Radius/Size')
+        self.lbl_radius_2 = QtWidgets.QLabel('Secondary Radius/Size')
         self.lbl_visible = QtWidgets.QLabel('Show/hide')
-        self.lbl_preview = QtWidgets.QLabel('Preview')
+        self.btn_preview = QtWidgets.QPushButton('Refresh preview')
+        self.btn_preview.clicked.connect(self.btn_preview_trigger)
 
         self.cmb_si_shape = QtWidgets.QComboBox()
         self.cmb_si_shape.addItem('Circle')
@@ -3035,7 +3084,67 @@ class CustomizeOverlay(QtWidgets.QDialog):
         self.cmb_un_shape = QtWidgets.QComboBox()
         self.cmb_un_shape.addItem('Circle')
 
+        self.si_color_1_selector = GUI_custom_components.RgbaSelector(
+            r=self.parser.getint('colors', 'si_primary_r'),
+            g=self.parser.getint('colors', 'si_primary_g'),
+            b=self.parser.getint('colors', 'si_primary_b'),
+            a=self.parser.getint('colors', 'si_primary_a')
+        )
+        self.cu_color_1_selector = GUI_custom_components.RgbaSelector(
+            r=self.parser.getint('colors', 'cu_primary_r'),
+            g=self.parser.getint('colors', 'cu_primary_g'),
+            b=self.parser.getint('colors', 'cu_primary_b'),
+            a=self.parser.getint('colors', 'cu_primary_a')
+        )
+        self.al_color_1_selector = GUI_custom_components.RgbaSelector(
+            r=self.parser.getint('colors', 'al_primary_r'),
+            g=self.parser.getint('colors', 'al_primary_g'),
+            b=self.parser.getint('colors', 'al_primary_b'),
+            a=self.parser.getint('colors', 'al_primary_a')
+        )
+        self.mg_color_1_selector = GUI_custom_components.RgbaSelector(
+            r=self.parser.getint('colors', 'mg_primary_r'),
+            g=self.parser.getint('colors', 'mg_primary_g'),
+            b=self.parser.getint('colors', 'mg_primary_b'),
+            a=self.parser.getint('colors', 'mg_primary_a')
+        )
+        self.un_color_1_selector = GUI_custom_components.RgbaSelector(
+            r=self.parser.getint('colors', 'un_primary_r'),
+            g=self.parser.getint('colors', 'un_primary_g'),
+            b=self.parser.getint('colors', 'un_primary_b'),
+            a=self.parser.getint('colors', 'un_primary_a')
+        )
 
+        self.si_color_2_selector = GUI_custom_components.RgbaSelector(
+            r=self.parser.getint('colors', 'si_secondary_r'),
+            g=self.parser.getint('colors', 'si_secondary_g'),
+            b=self.parser.getint('colors', 'si_secondary_b'),
+            a=self.parser.getint('colors', 'si_secondary_a')
+        )
+        self.cu_color_2_selector = GUI_custom_components.RgbaSelector(
+            r=self.parser.getint('colors', 'cu_secondary_r'),
+            g=self.parser.getint('colors', 'cu_secondary_g'),
+            b=self.parser.getint('colors', 'cu_secondary_b'),
+            a=self.parser.getint('colors', 'cu_secondary_a')
+        )
+        self.al_color_2_selector = GUI_custom_components.RgbaSelector(
+            r=self.parser.getint('colors', 'al_secondary_r'),
+            g=self.parser.getint('colors', 'al_secondary_g'),
+            b=self.parser.getint('colors', 'al_secondary_b'),
+            a=self.parser.getint('colors', 'al_secondary_a')
+        )
+        self.mg_color_2_selector = GUI_custom_components.RgbaSelector(
+            r=self.parser.getint('colors', 'mg_secondary_r'),
+            g=self.parser.getint('colors', 'mg_secondary_g'),
+            b=self.parser.getint('colors', 'mg_secondary_b'),
+            a=self.parser.getint('colors', 'mg_secondary_a')
+        )
+        self.un_color_2_selector = GUI_custom_components.RgbaSelector(
+            r=self.parser.getint('colors', 'un_secondary_r'),
+            g=self.parser.getint('colors', 'un_secondary_g'),
+            b=self.parser.getint('colors', 'un_secondary_b'),
+            a=self.parser.getint('colors', 'un_secondary_a')
+        )
 
         self.set_layout()
         self.exec_()
@@ -3183,35 +3292,16 @@ class CustomizeOverlay(QtWidgets.QDialog):
 
         self.setLayout(top_layout)
 
-    def btn_activate_model_trigger(self):
-        self.ui_obj.project_instance.active_model = self.model
-        self.ui_obj.graph.active_model = self.model
+    def btn_preview_trigger(self):
+        pass
 
-    def btn_load_model_trigger(self):
-        filename = QtWidgets.QFileDialog.getOpenFileName(self, "Load model", '', "")
-        if filename[0]:
-            self.close()
-            PlotModels(ui_obj=self.ui_obj, model=statistics.VertexDataManager.load(filename[0]))
+    def btn_set_default_trigger(self):
+        pass
 
-    def btn_dual_plot_trigger(self):
-        self.model.dual_plot(self.cmb_attribute_1.currentText(), self.cmb_attribute_2.currentText())
+    def btn_apply_changes_trigger(self):
+        pass
 
-    def btn_plot_all_trigger(self):
-        self.model.plot_all()
-
-    def btn_plot_z_scores_trigger(self):
-        self.model.z_plot()
-
-    def btn_plot_pca_trigger(self):
-        if self.cmb_pca_setting.currentText() == 'Show categories':
-            self.model.plot_pca(show_category=True)
-        else:
-            self.model.plot_pca(show_category=False)
-
-    def btn_plot_single_trigger(self):
-        self.model.single_plot(self.cmb_single_attribute.currentText())
-
-    def btn_quit_trigger(self):
+    def btn_cancel_changes_trigger(self):
         self.close()
 
 
