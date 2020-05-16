@@ -52,7 +52,6 @@ class InteractiveColumn(QtWidgets.QGraphicsEllipseItem):
     def mouseReleaseEvent(self, event: 'QtWidgets.QGraphicsEllipseItem.mouseReleaseEvent'):
         """Pass a mouse release event on to the ui_obj reference object"""
         self.ui_obj.column_selected(self.i)
-        # super().__init__()
 
 
 class InteractivePosColumn(InteractiveColumn):
@@ -408,7 +407,7 @@ class Overlay(QtWidgets.QWidget):
             self.hide()
 
 
-class RgbaSelector(QtWidgets.QGridLayout):
+class RgbaSelector(QtWidgets.QGroupBox):
 
     def __init__(self, *args, r=100, g=100, b=100, a=100):
         super().__init__(*args)
@@ -450,14 +449,80 @@ class RgbaSelector(QtWidgets.QGridLayout):
         self.lbl_b = QtWidgets.QLabel('B:')
         self.lbl_a = QtWidgets.QLabel('A:')
 
-        self.addWidget(self.lbl_r, 0, 0)
-        self.addWidget(self.lbl_g, 0, 1)
-        self.addWidget(self.lbl_b, 0, 2)
-        self.addWidget(self.lbl_a, 0, 3)
-        self.addWidget(self.r_box, 1, 0)
-        self.addWidget(self.g_box, 1, 1)
-        self.addWidget(self.b_box, 1, 2)
-        self.addWidget(self.a_box, 1, 3)
+        layout = QtWidgets.QGridLayout()
+
+        layout.addWidget(self.lbl_r, 0, 0)
+        layout.addWidget(self.lbl_g, 0, 1)
+        layout.addWidget(self.lbl_b, 0, 2)
+        layout.addWidget(self.lbl_a, 0, 3)
+        layout.addWidget(self.r_box, 1, 0)
+        layout.addWidget(self.g_box, 1, 1)
+        layout.addWidget(self.b_box, 1, 2)
+        layout.addWidget(self.a_box, 1, 3)
+
+        self.setLayout(layout)
+
+        self.setTitle('')
+
+
+class CenterBox(QtWidgets.QGroupBox):
+
+    def __init__(self, *args, widget=None):
+        super().__init__(*args)
+
+        self.widget = widget
+
+        h_layout = QtWidgets.QHBoxLayout()
+        h_layout.addStretch()
+        h_layout.addWidget(self.widget)
+        h_layout.addStretch()
+
+        v_layout = QtWidgets.QVBoxLayout()
+        v_layout.addStretch()
+        v_layout.addLayout(h_layout)
+        v_layout.addStretch()
+
+        self.setLayout(v_layout)
+
+        self.setStyleSheet("border:0;")
+
+        self.widget.setStyleSheet('')
+
+
+class HCenterBox(QtWidgets.QGroupBox):
+
+    def __init__(self, *args, widget=None):
+        super().__init__(*args)
+
+        self.widget = widget
+
+        h_layout = QtWidgets.QHBoxLayout()
+        h_layout.addStretch()
+        h_layout.addWidget(self.widget)
+        h_layout.addStretch()
+
+        self.setLayout(h_layout)
+
+        self.setFlat(True)
+        self.setStyleSheet("border:0;")
+
+
+class VCenterBox(QtWidgets.QGroupBox):
+
+    def __init__(self, *args, widget=None):
+        super().__init__(*args)
+
+        self.widget = widget
+
+        v_layout = QtWidgets.QVBoxLayout()
+        v_layout.addStretch()
+        v_layout.addWidget(self.widget)
+        v_layout.addStretch()
+
+        self.setLayout(v_layout)
+
+        self.setFlat(True)
+        self.setStyleSheet("border:0;")
 
 
 # ----------

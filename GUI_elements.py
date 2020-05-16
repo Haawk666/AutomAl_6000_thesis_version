@@ -1699,6 +1699,10 @@ class ControlWindow(QtWidgets.QWidget):
 
         self.lbl_chi.setText('Chi: ')
 
+    def keyPressEvent(self, event):
+
+        self.ui_obj.keyPressEvent(event)
+
 
 class MenuBar:
 
@@ -3028,7 +3032,11 @@ class CustomizeOverlay(QtWidgets.QDialog):
         self.setWindowTitle('Customize overlay')
 
         self.parser = configparser.ConfigParser()
-        self.read('config.ini')
+        self.parser.read('config.ini')
+
+        self.example_vertices = [
+
+        ]
 
         # Dialog buttons:
         self.btn_set_default = QtWidgets.QPushButton('Restore default')
@@ -3037,11 +3045,15 @@ class CustomizeOverlay(QtWidgets.QDialog):
         self.btn_apply_changes.clicked.connect(self.btn_apply_changes_trigger)
         self.btn_cancel_changes = QtWidgets.QPushButton('Cancel')
         self.btn_cancel_changes.clicked.connect(self.btn_cancel_changes_trigger)
-        self.dialog_btn_layout = QtWidgets.QHBoxLayout
+        self.btn_overlay_scheme = QtWidgets.QPushButton('Set overlay scheme')
+        self.btn_overlay_scheme.clicked.connect(self.btn_overlay_scheme_trigger)
+
+        self.dialog_btn_layout = QtWidgets.QHBoxLayout()
         self.dialog_btn_layout.addStretch()
         self.dialog_btn_layout.addWidget(self.btn_apply_changes)
         self.dialog_btn_layout.addWidget(self.btn_cancel_changes)
         self.dialog_btn_layout.addWidget(self.btn_set_default)
+        self.dialog_btn_layout.addWidget(self.btn_overlay_scheme)
         self.dialog_btn_layout.addStretch()
 
         # Layout elements:
@@ -3049,18 +3061,19 @@ class CustomizeOverlay(QtWidgets.QDialog):
         self.cmb_categorization.addItem('Simple')
 
         # Simple categorization:
+        self.lbl_species = QtWidgets.QLabel('Species:')
         self.lbl_si = QtWidgets.QLabel('Si')
         self.lbl_cu = QtWidgets.QLabel('Cu')
         self.lbl_al = QtWidgets.QLabel('Al')
-        self.lbl_Mg = QtWidgets.QLabel('Mg')
+        self.lbl_mg = QtWidgets.QLabel('Mg')
         self.lbl_un = QtWidgets.QLabel('Un')
 
-        self.lbl_shape = QtWidgets.QLabel('Shape')
-        self.lbl_color_1 = QtWidgets.QLabel('Primary color ()')
-        self.lbl_color_2 = QtWidgets.QLabel('Secondary color')
-        self.lbl_radius_1 = QtWidgets.QLabel('Primary Radius/Size')
-        self.lbl_radius_2 = QtWidgets.QLabel('Secondary Radius/Size')
-        self.lbl_visible = QtWidgets.QLabel('Show/hide')
+        self.lbl_shape = QtWidgets.QLabel('Shape:')
+        self.lbl_color_1 = QtWidgets.QLabel('Primary color:')
+        self.lbl_color_2 = QtWidgets.QLabel('Secondary color:')
+        self.lbl_radius_1 = QtWidgets.QLabel('Primary radius (nm):')
+        self.lbl_radius_2 = QtWidgets.QLabel('Secondary radius (%):')
+        self.lbl_visible = QtWidgets.QLabel('Show:')
         self.btn_preview = QtWidgets.QPushButton('Refresh preview')
         self.btn_preview.clicked.connect(self.btn_preview_trigger)
 
@@ -3137,155 +3150,181 @@ class CustomizeOverlay(QtWidgets.QDialog):
             a=self.parser.getint('colors', 'un_secondary_a')
         )
 
-        self.si_size_1 = QtWidgets.QSpinBox()
-        self.si_size_1.setMaximum(400)
-        self.si_size_1.setValue(self.parser.getfloat('', ''))
+        self.si_size_1 = QtWidgets.QDoubleSpinBox()
+        self.si_size_1.setMaximum(400.00)
+        self.si_size_1.setMinimum(0.00)
+        self.si_size_1.setDecimals(2)
+        self.si_size_1.setValue(self.parser.getfloat('overlay_radii', 'si_outer'))
+        self.si_size_2 = QtWidgets.QDoubleSpinBox()
+        self.si_size_2.setMaximum(1.00)
+        self.si_size_2.setMinimum(0.00)
+        self.si_size_2.setDecimals(2)
+        self.si_size_2.setValue(self.parser.getfloat('overlay_radii', 'si_inner'))
+
+        self.cu_size_1 = QtWidgets.QDoubleSpinBox()
+        self.cu_size_1.setMaximum(400.00)
+        self.cu_size_1.setMinimum(0.00)
+        self.cu_size_1.setDecimals(2)
+        self.cu_size_1.setValue(self.parser.getfloat('overlay_radii', 'cu_outer'))
+        self.cu_size_2 = QtWidgets.QDoubleSpinBox()
+        self.cu_size_2.setMaximum(1.00)
+        self.cu_size_2.setMinimum(0.00)
+        self.cu_size_2.setDecimals(2)
+        self.cu_size_2.setValue(self.parser.getfloat('overlay_radii', 'cu_inner'))
+
+        self.al_size_1 = QtWidgets.QDoubleSpinBox()
+        self.al_size_1.setMaximum(400.00)
+        self.al_size_1.setMinimum(0.00)
+        self.al_size_1.setDecimals(2)
+        self.al_size_1.setValue(self.parser.getfloat('overlay_radii', 'al_outer'))
+        self.al_size_2 = QtWidgets.QDoubleSpinBox()
+        self.al_size_2.setMaximum(1.00)
+        self.al_size_2.setMinimum(0.00)
+        self.al_size_2.setDecimals(2)
+        self.al_size_2.setValue(self.parser.getfloat('overlay_radii', 'al_inner'))
+
+        self.mg_size_1 = QtWidgets.QDoubleSpinBox()
+        self.mg_size_1.setMaximum(400.00)
+        self.mg_size_1.setMinimum(0.00)
+        self.mg_size_1.setDecimals(2)
+        self.mg_size_1.setValue(self.parser.getfloat('overlay_radii', 'mg_outer'))
+        self.mg_size_2 = QtWidgets.QDoubleSpinBox()
+        self.mg_size_2.setMaximum(1.00)
+        self.mg_size_2.setMinimum(0.00)
+        self.mg_size_2.setDecimals(2)
+        self.mg_size_2.setValue(self.parser.getfloat('overlay_radii', 'mg_inner'))
+
+        self.un_size_1 = QtWidgets.QDoubleSpinBox()
+        self.un_size_1.setMaximum(400.00)
+        self.un_size_1.setMinimum(0.00)
+        self.un_size_1.setDecimals(2)
+        self.un_size_1.setValue(self.parser.getfloat('overlay_radii', 'un_outer'))
+        self.un_size_2 = QtWidgets.QDoubleSpinBox()
+        self.un_size_2.setMaximum(1.00)
+        self.un_size_2.setMinimum(0.00)
+        self.un_size_2.setDecimals(2)
+        self.un_size_2.setValue(self.parser.getfloat('overlay_radii', 'un_inner'))
+
+        self.chb_si_show = QtWidgets.QCheckBox('')
+        self.chb_si_show.setChecked(True)
+        self.chb_cu_show = QtWidgets.QCheckBox('')
+        self.chb_cu_show.setChecked(True)
+        self.chb_al_show = QtWidgets.QCheckBox('')
+        self.chb_al_show.setChecked(True)
+        self.chb_mg_show = QtWidgets.QCheckBox('')
+        self.chb_mg_show.setChecked(True)
+        self.chb_un_show = QtWidgets.QCheckBox('')
+        self.chb_un_show.setChecked(True)
 
         self.set_layout()
         self.exec_()
 
     def set_layout(self):
-        # Fill info into widgets:
-        self.lbl_viewing_model.setText('Model: {}'.format(self.model.save_filename))
-        if self.ui_obj.project_instance is not None:
-            if self.model.save_filename == self.ui_obj.project_instance.graph.active_model.save_filename:
-                self.btn_activate_model.setDisabled(True)
-            else:
-                self.btn_activate_model.setDisabled(False)
-        else:
-            self.btn_activate_model.setDisabled(True)
-        number_of_files = 0
-        for file in self.model.files.splitlines(keepends=False):
-            number_of_files += 1
-        gen_string = ''
-        gen_string += 'Total size, n = {}\n'.format(self.model.uncategorized_normal_dist.n)
-        gen_string += 'Data gathered from {} images\n'.format(number_of_files)
-        gen_string += 'Filter:\n'
-        for key, value in self.model.filter_.items():
-            gen_string += '    {}: {}\n'.format(key, value)
-        self.lbl_size.setText(gen_string)
-        attr_string = ''
-        for attribute in self.model.attribute_keys:
-            self.cmb_attribute_1.addItem(attribute)
-            self.cmb_attribute_2.addItem(attribute)
-            self.cmb_single_attribute.addItem(attribute)
-            attr_string += '{}\n'.format(attribute)
-        self.lbl_attributes.setText('{}'.format(attr_string))
-        cat_string = ''
-        for c, category_key in enumerate(self.model.category_titles):
-            cat_string += '{}\t\tn = {}\n'.format(category_key, self.model.composite_model[c].n)
-        self.lbl_categories.setText('{}'.format(cat_string))
+        grid_layout = QtWidgets.QGridLayout()
 
-        # Create group boxes:
-        grp_set_model = QtWidgets.QGroupBox('Select model')
-        grp_dual_plot = QtWidgets.QGroupBox('Dual plot')
-        grp_plot_all = QtWidgets.QGroupBox('Plot all model attributes densities')
-        grp_plot_pca = QtWidgets.QGroupBox('Plot 2 first principle components')
-        grp_categorization = QtWidgets.QGroupBox('Data categories ({}):'.format(self.model.num_data_categories))
-        grp_attributes = QtWidgets.QGroupBox('Data attributes ({}):'.format(self.model.k))
-        grp_general = QtWidgets.QGroupBox('General:')
-        grp_single_plot = QtWidgets.QGroupBox('Plot attribute model distributions')
+        strut_1 = QtWidgets.QWidget()
+        strut_1.setMinimumWidth(100)
+        strut_1.setMaximumHeight(0)
+        strut_2 = QtWidgets.QWidget()
+        strut_2.setMinimumWidth(150)
+        strut_2.setMaximumHeight(0)
+        strut_3 = QtWidgets.QWidget()
+        strut_3.setMinimumWidth(20)
+        strut_3.setMaximumHeight(0)
+        strut_4 = QtWidgets.QWidget()
+        strut_4.setMinimumWidth(20)
+        strut_4.setMaximumHeight(0)
+        strut_5 = QtWidgets.QWidget()
+        strut_5.setMinimumWidth(100)
+        strut_5.setMaximumHeight(0)
+        strut_6 = QtWidgets.QWidget()
+        strut_6.setMinimumWidth(100)
+        strut_6.setMaximumHeight(0)
+        strut_7 = QtWidgets.QWidget()
+        strut_7.setMinimumWidth(80)
+        strut_7.setMaximumHeight(0)
+        strut_8 = QtWidgets.QWidget()
+        strut_8.setMinimumWidth(80)
+        strut_8.setMaximumHeight(0)
 
-        # Create group layouts:
-        grp_set_model_layout = QtWidgets.QVBoxLayout()
-        grp_set_model_layout.addWidget(self.lbl_viewing_model)
-        layout = QtWidgets.QHBoxLayout()
-        layout.addStretch()
-        layout.addWidget(self.btn_activate_model)
-        layout.addStretch()
-        grp_set_model_layout.addLayout(layout)
-        layout = QtWidgets.QHBoxLayout()
-        layout.addStretch()
-        layout.addWidget(self.btn_load_model)
-        layout.addStretch()
-        grp_set_model_layout.addLayout(layout)
-        grp_set_model.setLayout(grp_set_model_layout)
+        v_strut = QtWidgets.QWidget()
+        strut_8.setMaximumWidth(0)
+        strut_8.setMinimumHeight(50)
 
-        grp_dual_plot_layout = QtWidgets.QVBoxLayout()
-        layout = QtWidgets.QHBoxLayout()
-        layout.addWidget(self.lbl_attribute_1)
-        layout.addWidget(self.cmb_attribute_1)
-        grp_dual_plot_layout.addLayout(layout)
-        layout = QtWidgets.QHBoxLayout()
-        layout.addWidget(self.lbl_attribute_2)
-        layout.addWidget(self.cmb_attribute_2)
-        grp_dual_plot_layout.addLayout(layout)
-        layout = QtWidgets.QHBoxLayout()
-        layout.addStretch()
-        layout.addWidget(self.btn_dual_plot)
-        layout.addStretch()
-        grp_dual_plot_layout.addLayout(layout)
-        grp_dual_plot.setLayout(grp_dual_plot_layout)
+        # Column 1:
+        grid_layout.addWidget(GUI_custom_components.CenterBox(widget=self.lbl_species), 0, 0)
+        grid_layout.addWidget(GUI_custom_components.CenterBox(widget=self.lbl_si), 1, 0)
+        grid_layout.addWidget(GUI_custom_components.CenterBox(widget=self.lbl_cu), 2, 0)
+        grid_layout.addWidget(GUI_custom_components.CenterBox(widget=self.lbl_al), 3, 0)
+        grid_layout.addWidget(GUI_custom_components.CenterBox(widget=self.lbl_mg), 4, 0)
+        grid_layout.addWidget(GUI_custom_components.CenterBox(widget=self.lbl_un), 5, 0)
+        grid_layout.addWidget(strut_1, 6, 0)
+        grid_layout.addWidget(v_strut, 7, 0)
 
-        grp_plot_all_layout = QtWidgets.QVBoxLayout()
-        layout = QtWidgets.QHBoxLayout()
-        layout.addStretch()
-        layout.addWidget(self.btn_plot_all)
-        layout.addStretch()
-        grp_plot_all_layout.addLayout(layout)
-        layout = QtWidgets.QHBoxLayout()
-        layout.addStretch()
-        layout.addWidget(self.btn_plot_z_scores)
-        layout.addStretch()
-        grp_plot_all_layout.addLayout(layout)
-        grp_plot_all.setLayout(grp_plot_all_layout)
+        # Column 2:
+        grid_layout.addWidget(GUI_custom_components.CenterBox(widget=self.lbl_shape), 0, 1)
+        grid_layout.addWidget(self.cmb_si_shape, 1, 1)
+        grid_layout.addWidget(self.cmb_cu_shape, 2, 1)
+        grid_layout.addWidget(self.cmb_al_shape, 3, 1)
+        grid_layout.addWidget(self.cmb_mg_shape, 4, 1)
+        grid_layout.addWidget(self.cmb_un_shape, 5, 1)
+        grid_layout.addWidget(strut_2, 6, 1)
 
-        grp_plot_pca_layout = QtWidgets.QVBoxLayout()
-        layout = QtWidgets.QHBoxLayout()
-        layout.addWidget(self.lbl_pca_categories)
-        layout.addWidget(self.cmb_pca_setting)
-        grp_plot_pca_layout.addLayout(layout)
-        layout = QtWidgets.QHBoxLayout()
-        layout.addStretch()
-        layout.addWidget(self.btn_plot_pca)
-        layout.addStretch()
-        grp_plot_pca_layout.addLayout(layout)
-        grp_plot_pca.setLayout(grp_plot_pca_layout)
+        # Column 3:
+        grid_layout.addWidget(GUI_custom_components.CenterBox(widget=self.lbl_color_1), 0, 2)
+        grid_layout.addWidget(self.si_color_1_selector, 1, 2)
+        grid_layout.addWidget(self.cu_color_1_selector, 2, 2)
+        grid_layout.addWidget(self.al_color_1_selector, 3, 2)
+        grid_layout.addWidget(self.mg_color_1_selector, 4, 2)
+        grid_layout.addWidget(self.un_color_1_selector, 5, 2)
+        grid_layout.addWidget(strut_3, 6, 2)
 
-        grp_categorization_layout = QtWidgets.QVBoxLayout()
-        grp_categorization_layout.addWidget(self.lbl_categories)
-        grp_categorization.setLayout(grp_categorization_layout)
+        # Column 4:
+        grid_layout.addWidget(GUI_custom_components.CenterBox(widget=self.lbl_color_2), 0, 3)
+        grid_layout.addWidget(self.si_color_2_selector, 1, 3)
+        grid_layout.addWidget(self.cu_color_2_selector, 2, 3)
+        grid_layout.addWidget(self.al_color_2_selector, 3, 3)
+        grid_layout.addWidget(self.mg_color_2_selector, 4, 3)
+        grid_layout.addWidget(self.un_color_2_selector, 5, 3)
+        grid_layout.addWidget(strut_4, 6, 3)
 
-        grp_attributes_layout = QtWidgets.QVBoxLayout()
-        grp_attributes_layout.addWidget(self.lbl_attributes)
-        grp_attributes.setLayout(grp_attributes_layout)
+        # Column 5:
+        grid_layout.addWidget(GUI_custom_components.CenterBox(widget=self.lbl_radius_1), 0, 4)
+        grid_layout.addWidget(GUI_custom_components.CenterBox(widget=self.si_size_1), 1, 4)
+        grid_layout.addWidget(GUI_custom_components.CenterBox(widget=self.cu_size_1), 2, 4)
+        grid_layout.addWidget(GUI_custom_components.CenterBox(widget=self.al_size_1), 3, 4)
+        grid_layout.addWidget(GUI_custom_components.CenterBox(widget=self.mg_size_1), 4, 4)
+        grid_layout.addWidget(GUI_custom_components.CenterBox(widget=self.un_size_1), 5, 4)
+        grid_layout.addWidget(strut_5, 6, 4)
 
-        grp_single_plot_layout = QtWidgets.QVBoxLayout()
-        layout = QtWidgets.QHBoxLayout()
-        layout.addWidget(self.lbl_single_attribute)
-        layout.addWidget(self.cmb_single_attribute)
-        grp_single_plot_layout.addLayout(layout)
-        layout = QtWidgets.QHBoxLayout()
-        layout.addStretch()
-        layout.addWidget(self.btn_plot_single)
-        layout.addStretch()
-        grp_single_plot_layout.addLayout(layout)
-        grp_single_plot.setLayout(grp_single_plot_layout)
+        # Column 6:
+        grid_layout.addWidget(GUI_custom_components.CenterBox(widget=self.lbl_radius_2), 0, 5)
+        grid_layout.addWidget(GUI_custom_components.CenterBox(widget=self.si_size_2), 1, 5)
+        grid_layout.addWidget(GUI_custom_components.CenterBox(widget=self.cu_size_2), 2, 5)
+        grid_layout.addWidget(GUI_custom_components.CenterBox(widget=self.al_size_2), 3, 5)
+        grid_layout.addWidget(GUI_custom_components.CenterBox(widget=self.mg_size_2), 4, 5)
+        grid_layout.addWidget(GUI_custom_components.CenterBox(widget=self.un_size_2), 5, 5)
+        grid_layout.addWidget(strut_6, 6, 5)
 
-        grp_general_layout = QtWidgets.QVBoxLayout()
-        grp_general_layout.addWidget(self.lbl_size)
-        grp_general.setLayout(grp_general_layout)
+        # Column 7:
+        grid_layout.addWidget(GUI_custom_components.CenterBox(widget=self.lbl_visible), 0, 6)
+        grid_layout.addWidget(GUI_custom_components.CenterBox(widget=self.chb_si_show), 1, 6)
+        grid_layout.addWidget(GUI_custom_components.CenterBox(widget=self.chb_cu_show), 2, 6)
+        grid_layout.addWidget(GUI_custom_components.CenterBox(widget=self.chb_al_show), 3, 6)
+        grid_layout.addWidget(GUI_custom_components.CenterBox(widget=self.chb_mg_show), 4, 6)
+        grid_layout.addWidget(GUI_custom_components.CenterBox(widget=self.chb_un_show), 5, 6)
+        grid_layout.addWidget(strut_7, 6, 6)
 
-        # Set top layout:
-        grid = QtWidgets.QGridLayout()
-        grid.addWidget(grp_set_model, 0, 0)
-        grid.addWidget(grp_general, 1, 0)
-        grid.addWidget(grp_categorization, 2, 0)
-        grid.addWidget(grp_attributes, 3, 0)
-        grid.addWidget(grp_single_plot, 0, 1)
-        grid.addWidget(grp_dual_plot, 1, 1)
-        grid.addWidget(grp_plot_all, 2, 1)
-        grid.addWidget(grp_plot_pca, 3, 1)
+        # Column 8:
+        grid_layout.addWidget(self.btn_preview, 0, 7)
 
-        top_layout = QtWidgets.QVBoxLayout()
-        top_layout.addLayout(grid)
-        layout = QtWidgets.QHBoxLayout()
-        layout.addStretch()
-        layout.addWidget(self.btn_quit)
-        layout.addStretch()
-        top_layout.addLayout(layout)
+        grid_layout.addWidget(strut_8, 6, 7)
 
-        self.setLayout(top_layout)
+        layout = QtWidgets.QVBoxLayout()
+        layout.addLayout(grid_layout)
+        layout.addLayout(self.dialog_btn_layout)
+
+        self.setLayout(layout)
 
     def btn_preview_trigger(self):
         pass
@@ -3293,8 +3332,80 @@ class CustomizeOverlay(QtWidgets.QDialog):
     def btn_set_default_trigger(self):
         pass
 
-    def btn_apply_changes_trigger(self):
+    def btn_overlay_scheme_trigger(self):
         pass
+
+    def btn_apply_changes_trigger(self):
+
+        self.parser.set('shapes', 'si_shape', str(self.cmb_si_shape.currentText()))
+        self.parser.set('shapes', 'cu_shape', str(self.cmb_cu_shape.currentText()))
+        self.parser.set('shapes', 'al_shape', str(self.cmb_al_shape.currentText()))
+        self.parser.set('shapes', 'mg_shape', str(self.cmb_mg_shape.currentText()))
+        self.parser.set('shapes', 'un_shape', str(self.cmb_un_shape.currentText()))
+
+        self.parser.set('colors', 'si_primary_r', str(self.si_color_1_selector.r_box.value()))
+        self.parser.set('colors', 'si_primary_g', str(self.si_color_1_selector.g_box.value()))
+        self.parser.set('colors', 'si_primary_b', str(self.si_color_1_selector.b_box.value()))
+        self.parser.set('colors', 'si_primary_a', str(self.si_color_1_selector.a_box.value()))
+        self.parser.set('colors', 'si_secondary_r', str(self.si_color_2_selector.r_box.value()))
+        self.parser.set('colors', 'si_secondary_g', str(self.si_color_2_selector.g_box.value()))
+        self.parser.set('colors', 'si_secondary_b', str(self.si_color_2_selector.b_box.value()))
+        self.parser.set('colors', 'si_secondary_a', str(self.si_color_2_selector.a_box.value()))
+
+        self.parser.set('colors', 'cu_primary_r', str(self.cu_color_1_selector.r_box.value()))
+        self.parser.set('colors', 'cu_primary_g', str(self.cu_color_1_selector.g_box.value()))
+        self.parser.set('colors', 'cu_primary_b', str(self.cu_color_1_selector.b_box.value()))
+        self.parser.set('colors', 'cu_primary_a', str(self.cu_color_1_selector.a_box.value()))
+        self.parser.set('colors', 'cu_secondary_r', str(self.cu_color_2_selector.r_box.value()))
+        self.parser.set('colors', 'cu_secondary_g', str(self.cu_color_2_selector.g_box.value()))
+        self.parser.set('colors', 'cu_secondary_b', str(self.cu_color_2_selector.b_box.value()))
+        self.parser.set('colors', 'cu_secondary_a', str(self.cu_color_2_selector.a_box.value()))
+
+        self.parser.set('colors', 'al_primary_r', str(self.al_color_1_selector.r_box.value()))
+        self.parser.set('colors', 'al_primary_g', str(self.al_color_1_selector.g_box.value()))
+        self.parser.set('colors', 'al_primary_b', str(self.al_color_1_selector.b_box.value()))
+        self.parser.set('colors', 'al_primary_a', str(self.al_color_1_selector.a_box.value()))
+        self.parser.set('colors', 'al_secondary_r', str(self.al_color_2_selector.r_box.value()))
+        self.parser.set('colors', 'al_secondary_g', str(self.al_color_2_selector.g_box.value()))
+        self.parser.set('colors', 'al_secondary_b', str(self.al_color_2_selector.b_box.value()))
+        self.parser.set('colors', 'al_secondary_a', str(self.al_color_2_selector.a_box.value()))
+
+        self.parser.set('colors', 'mg_primary_r', str(self.mg_color_1_selector.r_box.value()))
+        self.parser.set('colors', 'mg_primary_g', str(self.mg_color_1_selector.g_box.value()))
+        self.parser.set('colors', 'mg_primary_b', str(self.mg_color_1_selector.b_box.value()))
+        self.parser.set('colors', 'mg_primary_a', str(self.mg_color_1_selector.a_box.value()))
+        self.parser.set('colors', 'mg_secondary_r', str(self.mg_color_2_selector.r_box.value()))
+        self.parser.set('colors', 'mg_secondary_g', str(self.mg_color_2_selector.g_box.value()))
+        self.parser.set('colors', 'mg_secondary_b', str(self.mg_color_2_selector.b_box.value()))
+        self.parser.set('colors', 'mg_secondary_a', str(self.mg_color_2_selector.a_box.value()))
+
+        self.parser.set('colors', 'un_primary_r', str(self.un_color_1_selector.r_box.value()))
+        self.parser.set('colors', 'un_primary_g', str(self.un_color_1_selector.g_box.value()))
+        self.parser.set('colors', 'un_primary_b', str(self.un_color_1_selector.b_box.value()))
+        self.parser.set('colors', 'un_primary_a', str(self.un_color_1_selector.a_box.value()))
+        self.parser.set('colors', 'un_secondary_r', str(self.un_color_2_selector.r_box.value()))
+        self.parser.set('colors', 'un_secondary_g', str(self.un_color_2_selector.g_box.value()))
+        self.parser.set('colors', 'un_secondary_b', str(self.un_color_2_selector.b_box.value()))
+        self.parser.set('colors', 'un_secondary_a', str(self.un_color_2_selector.a_box.value()))
+
+        self.parser.set('overlay_radii', 'si_outer', str(self.si_size_1.value()))
+        self.parser.set('overlay_radii', 'cu_outer', str(self.cu_size_1.value()))
+        self.parser.set('overlay_radii', 'al_outer', str(self.al_size_1.value()))
+        self.parser.set('overlay_radii', 'mg_outer', str(self.mg_size_1.value()))
+        self.parser.set('overlay_radii', 'un_outer', str(self.un_size_1.value()))
+
+        self.parser.set('overlay_radii', 'si_inner', str(self.si_size_2.value()))
+        self.parser.set('overlay_radii', 'cu_inner', str(self.cu_size_2.value()))
+        self.parser.set('overlay_radii', 'al_inner', str(self.al_size_2.value()))
+        self.parser.set('overlay_radii', 'mg_inner', str(self.mg_size_2.value()))
+        self.parser.set('overlay_radii', 'un_inner', str(self.un_size_2.value()))
+
+        with open('config.ini', 'w') as configfile:
+            self.parser.write(configfile)
+
+        self.ui_obj.update_overlay()
+
+        logger.info('Updated settings')
 
     def btn_cancel_changes_trigger(self):
         self.close()

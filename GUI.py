@@ -7,7 +7,6 @@ import core
 import GUI_elements
 import GUI_settings
 import utils
-import statistics
 # External imports:
 from PyQt5 import QtWidgets, QtGui, QtCore
 import sys
@@ -1096,7 +1095,7 @@ class MainUI(QtWidgets.QMainWindow):
         pass
 
     def btn_set_style_trigger(self):
-        pass
+        GUI_elements.CustomizeOverlay(ui_obj=self)
 
     def btn_set_indices_trigger(self):
         pass

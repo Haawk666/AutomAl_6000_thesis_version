@@ -107,12 +107,18 @@ class Project:
         1: 'Al-Mg-Si'
     }
 
-    # Standard AutomAl 6000 class header:
-    advanced_category_string = {0: 'Si_1', 1: 'Si_2', 2: 'Si_3', 3: 'Cu', 4: 'Al_1', 5: 'Al_2', 6: 'Mg_1', 7: 'Mg_2'}
-    species_string = {0: 'Si', 1: 'Cu', 2: 'Al', 3: 'Mg', 4: 'Un'}
     symmetry = {'Si': 3, 'Cu': 3, 'Al': 4, 'Mg': 5, 'Un': 3}
     atomic_radii = {'Si': 117.5, 'Cu': 127.81, 'Al': 143.0, 'Mg': 160.0, 'Ag': 144.5, 'Zn': 133.25, 'Un': 200.0}
     al_lattice_const = 404.95
+
+    # Categories:
+    simple_categories = set('Si', 'Cu', 'Al', 'Mg', 'Un')
+    advanced_categories = set('Si_1', 'Si_2', 'Cu', )
+
+
+
+    species_string = {0: 'Si', 1: 'Cu', 2: 'Al', 3: 'Mg', 4: 'Un'}
+    advanced_category_string = {0: 'Si_1', 1: 'Si_2', 2: 'Si_3', 3: 'Cu', 4: 'Al_1', 5: 'Al_2', 6: 'Mg_1', 7: 'Mg_2'}
 
     def __init__(self, filename_full, debug_obj=None):
 
