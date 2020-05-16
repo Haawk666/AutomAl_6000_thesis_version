@@ -9,7 +9,10 @@ import legacy_items
 import untangling
 import statistics
 # External imports:
+from matplotlib import pyplot as plt
+from matplotlib.gridspec import GridSpec
 import numpy as np
+import scipy.ndimage
 import dm3_lib as dm3
 import sys
 import copy
@@ -27,72 +30,6 @@ class Project:
         be instantiated with filename_full='empty', but this is only meant to be used as a placeholder.
     :param debug_obj: DEPRECATED
     :type filename_full: string
-
-    .. code-block:: python
-        :caption: Example
-
-        >>> import core
-        >>> my_project_instance = core.SuchSoftware('Saves/sample.dm3')
-        >>> print(my_project_instance)
-        Image summary: ----------
-            Number of detected columns: 0
-            Number of detected precipitate columns: 0
-
-            Number of inconsistencies: 0
-            Number of popular: 0
-            Number of unpopular: 0
-            Chi: 0
-
-            Average peak intensity: 0
-            Average average intensity: 0
-
-            Average Si peak intensity: 0.0
-            Average Cu peak intensity: 0.0
-            Average Zn peak intensity: 0.0
-            Average Al peak intensity: 0.0
-            Average Ag peak intensity: 0.0
-            Average Mg peak intensity: 0.0
-            Average Un peak intensity: 0.0
-
-            Average Si average intensity: 0.0
-            Average Cu average intensity: 0.0
-            Average Zn average intensity: 0.0
-            Average Al average intensity: 0.0
-            Average Ag average intensity: 0.0
-            Average Mg average intensity: 0.0
-            Average Un average intensity: 0.0
-
-            Number of Si-columns: 0
-            Number of Cu-columns: 0
-            Number of Zn-columns: 0
-            Number of Al-columns: 0
-            Number of Ag-columns: 0
-            Number of Mg-columns: 0
-            Number of Un-columns: 0
-
-            Number procentage of Si: 0.0
-            Number procentage of Cu: 0.0
-            Number procentage of Zn: 0.0
-            Number procentage of Al: 0.0
-            Number procentage of Ag: 0.0
-            Number procentage of Mg: 0.0
-            Number procentage of Un: 0.0
-
-            Number of precipitate Si-columns: 0
-            Number of precipitate Cu-columns: 0
-            Number of precipitate Zn-columns: 0
-            Number of precipitate Al-columns: 0
-            Number of precipitate Ag-columns: 0
-            Number of precipitate Mg-columns: 0
-            Number of precipitate Un-columns: 0
-
-            Number procentage of precipitate Si: 0.0
-            Number procentage of precipitate Cu: 0.0
-            Number procentage of precipitate Zn: 0.0
-            Number procentage of precipitate Al: 0.0
-            Number procentage of precipitate Ag: 0.0
-            Number procentage of precipitate Mg: 0.0
-            Number procentage of precipitate Un: 0.0
 
     """
 
@@ -112,10 +49,8 @@ class Project:
     al_lattice_const = 404.95
 
     # Categories:
-    simple_categories = set('Si', 'Cu', 'Al', 'Mg', 'Un')
-    advanced_categories = set('Si_1', 'Si_2', 'Cu', )
-
-
+    simple_categories = ['Si', 'Cu', 'Al', 'Mg', 'Un']
+    advanced_categories = ['Si_1', 'Si_2', 'Cu', 'Al_1', 'Al_2', 'Mg_1', 'Mg_2']
 
     species_string = {0: 'Si', 1: 'Cu', 2: 'Al', 3: 'Mg', 4: 'Un'}
     advanced_category_string = {0: 'Si_1', 1: 'Si_2', 2: 'Si_3', 3: 'Cu', 4: 'Al_1', 5: 'Al_2', 6: 'Mg_1', 7: 'Mg_2'}
@@ -130,6 +65,7 @@ class Project:
         self.im_width = 0
         self.version_saved = None
         self.starting_index = None
+        self.custom_categories = []
 
         # For communicating with the interface, if any:
         self.debug_obj = debug_obj
@@ -149,8 +85,11 @@ class Project:
             self.im_mat = dm3f.imagedata
             (self.scale, _) = dm3f.pxsize
             self.scale = 1000 * self.scale  # Scale is now in nm/pixel
-            self.im_mat = utils.normalize_static(self.im_mat)
+            if self.scale > 7.0:
+                self.im_mat = scipy.ndimage.zoom(self.im_mat, 2, order=1)
+                self.scale = self.scale / 2
             (self.im_height, self.im_width) = self.im_mat.shape
+            self.im_mat = utils.normalize_static(self.im_mat)
             self.fft_im_mat = utils.gen_fft(self.im_mat)
 
         # Data matrices:
@@ -255,7 +194,7 @@ class Project:
             logger.info('Unknown alloy index! Using index 0')
             self.alloy_mat = [1, 1, 1, 1, 0]
 
-    def column_detection(self, search_type='s'):
+    def column_detection(self, search_type='s', plot=False):
         """Column detection algorithm.
 
         The column detection algorithm will attempt to locate the columns in a HAADF-STEM image. When a SuchSoftware
@@ -274,10 +213,28 @@ class Project:
         :type search_type: string
 
         """
+        peak_values = []
         if self.num_columns == 0:
             logger.info('Starting column detection. Search mode is \'{}\''.format(search_type))
         else:
             logger.info('Continuing column detection. Search mode is \'{}\''.format(search_type))
+            min_val = 1
+            for vertex in self.graph.vertices:
+                if vertex.peak_gamma < min_val:
+                    min_val = vertex.peak_gamma
+            if min_val < self.threshold:
+                new_graph = graph_2.AtomicGraph(self.scale)
+                self.num_columns = 0
+                for vertex in self.graph.vertices:
+                    if vertex.peak_gamma > self.threshold:
+                        self.num_columns += 1
+                        peak_values.append(vertex.peak_gamma)
+                        new_graph.add_vertex(vertex)
+                self.graph = new_graph
+            else:
+                for vertex in self.graph.vertices:
+                    peak_values.append(vertex.peak_gamma)
+
         cont = True
         counter = self.num_columns
         self.search_mat = utils.gen_framed_mat(self.search_mat, self.r + self.overhead)
@@ -289,6 +246,8 @@ class Project:
                                    (self.im_height + 2 * (self.r + self.overhead),
                                     self.im_width + 2 * (self.r + self.overhead)))
             max_val = self.search_mat[pos]
+            peak_values.append(max_val)
+
             x_fit, y_fit = utils.cm_fit(self.im_mat, pos[1], pos[0], self.r)
 
             x_fit_real_coor = x_fit - self.r - self.overhead
@@ -301,6 +260,7 @@ class Project:
             self.search_mat = utils.delete_pixels(self.search_mat, x_fit_pix, y_fit_pix, self.r + self.overhead)
 
             vertex = graph_2.Vertex(counter, x_fit_real_coor, y_fit_real_coor, self.r, self.scale)
+            vertex.peak_gamma = max_val
             vertex.reset_probability_vector(bias=6)
             self.graph.add_vertex(vertex)
 
@@ -327,6 +287,22 @@ class Project:
         self.calc_avg_gamma()
         self.summarize_stats()
         logger.info('Column detection complete! Found {} columns.'.format(self.num_columns))
+
+        if plot:
+            fig = plt.figure(constrained_layout=True)
+            gs = GridSpec(1, 1, figure=fig)
+            ax_attr = fig.add_subplot(gs[0, 0])
+            ax_attr.plot(
+                range(0, self.num_columns),
+                peak_values,
+                c='k',
+                label='Column peak intensity)'
+            )
+            ax_attr.set_title('Column detection summary')
+            ax_attr.set_xlabel('# Column')
+            ax_attr.set_ylabel('Peak intensity')
+            ax_attr.legend()
+            plt.show()
 
     def find_nearest(self, i, n, weight=4):
         """Use the image to determine the closest neighbours of vertex *i*.

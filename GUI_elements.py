@@ -886,6 +886,8 @@ class ControlWindow(QtWidgets.QWidget):
         # Checkboxes
         self.chb_lock_views = QtWidgets.QCheckBox('Lock views')
 
+        self.chb_plot_results = QtWidgets.QCheckBox('Plot column detection summary')
+        self.chb_automatic_threshold = QtWidgets.QCheckBox('Use automatic thresholding')
         self.chb_toggle_positions = QtWidgets.QCheckBox('Show column position overlay')
 
         self.chb_show_graphic_updates = QtWidgets.QCheckBox('Show graphic updates (slow)')
@@ -958,6 +960,8 @@ class ControlWindow(QtWidgets.QWidget):
 
         self.chb_lock_views.setChecked(False)
 
+        self.chb_plot_results.setChecked(False)
+        self.chb_automatic_threshold.setChecked(False)
         self.chb_toggle_positions.setChecked(True)
 
         self.chb_show_graphic_updates.setChecked(False)
@@ -999,6 +1003,8 @@ class ControlWindow(QtWidgets.QWidget):
 
         self.chb_lock_views.toggled.connect(self.ui_obj.chb_lock_views_trigger)
 
+        self.chb_plot_results.toggled.connect(self.ui_obj.chb_plot_results_trigger)
+        self.chb_automatic_threshold.toggled.connect(self.ui_obj.chb_automatic_threshold_trigger)
         self.chb_toggle_positions.toggled.connect(self.ui_obj.chb_toggle_positions_trigger)
 
         self.chb_show_graphic_updates.toggled.connect(self.ui_obj.chb_show_graphic_updates_trigger)
@@ -1091,6 +1097,8 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_pca = GUI_custom_components.MediumButton('Perform PCA', self, trigger_func=self.ui_obj.btn_pca_trigger)
         self.btn_calc_models = GUI_custom_components.MediumButton('Calculate model', self, trigger_func=self.ui_obj.btn_calc_models_trigger)
         self.btn_plot_models = GUI_custom_components.MediumButton('Plot model', self, trigger_func=self.ui_obj.btn_plot_models_trigger)
+        self.btn_show_all = GUI_custom_components.MediumButton('Show all', self, trigger_func=self.ui_obj.btn_show_all_trigger)
+        self.btn_hide_all = GUI_custom_components.MediumButton('Hide all', self, trigger_func=self.ui_obj.btn_hide_all_trigger)
 
         # Button layouts
         btn_project_layout = QtWidgets.QVBoxLayout()
@@ -1150,6 +1158,8 @@ class ControlWindow(QtWidgets.QWidget):
 
         btn_overlay_btns_layout = QtWidgets.QHBoxLayout()
         btn_overlay_btns_layout.addWidget(self.btn_set_style)
+        btn_overlay_btns_layout.addWidget(self.btn_show_all)
+        btn_overlay_btns_layout.addWidget(self.btn_hide_all)
         btn_overlay_btns_layout.addStretch()
 
         btn_graph_btns_layout = QtWidgets.QHBoxLayout()
@@ -1215,6 +1225,8 @@ class ControlWindow(QtWidgets.QWidget):
         self.alg_1_box_layout.addLayout(self.btn_set_scale_layout)
         self.alg_1_box_layout.addLayout(self.btn_set_threshold_layout)
         self.alg_1_box_layout.addLayout(self.btn_set_search_size_layout)
+        self.alg_1_box_layout.addWidget(self.chb_automatic_threshold)
+        self.alg_1_box_layout.addWidget(self.chb_plot_results)
         self.alg_1_box_layout.addWidget(self.chb_toggle_positions)
         self.alg_1_box = GUI_custom_components.GroupBox('Column detection', menu_action=self.ui_obj.menu.toggle_alg_1_control_action)
         self.alg_1_box.setLayout(self.alg_1_box_layout)
@@ -1346,6 +1358,8 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_list.append(self.btn_deselect)
         self.btn_list.append(self.btn_new)
         self.btn_list.append(self.btn_set_style)
+        self.btn_list.append(self.btn_show_all)
+        self.btn_list.append(self.btn_hide_all)
         self.btn_list.append(self.btn_set_indices)
         self.btn_list.append(self.btn_test)
         self.btn_list.append(self.btn_crash)
@@ -1358,6 +1372,8 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_list.append(self.btn_plot_models)
 
         self.chb_list.append(self.chb_lock_views)
+        self.chb_list.append(self.chb_plot_results)
+        self.chb_list.append(self.chb_automatic_threshold)
         self.chb_list.append(self.chb_toggle_positions)
         self.chb_list.append(self.chb_show_graphic_updates)
         self.chb_list.append(self.chb_precipitate_column)

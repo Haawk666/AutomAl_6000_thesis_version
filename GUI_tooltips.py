@@ -47,7 +47,9 @@ btn_refresh_graph = 'Recalculate graph parameters and update vertex properties'
 btn_refresh_mesh = 'Update internal mesh information and graphical representations'
 btn_deselect = 'Deselect any columns'
 btn_new = 'Not implemented'
-btn_set_style = 'Not implemented'
+btn_set_style = 'Customize the overlay appareance'
+btn_show_all = 'Show all non-void columns present in the data'
+btn_hide_all = 'Hide all columns of the overlay'
 btn_set_indices = 'DEPRECATED. Use \'permute mode\''
 btn_test = 'Ad-Hoc debugging functionality'
 btn_crash = 'Throw an exception for science!... (Save your work first!)'
@@ -65,6 +67,10 @@ btn_calc_models = 'Calculate model parameters with the help of a wizard'
 btn_plot_models = 'Display various plots of any of the constructed statistical models'
 
 chb_lock_views = 'Lock the different tabs together to always display the same area'
+chb_plot_results = 'Plot the peak pixel intensities of each column after column detection finishes.'
+chb_automatic_threshold = 'If checked, column detection will apply an algorithm to detect an optimal threshold value.\n' \
+                          'this feature is a prototype and manual thresholding should be used if automatic does not\n' \
+                          'work. Use the plotting function to asses the success of column detection.'
 chb_toggle_positions = 'Toggle the overlay of atomic positions'
 chb_show_graphic_updates = 'Determines whether the graphical representation of the data will update while the\n' \
                            'algorithm is running. This will slow down the process significantly, but could\n' \
@@ -147,6 +153,8 @@ control_window_btn_list = [
     btn_deselect,
     btn_new,
     btn_set_style,
+    btn_show_all,
+    btn_hide_all,
     btn_set_indices,
     btn_test,
     btn_crash,
@@ -161,6 +169,8 @@ control_window_btn_list = [
 
 control_window_chb_list = [
     chb_lock_views,
+    chb_plot_results,
+    chb_automatic_threshold,
     chb_toggle_positions,
     chb_show_graphic_updates,
     chb_precipitate_column,

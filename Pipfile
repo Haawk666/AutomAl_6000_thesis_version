@@ -10,6 +10,8 @@ numpy = "*"
 pillow = "*"
 matplotlib = "*"
 pyqt5 = "*"
+scipy-ndimage = "*"
+scipy = "*"
 
 [requires]
 python_version = "3.8"

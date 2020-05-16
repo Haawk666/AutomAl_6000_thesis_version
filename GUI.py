@@ -914,17 +914,17 @@ class MainUI(QtWidgets.QMainWindow):
 
     def btn_continue_detection_trigger(self):
         if self.project_instance is not None:
-            items = ('Search size', 'Threshold', 'other')
+            items = ('Threshold', 'Search size', 'other')
             item, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Search type", items, 0, False)
             if ok_pressed and item:
-                self.sys_message('Working...')
+                self.sys_message('Working, column detection might take several minutes...')
                 self.project_instance.redraw_search_mat()
                 if item == 'Search size':
-                    self.project_instance.column_detection('s')
+                    self.project_instance.column_detection('s', plot=self.control_window.chb_plot_results.isChecked())
                 elif item == 'Threshold':
-                    self.project_instance.column_detection('t')
+                    self.project_instance.column_detection('t', plot=self.control_window.chb_plot_results.isChecked())
                 else:
-                    self.project_instance.column_detection('o')
+                    self.project_instance.column_detection('o', plot=self.control_window.chb_plot_results.isChecked())
                 self.update_display()
                 self.sys_message('Ready.')
 
@@ -1097,6 +1097,12 @@ class MainUI(QtWidgets.QMainWindow):
     def btn_set_style_trigger(self):
         GUI_elements.CustomizeOverlay(ui_obj=self)
 
+    def btn_show_all_trigger(self):
+        pass
+
+    def btn_hide_all_trigger(self):
+        pass
+
     def btn_set_indices_trigger(self):
         pass
 
@@ -1224,6 +1230,12 @@ class MainUI(QtWidgets.QMainWindow):
             self.lock_views = True
         else:
             self.lock_views = False
+
+    def chb_plot_results_trigger(self, state):
+        pass
+
+    def chb_automatic_threshold_trigger(self, state):
+        pass
 
     def chb_toggle_positions_trigger(self, state):
         if self.project_instance is not None:
