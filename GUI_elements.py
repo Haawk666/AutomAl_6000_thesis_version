@@ -3137,6 +3137,10 @@ class CustomizeOverlay(QtWidgets.QDialog):
             a=self.parser.getint('colors', 'un_secondary_a')
         )
 
+        self.si_size_1 = QtWidgets.QSpinBox()
+        self.si_size_1.setMaximum(400)
+        self.si_size_1.setValue(self.parser.getfloat('', ''))
+
         self.set_layout()
         self.exec_()
 
