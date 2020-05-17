@@ -77,7 +77,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.no_graphic = QtGui.QPixmap('Images\\no_image.png')
         self.graphic = QtGui.QPixmap('Images\\no_image.png')
 
-        # gs = QGraphicsView
+        # gs = QGraphicsScene
         self.gs_raw_image = GUI_elements.RawImage(ui_obj=self, background=self.no_graphic)
         self.gs_atomic_positions = GUI_elements.AtomicPositions(ui_obj=self, background=self.no_graphic)
         self.gs_overlay_composition = GUI_elements.OverlayComposition(ui_obj=self, background=self.no_graphic)

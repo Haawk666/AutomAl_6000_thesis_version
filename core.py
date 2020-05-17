@@ -216,6 +216,9 @@ class Project:
         peak_values = []
         if self.num_columns == 0:
             logger.info('Starting column detection. Search mode is \'{}\''.format(search_type))
+            self.search_mat = utils.gen_framed_mat(self.search_mat, self.r + self.overhead)
+            self.im_mat = utils.gen_framed_mat(self.im_mat, self.r + self.overhead)
+            cont = True
         else:
             logger.info('Continuing column detection. Search mode is \'{}\''.format(search_type))
             min_val = 1
@@ -225,20 +228,29 @@ class Project:
             if min_val < self.threshold:
                 new_graph = graph_2.AtomicGraph(self.scale)
                 self.num_columns = 0
+                self.search_mat = self.im_mat
+                self.search_mat = utils.gen_framed_mat(self.search_mat, self.r + self.overhead)
                 for vertex in self.graph.vertices:
                     if vertex.peak_gamma > self.threshold:
                         self.num_columns += 1
                         peak_values.append(vertex.peak_gamma)
                         new_graph.add_vertex(vertex)
+                        self.search_mat = utils.delete_pixels(
+                            self.search_mat,
+                            int(vertex.im_coor_x + self.r + self.overhead),
+                            int(vertex.im_coor_y + self.r + self.overhead),
+                            self.r + self.overhead
+                        )
                 self.graph = new_graph
+                cont = False
             else:
                 for vertex in self.graph.vertices:
                     peak_values.append(vertex.peak_gamma)
+                self.search_mat = utils.gen_framed_mat(self.search_mat, self.r + self.overhead)
+                self.im_mat = utils.gen_framed_mat(self.im_mat, self.r + self.overhead)
+                cont = True
 
-        cont = True
         counter = self.num_columns
-        self.search_mat = utils.gen_framed_mat(self.search_mat, self.r + self.overhead)
-        self.im_mat = utils.gen_framed_mat(self.im_mat, self.r + self.overhead)
 
         while cont:
 
@@ -267,9 +279,6 @@ class Project:
             self.column_centre_mat[y_fit_real_coor_pix, x_fit_real_coor_pix, 0] = 1
             self.column_centre_mat[y_fit_real_coor_pix, x_fit_real_coor_pix, 1] = counter
 
-            logger.debug(str(counter) + ': (' + str(x_fit_real_coor) + ', ' + str(y_fit_real_coor) + ') | (' + str(
-                pos[1]) + ', ' + str(pos[0]) + ')')
-
             self.num_columns += 1
             counter += 1
 
@@ -290,18 +299,71 @@ class Project:
 
         if plot:
             fig = plt.figure(constrained_layout=True)
-            gs = GridSpec(1, 1, figure=fig)
-            ax_attr = fig.add_subplot(gs[0, 0])
-            ax_attr.plot(
-                range(0, self.num_columns),
+            gs = GridSpec(4, 1, figure=fig)
+            ax_values = fig.add_subplot(gs[0, 0])
+            ax_slope = fig.add_subplot(gs[1, 0])
+            ax_cum_var = fig.add_subplot(gs[2, 0])
+            ax_cum_var_slope = fig.add_subplot(gs[3, 0])
+
+            ax_values.plot(
+                range(0, len(peak_values)),
                 peak_values,
                 c='k',
-                label='Column peak intensity)'
+                label='Column peak intensity'
             )
-            ax_attr.set_title('Column detection summary')
-            ax_attr.set_xlabel('# Column')
-            ax_attr.set_ylabel('Peak intensity')
-            ax_attr.legend()
+            ax_values.set_title('Column detection summary')
+            ax_values.set_xlabel('# Column')
+            ax_values.set_ylabel('Peak intensity')
+            ax_values.legend()
+
+            slope = [0]
+            for ind in range(1, len(peak_values)):
+                slope.append(peak_values[ind] - peak_values[ind - 1])
+
+            ax_slope.plot(
+                range(0, len(peak_values)),
+                slope,
+                c='b',
+                label='2 point slope of peak intensity'
+            )
+            ax_slope.set_title('Slope')
+            ax_slope.set_xlabel('# Column')
+            ax_slope.set_ylabel('slope')
+            ax_slope.legend()
+
+            cumulative_slope_variance = [0]
+            cum_slp_var_slp = [0]  # lol
+            for ind in range(1, len(peak_values)):
+                cumulative_slope_variance.append(utils.variance(slope[0:ind]))
+                cum_slp_var_slp.append(cumulative_slope_variance[ind] - cumulative_slope_variance[ind - 1])
+
+            ax_cum_var.plot(
+                range(0, len(peak_values)),
+                cumulative_slope_variance,
+                c='r',
+                label='Cumulative slope variance'
+            )
+            ax_cum_var.set_title('Cumulative variance')
+            ax_cum_var.set_xlabel('# Column')
+            ax_cum_var.set_ylabel('$\\sigma^2$')
+            ax_cum_var.legend()
+
+            ax_cum_var_slope.plot(
+                range(0, len(peak_values)),
+                cum_slp_var_slp,
+                c='g',
+                label='Slope of cumulative slope variance'
+            )
+            ax_cum_var_slope.set_title('Variance slope')
+            ax_cum_var_slope.set_xlabel('# Column')
+            ax_cum_var_slope.set_ylabel('2-point slope approximation')
+            ax_cum_var_slope.legend()
+
+            inflection_points = []
+            for ind in range(1, len(cum_slp_var_slp)):
+                if cum_slp_var_slp[ind] > cum_slp_var_slp[ind - 1]:
+                    inflection_points.append(ind)
+
             plt.show()
 
     def find_nearest(self, i, n, weight=4):
@@ -948,5 +1010,9 @@ class Project:
                 self.column_centre_mat[int(vertex.im_coor_y), int(vertex.im_coor_x), 0] = 1
                 self.column_centre_mat[int(vertex.im_coor_y), int(vertex.im_coor_x), 1] = vertex.i
 
+    def get_im_length_from_spatial(self, spatial_length):
+        return self.scale * spatial_length
 
+    def get_spatial_length_from_im(self, im_length):
+        return im_length / self.scale
 

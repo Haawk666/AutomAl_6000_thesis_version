@@ -23,7 +23,7 @@ class InteractiveColumn(QtWidgets.QGraphicsEllipseItem):
     Inherits PyQt5.QtWidgets.QGraphicsEllipseItem()
     """
 
-    def __init__(self, ui_obj=None, i=-1, r=5, scale_factor=1):
+    def __init__(self, ui_obj=None, vertex=None, scale_factor=1, r=5, movable=True, selectable=True):
 
         """Initialize with optional reference to a MainUI object.
 
@@ -37,17 +37,24 @@ class InteractiveColumn(QtWidgets.QGraphicsEllipseItem):
         """
 
         self.ui_obj = ui_obj
-        self.r = r
-        self.i = i
+        if vertex is not None:
+            self.r = r
+            self.i = vertex.i
+            self.center_coor = vertex.im_pos()
+            self.center_coor = scale_factor * self.center_coor[0] - np.round(self.r / 2), scale_factor * self.center_coor[1] - np.round(self.r / 2)
+        else:
+            self.r = 5
+            self.i = -1
+            self.center_coor = (0, 0, 0)
         self.scale_factor = scale_factor
-        self.vertex = self.ui_obj.project_instance.graph.vertices[self.i]
-        self.center_coor = self.vertex.im_pos()
-        self.center_coor = scale_factor * self.center_coor[0] - np.round(self.r / 2), scale_factor * self.center_coor[1] - np.round(self.r / 2)
+        self.vertex = vertex
 
         super().__init__(0, 0, self.r, self.r)
 
-        self.moveBy(self.center_coor[0], self.center_coor[1])
-        self.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable)
+        if movable:
+            self.moveBy(self.center_coor[0], self.center_coor[1])
+        if selectable:
+            self.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable)
 
     def mouseReleaseEvent(self, event: 'QtWidgets.QGraphicsEllipseItem.mouseReleaseEvent'):
         """Pass a mouse release event on to the ui_obj reference object"""
@@ -56,11 +63,11 @@ class InteractiveColumn(QtWidgets.QGraphicsEllipseItem):
 
 class InteractivePosColumn(InteractiveColumn):
 
-    def __init__(self, *args):
+    def __init__(self, ui_obj=None, vertex=None, scale_factor=1, movable=True):
         """Initialize a positional interactive column.
 
         Inherits GUI_custom_components.InteractiveColumn. Is used to highlight atomic positions."""
-        super().__init__(*args)
+        super().__init__(ui_obj=ui_obj, vertex=vertex, scale_factor=scale_factor, movable=movable)
 
         self.selected_pen = GUI_settings.pen_selected_2
         self.selected_brush = GUI_settings.brush_selected_2
@@ -86,29 +93,20 @@ class InteractivePosColumn(InteractiveColumn):
 
 class InteractiveOverlayColumn(InteractiveColumn):
 
-    def __init__(self, *args):
+    def __init__(
+            self, ui_obj=None, vertex=None, scale_factor=1, movable=True, selectable=True,
+            pen=QtGui.QPen(QtCore.Qt.red), brush=QtGui.QBrush(QtCore.Qt.red)
+    ):
         """Initialize a positional interactive column.
 
         Inherits GUI_custom_components.InteractiveColumn. Is used to highlight atomic positions."""
-        super().__init__(*args)
+        super().__init__(ui_obj=ui_obj, vertex=vertex, scale_factor=scale_factor, movable=movable, selectable=True)
 
-        self.pen_cu = GUI_settings.pen_cu
-        self.pen_si = GUI_settings.pen_si
-        self.pen_zn = GUI_settings.pen_zn
-        self.pen_al = GUI_settings.pen_al
-        self.pen_mg = GUI_settings.pen_mg
-        self.pen_ag = GUI_settings.pen_ag
-        self.pen_un = GUI_settings.pen_un
-        self.selected_pen = GUI_settings.pen_selected_1
-        self.brush_cu = GUI_settings.brush_cu
-        self.brush_si = GUI_settings.brush_si
-        self.brush_al = GUI_settings.brush_al
-        self.brush_zn = GUI_settings.brush_zn
-        self.brush_mg = GUI_settings.brush_mg
-        self.brush_ag = GUI_settings.brush_ag
-        self.brush_un = GUI_settings.brush_un
-        self.brush_selected = GUI_settings.brush_selected_1
-        self.brush_black = GUI_settings.brush_black
+        self.pen = pen
+        self.brush = brush
+        self.selected_pen = QtGui.QPen(QtCore.Qt.darkCyan)
+        self.selected_pen.setWidth(6)
+        self.selected_brush = QtGui.QBrush(QtCore.Qt.darkCyan)
 
         self.set_style()
 
@@ -116,44 +114,26 @@ class InteractiveOverlayColumn(InteractiveColumn):
         """Set the appearance of the shape"""
         if self.i == self.ui_obj.selected_column:
             self.setPen(self.selected_pen)
-            self.setBrush(self.brush_selected)
+            self.setBrush(self.selected_brush)
         else:
-            self.setBrush(self.brush_black)
-            if self.vertex.species_index == 0:
-                self.setPen(self.pen_si)
-                if self.vertex.zeta == 0:
-                    self.setBrush(self.brush_si)
-            elif self.vertex.species_index == 1:
-                self.setPen(self.pen_cu)
-                if self.vertex.zeta == 0:
-                    self.setBrush(self.brush_cu)
-            elif self.vertex.species_index == 2:
-                self.setPen(self.pen_al)
-                if self.vertex.zeta == 0:
-                    self.setBrush(self.brush_al)
-            elif self.vertex.species_index == 3:
-                self.setPen(self.pen_mg)
-                if self.vertex.zeta == 0:
-                    self.setBrush(self.brush_mg)
-            elif self.vertex.species_index == 4:
-                self.setPen(self.pen_un)
-                if self.vertex.zeta == 0:
-                    self.setBrush(self.brush_un)
-            else:
-                logger.error('Unknown h_index')
-            if not self.vertex.show_in_overlay:
+            self.setPen(self.pen)
+            self.setBrush(self.brush)
+        if self.vertex is not None:
+            if not self.vertex.show_in_overlay :
                 self.hide()
             else:
                 self.show()
+        else:
+            self.show()
 
 
 class InteractiveGraphColumn(InteractiveColumn):
 
-    def __init__(self, *args):
+    def __init__(self, ui_obj=None, vertex=None, scale_factor=1, movable=True):
         """Initialize a positional interactive column.
 
         Inherits GUI_custom_components.InteractiveColumn. Is used to highlight atomic positions."""
-        super().__init__(*args)
+        super().__init__(ui_obj=ui_obj, vertex=vertex, scale_factor=scale_factor, movable=movable)
 
         self.selected_pen = GUI_settings.pen_selected_1
         self.unselected_pen = GUI_settings.pen_graph
@@ -362,49 +342,6 @@ class MeshDetail(QtWidgets.QGraphicsItemGroup):
     def mouseReleaseEvent(self, event: 'QtWidgets.QGraphicsItemGroup.mouseReleaseEvent'):
         print('{}'.format(self.mesh.mesh_index))
         # super().__init__()
-
-
-class Overlay(QtWidgets.QWidget):
-
-    def __init__(self, parent=None):
-
-        QtWidgets.QWidget.__init__(self, parent)
-        palette = QtGui.QPalette(self.palette())
-        palette.setColor(palette.Background, QtCore.Qt.transparent)
-        self.setPalette(palette)
-
-    def paintEvent(self, event):
-
-        painter = QtGui.QPainter()
-        painter.begin(self)
-        painter.setRenderHint(QtGui.QPainter.Antialiasing)
-        painter.fillRect(event.rect(), QtGui.QBrush(QtGui.QColor(255, 255, 255, 127)))
-        painter.setPen(QtGui.QPen(QtCore.Qt.NoPen))
-
-        for i in range(6):
-            if (self.counter / 5) % 6 == i:
-                painter.setBrush(QtGui.QBrush(QtGui.QColor(127 + (self.counter % 5) * 32, 127, 127)))
-            else:
-                painter.setBrush(QtGui.QBrush(QtGui.QColor(127, 127, 127)))
-            painter.drawEllipse(
-                self.width() / 2 + 30 * np.cos(2 * np.pi * i / 6.0) - 10,
-                self.height() / 2 + 30 * np.sin(2 * np.pi * i / 6.0) - 10,
-                20, 20)
-
-        painter.end()
-
-    def showEvent(self, event):
-
-        self.timer = self.startTimer(50)
-        self.counter = 0
-
-    def timerEvent(self, event):
-
-        self.counter += 1
-        self.update()
-        if self.counter == 60:
-            self.killTimer(self.timer)
-            self.hide()
 
 
 class RgbaSelector(QtWidgets.QGroupBox):

@@ -3,7 +3,3 @@ GUI: GUI version: 0.0.2
 GUI: core version: 0.1.0
 GUI: Build version: Alpha 1.0
 ------------------------
-core: Generated instance from C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/haakon_004.dm3
-core: Saved C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/haakon_004_initial
-core: Starting column detection. Search mode is 't'
-core: Column detection complete! Found 1670 columns.

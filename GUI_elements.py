@@ -79,7 +79,10 @@ class AtomicPositions(QtWidgets.QGraphicsScene):
         if self.ui_obj.project_instance is not None:
             for vertex in self.ui_obj.project_instance.graph.vertices:
                 if not vertex.void:
-                    self.interactive_position_objects.append(GUI_custom_components.InteractivePosColumn(self.ui_obj, vertex.i, 2 * vertex.r))
+                    self.interactive_position_objects.append(GUI_custom_components.InteractivePosColumn(
+                        ui_obj=self.ui_obj,
+                        vertex=vertex
+                    ))
                     self.addItem(self.interactive_position_objects[-1])
                     if not self.ui_obj.control_window.chb_toggle_positions.isChecked():
                         self.interactive_position_objects[-1].hide()
@@ -121,13 +124,27 @@ class OverlayComposition(QtWidgets.QGraphicsScene):
             else:
                 self.scale_bar.hide()
 
+        self.parser = configparser.ConfigParser()
+        self.parser.read('config.ini')
+
+        categories = ['Si', 'Cu', 'Al', 'Mg', 'Un']
+        self.zeta_1_pens = []
+        self.zeta_0_pens = []
+        self.zeta_1_brushes = []
+        self.zeta_0_brushes = []
+
+        for category in categories:
+            pass
+
     def re_draw(self):
         """Redraw contents."""
         self.interactive_overlay_objects = []
         if self.ui_obj.project_instance is not None:
             for vertex in self.ui_obj.project_instance.graph.vertices:
                 if not vertex.void:
-                    self.interactive_overlay_objects.append(GUI_custom_components.InteractiveOverlayColumn(self.ui_obj, vertex.i, vertex.r))
+                    self.interactive_overlay_objects.append(GUI_custom_components.InteractiveOverlayColumn(
+                        self.ui_obj, vertex.i, vertex.r)
+                    )
                     self.addItem(self.interactive_overlay_objects[-1])
                     if vertex.show_in_overlay:
                         self.interactive_overlay_objects[-1].show()
@@ -3092,6 +3109,8 @@ class CustomizeOverlay(QtWidgets.QDialog):
         self.lbl_visible = QtWidgets.QLabel('Show:')
         self.btn_preview = QtWidgets.QPushButton('Refresh preview')
         self.btn_preview.clicked.connect(self.btn_preview_trigger)
+        self.lbl_zeta_0 = QtWidgets.QLabel('zeta=0')
+        self.lbl_zeta_1 = QtWidgets.QLabel('zeta=1')
 
         self.cmb_si_shape = QtWidgets.QComboBox()
         self.cmb_si_shape.addItem('Circle')
@@ -3232,8 +3251,71 @@ class CustomizeOverlay(QtWidgets.QDialog):
         self.chb_un_show = QtWidgets.QCheckBox('')
         self.chb_un_show.setChecked(True)
 
+        self.gv_list = []
+
+        categories = ['si', 'cu', 'al', 'mg', 'un']
+
+        for s, species in enumerate(categories):
+            self.gv_list.append([])
+            self.gv_list[s].append(QtWidgets.QGraphicsView(QtWidgets.QGraphicsScene()))
+            self.gv_list[s].append(QtWidgets.QGraphicsView(QtWidgets.QGraphicsScene()))
+
+        self.redraw_vertices()
+
+        for s, species in enumerate(categories):
+            self.gv_list[s][0].setTransformationAnchor(QtWidgets.QGraphicsView.NoAnchor)
+            self.gv_list[s][0].setResizeAnchor(QtWidgets.QGraphicsView.NoAnchor)
+            self.gv_list[s][0].scale(2.5, 2.5)
+            self.gv_list[s][1].setTransformationAnchor(QtWidgets.QGraphicsView.NoAnchor)
+            self.gv_list[s][1].setResizeAnchor(QtWidgets.QGraphicsView.NoAnchor)
+            self.gv_list[s][1].scale(2.5, 2.5)
+
         self.set_layout()
         self.exec_()
+
+    def redraw_vertices(self):
+
+        zeta = [0, 1]
+        categories = ['si', 'cu', 'al', 'mg', 'un']
+
+        for s, species in enumerate(categories):
+            color_1 = QtGui.QColor.fromRgb(
+                eval('self.{}_color_1_selector.r_box.value()'.format(species)),
+                eval('self.{}_color_1_selector.g_box.value()'.format(species)),
+                eval('self.{}_color_1_selector.b_box.value()'.format(species)),
+                alpha=eval('self.{}_color_1_selector.a_box.value()'.format(species))
+            )
+            for z in zeta:
+                if z == 0:
+                    color_2 = color_1
+                else:
+                    color_2 = QtGui.QColor.fromRgb(
+                        eval('self.{}_color_2_selector.r_box.value()'.format(species)),
+                        eval('self.{}_color_2_selector.g_box.value()'.format(species)),
+                        eval('self.{}_color_2_selector.b_box.value()'.format(species)),
+                        alpha=eval('self.{}_color_2_selector.a_box.value()'.format(species))
+                    )
+                pen = QtGui.QPen(color_1)
+                r = eval('self.{}_size_1.value()'.format(species))
+                r_factor = eval('self.{}_size_2.value()'.format(species))
+                pen.setWidth(0.5)
+                brush = QtGui.QBrush(color_2)
+
+                vertex_graphic = GUI_custom_components.InteractiveOverlayColumn(
+                    ui_obj=self.ui_obj,
+                    vertex=None,
+                    scale_factor=1,
+                    movable=False,
+                    selectable=False,
+                    pen=pen,
+                    brush=brush
+                )
+                vertex_graphic.i = self.ui_obj.selected_column + 1
+                vertex_graphic.set_style()
+                for item in self.gv_list[s][z].scene().items():
+                    self.gv_list[s][z].scene().removeItem(item)
+
+                self.gv_list[s][z].scene().addItem(vertex_graphic)
 
     def set_layout(self):
         grid_layout = QtWidgets.QGridLayout()
@@ -3331,10 +3413,22 @@ class CustomizeOverlay(QtWidgets.QDialog):
         grid_layout.addWidget(GUI_custom_components.CenterBox(widget=self.chb_un_show), 5, 6)
         grid_layout.addWidget(strut_7, 6, 6)
 
-        # Column 8:
-        grid_layout.addWidget(self.btn_preview, 0, 7)
+        # Column 8/9:
+        grid_layout.addWidget(self.btn_preview, 0, 7, 1, 8)
 
-        grid_layout.addWidget(strut_8, 6, 7)
+        grid_layout.addWidget(self.gv_list[0][0], 1, 7)
+        grid_layout.addWidget(self.gv_list[0][1], 1, 8)
+        grid_layout.addWidget(self.gv_list[1][0], 2, 7)
+        grid_layout.addWidget(self.gv_list[1][1], 2, 8)
+        grid_layout.addWidget(self.gv_list[2][0], 3, 7)
+        grid_layout.addWidget(self.gv_list[2][1], 3, 8)
+        grid_layout.addWidget(self.gv_list[3][0], 4, 7)
+        grid_layout.addWidget(self.gv_list[3][1], 4, 8)
+        grid_layout.addWidget(self.gv_list[4][0], 5, 7)
+        grid_layout.addWidget(self.gv_list[4][1], 5, 8)
+
+        grid_layout.addWidget(GUI_custom_components.CenterBox(widget=self.lbl_zeta_0), 6, 7)
+        grid_layout.addWidget(GUI_custom_components.CenterBox(widget=self.lbl_zeta_1), 6, 8)
 
         layout = QtWidgets.QVBoxLayout()
         layout.addLayout(grid_layout)
@@ -3343,7 +3437,7 @@ class CustomizeOverlay(QtWidgets.QDialog):
         self.setLayout(layout)
 
     def btn_preview_trigger(self):
-        pass
+        self.redraw_vertices()
 
     def btn_set_default_trigger(self):
         pass
@@ -3418,6 +3512,8 @@ class CustomizeOverlay(QtWidgets.QDialog):
 
         with open('config.ini', 'w') as configfile:
             self.parser.write(configfile)
+
+        self.btn_preview_trigger()
 
         self.ui_obj.update_overlay()
 
