@@ -119,7 +119,7 @@ class InteractiveOverlayColumn(InteractiveColumn):
             self.setPen(self.pen)
             self.setBrush(self.brush)
         if self.vertex is not None:
-            if not self.vertex.show_in_overlay :
+            if not self.vertex.show_in_overlay:
                 self.hide()
             else:
                 self.show()

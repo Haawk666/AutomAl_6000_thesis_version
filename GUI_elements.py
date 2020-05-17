@@ -3279,26 +3279,24 @@ class CustomizeOverlay(QtWidgets.QDialog):
         categories = ['si', 'cu', 'al', 'mg', 'un']
 
         for s, species in enumerate(categories):
-            color_1 = QtGui.QColor.fromRgb(
+            color_1 = QtGui.QColor(
                 eval('self.{}_color_1_selector.r_box.value()'.format(species)),
                 eval('self.{}_color_1_selector.g_box.value()'.format(species)),
                 eval('self.{}_color_1_selector.b_box.value()'.format(species)),
-                alpha=eval('self.{}_color_1_selector.a_box.value()'.format(species))
             )
             for z in zeta:
                 if z == 0:
                     color_2 = color_1
                 else:
-                    color_2 = QtGui.QColor.fromRgb(
+                    color_2 = QtGui.QColor(
                         eval('self.{}_color_2_selector.r_box.value()'.format(species)),
                         eval('self.{}_color_2_selector.g_box.value()'.format(species)),
                         eval('self.{}_color_2_selector.b_box.value()'.format(species)),
-                        alpha=eval('self.{}_color_2_selector.a_box.value()'.format(species))
                     )
                 pen = QtGui.QPen(color_1)
-                r = eval('self.{}_size_1.value()'.format(species))
+                r = eval('self.{}_size_1.value()'.format(species)) / 10
                 r_factor = eval('self.{}_size_2.value()'.format(species))
-                pen.setWidth(0.5)
+                pen.setWidth(r * r_factor)
                 brush = QtGui.QBrush(color_2)
 
                 vertex_graphic = GUI_custom_components.InteractiveOverlayColumn(
