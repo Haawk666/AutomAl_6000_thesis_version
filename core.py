@@ -28,8 +28,9 @@ class Project:
 
     :param filename_full: The full path and/or relative path and filename of the .dm3 image to import. A project can
         be instantiated with filename_full='empty', but this is only meant to be used as a placeholder.
-    :param debug_obj: DEPRECATED
+    :param debug_obj: An instance of an AutomAl 6000 GUI.MainUI(). Optional, default=None.
     :type filename_full: string
+    :type debug_obj: <GUI.MainUI()>
 
     """
 
@@ -39,23 +40,10 @@ class Project:
     # District size
     district_size = 8
 
-    alloy_string = {
-        0: 'Al-Mg-Si-(Cu)',
-        1: 'Al-Mg-Si'
-    }
-
-    symmetry = {'Si': 3, 'Cu': 3, 'Al': 4, 'Mg': 5, 'Un': 3}
     atomic_radii = {'Si': 117.5, 'Cu': 127.81, 'Al': 143.0, 'Mg': 160.0, 'Ag': 144.5, 'Zn': 133.25, 'Un': 200.0}
     al_lattice_const = 404.95
 
-    # Categories:
-    simple_categories = ['Si', 'Cu', 'Al', 'Mg', 'Un']
-    advanced_categories = ['Si_1', 'Si_2', 'Cu', 'Al_1', 'Al_2', 'Mg_1', 'Mg_2']
-
-    species_string = {0: 'Si', 1: 'Cu', 2: 'Al', 3: 'Mg', 4: 'Un'}
-    advanced_category_string = {0: 'Si_1', 1: 'Si_2', 2: 'Si_3', 3: 'Cu', 4: 'Al_1', 5: 'Al_2', 6: 'Mg_1', 7: 'Mg_2'}
-
-    def __init__(self, filename_full, debug_obj=None):
+    def __init__(self, filename_full, debug_obj=None, species_dict=None, advanced_species_dict=None):
 
         self.filename_full = filename_full
         self.im_mat = None
@@ -65,19 +53,29 @@ class Project:
         self.im_width = 0
         self.version_saved = None
         self.starting_index = None
-        self.custom_categories = []
+
+        # In AutomAl 6000, each column is modelled by a single atomic species, more advanced categorization can be
+        # applied however. Each advanced category must map to one of the simple categories and also to a symmetry.
+        self.species_dict = {
+            'Si': [3, 117.5],
+            'Cu': [3, 127.81],
+            'Al': [4, 143.0],
+            'Mg': [5, 160.0],
+            'Un': [3, 200.0]
+        }
+        self.advanced_species = {
+            'Si_1': [3, 'Si'],
+            'Si_2': [3, 'Si'],
+            'Cu_1': [3, 'Cu'],
+            'Al_1': [4, 'Al'],
+            'Al_2': [4, 'Al'],
+            'Mg_1': [5, 'Mg'],
+            'Mg_2': [5, 'Mg']
+        }
 
         # For communicating with the interface, if any:
         self.debug_obj = debug_obj
         self.debug_mode = False
-
-        # Alloy info: This vector is used to multiply away elements in the AtomicColumn.prob_vector that are not in
-        # the alloy being studied. Currently supported alloys are:
-        # self.alloy = alloy
-        # 0 = Al-Si-Mg-Cu
-        # 1 = Al-Si-Mg
-        self.alloy = 0
-        self.alloy_mat = [1, 1, 1, 1, 0]
 
         self.im_meta_data = {}
         if not (filename_full == 'Empty' or filename_full == 'empty'):
@@ -106,7 +104,7 @@ class Project:
         self.overhead = int(6 * (self.r / 10))
 
         # Initialize an empty graph
-        self.graph = graph_2.AtomicGraph(self.scale, None)
+        self.graph = graph_2.AtomicGraph(self.scale, active_model=None)
 
         logger.info('Generated instance from {}'.format(filename_full))
 

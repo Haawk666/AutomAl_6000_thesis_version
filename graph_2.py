@@ -16,47 +16,12 @@ logger.setLevel(logging.DEBUG)
 
 class Vertex:
 
-    # Standard AutomAl 6000 class header:
-    advanced_category_string = {
-        0: 'Si_1',
-        1: 'Si_2',
-        2: 'Si_3',
-        3: 'Cu',
-        4: 'Al_1',
-        5: 'Al_2',
-        6: 'Mg_1',
-        7: 'Mg_2'
-    }
-
-    species_string = {
-        0: 'Si',
-        1: 'Cu',
-        2: 'Al',
-        3: 'Mg',
-        4: 'Un'
-    }
-
-    symmetry = {
-        'Si': 3,
-        'Cu': 3,
-        'Al': 4,
-        'Mg': 5,
-        'Un': 3
-    }
-
-    atomic_radii = {
-        'Si': 117.5,
-        'Cu': 127.81,
-        'Al': 143.0,
-        'Mg': 160.0,
-        'Ag': 144.5,
-        'Zn': 133.25,
-        'Un': 200.0
-    }
-
     al_lattice_const = 404.95
 
-    def __init__(self, index, im_coor_x, im_coor_y, r, scale, zeta=0, species_index=4, void=False):
+    def __init__(self, index, im_coor_x, im_coor_y, r, scale, zeta=0, atomic_species='Un', n=3, void=False, parent_graph=None):
+
+        # parent
+        self.parent_graph = parent_graph
 
         # Index
         self.i = index
@@ -66,10 +31,8 @@ class Vertex:
         self.zeta = zeta
         self.peak_gamma = 0
         self.avg_gamma = 0
-        self.atomic_species = Vertex.species_string[species_index]
-        self.species_index = species_index
-        self.species_variant = 0
-        self.advanced_category_index = 0
+        self.atomic_species = atomic_species
+        self.advanced_species = None
 
         # Position
         self.scale = scale
@@ -98,21 +61,36 @@ class Vertex:
         self.flag_9 = False
 
         # model-analysis
-        self.probability_vector = [0, 0, 0, 0, 1]
-        self.confidence = 0
-        self.advanced_probability_vector = [0, 0, 0, 0, 0, 0, 0, 0]
+        if self.parent_graph is None:
+            self.probability_vector = {}
+            self.alpha_probability_vector = {}
+            self.composite_probability_vector = {}
+            self.weighted_probability_vector = {}
 
-        self.alpha_probability_vector = [0, 0, 0, 0, 1]
-        self.alpha_confidence = 0
-        self.advanced_alpha_probability_vector = [0, 0, 0, 0, 0, 0, 0, 0]
+            self.confidence = 0
+            self.alpha_confidence = 0
+            self.composite_confidence = 0
+            self.weighted_confidence = 0
 
-        self.composite_probability_vector = [0, 0, 0, 0, 1]
-        self.composite_confidence = 0
-        self.advanced_composite_probability_vector = [0, 0, 0, 0, 0, 0, 0, 0]
+            self.advanced_probability_vector = {}
+            self.advanced_alpha_probability_vector = {}
+            self.advanced_composite_probability_vector = {}
+            self.advanced_weighted_probability_vector = {}
+        else:
+            self.probability_vector = {}
+            self.alpha_probability_vector = {}
+            self.composite_probability_vector = {}
+            self.weighted_probability_vector = {}
 
-        self.weighted_probability_vector = [0, 0, 0, 0, 1]
-        self.weighted_confidence = 0
-        self.advanced_weighted_probability_vector = [0, 0, 0, 0, 0, 0, 0, 0]
+            self.confidence = 0
+            self.alpha_confidence = 0
+            self.composite_confidence = 0
+            self.weighted_confidence = 0
+
+            self.advanced_probability_vector = {}
+            self.advanced_alpha_probability_vector = {}
+            self.advanced_composite_probability_vector = {}
+            self.advanced_weighted_probability_vector = {}
 
         # Model variables
         self.alpha_angles = []
@@ -142,7 +120,7 @@ class Vertex:
         self.in_semi_partners = set()
 
         # Graph parameters
-        self.n = 3
+        self.n = n
         self.in_degree = 0
         self.out_degree = 0
         self.degree = 0
@@ -244,7 +222,7 @@ class Vertex:
     def normalize_probability_vector(self):
         self.probability_vector = [a / sum(self.probability_vector) for a in self.probability_vector]
 
-    def reset_probability_vector(self, bias=-1):
+    def reset_probability_vector(self, bias='Un'):
         self.probability_vector = [1, 1, 1, 1, 1]
         if bias not in [-1, 0, 1, 2, 3, 4]:
             bias = -1
@@ -408,15 +386,16 @@ class Arc:
 
 class AtomicGraph:
 
-    # Standard AutomAl 6000 class header:
-    advanced_category_string = {0: 'Si_1', 1: 'Si_2', 2: 'Si_3', 3: 'Cu', 4: 'Al_1', 5: 'Al_2', 6: 'Mg_1', 7: 'Mg_2'}
-    species_string = {0: 'Si', 1: 'Cu', 2: 'Al', 3: 'Mg', 4: 'Un'}
-    symmetry = {'Si': 3, 'Cu': 3, 'Al': 4, 'Mg': 5, 'Un': 3}
-    atomic_radii = {'Si': 117.5, 'Cu': 127.81, 'Al': 143.0, 'Mg': 160.0, 'Ag': 144.5, 'Zn': 133.25, 'Un': 200.0}
     al_lattice_const = 404.95
 
-    def __init__(self, scale, active_model=None, district_size=8):
+    def __init__(self, scale, active_model=None, district_size=8, species_dict=None, advanced_species_dict=None):
 
+        # Categorization:
+        self.species_dict = {}
+        self.advanced_species_dict = {}
+        self.set_categories(species_dict, advanced_species_dict)
+
+        # Contents:
         self.vertices = []
         self.arcs = []
         self.arc_indices = []
@@ -466,6 +445,9 @@ class AtomicGraph:
     def vertex_report(self, i):
         string = self.vertices[i].report()
         return string
+
+    def set_categories(self, species_dict, advanced_species_dict):
+
 
     def add_vertex(self, new_vertex):
         for i, vertex in enumerate(self.vertices):
