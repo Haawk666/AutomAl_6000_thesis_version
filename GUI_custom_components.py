@@ -63,11 +63,11 @@ class InteractiveColumn(QtWidgets.QGraphicsEllipseItem):
 
 class InteractivePosColumn(InteractiveColumn):
 
-    def __init__(self, ui_obj=None, vertex=None, scale_factor=1, movable=True):
+    def __init__(self, ui_obj=None, vertex=None, scale_factor=1, movable=True, r=16):
         """Initialize a positional interactive column.
 
         Inherits GUI_custom_components.InteractiveColumn. Is used to highlight atomic positions."""
-        super().__init__(ui_obj=ui_obj, vertex=vertex, scale_factor=scale_factor, movable=movable)
+        super().__init__(ui_obj=ui_obj, vertex=vertex, scale_factor=scale_factor, movable=movable, r=r)
 
         self.selected_pen = GUI_settings.pen_selected_2
         self.selected_brush = GUI_settings.brush_selected_2
@@ -94,13 +94,13 @@ class InteractivePosColumn(InteractiveColumn):
 class InteractiveOverlayColumn(InteractiveColumn):
 
     def __init__(
-            self, ui_obj=None, vertex=None, scale_factor=1, movable=True, selectable=True,
+            self, ui_obj=None, vertex=None, scale_factor=1, movable=True, selectable=True, r=16,
             pen=QtGui.QPen(QtCore.Qt.red), brush=QtGui.QBrush(QtCore.Qt.red)
     ):
         """Initialize a positional interactive column.
 
         Inherits GUI_custom_components.InteractiveColumn. Is used to highlight atomic positions."""
-        super().__init__(ui_obj=ui_obj, vertex=vertex, scale_factor=scale_factor, movable=movable, selectable=True)
+        super().__init__(ui_obj=ui_obj, vertex=vertex, scale_factor=scale_factor, movable=movable, selectable=selectable, r=r)
 
         self.pen = pen
         self.brush = brush
@@ -129,11 +129,11 @@ class InteractiveOverlayColumn(InteractiveColumn):
 
 class InteractiveGraphColumn(InteractiveColumn):
 
-    def __init__(self, ui_obj=None, vertex=None, scale_factor=1, movable=True):
+    def __init__(self, ui_obj=None, vertex=None, scale_factor=1, r=16):
         """Initialize a positional interactive column.
 
         Inherits GUI_custom_components.InteractiveColumn. Is used to highlight atomic positions."""
-        super().__init__(ui_obj=ui_obj, vertex=vertex, scale_factor=scale_factor, movable=movable)
+        super().__init__(ui_obj=ui_obj, vertex=vertex, scale_factor=scale_factor, movable=True, selectable=True, r=r)
 
         self.selected_pen = GUI_settings.pen_selected_1
         self.unselected_pen = GUI_settings.pen_graph

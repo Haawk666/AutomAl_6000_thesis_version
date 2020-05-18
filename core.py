@@ -214,6 +214,7 @@ class Project:
 
         """
         peak_values = []
+        non_edge_peak_values = []
         if self.num_columns == 0:
             logger.info('Starting column detection. Search mode is \'{}\''.format(search_type))
             self.search_mat = utils.gen_framed_mat(self.search_mat, self.r + self.overhead)
@@ -295,6 +296,12 @@ class Project:
         self.im_mat = utils.gen_de_framed_mat(self.im_mat, self.r + self.overhead)
         self.calc_avg_gamma()
         self.summarize_stats()
+
+        self.find_edge_columns()
+        for vertex in self.graph.vertices:
+            if not vertex.is_edge_column:
+                non_edge_peak_values.append(vertex.peak_gamma)
+
         logger.info('Column detection complete! Found {} columns.'.format(self.num_columns))
 
         if plot:
@@ -338,10 +345,10 @@ class Project:
                 cum_slp_var_slp.append(cumulative_slope_variance[ind] - cumulative_slope_variance[ind - 1])
 
             ax_cum_var.plot(
-                range(0, len(peak_values)),
-                cumulative_slope_variance,
+                range(0, len(non_edge_peak_values)),
+                non_edge_peak_values,
                 c='r',
-                label='Cumulative slope variance'
+                label='None edge peak values'
             )
             ax_cum_var.set_title('Cumulative variance')
             ax_cum_var.set_xlabel('# Column')

@@ -3,3 +3,6 @@ GUI: GUI version: 0.0.2
 GUI: core version: 0.1.0
 GUI: Build version: Alpha 1.0
 ------------------------
+GUI: Opening file C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_b/haakon_001_control
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_b/haakon_001_control
+GUI_elements: Updated settings

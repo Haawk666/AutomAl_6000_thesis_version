@@ -81,7 +81,8 @@ class AtomicPositions(QtWidgets.QGraphicsScene):
                 if not vertex.void:
                     self.interactive_position_objects.append(GUI_custom_components.InteractivePosColumn(
                         ui_obj=self.ui_obj,
-                        vertex=vertex
+                        vertex=vertex,
+                        r=vertex.r
                     ))
                     self.addItem(self.interactive_position_objects[-1])
                     if not self.ui_obj.control_window.chb_toggle_positions.isChecked():
@@ -101,6 +102,7 @@ class OverlayComposition(QtWidgets.QGraphicsScene):
         self.interactive_overlay_objects = []
         self.background_image = background
         self.pixmap = None
+        self.categories = ['si', 'cu', 'al', 'mg', 'un']
         if background is not None:
             self.pixmap = self.addPixmap(self.background_image)
             if self.ui_obj.control_window.chb_raw_image.isChecked():
@@ -115,6 +117,10 @@ class OverlayComposition(QtWidgets.QGraphicsScene):
             else:
                 self.setBackgroundBrush(GUI_settings.brush_white)
         self.scale_bar = None
+        self.parser = None
+        self.zeta_1_brushes = []
+        self.zeta_0_brushes = []
+        self.pens = []
         if self.ui_obj.project_instance is not None:
             self.scale_bar = GUI_custom_components.ScaleBar(length=2, scale=self.ui_obj.project_instance.scale, r=self.ui_obj.project_instance.r, height=self.ui_obj.project_instance.im_height)
             self.addItem(self.scale_bar)
@@ -123,18 +129,32 @@ class OverlayComposition(QtWidgets.QGraphicsScene):
                 self.scale_bar.show()
             else:
                 self.scale_bar.hide()
-
-        self.parser = configparser.ConfigParser()
-        self.parser.read('config.ini')
-
-        categories = ['Si', 'Cu', 'Al', 'Mg', 'Un']
-        self.zeta_1_pens = []
-        self.zeta_0_pens = []
-        self.zeta_1_brushes = []
-        self.zeta_0_brushes = []
-
-        for category in categories:
-            pass
+            self.parser = configparser.ConfigParser()
+            self.parser.read('config.ini')
+            self.radii = []
+            self.pens = []
+            self.zeta_1_brushes = []
+            self.zeta_0_brushes = []
+            for species in self.categories:
+                self.radii.append(self.parser.getfloat('overlay_radii', '{}_outer'.format(species)) / self.ui_obj.project_instance.scale)
+                color_1 = QtGui.QColor(
+                    self.parser.getint('colors', '{}_primary_r'.format(species)),
+                    self.parser.getint('colors', '{}_primary_g'.format(species)),
+                    self.parser.getint('colors', '{}_primary_b'.format(species))
+                )
+                color_2 = QtGui.QColor(
+                    self.parser.getint('colors', '{}_secondary_r'.format(species)),
+                    self.parser.getint('colors', '{}_secondary_g'.format(species)),
+                    self.parser.getint('colors', '{}_secondary_b'.format(species))
+                )
+                pen = QtGui.QPen(color_1)
+                r_factor = self.parser.getfloat('overlay_radii', '{}_inner'.format(species)) / self.ui_obj.project_instance.scale
+                pen.setWidth(r_factor)
+                self.pens.append(pen)
+                brush = QtGui.QBrush(color_1)
+                self.zeta_0_brushes.append(brush)
+                brush = QtGui.QBrush(color_2)
+                self.zeta_1_brushes.append(brush)
 
     def re_draw(self):
         """Redraw contents."""
@@ -142,9 +162,19 @@ class OverlayComposition(QtWidgets.QGraphicsScene):
         if self.ui_obj.project_instance is not None:
             for vertex in self.ui_obj.project_instance.graph.vertices:
                 if not vertex.void:
+                    species = vertex.atomic_species.lower()
+                    brush = None
+                    if vertex.zeta == 0:
+                        brush = self.zeta_0_brushes[self.categories.index(species)]
+                    else:
+                        brush = self.zeta_1_brushes[self.categories.index(species)]
                     self.interactive_overlay_objects.append(GUI_custom_components.InteractiveOverlayColumn(
-                        self.ui_obj, vertex.i, vertex.r)
-                    )
+                        ui_obj=self.ui_obj,
+                        vertex=vertex,
+                        r=self.radii[self.categories.index(species)],
+                        pen=self.pens[self.categories.index(species)],
+                        brush=brush
+                    ))
                     self.addItem(self.interactive_overlay_objects[-1])
                     if vertex.show_in_overlay:
                         self.interactive_overlay_objects[-1].show()
@@ -222,7 +252,12 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
         self.interactive_vertex_objects = []
         for vertex in self.ui_obj.project_instance.graph.vertices:
             if not vertex.void:
-                self.interactive_vertex_objects.append(GUI_custom_components.InteractiveGraphColumn(self.ui_obj, vertex.i, vertex.r, self.scale_factor))
+                self.interactive_vertex_objects.append(GUI_custom_components.InteractiveGraphColumn(
+                    ui_obj=self.ui_obj,
+                    vertex=vertex,
+                    scale_factor=self.scale_factor,
+                    r=vertex.r
+                ))
                 self.addItem(self.interactive_vertex_objects[-1])
 
     def re_draw_edges(self):
@@ -3190,55 +3225,50 @@ class CustomizeOverlay(QtWidgets.QDialog):
         self.si_size_1.setMinimum(0.00)
         self.si_size_1.setDecimals(2)
         self.si_size_1.setValue(self.parser.getfloat('overlay_radii', 'si_outer'))
-        self.si_size_2 = QtWidgets.QDoubleSpinBox()
-        self.si_size_2.setMaximum(1.00)
-        self.si_size_2.setMinimum(0.00)
-        self.si_size_2.setDecimals(2)
-        self.si_size_2.setValue(self.parser.getfloat('overlay_radii', 'si_inner'))
+        self.si_size_2 = QtWidgets.QSpinBox()
+        self.si_size_2.setMaximum(60)
+        self.si_size_2.setMinimum(0)
+        self.si_size_2.setValue(self.parser.getint('overlay_radii', 'si_inner'))
 
         self.cu_size_1 = QtWidgets.QDoubleSpinBox()
         self.cu_size_1.setMaximum(400.00)
         self.cu_size_1.setMinimum(0.00)
         self.cu_size_1.setDecimals(2)
         self.cu_size_1.setValue(self.parser.getfloat('overlay_radii', 'cu_outer'))
-        self.cu_size_2 = QtWidgets.QDoubleSpinBox()
-        self.cu_size_2.setMaximum(1.00)
-        self.cu_size_2.setMinimum(0.00)
-        self.cu_size_2.setDecimals(2)
-        self.cu_size_2.setValue(self.parser.getfloat('overlay_radii', 'cu_inner'))
+        self.cu_size_2 = QtWidgets.QSpinBox()
+        self.cu_size_2.setMaximum(60)
+        self.cu_size_2.setMinimum(0)
+        self.cu_size_2.setValue(self.parser.getint('overlay_radii', 'cu_inner'))
 
         self.al_size_1 = QtWidgets.QDoubleSpinBox()
         self.al_size_1.setMaximum(400.00)
         self.al_size_1.setMinimum(0.00)
         self.al_size_1.setDecimals(2)
         self.al_size_1.setValue(self.parser.getfloat('overlay_radii', 'al_outer'))
-        self.al_size_2 = QtWidgets.QDoubleSpinBox()
-        self.al_size_2.setMaximum(1.00)
-        self.al_size_2.setMinimum(0.00)
-        self.al_size_2.setDecimals(2)
-        self.al_size_2.setValue(self.parser.getfloat('overlay_radii', 'al_inner'))
+        self.al_size_2 = QtWidgets.QSpinBox()
+        self.al_size_2.setMaximum(60)
+        self.al_size_2.setMinimum(0)
+        self.al_size_2.setValue(self.parser.getint('overlay_radii', 'al_inner'))
 
         self.mg_size_1 = QtWidgets.QDoubleSpinBox()
         self.mg_size_1.setMaximum(400.00)
         self.mg_size_1.setMinimum(0.00)
         self.mg_size_1.setDecimals(2)
         self.mg_size_1.setValue(self.parser.getfloat('overlay_radii', 'mg_outer'))
-        self.mg_size_2 = QtWidgets.QDoubleSpinBox()
-        self.mg_size_2.setMaximum(1.00)
-        self.mg_size_2.setMinimum(0.00)
-        self.mg_size_2.setDecimals(2)
-        self.mg_size_2.setValue(self.parser.getfloat('overlay_radii', 'mg_inner'))
+        self.mg_size_2 = QtWidgets.QSpinBox()
+        self.mg_size_2.setMaximum(60)
+        self.mg_size_2.setMinimum(0)
+        self.mg_size_2.setValue(self.parser.getint('overlay_radii', 'mg_inner'))
 
         self.un_size_1 = QtWidgets.QDoubleSpinBox()
         self.un_size_1.setMaximum(400.00)
         self.un_size_1.setMinimum(0.00)
         self.un_size_1.setDecimals(2)
         self.un_size_1.setValue(self.parser.getfloat('overlay_radii', 'un_outer'))
-        self.un_size_2 = QtWidgets.QDoubleSpinBox()
-        self.un_size_2.setMaximum(1.00)
-        self.un_size_2.setMinimum(0.00)
-        self.un_size_2.setDecimals(2)
-        self.un_size_2.setValue(self.parser.getfloat('overlay_radii', 'un_inner'))
+        self.un_size_2 = QtWidgets.QSpinBox()
+        self.un_size_2.setMaximum(60)
+        self.un_size_2.setMinimum(0)
+        self.un_size_2.setValue(self.parser.getint('overlay_radii', 'un_inner'))
 
         self.chb_si_show = QtWidgets.QCheckBox('')
         self.chb_si_show.setChecked(True)
@@ -3295,13 +3325,14 @@ class CustomizeOverlay(QtWidgets.QDialog):
                     )
                 pen = QtGui.QPen(color_1)
                 r = eval('self.{}_size_1.value()'.format(species)) / 10
-                r_factor = eval('self.{}_size_2.value()'.format(species))
-                pen.setWidth(r * r_factor)
+                r_factor = eval('self.{}_size_2.value()'.format(species)) / 10
+                pen.setWidth(r_factor)
                 brush = QtGui.QBrush(color_2)
 
                 vertex_graphic = GUI_custom_components.InteractiveOverlayColumn(
                     ui_obj=self.ui_obj,
                     vertex=None,
+                    r=r,
                     scale_factor=1,
                     movable=False,
                     selectable=False,
