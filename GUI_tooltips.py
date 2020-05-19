@@ -27,6 +27,7 @@ btn_new_project = 'Start a new project by importing a dm3 image.'
 btn_open_project = 'Open a project previously saved with AutomAl 6000'
 btn_save_project = 'Save current project as AutomAl 6000 project file'
 btn_close_project = 'Close the current project'
+btn_configure_classes = 'Edit the classification system that will be used in this project'
 btn_show_stats = 'Show a numerical summary of the image.'
 btn_show_source = 'Show the full path and filename of the original image this project was created from\n' \
                   '(in case you forgot;)'

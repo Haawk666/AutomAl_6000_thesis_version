@@ -18,7 +18,7 @@ class Vertex:
 
     al_lattice_const = 404.95
 
-    def __init__(self, index, im_coor_x, im_coor_y, r, scale, zeta=0, atomic_species='Un', n=3, void=False, parent_graph=None):
+    def __init__(self, index, im_coor_x, im_coor_y, r, scale, zeta=0, advanced_species='Un_1', n=3, atomic_species='Un', void=False, parent_graph=None):
 
         # parent
         self.parent_graph = parent_graph
@@ -31,8 +31,8 @@ class Vertex:
         self.zeta = zeta
         self.peak_gamma = 0
         self.avg_gamma = 0
+        self.advanced_species = advanced_species
         self.atomic_species = atomic_species
-        self.advanced_species = None
 
         # Position
         self.scale = scale
@@ -61,36 +61,20 @@ class Vertex:
         self.flag_9 = False
 
         # model-analysis
-        if self.parent_graph is None:
-            self.probability_vector = {}
-            self.alpha_probability_vector = {}
-            self.composite_probability_vector = {}
-            self.weighted_probability_vector = {}
+        self.probability_vector = {}
+        self.alpha_probability_vector = {}
+        self.composite_probability_vector = {}
+        self.weighted_probability_vector = {}
 
-            self.confidence = 0
-            self.alpha_confidence = 0
-            self.composite_confidence = 0
-            self.weighted_confidence = 0
+        self.confidence = 0
+        self.alpha_confidence = 0
+        self.composite_confidence = 0
+        self.weighted_confidence = 0
 
-            self.advanced_probability_vector = {}
-            self.advanced_alpha_probability_vector = {}
-            self.advanced_composite_probability_vector = {}
-            self.advanced_weighted_probability_vector = {}
-        else:
-            self.probability_vector = {}
-            self.alpha_probability_vector = {}
-            self.composite_probability_vector = {}
-            self.weighted_probability_vector = {}
-
-            self.confidence = 0
-            self.alpha_confidence = 0
-            self.composite_confidence = 0
-            self.weighted_confidence = 0
-
-            self.advanced_probability_vector = {}
-            self.advanced_alpha_probability_vector = {}
-            self.advanced_composite_probability_vector = {}
-            self.advanced_weighted_probability_vector = {}
+        self.advanced_probability_vector = {}
+        self.advanced_alpha_probability_vector = {}
+        self.advanced_composite_probability_vector = {}
+        self.advanced_weighted_probability_vector = {}
 
         # Model variables
         self.alpha_angles = []
@@ -125,7 +109,7 @@ class Vertex:
         self.out_degree = 0
         self.degree = 0
 
-        self.determine_species_from_species_index()
+        self.reset_probability_vector_from_atomic_species()
 
     def __str__(self):
         return self.report()
@@ -219,24 +203,35 @@ class Vertex:
     def spatial_pos(self):
         return self.spatial_coor_x, self.spatial_coor_y, self.spatial_coor_z
 
-    def normalize_probability_vector(self):
-        self.probability_vector = [a / sum(self.probability_vector) for a in self.probability_vector]
-
-    def reset_probability_vector(self, bias='Un'):
-        self.probability_vector = [1, 1, 1, 1, 1]
-        if bias not in [-1, 0, 1, 2, 3, 4]:
-            bias = -1
-        self.probability_vector[bias] = 1.1
-        self.normalize_probability_vector()
-        self.determine_species_from_probability_vector()
+    def reset_probability_vector(self, bias='Un_1'):
+        self.advanced_probability_vector = {}
+        self.probability_vector = {}
+        if self.parent_graph is not None:
+            for category, value in self.parent_graph.species_dict.items():
+                if category == bias:
+                    self.advanced_probability_vector[category] = 1.1
+                    if value['atomic_species'] in self.probability_vector:
+                        self.probability_vector[value['atomic_species']] += 1.1
+                    else:
+                        self.probability_vector[value['atomic_species']] = 1.1
+                else:
+                    self.advanced_probability_vector[category] = 1.0
+                    if value['atomic_species'] in self.probability_vector:
+                        self.probability_vector[value['atomic_species']] += 1.0
+                    else:
+                        self.probability_vector[value['atomic_species']] = 1.0
+            self.advanced_probability_vector = utils.normalize_dict(self.advanced_probability_vector)
+            self.probability_vector = utils.normalize_dict(self.probability_vector)
+            self.atomic_species = self.parent_graph.species_dict[bias]['atomic_species']
+            self.advanced_species = bias
 
     def determine_species_from_probability_vector(self):
-        self.species_index = self.probability_vector.index(max(self.probability_vector))
-        self.atomic_species = Vertex.species_string[self.species_index]
-        self.n = Vertex.symmetry[self.atomic_species]
+        self.advanced_species = max(self.advanced_probability_vector, key=self.advanced_probability_vector.get)
+        self.atomic_species = self.parent_graph.species_dict[self.advanced_species]['atomic_species']
+        self.n = self.parent_graph.species_dict[self.atomic_species]['symmetry']
 
-    def determine_species_from_species_index(self):
-        self.reset_probability_vector(bias=self.species_index)
+    def reset_probability_vector_from_atomic_species(self):
+        self.reset_probability_vector(bias=self.advanced_species)
 
     @ staticmethod
     def determine_simple_from_advanced_model(advanced_model):
@@ -263,26 +258,6 @@ class Vertex:
             simple_model[5] / 2
         ]
         return advanced
-
-    def increment_species_index(self):
-        if self.species_index == 3 or self.species_index == 4:
-            return False
-        else:
-            self.species_index += 1
-            self.determine_species_from_species_index()
-            return True
-
-    def decrement_species_index(self):
-        if self.species_index == 0:
-            return False
-        else:
-            self.species_index -= 1
-            self.determine_species_from_species_index()
-            return True
-
-    def set_species_from_species_index(self, species_index):
-        self.species_index = species_index
-        self.determine_species_from_species_index()
 
     def permute_j_k(self, j, k):
         if j == k:
@@ -388,12 +363,22 @@ class AtomicGraph:
 
     al_lattice_const = 404.95
 
-    def __init__(self, scale, active_model=None, district_size=8, species_dict=None, advanced_species_dict=None):
+    def __init__(self, scale, active_model=None, district_size=8, species_dict=None):
 
         # Categorization:
-        self.species_dict = {}
-        self.advanced_species_dict = {}
-        self.set_categories(species_dict, advanced_species_dict)
+        if species_dict is None:
+            self.species_dict = {
+                'Si_1': {'symmetry': 3, 'atomic_species': 'Si', 'atomic_radii': 117.50, 'color': (255, 0, 0), 'species_color': (255, 0, 0)},
+                'Si_2': {'symmetry': 3, 'atomic_species': 'Si', 'atomic_radii': 117.50, 'color': (235, 20, 20), 'species_color': (255, 0, 0)},
+                'Cu_1': {'symmetry': 3, 'atomic_species': 'Cu', 'atomic_radii': 127.81, 'color': (255, 255, 0), 'species_color': (255, 255, 0)},
+                'Al_1': {'symmetry': 4, 'atomic_species': 'Al', 'atomic_radii': 143.00, 'color': (0, 255, 0), 'species_color': (0, 255, 0)},
+                'Al_2': {'symmetry': 4, 'atomic_species': 'Al', 'atomic_radii': 143.00, 'color': (20, 235, 20), 'species_color': (0, 255, 0)},
+                'Mg_1': {'symmetry': 5, 'atomic_species': 'Mg', 'atomic_radii': 160.00, 'color': (138, 43, 226), 'species_color': (138, 43, 226)},
+                'Mg_2': {'symmetry': 6, 'atomic_species': 'Mg', 'atomic_radii': 160.00, 'color': (118, 63, 206), 'species_color': (138, 43, 226)},
+                'Un_1': {'symmetry': 3, 'atomic_species': 'Un', 'atomic_radii': 200.00, 'color': (255, 0, 0), 'species_color': (255, 0, 0)}
+            }
+        else:
+            self.species_dict = species_dict
 
         # Contents:
         self.vertices = []
@@ -446,9 +431,6 @@ class AtomicGraph:
         string = self.vertices[i].report()
         return string
 
-    def set_categories(self, species_dict, advanced_species_dict):
-
-
     def add_vertex(self, new_vertex):
         for i, vertex in enumerate(self.vertices):
             if vertex.void:
@@ -489,6 +471,18 @@ class AtomicGraph:
             if not vertex.void:
                 vertices.append(vertex)
         return vertices
+
+    def get_species(self):
+        species = set()
+        for item in self.species_dict.values():
+            species.add(item['atomic_species'])
+        return species
+
+    def get_classes(self):
+        classes = set()
+        for item in self.species_dict:
+            classes.add(item)
+        return classes
 
     def get_arc(self, i, j):
         result = None

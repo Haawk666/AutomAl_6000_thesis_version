@@ -878,6 +878,9 @@ class MainUI(QtWidgets.QMainWindow):
         if self.project_instance is not None:
             self.menu_close_trigger()
 
+    def btn_configure_classes_trigger(self):
+        GUI_elements.CustomizeClassification(ui_obj=self)
+
     def btn_cancel_move_trigger(self):
         self.control_window.mode_move(False)
         self.update_central_widget()

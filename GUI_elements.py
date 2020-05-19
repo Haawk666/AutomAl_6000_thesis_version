@@ -163,7 +163,6 @@ class OverlayComposition(QtWidgets.QGraphicsScene):
             for vertex in self.ui_obj.project_instance.graph.vertices:
                 if not vertex.void:
                     species = vertex.atomic_species.lower()
-                    brush = None
                     if vertex.zeta == 0:
                         brush = self.zeta_0_brushes[self.categories.index(species)]
                     else:
@@ -1119,6 +1118,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_open_project = GUI_custom_components.MediumButton('Open', self, trigger_func=self.ui_obj.btn_open_project_trigger)
         self.btn_save_project = GUI_custom_components.MediumButton('Save', self, trigger_func=self.ui_obj.btn_save_project_trigger)
         self.btn_close_project = GUI_custom_components.MediumButton('Close', self, trigger_func=self.ui_obj.btn_close_project_trigger)
+        self.btn_configure_classes = GUI_custom_components.MediumButton('Categories', self, trigger_func=self.ui_obj.btn_configure_classes_trigger)
 
         self.btn_show_stats = GUI_custom_components.MediumButton('Stats', self, trigger_func=self.ui_obj.btn_show_stats_trigger)
         self.btn_show_source = GUI_custom_components.MediumButton('Source', self, trigger_func=self.ui_obj.btn_view_image_title_trigger)
@@ -1162,6 +1162,7 @@ class ControlWindow(QtWidgets.QWidget):
         btn_project_layout.addLayout(layout)
         layout = QtWidgets.QHBoxLayout()
         layout.addWidget(self.btn_close_project)
+        layout.addWidget(self.btn_configure_classes)
         layout.addStretch()
         btn_project_layout.addLayout(layout)
 
@@ -1391,6 +1392,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_list.append(self.btn_open_project)
         self.btn_list.append(self.btn_save_project)
         self.btn_list.append(self.btn_close_project)
+        self.btn_list.append(self.btn_configure_classes)
         self.btn_list.append(self.btn_show_stats)
         self.btn_list.append(self.btn_show_source)
         self.btn_list.append(self.btn_align_views)
@@ -1510,132 +1512,63 @@ class ControlWindow(QtWidgets.QWidget):
         box_seperation = 10
         box_displacement = 25
 
-        if not self.ui_obj.selected_column == -1:
-
-            si_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].probability_vector[0])
-            cu_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].probability_vector[1])
-            al_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].probability_vector[2])
-            mg_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].probability_vector[3])
-            un_box_height = int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].probability_vector[4])
-
+        species = set()
+        colors = {}
+        if self.ui_obj.project_instance is None:
+            species.add('Si')
+            colors['Si'] = (255, 0, 0)
+            species.add('Cu')
+            colors['Cu'] = (255, 255, 0)
+            species.add('Al')
+            colors['Al'] = (0, 255, 0)
+            species.add('Mg')
+            colors['Mg'] = (138, 43, 226)
+            species.add('Un')
+            colors['Un'] = (0, 0, 255)
         else:
+            for item in self.ui_obj.project_instance.graph.species_dict.values():
+                species.add(item['atomic_species'])
+                colors[item['atomic_species']] = item['species_color']
 
-            si_box_height = 0
-            cu_box_height = 0
-            al_box_height = 0
-            mg_box_height = 0
-            un_box_height = 0
+        species = list(species)
+        box_heights = []
+        if not self.ui_obj.selected_column == -1:
+            for atomic_species in species:
+                box_heights.append(int(100 * self.ui_obj.project_instance.graph.vertices[self.ui_obj.selected_column].probability_vector[atomic_species]))
+        else:
+            box_heights = [0] * 5
 
         box = QtWidgets.QGraphicsRectItem(0, -10, self.width - 10, self.height - 10)
         box.setPen(GUI_settings.pen_boarder)
         box.hide()
 
-        x_box = box_seperation + 0 * box_displacement
-        box_height = si_box_height
-        si_box = QtWidgets.QGraphicsRectItem(0, 0, box_width, box_height)
-        si_box.setBrush(GUI_settings.brush_si)
-        si_box.setX(x_box)
-        si_box.setY(100 - box_height)
-        si_text = QtWidgets.QGraphicsSimpleTextItem()
-        si_text.setText('Si')
-        si_text.setFont(GUI_settings.font_tiny)
-        si_text.setX(x_box + 3)
-        si_text.setY(100 + 4)
-        si_number = QtWidgets.QGraphicsSimpleTextItem()
-        si_number.setText(str(box_height / 100))
-        si_number.setFont(GUI_settings.font_tiny)
-        si_number.setX(x_box - 1)
-        si_number.setY(100 - box_height - 10)
-
-        x_box = box_seperation + 1 * box_displacement
-        box_height = cu_box_height
-        cu_box = QtWidgets.QGraphicsRectItem(0, 0, box_width, box_height)
-        cu_box.setBrush(GUI_settings.brush_cu)
-        cu_box.setX(x_box)
-        cu_box.setY(100 - box_height)
-        cu_text = QtWidgets.QGraphicsSimpleTextItem()
-        cu_text.setText('Cu')
-        cu_text.setFont(GUI_settings.font_tiny)
-        cu_text.setX(x_box + 2)
-        cu_text.setY(100 + 4)
-        cu_number = QtWidgets.QGraphicsSimpleTextItem()
-        cu_number.setText(str(box_height / 100))
-        cu_number.setFont(GUI_settings.font_tiny)
-        cu_number.setX(x_box - 1)
-        cu_number.setY(100 - box_height - 10)
-
-        x_box = box_seperation + 2 * box_displacement
-        box_height = al_box_height
-        al_box = QtWidgets.QGraphicsRectItem(0, 0, box_width, box_height)
-        al_box.setBrush(GUI_settings.brush_al)
-        al_box.setX(x_box)
-        al_box.setY(100 - box_height)
-        al_text = QtWidgets.QGraphicsSimpleTextItem()
-        al_text.setText('Al')
-        al_text.setFont(GUI_settings.font_tiny)
-        al_text.setX(x_box + 2)
-        al_text.setY(100 + 4)
-        al_number = QtWidgets.QGraphicsSimpleTextItem()
-        al_number.setText(str(box_height / 100))
-        al_number.setFont(GUI_settings.font_tiny)
-        al_number.setX(x_box - 1)
-        al_number.setY(100 - box_height - 10)
-
-        x_box = box_seperation + 3 * box_displacement
-        box_height = mg_box_height
-        mg_box = QtWidgets.QGraphicsRectItem(0, 0, box_width, box_height)
-        mg_box.setBrush(GUI_settings.brush_mg)
-        mg_box.setX(x_box)
-        mg_box.setY(100 - box_height)
-        mg_text = QtWidgets.QGraphicsSimpleTextItem()
-        mg_text.setText('Mg')
-        mg_text.setFont(GUI_settings.font_tiny)
-        mg_text.setX(x_box + 2)
-        mg_text.setY(100 + 4)
-        mg_number = QtWidgets.QGraphicsSimpleTextItem()
-        mg_number.setText(str(box_height / 100))
-        mg_number.setFont(GUI_settings.font_tiny)
-        mg_number.setX(x_box - 1)
-        mg_number.setY(100 - box_height - 10)
-
-        x_box = box_seperation + 4 * box_displacement
-        box_height = un_box_height
-        un_box = QtWidgets.QGraphicsRectItem(0, 0, box_width, box_height)
-        un_box.setBrush(GUI_settings.brush_un)
-        un_box.setX(x_box)
-        un_box.setY(100 - box_height)
-        un_text = QtWidgets.QGraphicsSimpleTextItem()
-        un_text.setText('Un')
-        un_text.setFont(GUI_settings.font_tiny)
-        un_text.setX(x_box + 2)
-        un_text.setY(100 + 4)
-        un_number = QtWidgets.QGraphicsSimpleTextItem()
-        un_number.setText(str(box_height / 100))
-        un_number.setFont(GUI_settings.font_tiny)
-        un_number.setX(x_box - 1)
-        un_number.setY(100 - box_height - 10)
-
         probGraphicScene = QtWidgets.QGraphicsScene()
-
         probGraphicScene.addItem(box)
 
-        probGraphicScene.addItem(si_box)
-        probGraphicScene.addItem(cu_box)
-        probGraphicScene.addItem(al_box)
-        probGraphicScene.addItem(mg_box)
-        probGraphicScene.addItem(un_box)
+        for i, box_height in enumerate(box_heights):
+            x_box = box_seperation + i * box_displacement
+            species_box = QtWidgets.QGraphicsRectItem(0, 0, box_width, box_height)
+            species_box.setBrush(QtGui.QBrush(QtGui.QColor(
+                colors[species[i]][0],
+                colors[species[i]][1],
+                colors[species[i]][2]
+            )))
+            species_box.setX(x_box)
+            species_box.setY(100 - box_height)
+            species_text = QtWidgets.QGraphicsSimpleTextItem()
+            species_text.setText(species[i])
+            species_text.setFont(GUI_settings.font_tiny)
+            species_text.setX(x_box + 2)
+            species_text.setY(100 + 4)
+            species_number = QtWidgets.QGraphicsSimpleTextItem()
+            species_number.setText(str(box_height / 100))
+            species_number.setFont(GUI_settings.font_tiny)
+            species_number.setX(x_box - 1)
+            species_number.setY(100 - box_height - 10)
 
-        probGraphicScene.addItem(si_text)
-        probGraphicScene.addItem(cu_text)
-        probGraphicScene.addItem(al_text)
-        probGraphicScene.addItem(mg_text)
-        probGraphicScene.addItem(un_text)
-
-        probGraphicScene.addItem(si_number)
-        probGraphicScene.addItem(cu_number)
-        probGraphicScene.addItem(al_number)
-        probGraphicScene.addItem(mg_number)
-        probGraphicScene.addItem(un_number)
+            probGraphicScene.addItem(species_box)
+            probGraphicScene.addItem(species_text)
+            probGraphicScene.addItem(species_number)
 
         if GUI_settings.theme == 'dark':
             probGraphicScene.palette().setColor(QtGui.QPalette.Text, QtCore.Qt.white)
@@ -1729,7 +1662,7 @@ class ControlWindow(QtWidgets.QWidget):
             self.lbl_search_size.setText('Search size: {}'.format(self.ui_obj.project_instance.search_size))
             self.lbl_scale.setText('Scale (pm / pixel): {}'.format(self.ui_obj.project_instance.scale))
 
-            self.lbl_alloy.setText(self.ui_obj.project_instance.alloy_string[self.ui_obj.project_instance.alloy])
+            self.lbl_alloy.setText(self.ui_obj.project_instance.get_alloy_string())
 
             if self.ui_obj.selected_column == -1:
                 self.deselect_column()
@@ -3550,6 +3483,141 @@ class CustomizeOverlay(QtWidgets.QDialog):
 
     def btn_cancel_changes_trigger(self):
         self.close()
+
+
+class CustomizeClassification(QtWidgets.QDialog):
+
+    def __init__(self, *args, ui_obj=None):
+        super().__init__(*args)
+
+        self.ui_obj = ui_obj
+
+        self.setWindowTitle('Customize classification')
+
+        self.btn_what_is_this = QtWidgets.QPushButton('What is this?')
+        self.btn_what_is_this.clicked.connect(self.btn_what_is_this_trigger)
+
+        self.btn_remove = QtWidgets.QPushButton('Remove class')
+        self.btn_remove.clicked.connect(self.btn_remove_trigger)
+        self.btn_edit = QtWidgets.QPushButton('Edit class')
+        self.btn_edit.clicked.connect(self.btn_edit_trigger)
+        self.btn_new = QtWidgets.QPushButton('Add new class')
+        self.btn_new.clicked.connect(self.btn_new_trigger)
+
+        self.btn_cancel = QtWidgets.QPushButton('Cancel')
+        self.btn_cancel.clicked.connect(self.btn_cancel_trigger)
+        self.btn_apply = QtWidgets.QPushButton('Apply')
+        self.btn_apply.clicked.connect(self.btn_apply_trigger)
+        self.btn_set_default = QtWidgets.QPushButton('Set default')
+        self.btn_set_default.clicked.connect(self.btn_set_default_trigger)
+
+        self.edit_btn_layout = QtWidgets.QVBoxLayout()
+        self.edit_btn_layout.addStretch()
+        self.edit_btn_layout.addWidget(self.btn_new)
+        self.edit_btn_layout.addWidget(self.btn_edit)
+        self.edit_btn_layout.addWidget(self.btn_remove)
+        self.edit_btn_layout.addStretch()
+
+        self.dialog_btn_layout = QtWidgets.QHBoxLayout()
+        self.dialog_btn_layout.addStretch()
+        self.dialog_btn_layout.addWidget(self.btn_apply)
+        self.dialog_btn_layout.addWidget(self.btn_cancel)
+        self.dialog_btn_layout.addWidget(self.btn_set_default)
+        self.dialog_btn_layout.addStretch()
+
+        if self.ui_obj.project_instance is None:
+            length = len(GUI.core.Project.default_dict)
+        else:
+            length = len(self.ui_obj.project_instance.species_dict)
+
+        self.tbl_classes = QtWidgets.QTableWidget(length, 6)
+        headers = ['Class', 'Symmetry', 'Atomic species', 'Atomic radii', 'Color (r, g, b)', 'Species color (r, g, b)']
+        self.tbl_classes.setHorizontalHeaderLabels(headers)
+
+        if self.ui_obj.project_instance is not None:
+            counter = 0
+            for class_, details in self.ui_obj.project_instance.species_dict.items():
+                this_class = QtWidgets.QTableWidgetItem(class_)
+                this_symmetry = QtWidgets.QTableWidgetItem(details['symmetry'])
+                this_species = QtWidgets.QTableWidgetItem(details['atomic_species'])
+                this_radii = QtWidgets.QTableWidgetItem(details['atomic_radii'])
+                this_color = QtWidgets.QTableWidgetItem(details['color'])
+                this_species_color = QtWidgets.QTableWidgetItem(details['species_color'])
+
+                self.tbl_classes.setItem(counter, 0, this_class)
+                self.tbl_classes.setItem(counter, 1, this_symmetry)
+                self.tbl_classes.setItem(counter, 2, this_species)
+                self.tbl_classes.setItem(counter, 3, this_radii)
+                self.tbl_classes.setItem(counter, 4, this_color)
+                self.tbl_classes.setItem(counter, 5, this_species_color)
+
+                counter += 1
+        else:
+            counter = 0
+            for class_, details in GUI.core.Project.default_dict.items():
+                this_class = QtWidgets.QTableWidgetItem(class_)
+                this_symmetry = QtWidgets.QTableWidgetItem(details['symmetry'])
+                this_species = QtWidgets.QTableWidgetItem(details['atomic_species'])
+                this_radii = QtWidgets.QTableWidgetItem(details['atomic_radii'])
+                this_color = QtWidgets.QTableWidgetItem('({}, {}, {})'.format(details['color'][0], details['color'][0], details['color'][0]))
+                this_species_color = QtWidgets.QTableWidgetItem('({}, {}, {})'.format(details['species_color'][0], details['species_color'][0], details['species_color'][0]))
+
+                self.tbl_classes.setItem(counter, 0, this_class)
+                self.tbl_classes.setItem(counter, 1, this_symmetry)
+                self.tbl_classes.setItem(counter, 2, this_species)
+                self.tbl_classes.setItem(counter, 3, this_radii)
+                self.tbl_classes.setItem(counter, 4, this_color)
+                self.tbl_classes.setItem(counter, 5, this_species_color)
+
+                counter += 1
+
+        self.tbl_classes.resizeColumnsToContents()
+        self.tbl_classes.resizeRowsToContents()
+
+        self.set_layout()
+        self.exec_()
+
+    def set_layout(self):
+        v_layout = QtWidgets.QVBoxLayout()
+        v_layout.addWidget(self.btn_what_is_this)
+        layout = QtWidgets.QHBoxLayout()
+        layout.addWidget(self.tbl_classes)
+        layout.addLayout(self.edit_btn_layout)
+        v_layout.addLayout(layout)
+        v_layout.addLayout(self.dialog_btn_layout)
+        self.setLayout(v_layout)
+
+    def btn_apply_trigger(self):
+        pass
+
+    def btn_cancel_trigger(self):
+        self.close()
+
+    def btn_new_trigger(self):
+        pass
+
+    def btn_edit_trigger(self):
+        pass
+
+    def btn_set_default_trigger(self):
+        pass
+
+    def btn_remove_trigger(self):
+        pass
+
+    def btn_what_is_this_trigger(self):
+        pass
+
+
+
+
+
+
+
+
+
+
+
 
 
 

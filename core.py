@@ -17,6 +17,7 @@ import dm3_lib as dm3
 import sys
 import copy
 import pickle
+import configparser
 import logging
 # Instantiate logger
 logger = logging.getLogger(__name__)
@@ -37,13 +38,23 @@ class Project:
     # Version
     version = [0, 1, 0]
 
+    default_dict = {
+        'Si_1': {'symmetry': 3, 'atomic_species': 'Si', 'atomic_radii': 117.50, 'color': (255, 0, 0), 'species_color': (255, 0, 0)},
+        'Si_2': {'symmetry': 3, 'atomic_species': 'Si', 'atomic_radii': 117.50, 'color': (235, 20, 20), 'species_color': (255, 0, 0)},
+        'Cu_1': {'symmetry': 3, 'atomic_species': 'Cu', 'atomic_radii': 127.81, 'color': (255, 255, 0), 'species_color': (255, 255, 0)},
+        'Al_1': {'symmetry': 4, 'atomic_species': 'Al', 'atomic_radii': 143.00, 'color': (0, 255, 0), 'species_color': (0, 255, 0)},
+        'Al_2': {'symmetry': 4, 'atomic_species': 'Al', 'atomic_radii': 143.00, 'color': (20, 235, 20), 'species_color': (0, 255, 0)},
+        'Mg_1': {'symmetry': 5, 'atomic_species': 'Mg', 'atomic_radii': 160.00, 'color': (138, 43, 226), 'species_color': (138, 43, 226)},
+        'Mg_2': {'symmetry': 6, 'atomic_species': 'Mg', 'atomic_radii': 160.00, 'color': (118, 63, 206), 'species_color': (138, 43, 226)},
+        'Un_1': {'symmetry': 3, 'atomic_species': 'Un', 'atomic_radii': 200.00, 'color': (255, 0, 0), 'species_color': (255, 0, 0)}
+    }
+
     # District size
     district_size = 8
 
-    atomic_radii = {'Si': 117.5, 'Cu': 127.81, 'Al': 143.0, 'Mg': 160.0, 'Ag': 144.5, 'Zn': 133.25, 'Un': 200.0}
     al_lattice_const = 404.95
 
-    def __init__(self, filename_full, debug_obj=None, species_dict=None, advanced_species_dict=None):
+    def __init__(self, filename_full, debug_obj=None, species_dict=None):
 
         self.filename_full = filename_full
         self.im_mat = None
@@ -56,22 +67,32 @@ class Project:
 
         # In AutomAl 6000, each column is modelled by a single atomic species, more advanced categorization can be
         # applied however. Each advanced category must map to one of the simple categories and also to a symmetry.
-        self.species_dict = {
-            'Si': [3, 117.5],
-            'Cu': [3, 127.81],
-            'Al': [4, 143.0],
-            'Mg': [5, 160.0],
-            'Un': [3, 200.0]
-        }
-        self.advanced_species = {
-            'Si_1': [3, 'Si'],
-            'Si_2': [3, 'Si'],
-            'Cu_1': [3, 'Cu'],
-            'Al_1': [4, 'Al'],
-            'Al_2': [4, 'Al'],
-            'Mg_1': [5, 'Mg'],
-            'Mg_2': [5, 'Mg']
-        }
+        parser = configparser.ConfigParser()
+        parser.read('config.ini')
+        if species_dict is None:
+            self.species_dict = Project.default_dict
+            for key, item in self.species_dict.items():
+                item['color'] = (
+                    parser.getint('advanced_colors', '{}_r'.format(key)),
+                    parser.getint('advanced_colors', '{}_g'.format(key)),
+                    parser.getint('advanced_colors', '{}_b'.format(key))
+                )
+                item['species_color'] = (
+                    parser.getint('simple_colors', '{}_r'.format(item['atomic_species'])),
+                    parser.getint('simple_colors', '{}_g'.format(item['atomic_species'])),
+                    parser.getint('simple_colors', '{}_b'.format(item['atomic_species']))
+                )
+        else:
+            self.species_dict = species_dict
+            for key, item in self.species_dict.items():
+                parser.set('advanced_colors', '{}_r', '{}'.format(key, item['color'][0]))
+                parser.set('advanced_colors', '{}_g', '{}'.format(key, item['color'][1]))
+                parser.set('advanced_colors', '{}_b', '{}'.format(key, item['color'][2]))
+                parser.set('simple_colors', '{}_r', '{}'.format(item['atomic_species'], item['species_color'][0]))
+                parser.set('simple_colors', '{}_g', '{}'.format(item['atomic_species'], item['species_color'][1]))
+                parser.set('simple_colors', '{}_b', '{}'.format(item['atomic_species'], item['species_color'][2]))
+            with open('config.ini', 'w') as configfile:
+                parser.write(configfile)
 
         # For communicating with the interface, if any:
         self.debug_obj = debug_obj
@@ -104,7 +125,7 @@ class Project:
         self.overhead = int(6 * (self.r / 10))
 
         # Initialize an empty graph
-        self.graph = graph_2.AtomicGraph(self.scale, active_model=None)
+        self.graph = graph_2.AtomicGraph(self.scale, active_model=None, species_dict=self.species_dict)
 
         logger.info('Generated instance from {}'.format(filename_full))
 
@@ -135,6 +156,28 @@ class Project:
         else:
             logger.info(string)
             return None
+
+    def get_alloy_string(self):
+        species_string = ''
+        species = set()
+        for sp in self.species_dict.values():
+            species.add(sp['atomic_species'])
+        species.remove('Un')
+        if 'Al' in species:
+            species_string += 'Al-'
+            species.remove('Al')
+        if 'Mg' in species:
+            species_string += 'Mg-'
+            species.remove('Mg')
+        if 'Si' in species:
+            species_string += 'Si-'
+            species.remove('Si')
+        if 'Cu' in species:
+            species_string += 'Cu-'
+            species.remove('Cu')
+        for remaining in species:
+            species_string += '{}-'.format(remaining)
+        return species_string[:-1]
 
     def save(self, filename_full):
         """Save the current project as a pickle file.
@@ -183,15 +226,6 @@ class Project:
                     logger.info('Loaded {}'.format(filename_full))
         return obj
 
-    def set_alloy_mat(self):
-        if self.alloy == 0:
-            self.alloy_mat = [1, 1, 1, 1, 0]
-        elif self.alloy == 1:
-            self.alloy_mat = [1, 0, 1, 1, 0]
-        else:
-            logger.info('Unknown alloy index! Using index 0')
-            self.alloy_mat = [1, 1, 1, 1, 0]
-
     def column_detection(self, search_type='s', plot=False):
         """Column detection algorithm.
 
@@ -213,10 +247,10 @@ class Project:
         """
         peak_values = []
         non_edge_peak_values = []
-        if self.num_columns == 0:
+        tmp_im_mat = utils.gen_framed_mat(self.im_mat, self.r + self.overhead)
+        if len(self.graph.vertices) == 0:
             logger.info('Starting column detection. Search mode is \'{}\''.format(search_type))
-            self.search_mat = utils.gen_framed_mat(self.search_mat, self.r + self.overhead)
-            self.im_mat = utils.gen_framed_mat(self.im_mat, self.r + self.overhead)
+            self.search_mat = utils.gen_framed_mat(self.im_mat, self.r + self.overhead)
             cont = True
         else:
             logger.info('Continuing column detection. Search mode is \'{}\''.format(search_type))
@@ -246,7 +280,6 @@ class Project:
                 for vertex in self.graph.vertices:
                     peak_values.append(vertex.peak_gamma)
                 self.search_mat = utils.gen_framed_mat(self.search_mat, self.r + self.overhead)
-                self.im_mat = utils.gen_framed_mat(self.im_mat, self.r + self.overhead)
                 cont = True
 
         counter = self.num_columns
@@ -259,7 +292,7 @@ class Project:
             max_val = self.search_mat[pos]
             peak_values.append(max_val)
 
-            x_fit, y_fit = utils.cm_fit(self.im_mat, pos[1], pos[0], self.r)
+            x_fit, y_fit = utils.cm_fit(tmp_im_mat, pos[1], pos[0], self.r)
 
             x_fit_real_coor = x_fit - self.r - self.overhead
             y_fit_real_coor = y_fit - self.r - self.overhead
@@ -270,9 +303,20 @@ class Project:
 
             self.search_mat = utils.delete_pixels(self.search_mat, x_fit_pix, y_fit_pix, self.r + self.overhead)
 
-            vertex = graph_2.Vertex(counter, x_fit_real_coor, y_fit_real_coor, self.r, self.scale)
-            vertex.peak_gamma = max_val
-            vertex.reset_probability_vector(bias=6)
+            vertex = graph_2.Vertex(counter, x_fit_real_coor, y_fit_real_coor, self.r, self.scale, parent_graph=self.graph)
+            vertex.avg_gamma, vertex.peak_gamma = utils.circular_average(tmp_im_mat, x_fit_pix, y_fit_pix, self.r)
+            if not max_val == vertex.peak_gamma:
+                logger.info(
+                    'Vertex {}\n    Pos: ({}, {})\n    Fit: ({}, {})\n    max_val: {}\n    peak_gamma: {}\n'.format(
+                        counter,
+                        pos[1] - self.r - self.overhead,
+                        pos[0] - self.r - self.overhead,
+                        x_fit_real_coor_pix,
+                        y_fit_real_coor_pix,
+                        max_val,
+                        vertex.peak_gamma
+                    )
+                )
             self.graph.add_vertex(vertex)
 
             self.column_centre_mat[y_fit_real_coor_pix, x_fit_real_coor_pix, 0] = 1
@@ -291,8 +335,6 @@ class Project:
                 logger.error('Invalid search_type')
 
         self.search_mat = utils.gen_de_framed_mat(self.search_mat, self.r + self.overhead)
-        self.im_mat = utils.gen_de_framed_mat(self.im_mat, self.r + self.overhead)
-        self.calc_avg_gamma()
         self.summarize_stats()
 
         self.find_edge_columns()
