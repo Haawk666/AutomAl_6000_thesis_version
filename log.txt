@@ -3,3 +3,5 @@ GUI: GUI version: 0.0.2
 GUI: core version: 0.1.0
 GUI: Build version: Alpha 1.0
 ------------------------
+GUI: Opening file C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/haakon_001_columns
+core: Loaded C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/haakon_001_columns

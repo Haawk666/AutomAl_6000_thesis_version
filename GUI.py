@@ -156,10 +156,7 @@ class MainUI(QtWidgets.QMainWindow):
             self.gs_overlay_composition.interactive_overlay_objects[self.selected_column].set_style()
             self.gs_atomic_graph.redraw_neighbourhood(self.selected_column)
             # Update control window info:
-            self.control_window.lbl_column_species.setText(
-                'Atomic species: ' + self.project_instance.graph.vertices[self.selected_column].atomic_species)
-            self.control_window.draw_histogram()
-            self.control_window.lbl_prob_vector.setText('Probability vector: {}'.format(self.project_instance.graph.vertices[self.selected_column].probability_vector))
+            self.control_window.select_column()
 
     def set_level(self, zeta):
         """Set level of selected column"""
@@ -406,6 +403,7 @@ class MainUI(QtWidgets.QMainWindow):
             self.savefile = None
             self.control_instance = None
             self.update_display()
+            self.btn_configure_classes_trigger()
         else:
             self.sys_message('Ready')
 
@@ -807,20 +805,13 @@ class MainUI(QtWidgets.QMainWindow):
     def btn_set_species_trigger(self):
         """Btn-trigger: Run 'set species' dialog."""
         if self.project_instance is not None and not self.selected_column == -1:
-            items = ('Al', 'Mg', 'Si', 'Cu', 'Un')
+            items = []
+            for item in self.project_instance.species_dict:
+                items.append(item)
             item, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Species", items, 0, False)
             if ok_pressed and item:
-                if item == 'Al':
-                    h = 2
-                elif item == 'Si':
-                    h = 0
-                elif item == 'Mg':
-                    h = 3
-                elif item == 'Cu':
-                    h = 1
-                else:
-                    h = 4
-                self.set_species(h)
+                self.set_species(item)
+                self.project_instance.graph.vertices[self.selected_column].is_set_by_user = True
 
     def btn_set_level_trigger(self):
         """Btn-trigger: Run 'set level' dialog."""

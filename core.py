@@ -39,14 +39,14 @@ class Project:
     version = [0, 1, 0]
 
     default_dict = {
-        'Si_1': {'symmetry': 3, 'atomic_species': 'Si', 'atomic_radii': 117.50, 'color': (255, 0, 0), 'species_color': (255, 0, 0)},
-        'Si_2': {'symmetry': 3, 'atomic_species': 'Si', 'atomic_radii': 117.50, 'color': (235, 20, 20), 'species_color': (255, 0, 0)},
-        'Cu_1': {'symmetry': 3, 'atomic_species': 'Cu', 'atomic_radii': 127.81, 'color': (255, 255, 0), 'species_color': (255, 255, 0)},
-        'Al_1': {'symmetry': 4, 'atomic_species': 'Al', 'atomic_radii': 143.00, 'color': (0, 255, 0), 'species_color': (0, 255, 0)},
-        'Al_2': {'symmetry': 4, 'atomic_species': 'Al', 'atomic_radii': 143.00, 'color': (20, 235, 20), 'species_color': (0, 255, 0)},
-        'Mg_1': {'symmetry': 5, 'atomic_species': 'Mg', 'atomic_radii': 160.00, 'color': (138, 43, 226), 'species_color': (138, 43, 226)},
-        'Mg_2': {'symmetry': 6, 'atomic_species': 'Mg', 'atomic_radii': 160.00, 'color': (118, 63, 206), 'species_color': (138, 43, 226)},
-        'Un_1': {'symmetry': 3, 'atomic_species': 'Un', 'atomic_radii': 200.00, 'color': (255, 0, 0), 'species_color': (255, 0, 0)}
+        'Si_1': {'symmetry': 3, 'atomic_species': 'Si', 'atomic_radii': 117.50, 'color': (255, 0, 0), 'species_color': (255, 0, 0), 'description': 'Q-prime Si'},
+        'Si_2': {'symmetry': 3, 'atomic_species': 'Si', 'atomic_radii': 117.50, 'color': (235, 20, 20), 'species_color': (255, 0, 0), 'description': 'Beta-pprime Si'},
+        'Cu_1': {'symmetry': 3, 'atomic_species': 'Cu', 'atomic_radii': 127.81, 'color': (255, 255, 0), 'species_color': (255, 255, 0), 'description': ''},
+        'Al_1': {'symmetry': 4, 'atomic_species': 'Al', 'atomic_radii': 143.00, 'color': (0, 255, 0), 'species_color': (0, 255, 0), 'description': ''},
+        'Al_2': {'symmetry': 4, 'atomic_species': 'Al', 'atomic_radii': 143.00, 'color': (20, 235, 20), 'species_color': (0, 255, 0), 'description': ''},
+        'Mg_1': {'symmetry': 5, 'atomic_species': 'Mg', 'atomic_radii': 160.00, 'color': (138, 43, 226), 'species_color': (138, 43, 226), 'description': ''},
+        'Mg_2': {'symmetry': 6, 'atomic_species': 'Mg', 'atomic_radii': 160.00, 'color': (118, 63, 206), 'species_color': (138, 43, 226), 'description': ''},
+        'Un_1': {'symmetry': 3, 'atomic_species': 'Un', 'atomic_radii': 100.00, 'color': (0, 0, 255), 'species_color': (0, 0, 255), 'description': ''}
     }
 
     # District size
@@ -557,9 +557,6 @@ class Project:
         elif search_type == 1:
 
             logger.info('Doing the basics...')
-            logger.info('Setting alloy...')
-            self.set_alloy_mat()
-            logger.info('Alloy set.')
             # Reset prob vectors:
             self.column_characterization(starting_index, search_type=12)
             # Spatial mapping:
@@ -957,7 +954,7 @@ class Project:
             self.find_edge_columns()
             for vertex in self.graph.vertices:
                 if vertex.is_edge_column and not vertex.is_set_by_user:
-                    vertex.reset_probability_vector(bias=2)
+                    vertex.reset_probability_vector(bias='Al_1')
             logger.info('Found edge columns.')
 
         elif search_type == 19:

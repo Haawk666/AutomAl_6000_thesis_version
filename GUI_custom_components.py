@@ -401,6 +401,19 @@ class RgbaSelector(QtWidgets.QGroupBox):
 
         self.setTitle('')
 
+    def get_triple(self):
+        triple = (
+            self.r_box.value(),
+            self.g_box.value(),
+            self.b_box.value()
+        )
+        return triple
+
+    def set_triple(self, triple):
+        self.r_box.setValue(triple[0])
+        self.g_box.setValue(triple[1])
+        self.b_box.setValue(triple[2])
+
 
 class CenterBox(QtWidgets.QGroupBox):
 

@@ -125,29 +125,15 @@ class Vertex:
         string += '        Peak gamma = {:.4f}\n'.format(self.peak_gamma)
         string += '        Average gamma = {:.4f}\n'.format(self.avg_gamma)
         string += '        Atomic species: {}\n'.format(self.atomic_species)
-        string += '        Species index: {}\n'.format(self.species_index)
+        string += '        Advanced species: {}\n'.format(self.advanced_species)
         string += '        Symmetry: {}\n'.format(self.n)
         string += '    Analysis:\n'
-        string += '        Species variant: {}\n'.format(self.species_variant)
-        string += '        Probability vector: ['
-        for prob in self.probability_vector:
-            string += ' {:.3f}'.format(prob)
-        string += ' ]\n'
+        string += '        Probability vector: {\n'
+        for key, prob in self.probability_vector.items():
+            string += '            {}: {:.3f}\n'.format(key, prob)
+        string += '        }\n'
         string += '            Prediction: {}\n'.format(self.atomic_species)
         string += '            Confidence: {}\n'.format(self.confidence)
-        string += '        Alpha model: ['
-        for a in self.alpha_probability_vector:
-            string += ' {:.3f}'.format(a)
-        string += ' ]\n'
-        string += '            Prediction: {}\n'.format(Vertex.species_string[self.alpha_probability_vector.index(max(self.alpha_probability_vector))])
-        string += '            Confidence: {}\n'.format(self.alpha_confidence)
-        string += '        Model: ['
-        for m in self.composite_probability_vector:
-            string += ' {:.3f}'.format(m)
-        string += ' ]\n'
-        string += '            Prediction: {}\n'.format(
-            Vertex.species_string[self.composite_probability_vector.index(max(self.composite_probability_vector))])
-        string += '            Confidence: {}\n'.format(self.composite_confidence)
         string += '    Graph parameters:\n'
         string += '        In-degree: {}\n'.format(self.in_degree)
         string += '        Out-degree: {}\n'.format(self.out_degree)
@@ -228,36 +214,10 @@ class Vertex:
     def determine_species_from_probability_vector(self):
         self.advanced_species = max(self.advanced_probability_vector, key=self.advanced_probability_vector.get)
         self.atomic_species = self.parent_graph.species_dict[self.advanced_species]['atomic_species']
-        self.n = self.parent_graph.species_dict[self.atomic_species]['symmetry']
+        self.n = self.parent_graph.species_dict[self.advanced_species]['symmetry']
 
     def reset_probability_vector_from_atomic_species(self):
         self.reset_probability_vector(bias=self.advanced_species)
-
-    @ staticmethod
-    def determine_simple_from_advanced_model(advanced_model):
-        simple = [
-            advanced_model[0] + advanced_model[1],
-            advanced_model[2],
-            0,
-            advanced_model[3] + advanced_model[4],
-            0,
-            advanced_model[5] + advanced_model[6],
-            0
-        ]
-        return simple
-
-    @ staticmethod
-    def determine_advanced_from_simple_model(simple_model):
-        advanced = [
-            simple_model[0] / 2,
-            simple_model[0] / 2,
-            simple_model[1],
-            simple_model[3] / 2,
-            simple_model[3] / 2,
-            simple_model[5] / 2,
-            simple_model[5] / 2
-        ]
-        return advanced
 
     def permute_j_k(self, j, k):
         if j == k:
@@ -313,17 +273,15 @@ class Vertex:
 class Arc:
 
     # Standard AutomAl 6000 class header:
-    advanced_category_string = {0: 'Si_1', 1: 'Si_2', 2: 'Si_3', 3: 'Cu', 4: 'Al_1', 5: 'Al_2', 6: 'Mg_1', 7: 'Mg_2'}
-    species_string = {0: 'Si', 1: 'Cu', 2: 'Al', 3: 'Mg', 4: 'Un'}
-    symmetry = {'Si': 3, 'Cu': 3, 'Al': 4, 'Mg': 5, 'Un': 3}
-    atomic_radii = {'Si': 117.5, 'Cu': 127.81, 'Al': 143.0, 'Mg': 160.0, 'Ag': 144.5, 'Zn': 133.25, 'Un': 200.0}
     al_lattice_const = 404.95
 
-    def __init__(self, j, vertex_a, vertex_b):
+    def __init__(self, j, vertex_a, vertex_b, parent_graph=None):
 
         self.j = j
         self.vertex_a = vertex_a
         self.vertex_b = vertex_b
+
+        self.parent = parent_graph
 
         if vertex_a.i in vertex_b.out_neighbourhood:
             self.dual_arc = True
@@ -353,8 +311,12 @@ class Arc:
         pos_j = self.vertex_b.spatial_pos()
         self.spatial_separation = np.sqrt((pos_i[0] - pos_j[0]) ** 2 + (pos_i[1] - pos_j[1]) ** 2 + (pos_i[2] - pos_j[2]) ** 2)
         self.spatial_projected_separation = np.sqrt((pos_i[0] - pos_j[0]) ** 2 + (pos_i[1] - pos_j[1]) ** 2)
-        radii_1 = self.atomic_radii[self.species_string[self.vertex_a.species_index]]
-        radii_2 = self.atomic_radii[self.species_string[self.vertex_a.species_index]]
+        if self.parent:
+            radii_1 = self.parent.species_dict[self.vertex_a.advanced_species]['atomic_radii']
+            radii_2 = self.parent.species_dict[self.vertex_b.advanced_species]['atomic_radii']
+        else:
+            radii_1 = 100
+            radii_2 = 100
         self.hard_sphere_separation = radii_1 + radii_2
         self.redshift = self.hard_sphere_separation - self.spatial_separation
 
@@ -485,6 +447,17 @@ class AtomicGraph:
         return classes
 
     def get_arc(self, i, j):
+        """Return the arc object adjacent from i to j, if any.
+
+        :param i: Index of the tail vertex
+        :param j: Index of the head vertex
+        :type i: int
+        :type j: int
+
+        :returns Arc instance:
+        :rtype graph_2.Arc:
+
+        """
         result = None
         for arc in self.arcs:
             if arc.vertex_a.i == i and arc.vertex_b.i == j:
@@ -496,6 +469,15 @@ class AtomicGraph:
         return result
 
     def get_vertex_objects_from_indices(self, vertex_indices):
+        """Get a list of Vertex objects corresponding to the indices given
+
+        :param vertex_indices: List of indices
+        :type vertex_indices: list(int)
+
+        :returns List of vertex objects:
+        :rtype list(graph_2.Vertex):
+
+        """
         vertices = []
         for index in vertex_indices:
             vertices.append(self.vertices[index])
@@ -579,8 +561,8 @@ class AtomicGraph:
         return projected_separation
 
     def get_hard_sphere_separation(self, i, j):
-        radii_1 = self.atomic_radii[self.vertices[i].atomic_species]
-        radii_2 = self.atomic_radii[self.vertices[j].atomic_species]
+        radii_1 = self.species_dict[self.vertices[i].advanced_species]['atomic_radii']
+        radii_2 = self.species_dict[self.vertices[j].advanced_species]['atomic_radii']
         return radii_1 + radii_2
 
     def get_im_separation_from_spatial_separation(self, spatial_searation):
@@ -728,13 +710,22 @@ class AtomicGraph:
         return corners, angles, vectors
 
     def set_zeta(self, i, zeta):
+        """Set the zeta value of the vertex with index i.
+
+        :param i: vertex index
+        :param zeta: Zeta
+        :type i: int
+        :type zeta: bool
+
+        """
+        if zeta is True:
+            zeta = 1
+        elif zeta is False:
+            zeta = 0
         self.vertices[i].zeta = zeta
 
-    def set_species(self, i, species_index):
-        self.vertices[i].set_species_from_species_index(species_index)
-        closed_district = copy.deepcopy(self.vertices[i].district)
-        closed_district.append(i)
-        self.build_local_map(closed_district)
+    def set_species(self, i, advanced_species):
+        self.vertices[i].reset_probability_vector(bias=advanced_species)
 
     @staticmethod
     def rebase(corners, next_, j, append=True):
@@ -1005,7 +996,7 @@ class AtomicGraph:
         avg_gammas = []
         for vertex in self.vertices:
             if not vertex.void:
-                if not vertex.is_in_precipitate and vertex.species_index == 3:
+                if not vertex.is_in_precipitate and vertex.atomic_species == 'Al':
                     peak_gammas.append(vertex.peak_gamma)
                     avg_gammas.append(vertex.avg_gamma)
         peak_mean = utils.mean_val(peak_gammas)
@@ -1126,39 +1117,7 @@ class AtomicGraph:
         logger.info('Graph refreshed!')
 
     def evaluate_sub_categories(self):
-        for vertex in self.vertices:
-            if not vertex.void:
-                if vertex.species_index == 2:
-                    if vertex.is_in_precipitate:
-                        vertex.species_variant = 2
-                        vertex.advanced_category_index = 3
-                    else:
-                        vertex.species_variant = 1
-                        vertex.advanced_category_index = 4
-                elif vertex.species_index == 0:
-                    sub_graph = self.get_column_centered_subgraph(vertex.i)
-                    for mesh in sub_graph.meshes:
-                        if mesh.order == 4:
-                            if mesh.vertices[0].species_index == 0 and\
-                                    mesh.vertices[1].species_index == 3 and\
-                                    mesh.vertices[2].species_index == 1 and\
-                                    mesh.vertices[3].species_index == 3:
-                                vertex.species_variant = 2
-                                vertex.advanced_category_index = 1
-                                break
-                    else:
-                        vertex.species_variant = 1
-                        vertex.advanced_category_index = 0
-                elif vertex.species_index == 3:
-                    if vertex.alpha_max < 3.175:
-                        vertex.species_variant = 1
-                        vertex.advanced_category_index = 5
-                    else:
-                        vertex.species_variant = 2
-                        vertex.advanced_category_index = 6
-                elif vertex.species_index == 1:
-                    vertex.species_variant = 1
-                    vertex.advanced_category_index = 2
+        pass
 
     def calc_condensed_property_data(self, filter_=None, recalc=True, keys=None):
 

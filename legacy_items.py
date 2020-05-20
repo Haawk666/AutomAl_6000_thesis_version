@@ -77,7 +77,7 @@ def precipitate_controller(graph, i):
 
     for x in range(0, graph.order):
 
-        if graph.vertices[x].flag_1 or graph.vertices[x].species_index == 6:
+        if graph.vertices[x].flag_1 or graph.vertices[x].atomic_species == 'Un':
             graph.vertices[x].is_in_precipitate = False
         else:
             graph.vertices[x].is_in_precipitate = True

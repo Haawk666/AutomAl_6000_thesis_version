@@ -1586,16 +1586,16 @@ class ControlWindow(QtWidgets.QWidget):
             vertex = self.ui_obj.project_instance.graph.vertices[i]
 
             self.lbl_column_index.setText('Column index: {}'.format(i))
-            self.lbl_column_x_pos.setText('x: {}'.format(vertex.im_coor_x))
-            self.lbl_column_y_pos.setText('y: {}'.format(vertex.im_coor_y))
-            self.lbl_column_peak_gamma.setText('Peak gamma: {}'.format(vertex.peak_gamma))
-            self.lbl_column_avg_gamma.setText('Avg gamma: {}'.format(vertex.avg_gamma))
+            self.lbl_column_x_pos.setText('x: {:.3f}'.format(vertex.im_coor_x))
+            self.lbl_column_y_pos.setText('y: {:.3f}'.format(vertex.im_coor_y))
+            self.lbl_column_peak_gamma.setText('Peak gamma: {:.3f}'.format(vertex.peak_gamma))
+            self.lbl_column_avg_gamma.setText('Avg gamma: {:.3f}'.format(vertex.avg_gamma))
             self.lbl_column_species.setText('Atomic species: {}'.format(vertex.atomic_species))
             self.lbl_column_level.setText('Level: {}'.format(vertex.zeta))
             self.lbl_neighbours.setText('Nearest neighbours: {}'.format(vertex.district))
 
-            self.lbl_alpha_max = QtWidgets.QLabel('Alpha max: {}'.format(vertex.alpha_max))
-            self.lbl_alpha_min = QtWidgets.QLabel('Alpha min: {}'.format(vertex.alpha_min))
+            self.lbl_alpha_max = QtWidgets.QLabel('Alpha max: {:.3f}'.format(vertex.alpha_max))
+            self.lbl_alpha_min = QtWidgets.QLabel('Alpha min: {:.3f}'.format(vertex.alpha_min))
 
             self.btn_new.setDisabled(False)
             self.btn_deselect.setDisabled(False)
@@ -1662,7 +1662,7 @@ class ControlWindow(QtWidgets.QWidget):
             self.lbl_search_size.setText('Search size: {}'.format(self.ui_obj.project_instance.search_size))
             self.lbl_scale.setText('Scale (pm / pixel): {}'.format(self.ui_obj.project_instance.scale))
 
-            self.lbl_alloy.setText(self.ui_obj.project_instance.get_alloy_string())
+            self.lbl_alloy.setText('Alloy: {}'.format(self.ui_obj.project_instance.get_alloy_string()))
 
             if self.ui_obj.selected_column == -1:
                 self.deselect_column()
@@ -3487,10 +3487,20 @@ class CustomizeOverlay(QtWidgets.QDialog):
 
 class CustomizeClassification(QtWidgets.QDialog):
 
-    def __init__(self, *args, ui_obj=None):
+    def __init__(self, *args, ui_obj=None, dict_=None):
         super().__init__(*args)
 
         self.ui_obj = ui_obj
+        if self.ui_obj.project_instance is None:
+            if dict_ is None:
+                self.dict = GUI.core.Project.default_dict
+            else:
+                self.dict = dict_
+        else:
+            if dict_ is None:
+                self.dict = self.ui_obj.project_instance.species_dict
+            else:
+                self.dict = dict_
 
         self.setWindowTitle('Customize classification')
 
@@ -3511,7 +3521,7 @@ class CustomizeClassification(QtWidgets.QDialog):
         self.btn_set_default = QtWidgets.QPushButton('Set default')
         self.btn_set_default.clicked.connect(self.btn_set_default_trigger)
 
-        self.edit_btn_layout = QtWidgets.QVBoxLayout()
+        self.edit_btn_layout = QtWidgets.QHBoxLayout()
         self.edit_btn_layout.addStretch()
         self.edit_btn_layout.addWidget(self.btn_new)
         self.edit_btn_layout.addWidget(self.btn_edit)
@@ -3525,70 +3535,59 @@ class CustomizeClassification(QtWidgets.QDialog):
         self.dialog_btn_layout.addWidget(self.btn_set_default)
         self.dialog_btn_layout.addStretch()
 
-        if self.ui_obj.project_instance is None:
-            length = len(GUI.core.Project.default_dict)
-        else:
-            length = len(self.ui_obj.project_instance.species_dict)
-
-        self.tbl_classes = QtWidgets.QTableWidget(length, 6)
-        headers = ['Class', 'Symmetry', 'Atomic species', 'Atomic radii', 'Color (r, g, b)', 'Species color (r, g, b)']
-        self.tbl_classes.setHorizontalHeaderLabels(headers)
-
-        if self.ui_obj.project_instance is not None:
-            counter = 0
-            for class_, details in self.ui_obj.project_instance.species_dict.items():
-                this_class = QtWidgets.QTableWidgetItem(class_)
-                this_symmetry = QtWidgets.QTableWidgetItem(details['symmetry'])
-                this_species = QtWidgets.QTableWidgetItem(details['atomic_species'])
-                this_radii = QtWidgets.QTableWidgetItem(details['atomic_radii'])
-                this_color = QtWidgets.QTableWidgetItem(details['color'])
-                this_species_color = QtWidgets.QTableWidgetItem(details['species_color'])
-
-                self.tbl_classes.setItem(counter, 0, this_class)
-                self.tbl_classes.setItem(counter, 1, this_symmetry)
-                self.tbl_classes.setItem(counter, 2, this_species)
-                self.tbl_classes.setItem(counter, 3, this_radii)
-                self.tbl_classes.setItem(counter, 4, this_color)
-                self.tbl_classes.setItem(counter, 5, this_species_color)
-
-                counter += 1
-        else:
-            counter = 0
-            for class_, details in GUI.core.Project.default_dict.items():
-                this_class = QtWidgets.QTableWidgetItem(class_)
-                this_symmetry = QtWidgets.QTableWidgetItem(details['symmetry'])
-                this_species = QtWidgets.QTableWidgetItem(details['atomic_species'])
-                this_radii = QtWidgets.QTableWidgetItem(details['atomic_radii'])
-                this_color = QtWidgets.QTableWidgetItem('({}, {}, {})'.format(details['color'][0], details['color'][0], details['color'][0]))
-                this_species_color = QtWidgets.QTableWidgetItem('({}, {}, {})'.format(details['species_color'][0], details['species_color'][0], details['species_color'][0]))
-
-                self.tbl_classes.setItem(counter, 0, this_class)
-                self.tbl_classes.setItem(counter, 1, this_symmetry)
-                self.tbl_classes.setItem(counter, 2, this_species)
-                self.tbl_classes.setItem(counter, 3, this_radii)
-                self.tbl_classes.setItem(counter, 4, this_color)
-                self.tbl_classes.setItem(counter, 5, this_species_color)
-
-                counter += 1
-
-        self.tbl_classes.resizeColumnsToContents()
-        self.tbl_classes.resizeRowsToContents()
+        self.lst_classes = QtWidgets.QListWidget()
+        self.lst_classes.itemClicked.connect(self.lst_classes_trigger)
+        self.headers = ['Symmetry', 'Atomic species', 'Atomic radii', 'Color (r, g, b)', 'Species color (r, g, b)', 'Description']
+        self.fields = ['symmetry', 'atomic_species', 'atomic_radii', 'color', 'species_color', 'description']
+        display_string = 'Class: \n'
+        for field in self.headers:
+            display_string += '{}: \n'.format(field)
+        self.lbl_details = QtWidgets.QLabel(display_string)
 
         self.set_layout()
         self.exec_()
 
+    def update_string(self):
+        if self.lst_classes.currentIndex() is None:
+            display_string = 'Class: \n'
+            for header, field in zip(self.headers, self.fields):
+                display_string += '{}: \n'.format(header)
+            self.lbl_details.setText(display_string)
+        else:
+            class_ = self.lst_classes.currentItem().text()
+            display_string = 'Class: {}\n'.format(class_)
+            for header, field in zip(self.headers, self.fields):
+                display_string += '{}: {}\n'.format(header, self.dict[class_][field])
+            self.lbl_details.setText(display_string)
+
     def set_layout(self):
+        self.lst_classes = QtWidgets.QListWidget()
+        self.lst_classes.itemClicked.connect(self.lst_classes_trigger)
+        for class_ in self.dict:
+            self.lst_classes.addItem(class_)
+
         v_layout = QtWidgets.QVBoxLayout()
         v_layout.addWidget(self.btn_what_is_this)
         layout = QtWidgets.QHBoxLayout()
-        layout.addWidget(self.tbl_classes)
-        layout.addLayout(self.edit_btn_layout)
+        layout.addWidget(self.lst_classes)
+        layout_2 = QtWidgets.QVBoxLayout()
+        layout_2.addLayout(self.edit_btn_layout)
+        layout_2.addWidget(self.lbl_details)
+        layout.addLayout(layout_2)
         v_layout.addLayout(layout)
         v_layout.addLayout(self.dialog_btn_layout)
         self.setLayout(v_layout)
 
+    def lst_classes_trigger(self):
+        self.update_string()
+
     def btn_apply_trigger(self):
-        pass
+        self.close()
+        if self.ui_obj.project_instance is not None:
+            self.ui_obj.project_instance.species_dict = self.dict
+            self.ui_obj.project_instance.graph.species_dict = self.dict
+        else:
+            logger.info('Cannot change default categories! Open a project first')
 
     def btn_cancel_trigger(self):
         self.close()
@@ -3597,16 +3596,113 @@ class CustomizeClassification(QtWidgets.QDialog):
         pass
 
     def btn_edit_trigger(self):
-        pass
+        CategoryEdit(parent=self)
+        self.update_string()
 
     def btn_set_default_trigger(self):
-        pass
+        self.dict = GUI.core.Project.default_dict
+        self.set_layout()
 
     def btn_remove_trigger(self):
-        pass
+        self.dict.pop(self.lst_classes.currentItem().text())
+        self.close()
+        CustomizeClassification(ui_obj=self.ui_obj, dict_=self.dict)
 
     def btn_what_is_this_trigger(self):
         pass
+
+
+class CategoryEdit(QtWidgets.QDialog):
+
+    def __init__(self, *args, parent=None):
+        super().__init__(*args)
+
+        self.parent = parent
+        self.class_ = parent.lst_classes.currentItem().text()
+
+        self.btn_ok = QtWidgets.QPushButton('Ok')
+        self.btn_ok.clicked.connect(self.btn_ok_trigger)
+        self.btn_cancel = QtWidgets.QPushButton('Cancel')
+        self.btn_cancel.clicked.connect(self.btn_cancel_trigger)
+
+        self.class_text = QtWidgets.QLineEdit('')
+        self.symmetry_box = QtWidgets.QSpinBox()
+        self.symmetry_box.setMaximum(10)
+        self.symmetry_box.setMinimum(0)
+        self.species_text = QtWidgets.QLineEdit('')
+        self.radii_box = QtWidgets.QDoubleSpinBox()
+        self.radii_box.setMinimum(0.00)
+        self.radii_box.setMaximum(500.0)
+        self.color_edit = GUI_custom_components.RgbaSelector()
+        self.species_color_edit = GUI_custom_components.RgbaSelector()
+        self.description_text = QtWidgets.QLineEdit('')
+
+        self.set_layout()
+        self.populate_values()
+        self.exec_()
+
+    def populate_values(self):
+        symmetry = self.parent.dict[self.class_]['symmetry']
+        species = self.parent.dict[self.class_]['atomic_species']
+        radii = self.parent.dict[self.class_]['atomic_radii']
+        color = self.parent.dict[self.class_]['color']
+        species_color = self.parent.dict[self.class_]['species_color']
+        description = self.parent.dict[self.class_]['description']
+        self.class_text.setText(self.class_)
+        self.symmetry_box.setValue(symmetry)
+        self.species_text.setText(species)
+        self.radii_box.setValue(radii)
+        self.color_edit.r_box.setValue(color[0])
+        self.color_edit.g_box.setValue(color[1])
+        self.color_edit.b_box.setValue(color[2])
+        self.species_color_edit.r_box.setValue(species_color[0])
+        self.species_color_edit.g_box.setValue(species_color[1])
+        self.species_color_edit.b_box.setValue(species_color[2])
+        self.description_text.setText(description)
+
+    def set_layout(self):
+        v_layout = QtWidgets.QVBoxLayout()
+
+        grid = QtWidgets.QGridLayout()
+        grid.addWidget(QtWidgets.QLabel('Class:'), 0, 0)
+        grid.addWidget(QtWidgets.QLabel('Symmetry:'), 0, 1)
+        grid.addWidget(QtWidgets.QLabel('Atomic species:'), 0, 2)
+        grid.addWidget(QtWidgets.QLabel('Radii:'), 0, 3)
+        grid.addWidget(QtWidgets.QLabel('Color:'), 0, 4)
+        grid.addWidget(QtWidgets.QLabel('Species color:'), 0, 5)
+        grid.addWidget(QtWidgets.QLabel('Description:'), 0, 6)
+
+        grid.addWidget(self.class_text, 1, 0)
+        grid.addWidget(self.symmetry_box, 1, 1)
+        grid.addWidget(self.species_text, 1, 2)
+        grid.addWidget(self.radii_box, 1, 3)
+        grid.addWidget(self.color_edit, 1, 4)
+        grid.addWidget(self.species_color_edit, 1, 5)
+        grid.addWidget(self.description_text, 1, 6)
+
+        v_layout.addLayout(grid)
+
+        btn_layout = QtWidgets.QHBoxLayout()
+        btn_layout.addStretch()
+        btn_layout.addWidget(self.btn_ok)
+        btn_layout.addWidget(self.btn_cancel)
+        btn_layout.addStretch()
+
+        v_layout.addLayout(btn_layout)
+
+        self.setLayout(v_layout)
+
+    def btn_ok_trigger(self):
+        self.close()
+        self.parent.dict[self.class_]['symmetry'] = self.symmetry_box.value()
+        self.parent.dict[self.class_]['atomic_species'] = self.species_text.text()
+        self.parent.dict[self.class_]['atomic_radii'] = self.radii_box.value()
+        self.parent.dict[self.class_]['color'] = self.color_edit.get_triple()
+        self.parent.dict[self.class_]['species_color'] = self.species_color_edit.get_triple()
+        self.parent.dict[self.class_]['description'] = self.description_text.text()
+
+    def btn_cancel_trigger(self):
+        self.close()
 
 
 
