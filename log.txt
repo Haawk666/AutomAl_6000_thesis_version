@@ -3,5 +3,10 @@ GUI: GUI version: 0.0.2
 GUI: core version: 0.1.0
 GUI: Build version: Alpha 1.0
 ------------------------
-GUI: Opening file C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/haakon_001_columns
-core: Loaded C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/haakon_001_columns
+GUI: Opening file C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/haakon_001_result
+core: Loaded C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/haakon_001_result
+core: Mapping spatial locality...
+column_characterization: Districts mapped in 34.43676805496216 seconds with matrix method.
+    Distance calculations took 34.08389353752136 seconds.
+    Sorting took 0.3528745174407959 seconds.
+core: Spatial mapping complete.

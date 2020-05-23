@@ -189,6 +189,12 @@ class Vertex:
     def spatial_pos(self):
         return self.spatial_coor_x, self.spatial_coor_y, self.spatial_coor_z
 
+    def set_probability_from_advanced(self):
+        pass
+
+    def set_advanced_from_probability(self):
+        pass
+
     def reset_probability_vector(self, bias='Un_1'):
         self.advanced_probability_vector = {}
         self.probability_vector = {}
@@ -214,6 +220,7 @@ class Vertex:
     def determine_species_from_probability_vector(self):
         self.advanced_species = max(self.advanced_probability_vector, key=self.advanced_probability_vector.get)
         self.atomic_species = self.parent_graph.species_dict[self.advanced_species]['atomic_species']
+        self.set_probability_from_advanced()
         self.n = self.parent_graph.species_dict[self.advanced_species]['symmetry']
 
     def reset_probability_vector_from_atomic_species(self):

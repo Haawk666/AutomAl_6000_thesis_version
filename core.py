@@ -7,6 +7,7 @@ import graph_op
 import compatibility
 import legacy_items
 import untangling
+import column_characterization
 import statistics
 # External imports:
 from matplotlib import pyplot as plt
@@ -634,10 +635,7 @@ class Project:
         elif search_type == 3:
             # Run spatial mapping
             logger.info('Mapping spatial locality...')
-            self.redraw_centre_mat()
-            for i in range(0, self.num_columns):
-                self.graph.vertices[i].district, _ = self.find_nearest(i, 8)
-            self.column_characterization(starting_index, search_type=18)
+            column_characterization.map_districts(self.graph)
             logger.info('Spatial mapping complete.')
 
         elif search_type == 4:
@@ -941,7 +939,7 @@ class Project:
             logger.info('Running experimental angle analysis')
             for vertex in self.graph.vertices:
                 if not vertex.is_edge_column and not vertex.is_set_by_user and not vertex.void:
-                    vertex.probability_vector = legacy_items.base_angle_score(self.graph, vertex.i)
+                    vertex.advanced_probability_vector = legacy_items.base_angle_score(self.graph, vertex.i)
                     vertex.determine_species_from_probability_vector()
             logger.info('Angle analysis complete!')
 

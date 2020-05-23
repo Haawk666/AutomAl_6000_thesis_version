@@ -57,8 +57,19 @@ def base_angle_score(graph_obj, i, apply=True):
         cf = [a * b for a, b in zip(cf_min, cf_max)]
         probs = utils.normalize_list(cf)
         sum_probs = [probs[1] + probs[2], probs[0], probs[3], probs[4] + probs[5], 0]
+        advanced_probability_vector = {
+            'Si_1': cf_si_1_max * cf_si_1_min,
+            'Si_2': cf_si_2_max * cf_si_2_min,
+            'Cu_1': cf_cu_max * cf_cu_min,
+            'Al_1': cf_al_max * cf_al_min / 2,
+            'Al_2': cf_al_max * cf_al_min / 2,
+            'Mg_1': cf_mg_1_max * cf_mg_1_min,
+            'Mg_2': cf_mg_2_max * cf_mg_2_min,
+            'Un_1': 0
+        }
+        advanced_probability_vector = utils.normalize_dict(advanced_probability_vector, norm_sum=1)
 
-        return utils.normalize_list(sum_probs)
+        return advanced_probability_vector
 
     else:
 
