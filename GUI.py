@@ -310,19 +310,19 @@ class MainUI(QtWidgets.QMainWindow):
             if key == QtCore.Qt.Key_1:
                 if not self.selected_column == -1:
                     self.project_instance.graph.vertices[self.selected_column].is_set_by_user = True
-                    self.set_species(0)
+                    self.set_species('Si_1')
             elif key == QtCore.Qt.Key_2:
                 if not self.selected_column == -1:
                     self.project_instance.graph.vertices[self.selected_column].is_set_by_user = True
-                    self.set_species(1)
+                    self.set_species('Cu_1')
             elif key == QtCore.Qt.Key_3:
                 if not self.selected_column == -1:
                     self.project_instance.graph.vertices[self.selected_column].is_set_by_user = True
-                    self.set_species(2)
+                    self.set_species('Al_1')
             elif key == QtCore.Qt.Key_4:
                 if not self.selected_column == -1:
                     self.project_instance.graph.vertices[self.selected_column].is_set_by_user = True
-                    self.set_species(3)
+                    self.set_species('Mg_1')
             elif key == QtCore.Qt.Key_Plus:
                 if not self.selected_column == -1:
                     self.set_level(self.project_instance.graph.vertices[self.selected_column].anti_level())
@@ -878,12 +878,22 @@ class MainUI(QtWidgets.QMainWindow):
 
     def btn_set_position_trigger(self):
         if self.project_instance is not None:
-            x = self.gs_atomic_positions.interactive_position_objects[self.selected_column].x() + self.project_instance.r
-            y = self.gs_atomic_positions.interactive_position_objects[self.selected_column].y() + self.project_instance.r
-            self.project_instance.graph.vertices[self.selected_column].im_coor_x = x
-            self.project_instance.graph.vertices[self.selected_column].im_coor_y = y
+            self.sys_message('Working...')
+            (x, y) = self.gs_atomic_positions.interactive_position_objects[self.selected_column].get_vertex_pos()
+            vertex = self.project_instance.graph.vertices[self.selected_column]
+            vertex.im_coor_x = x
+            vertex.im_coor_y = y
+            vertex.spatial_coor_x = x * self.project_instance.scale
+            vertex.spatial_coor_y = y * self.project_instance.scale
+            vertex.avg_gamma, vertex.peak_gamma = utils.circular_average(
+                self.project_instance.im_mat,
+                int(x),
+                int(y),
+                self.project_instance.r
+            )
             self.control_window.mode_move(False)
             self.update_central_widget()
+            self.sys_message('Ready.')
 
     def btn_show_stats_trigger(self):
         if self.project_instance is not None:
@@ -926,6 +936,13 @@ class MainUI(QtWidgets.QMainWindow):
         if self.project_instance is not None:
             self.project_instance.reset_graph()
             self.btn_continue_detection_trigger()
+
+    def btn_redraw_search_mat_trigger(self):
+        if self.project_instance is not None:
+            self.sys_message('Working...')
+            self.project_instance.redraw_search_mat()
+            self.update_search_matrix()
+            self.sys_message('Ready.')
 
     def btn_continue_analysis_trigger(self):
         if self.project_instance is not None:
@@ -1024,6 +1041,9 @@ class MainUI(QtWidgets.QMainWindow):
             if ok_pressed == QtWidgets.QMessageBox.Yes:
                 self.sys_message('Working...')
                 self.project_instance.graph.remove_vertex(self.selected_column)
+                self.project_instance.num_columns -= 1
+                self.update_central_widget()
+                logger.info('Vertex moved. remember to redraw the search matrix before continuing column detection!')
                 self.sys_message('Ready.')
 
     def btn_print_details_trigger(self):
@@ -1086,7 +1106,23 @@ class MainUI(QtWidgets.QMainWindow):
         self.column_selected(-1)
 
     def btn_new_column_trigger(self):
-        pass
+        if self.project_instance is not None:
+            self.sys_message('Working...')
+            new_vertex = core.graph_2.Vertex(
+                self.project_instance.graph.order,
+                self.project_instance.im_width / 2 + 0.1,
+                self.project_instance.im_height / 2 + 0.1,
+                self.project_instance.r,
+                self.project_instance.scale,
+                parent_graph=self.project_instance.graph
+            )
+            self.project_instance.graph.add_vertex(new_vertex)
+            self.project_instance.num_columns += 1
+            index = new_vertex.i
+            self.update_central_widget()
+            self.column_selected(index)
+            self.sys_message('Setting move mode to on...')
+            self.control_window.mode_move(True)
 
     def btn_set_style_trigger(self):
         GUI_elements.CustomizeOverlay(ui_obj=self)

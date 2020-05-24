@@ -1,6 +1,7 @@
 # Internal imports:
 # External imports:
 import numpy as np
+
 import time
 import logging
 # Instantiate logger:
@@ -22,7 +23,7 @@ def map_districts(graph_obj, district_size=8, method='matrix'):
                     matrix[i, j] = dist
         time_2 = time.time()
         for vertex in graph_obj.vertices:
-            vertex.district = np.argsort(matrix[vertex.i, :])[1:district_size + 1]
+            vertex.district = np.argsort(matrix[vertex.i, :])[1:district_size + 1].tolist()
         time_3 = time.time()
         summary_string = 'Districts mapped in {} seconds with matrix method.\n'.format(time_3 - time_1)
         summary_string += '    Distance calculations took {} seconds.\n'.format(time_2 - time_1)

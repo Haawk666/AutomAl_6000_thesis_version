@@ -344,18 +344,22 @@ def sort_neighbours(indices, distances, n):
 def cm_fit(mat, x_0, y_0, r):
     # "Centre of mass" fit. Calculates the centre of mass of the pixels in the circle centred at (x_0, y_0) with radius
     # r.
-    counter = 0
+    (y_range, x_range) = mat.shape
     total_mass = 0
     weighted_x_sum = 0
     weighted_y_sum = 0
     for x_i in range(x_0 - r, x_0 + r):
         for y_i in range(y_0 - r, y_0 + r):
-            distance = np.sqrt((x_0 - x_i)**2 + (y_0 - y_i)**2)
+            distance = np.sqrt((x_0 - x_i) ** 2 + (y_0 - y_i) ** 2)
             if distance <= r:
-                total_mass = total_mass + mat[y_i, x_i]
-                weighted_x_sum = weighted_x_sum + mat[y_i, x_i]*x_i
-                weighted_y_sum = weighted_y_sum + mat[y_i, x_i]*y_i
-                counter = counter + 1
+                if -1 < x_i < x_range and -1 < y_i < y_range:
+                    total_mass += mat[y_i, x_i]
+                    weighted_x_sum += mat[y_i, x_i]*x_i
+                    weighted_y_sum += mat[y_i, x_i]*y_i
+                else:
+                    total_mass += 0.1
+                    weighted_x_sum += 0.1*x_i
+                    weighted_y_sum += 0.1*y_i
     x_fit = weighted_x_sum / total_mass
     y_fit = weighted_y_sum / total_mass
     return x_fit, y_fit
@@ -420,10 +424,12 @@ def gen_de_framed_mat(temp_mat, r):
 
 def delete_pixels(mat, x_0, y_0, r):
     # Deletes (or sets elements to 0) in the (discrete)-circular area defined by it's centre (x_0, y_0) and radius r.
+    (y_range, x_range) = mat.shape
     for x_i in range(x_0 - r, x_0 + r):
         for y_i in range(y_0 - r, y_0 + r):
-            if np.sqrt((x_0 - x_i)**2 + (y_0 - y_i)**2) <= r:
-                mat[y_i, x_i] = 0.0
+            if -1 < x_i < x_range and -1 < y_i < y_range:
+                if np.sqrt((x_0 - x_i)**2 + (y_0 - y_i)**2) <= r:
+                    mat[y_i, x_i] = 0.0
     return mat
 
 
@@ -440,6 +446,7 @@ def draw_circle(mat, x_0, y_0, r):
 
 def circular_average(mat, x_0, y_0, r):
     # Calculate the average value of the elements in the circle centered at (x_0, y_0) with radius r.
+    (y_range, x_range) = mat.shape
     element_sum = 0.0
     peak_element = 0.0
     counter = 0
@@ -447,10 +454,11 @@ def circular_average(mat, x_0, y_0, r):
         for y_i in range(y_0 - r, y_0 + r):
             distance = np.sqrt((x_0 - x_i) ** 2 + (y_0 - y_i) ** 2)
             if distance <= r:
-                element_sum = element_sum + mat[y_i, x_i]
-                counter = counter + 1
-                if mat[y_i, x_i] > peak_element:
-                    peak_element = mat[y_i, x_i]
+                if -1 < x_i < x_range and -1 < y_i < y_range:
+                    element_sum = element_sum + mat[y_i, x_i]
+                    counter = counter + 1
+                    if mat[y_i, x_i] > peak_element:
+                        peak_element = mat[y_i, x_i]
     element_average = element_sum / counter
     return element_average, peak_element
 

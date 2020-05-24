@@ -114,7 +114,6 @@ class Project:
 
         # Data matrices:
         self.search_mat = copy.deepcopy(self.im_mat)
-        self.column_centre_mat = np.zeros((self.im_height, self.im_width, 2))
 
         # Counting and statistical variables.
         self.num_columns = 0
@@ -230,98 +229,75 @@ class Project:
     def column_detection(self, search_type='s', plot=False):
         """Column detection algorithm.
 
-        The column detection algorithm will attempt to locate the columns in a HAADF-STEM image. When a SuchSoftware
-        object is instantiated, the image data is stored in self.im_mat, which is a numpy array with values normalized
-        to the range (0, 1). In broad terms the algorithm works by identifying the brightest pixel in self.im_mat. It
-        then does a centre-of-mass calculation using pixel values from a circular area around the max pixel, with radius
-        self.r (Which is determined at init based on the scale information in the .dm3 metadata). It then sets all
-        pixels in an area slightly larger than this to 0 in self.search_mat. The next max pixel will then be identified
-        from the search_mat, while the CM-calculation will still be made from the im_mat.
-
-        It will continue searching until an end condition is met, which depends on the search mode. If search mode is
-        \'s\', it will search until it finds self.search_size number of columns. If search mode is \'t\', it will search
-        until the brightest pixel is below self.threshold. For more details, see [link].
-
-        :param search_type: (Optional, default=\'s\') The search mode for the algorithm.
-        :type search_type: string
-
         """
         peak_values = []
         non_edge_peak_values = []
-        tmp_im_mat = utils.gen_framed_mat(self.im_mat, self.r + self.overhead)
         if len(self.graph.vertices) == 0:
             logger.info('Starting column detection. Search mode is \'{}\''.format(search_type))
-            self.search_mat = utils.gen_framed_mat(self.im_mat, self.r + self.overhead)
+            self.search_mat = copy.deepcopy(self.im_mat)
             cont = True
         else:
             logger.info('Continuing column detection. Search mode is \'{}\''.format(search_type))
-            min_val = 1
+            min_val = 2
             for vertex in self.graph.vertices:
                 if vertex.peak_gamma < min_val:
                     min_val = vertex.peak_gamma
             if min_val < self.threshold:
-                new_graph = graph_2.AtomicGraph(self.scale)
+                new_graph = graph_2.AtomicGraph(
+                    self.scale,
+                    active_model=self.graph.active_model,
+                    species_dict=self.graph.species_dict
+                )
                 self.num_columns = 0
-                self.search_mat = self.im_mat
-                self.search_mat = utils.gen_framed_mat(self.search_mat, self.r + self.overhead)
-                for vertex in self.graph.vertices:
+                self.search_mat = copy.deepcopy(self.im_mat)
+                for vertex in self.graph.get_non_void_vertices():
                     if vertex.peak_gamma > self.threshold:
                         self.num_columns += 1
                         peak_values.append(vertex.peak_gamma)
                         new_graph.add_vertex(vertex)
                         self.search_mat = utils.delete_pixels(
                             self.search_mat,
-                            int(vertex.im_coor_x + self.r + self.overhead),
-                            int(vertex.im_coor_y + self.r + self.overhead),
+                            int(vertex.im_coor_x),
+                            int(vertex.im_coor_y),
                             self.r + self.overhead
                         )
                 self.graph = new_graph
                 cont = False
             else:
+                self.redraw_search_mat()
                 for vertex in self.graph.vertices:
                     peak_values.append(vertex.peak_gamma)
-                self.search_mat = utils.gen_framed_mat(self.search_mat, self.r + self.overhead)
                 cont = True
 
         counter = self.num_columns
 
         while cont:
 
-            pos = np.unravel_index(self.search_mat.argmax(),
-                                   (self.im_height + 2 * (self.r + self.overhead),
-                                    self.im_width + 2 * (self.r + self.overhead)))
+            pos = np.unravel_index(self.search_mat.argmax(), (self.im_height, self.im_width))
             max_val = self.search_mat[pos]
             peak_values.append(max_val)
 
-            x_fit, y_fit = utils.cm_fit(tmp_im_mat, pos[1], pos[0], self.r)
+            x_fit, y_fit = utils.cm_fit(self.im_mat, pos[1], pos[0], self.r)
+            x_fit_int = int(x_fit)
+            y_fit_int = int(y_fit)
 
-            x_fit_real_coor = x_fit - self.r - self.overhead
-            y_fit_real_coor = y_fit - self.r - self.overhead
-            x_fit_real_coor_pix = int(np.floor(x_fit_real_coor))
-            y_fit_real_coor_pix = int(np.floor(y_fit_real_coor))
-            x_fit_pix = int(np.floor(x_fit))
-            y_fit_pix = int(np.floor(y_fit))
+            self.search_mat = utils.delete_pixels(self.search_mat, x_fit_int, y_fit_int, self.r + self.overhead)
 
-            self.search_mat = utils.delete_pixels(self.search_mat, x_fit_pix, y_fit_pix, self.r + self.overhead)
-
-            vertex = graph_2.Vertex(counter, x_fit_real_coor, y_fit_real_coor, self.r, self.scale, parent_graph=self.graph)
-            vertex.avg_gamma, vertex.peak_gamma = utils.circular_average(tmp_im_mat, x_fit_pix, y_fit_pix, self.r)
+            vertex = graph_2.Vertex(counter, x_fit, y_fit, self.r, self.scale, parent_graph=self.graph)
+            vertex.avg_gamma, vertex.peak_gamma = utils.circular_average(self.im_mat, x_fit_int, y_fit_int, self.r)
             if not max_val == vertex.peak_gamma:
-                logger.info(
+                logger.debug(
                     'Vertex {}\n    Pos: ({}, {})\n    Fit: ({}, {})\n    max_val: {}\n    peak_gamma: {}\n'.format(
                         counter,
-                        pos[1] - self.r - self.overhead,
-                        pos[0] - self.r - self.overhead,
-                        x_fit_real_coor_pix,
-                        y_fit_real_coor_pix,
+                        pos[1],
+                        pos[0],
+                        x_fit,
+                        y_fit,
                         max_val,
                         vertex.peak_gamma
                     )
                 )
             self.graph.add_vertex(vertex)
-
-            self.column_centre_mat[y_fit_real_coor_pix, x_fit_real_coor_pix, 0] = 1
-            self.column_centre_mat[y_fit_real_coor_pix, x_fit_real_coor_pix, 1] = counter
 
             self.num_columns += 1
             counter += 1
@@ -335,7 +311,6 @@ class Project:
             else:
                 logger.error('Invalid search_type')
 
-        self.search_mat = utils.gen_de_framed_mat(self.search_mat, self.r + self.overhead)
         self.summarize_stats()
 
         self.find_edge_columns()
@@ -414,76 +389,6 @@ class Project:
 
             plt.show()
 
-    def find_nearest(self, i, n, weight=4):
-        """Use the image to determine the closest neighbours of vertex *i*.
-
-        :param i: Index of the vertex for which closest neighbours are to be determined.
-        :param n: How many neighbours to map.
-        :param weight: (Optional, default=4) Used for internal recursion. If n neighbours was not found by searching a
-            pre-set search area, then it will call itself with an increased weight, effectively increasing the search
-            area.
-        :type i: int
-        :type n: int
-        :type weight: int
-
-        :return: returns tuple of a python list with the indices of the *n* closest neighbours of vertex *i* and a
-            python list with the (projected) distance to each neighbour.
-        :rtype: tuple(list(<int>), list(<float>)).
-
-        """
-
-        x_0 = int(self.graph.vertices[i].im_coor_x)
-        y_0 = int(self.graph.vertices[i].im_coor_y)
-
-        indices = np.ndarray([n], dtype=np.int)
-        distances = np.ndarray([n], dtype=np.float64)
-        num_found = 0
-        total_num = 0
-
-        for x in range(x_0 - weight * self.r, x_0 + weight * self.r):
-            for y in range(y_0 - weight * self.r, y_0 + weight * self.r):
-
-                if 0 <= x < self.im_width and 0 <= y < self.im_height and not (x == x_0 and y == y_0):
-
-                    if self.column_centre_mat[y, x, 0] == 1:
-                        j = self.column_centre_mat[y, x, 1]
-                        dist = self.graph.get_projected_image_separation(i, j)
-                        if num_found >= n:
-                            if dist < distances.max():
-                                ind = distances.argmax()
-                                indices[ind] = j
-                                distances[ind] = dist
-                        else:
-                            indices[num_found] = j
-                            distances[num_found] = dist
-                            num_found += 1
-                        total_num += 1
-
-        if num_found < n:
-
-            indices, distances = self.find_nearest(i, n, weight=2 * weight)
-            logger.debug('Did not find enough neighbours for vertex {}. increasing search area.'.format(i))
-
-        else:
-
-            logger.debug('Found {} total neighbours for vertex {}'.format(total_num, i))
-
-            # Use built-in sort instead of this home-made shit:
-            temp_indices = np.ndarray([n], dtype=np.int)
-            temp_distances = np.ndarray([n], dtype=np.float64)
-
-            for k in range(0, n):
-
-                ind = distances.argmin()
-                temp_indices[k] = indices[ind]
-                temp_distances[k] = distances[ind]
-                distances[ind] = distances.max() + 100
-
-            indices = temp_indices
-            distances = temp_distances
-
-        return list(indices), list(distances)
-
     def find_edge_columns(self):
         """Locate vertices that are close to the edge of the image.
 
@@ -497,7 +402,7 @@ class Project:
 
             x_coor = vertex.im_coor_x
             y_coor = vertex.im_coor_y
-            margin = 6 * self.r
+            margin = 4 * self.r
 
             if x_coor < margin or x_coor > self.im_width - margin - 1 or y_coor < margin or y_coor > self.im_height - margin - 1:
                 self.graph.vertices[vertex.i].is_edge_column = True
@@ -640,9 +545,9 @@ class Project:
 
         elif search_type == 4:
             # redraw edges
-            logger.info('Adding edges to graph...')
+            logger.info('Mapping arcs...')
             self.graph.map_arcs()
-            logger.info('Edges added.')
+            logger.info('Arcs mapped.')
 
         elif search_type == 5:
             # Legacy particle detection
@@ -1017,10 +922,13 @@ class Project:
 
         """
         if self.graph.order > 0:
-            temp_mat = utils.gen_framed_mat(self.im_mat, self.r)
             for vertex in self.graph.vertices:
-                vertex.avg_gamma, vertex.peak_gamma = utils.circular_average(temp_mat, int(vertex.im_coor_x + self.r),
-                                                                             int(vertex.im_coor_y + self.r), self.r)
+                vertex.avg_gamma, vertex.peak_gamma = utils.circular_average(
+                    self.im_mat,
+                    int(vertex.im_coor_x),
+                    int(vertex.im_coor_y),
+                    self.r
+                )
 
     def summarize_stats(self):
         """Summarize current stats about the project file.
@@ -1033,24 +941,14 @@ class Project:
 
         """
 
-        self.search_mat = self.im_mat
-        if self.num_columns > 0:
-            self.search_mat = utils.gen_framed_mat(self.search_mat, self.r + self.overhead)
-            for i in range(0, self.num_columns):
-                self.search_mat = utils.delete_pixels(self.search_mat,
-                                                      int(self.graph.vertices[i].im_coor_x + self.r + self.overhead),
-                                                      int(self.graph.vertices[i].im_coor_y + self.r + self.overhead),
-                                                      self.r + self.overhead)
-            self.search_mat = utils.gen_de_framed_mat(self.search_mat, self.r + self.overhead)
-
-    def redraw_centre_mat(self):
-        """Redraw the centre matrix."""
-
-        self.column_centre_mat = np.zeros((self.im_height, self.im_width, 2), dtype=type(self.im_mat))
+        self.search_mat = copy.deepcopy(self.im_mat)
         if self.num_columns > 0:
             for vertex in self.graph.vertices:
-                self.column_centre_mat[int(vertex.im_coor_y), int(vertex.im_coor_x), 0] = 1
-                self.column_centre_mat[int(vertex.im_coor_y), int(vertex.im_coor_x), 1] = vertex.i
+                self.search_mat = utils.delete_pixels(
+                    self.search_mat,
+                    int(vertex.im_coor_x),
+                    int(vertex.im_coor_y),
+                    self.r + self.overhead)
 
     def get_im_length_from_spatial(self, spatial_length):
         return self.scale * spatial_length

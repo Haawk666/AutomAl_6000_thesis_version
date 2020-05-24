@@ -409,7 +409,6 @@ class AtomicGraph:
         else:
             self.vertices.append(new_vertex)
             if not new_vertex.i == len(self.vertices) - 1:
-                logger.warning('Vertex index out of sync! Overwriting index! (This is indicative of something going awry!)')
                 new_vertex.i = len(self.vertices) - 1
         self.order += 1
 

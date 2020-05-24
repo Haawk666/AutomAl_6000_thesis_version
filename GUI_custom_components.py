@@ -41,24 +41,32 @@ class InteractiveColumn(QtWidgets.QGraphicsEllipseItem):
             self.r = r
             self.i = vertex.i
             self.center_coor = vertex.im_pos()
-            self.center_coor = scale_factor * self.center_coor[0] - np.round(self.r / 2), scale_factor * self.center_coor[1] - np.round(self.r / 2)
         else:
             self.r = 5
             self.i = -1
-            self.center_coor = (0, 0, 0)
+            self.center_coor = (0, 0)
         self.scale_factor = scale_factor
         self.vertex = vertex
 
         super().__init__(0, 0, self.r, self.r)
 
         if movable:
-            self.moveBy(self.center_coor[0], self.center_coor[1])
+            offset = self.boundingRect().center()
+            self.moveBy(self.center_coor[0] - offset.x(), self.center_coor[1] - offset.y())
         if selectable:
             self.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable)
+
+    def get_vertex_pos(self):
+        offset = self.boundingRect().center()
+        pos = (self.x() + offset.x(), self.y() + offset.y())
+        return pos
 
     def mouseReleaseEvent(self, event: 'QtWidgets.QGraphicsEllipseItem.mouseReleaseEvent'):
         """Pass a mouse release event on to the ui_obj reference object"""
         self.ui_obj.column_selected(self.i)
+
+    def mousePressEvent(self, *args, **kwargs):
+        pass
 
 
 class InteractivePosColumn(InteractiveColumn):

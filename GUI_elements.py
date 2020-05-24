@@ -78,17 +78,18 @@ class AtomicPositions(QtWidgets.QGraphicsScene):
         self.interactive_position_objects = []
         if self.ui_obj.project_instance is not None:
             for vertex in self.ui_obj.project_instance.graph.vertices:
-                if not vertex.void:
-                    self.interactive_position_objects.append(GUI_custom_components.InteractivePosColumn(
-                        ui_obj=self.ui_obj,
-                        vertex=vertex,
-                        r=vertex.r
-                    ))
-                    self.addItem(self.interactive_position_objects[-1])
-                    if not self.ui_obj.control_window.chb_toggle_positions.isChecked():
-                        self.interactive_position_objects[-1].hide()
-                    else:
-                        self.interactive_position_objects[-1].show()
+                self.interactive_position_objects.append(GUI_custom_components.InteractivePosColumn(
+                    ui_obj=self.ui_obj,
+                    vertex=vertex,
+                    r=vertex.r
+                ))
+                self.addItem(self.interactive_position_objects[-1])
+                if not self.ui_obj.control_window.chb_toggle_positions.isChecked():
+                    self.interactive_position_objects[-1].hide()
+                else:
+                    self.interactive_position_objects[-1].show()
+                if vertex.void:
+                    self.interactive_position_objects[-1].hide()
 
 
 class OverlayComposition(QtWidgets.QGraphicsScene):
@@ -161,24 +162,25 @@ class OverlayComposition(QtWidgets.QGraphicsScene):
         self.interactive_overlay_objects = []
         if self.ui_obj.project_instance is not None:
             for vertex in self.ui_obj.project_instance.graph.vertices:
-                if not vertex.void:
-                    species = vertex.atomic_species.lower()
-                    if vertex.zeta == 0:
-                        brush = self.zeta_0_brushes[self.categories.index(species)]
-                    else:
-                        brush = self.zeta_1_brushes[self.categories.index(species)]
-                    self.interactive_overlay_objects.append(GUI_custom_components.InteractiveOverlayColumn(
-                        ui_obj=self.ui_obj,
-                        vertex=vertex,
-                        r=self.radii[self.categories.index(species)],
-                        pen=self.pens[self.categories.index(species)],
-                        brush=brush
-                    ))
-                    self.addItem(self.interactive_overlay_objects[-1])
-                    if vertex.show_in_overlay:
-                        self.interactive_overlay_objects[-1].show()
-                    else:
-                        self.interactive_overlay_objects[-1].hide()
+                species = vertex.atomic_species.lower()
+                if vertex.zeta == 0:
+                    brush = self.zeta_0_brushes[self.categories.index(species)]
+                else:
+                    brush = self.zeta_1_brushes[self.categories.index(species)]
+                self.interactive_overlay_objects.append(GUI_custom_components.InteractiveOverlayColumn(
+                    ui_obj=self.ui_obj,
+                    vertex=vertex,
+                    r=self.radii[self.categories.index(species)],
+                    pen=self.pens[self.categories.index(species)],
+                    brush=brush
+                ))
+                self.addItem(self.interactive_overlay_objects[-1])
+                if vertex.show_in_overlay:
+                    self.interactive_overlay_objects[-1].show()
+                else:
+                    self.interactive_overlay_objects[-1].hide()
+                if vertex.void:
+                    self.interactive_overlay_objects[-1].hide()
 
 
 class AtomicGraph(QtWidgets.QGraphicsScene):
@@ -250,13 +252,13 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
         """Redraws all column elements."""
         self.interactive_vertex_objects = []
         for vertex in self.ui_obj.project_instance.graph.vertices:
+            self.interactive_vertex_objects.append(GUI_custom_components.InteractiveGraphColumn(
+                ui_obj=self.ui_obj,
+                vertex=vertex,
+                scale_factor=self.scale_factor,
+                r=vertex.r
+            ))
             if not vertex.void:
-                self.interactive_vertex_objects.append(GUI_custom_components.InteractiveGraphColumn(
-                    ui_obj=self.ui_obj,
-                    vertex=vertex,
-                    scale_factor=self.scale_factor,
-                    r=vertex.r
-                ))
                 self.addItem(self.interactive_vertex_objects[-1])
 
     def re_draw_edges(self):
@@ -1126,6 +1128,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_export = GUI_custom_components.MediumButton('Export data', self, trigger_func=self.ui_obj.btn_export_overlay_image_trigger)
         self.btn_start_alg_1 = GUI_custom_components.MediumButton('Start', self, trigger_func=self.ui_obj.btn_continue_detection_trigger)
         self.btn_reset_alg_1 = GUI_custom_components.MediumButton('Reset', self, trigger_func=self.ui_obj.btn_restart_detection_trigger)
+        self.btn_redraw_search_mat = GUI_custom_components.MediumButton('Redraw search mat', self, trigger_func=self.ui_obj.btn_redraw_search_mat_trigger)
         self.btn_start_alg_2 = GUI_custom_components.MediumButton('Start', self, trigger_func=self.ui_obj.btn_continue_analysis_trigger)
         self.btn_reset_alg_2 = GUI_custom_components.MediumButton('Reset', self, trigger_func=self.ui_obj.btn_restart_analysis_trigger)
         self.btn_invert_lvl_alg_2 = GUI_custom_components.MediumButton('Invert lvl', self, trigger_func=self.ui_obj.btn_invert_levels_trigger)
@@ -1187,6 +1190,7 @@ class ControlWindow(QtWidgets.QWidget):
         btn_alg_1_btns_layout = QtWidgets.QHBoxLayout()
         btn_alg_1_btns_layout.addWidget(self.btn_start_alg_1)
         btn_alg_1_btns_layout.addWidget(self.btn_reset_alg_1)
+        btn_alg_1_btns_layout.addWidget(self.btn_redraw_search_mat)
         btn_alg_1_btns_layout.addStretch()
 
         btn_alg_2_btns_layout = QtWidgets.QHBoxLayout()
@@ -1399,6 +1403,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_list.append(self.btn_export)
         self.btn_list.append(self.btn_start_alg_1)
         self.btn_list.append(self.btn_reset_alg_1)
+        self.btn_list.append(self.btn_redraw_search_mat)
         self.btn_list.append(self.btn_start_alg_2)
         self.btn_list.append(self.btn_reset_alg_2)
         self.btn_list.append(self.btn_invert_lvl_alg_2)
