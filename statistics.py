@@ -178,13 +178,13 @@ class VertexDataManager:
 
     :param files: String of full filenames separated by newline character. Data will be gathered from each of the files.
     :param filter_: (Optional, default: None) Filter inclusion of data by the tokens in the above table.
-    :param keys: (Optional, default: None) The keys of the data attributes to include
+    :param attr_keys: (Optional, default: None) The keys of the data attributes to include
     :param save_filename: (Optional, default: 'model') Pickle the model data with this filename
     :param categorization: (Optional, default: 'advanced') Categorization keyword
 
     :type files: string
     :type filter_: [bool]
-    :type keys: [string]
+    :type attr_keys: [string]
     :type save_filename: string
     :type categorization: string
 
@@ -193,7 +193,74 @@ class VertexDataManager:
 
     """
 
-    def __init__(self, files, filter_=None, keys=None, category_key='advanced_category_index', save_filename='model', recalc=False):
+    default_dict = {
+        'Si_1': {
+            'symmetry': 3,
+            'atomic_species': 'Si',
+            'atomic_radii': 117.50,
+            'color': (255, 0, 0),
+            'species_color': (255, 0, 0),
+            'description': 'Q-prime Si'
+        },
+        'Si_2': {
+            'symmetry': 3,
+            'atomic_species': 'Si',
+            'atomic_radii': 117.50,
+            'color': (235, 20, 20),
+            'species_color': (255, 0, 0),
+            'description': 'Beta-pprime Si'
+        },
+        'Cu_1': {
+            'symmetry': 3,
+            'atomic_species': 'Cu',
+            'atomic_radii': 127.81,
+            'color': (255, 255, 0),
+            'species_color': (255, 255, 0),
+            'description': ''
+        },
+        'Al_1': {
+            'symmetry': 4,
+            'atomic_species': 'Al',
+            'atomic_radii': 143.00,
+            'color': (0, 255, 0),
+            'species_color': (0, 255, 0),
+            'description': ''
+        },
+        'Al_2': {
+            'symmetry': 4,
+            'atomic_species': 'Al',
+            'atomic_radii': 143.00,
+            'color': (20, 235, 20),
+            'species_color': (0, 255, 0),
+            'description': ''
+        },
+        'Mg_1': {
+            'symmetry': 5,
+            'atomic_species': 'Mg',
+            'atomic_radii': 160.00,
+            'color': (138, 43, 226),
+            'species_color': (138, 43, 226),
+            'description': ''
+        },
+        'Mg_2': {
+            'symmetry': 5,
+            'atomic_species': 'Mg',
+            'atomic_radii': 160.00,
+            'color': (118, 63, 206),
+            'species_color': (138, 43, 226),
+            'description': ''
+        },
+        'Un_1': {
+            'symmetry': 3,
+            'atomic_species': 'Un',
+            'atomic_radii': 100.00,
+            'color': (0, 0, 255),
+            'species_color': (0, 0, 255),
+            'description': ''
+        }
+    }
+
+    def __init__(self, files, filter_=None, attr_keys=None, category_key='advanced_species', save_filename='model', recalc=False, species_dict=None):
 
         if filter_ is None:
             self.filter_ = {
@@ -209,16 +276,21 @@ class VertexDataManager:
         else:
             self.filter_ = filter_
 
-        if keys is None:
+        if attr_keys is None:
             self.keys = ['alpha_max', 'alpha_min', 'theta_max', 'theta_min',
                          'theta_angle_mean', 'normalized_peak_gamma', 'normalized_avg_gamma']
         else:
-            self.keys = keys
+            self.keys = attr_keys
         self.attribute_keys, self.attribute_units = self.determine_attribute_keys()
         self.k = len(self.attribute_keys)
         self.pc_keys = []
         for i in range(0, self.k):
             self.pc_keys.append('PC {}'.format(i))
+
+        if species_dict is None:
+            self.species_dict = self.default_dict
+        else:
+            self.species_dict = species_dict
 
         self.files = files
         self.save_filename = save_filename
@@ -226,36 +298,15 @@ class VertexDataManager:
 
         self.category_key = category_key
 
-        self.original_dict_data = self.collect_data()
+        self.original_dict_data, self.category_list = self.collect_data()
         self.n = len(self.original_dict_data)
 
-        self.custom_categories = False
-        if self.category_key == 'advanced_category_index':
-            self.category_titles = ['Si_1', 'Si_2', 'Cu', 'Al_1', 'Al_2', 'Mg_1', 'Mg_2']
-            self.colours = ['r', 'k', 'y', 'g', 'mediumseagreen', 'm', 'plum']
-        elif self.category_key == 'species_index':
-            self.category_titles = ['Si', 'Cu', 'Al', 'Mg']
-            self.colours = ['r', 'y', 'g', 'm']
-        elif self.category_key == 'none':
-            self.category_titles = ['Column']
-            self.colours = ['k']
-        else:
-            self.category_titles = []
-            self.colours = ['r', 'k', 'y', 'g', 'mediumseagreen', 'm', 'plum']
-            values = set()
-            for item in self.original_dict_data:
-                values.add(item[self.category_key])
-            for value in values:
-                self.category_titles.append('{} = {}'.format(self.category_key, value))
-            self.num_data_categories = len(self.category_titles)
-            self.colours = self.colours[0:self.num_data_categories]
-            self.custom_categories = True
-        self.num_data_categories = len(self.category_titles)
+        self.num_data_categories = len(self.category_list)
 
         self.matrix_data = self.vectorize_data()
         self.composite_model = []
         for c, category_data in enumerate(self.matrix_data):
-            self.composite_model.append(MultivariateNormalDist(category_data, self.category_titles[c], self.attribute_keys))
+            self.composite_model.append(MultivariateNormalDist(category_data, self.category_list[c], self.attribute_keys))
 
         self.concatenated_matrix_data = self.concatenate_categories()
         self.uncategorized_normal_dist = MultivariateNormalDist(self.concatenated_matrix_data, 'All categories', self.attribute_keys)
@@ -274,7 +325,7 @@ class VertexDataManager:
         self.composed_uncategorized_normal_dist = MultivariateNormalDist(self.composed_uncategorized_data, 'Column', self.pc_keys)
         self.composed_normal_dist = []
         for c, composed_category_data in enumerate(self.composed_data):
-            self.composed_normal_dist.append(MultivariateNormalDist(composed_category_data, self.category_titles[c], self.pc_keys))
+            self.composed_normal_dist.append(MultivariateNormalDist(composed_category_data, self.category_list[c], self.pc_keys))
 
     def determine_attribute_keys(self):
         attributes = []
@@ -316,13 +367,18 @@ class VertexDataManager:
 
     def collect_data(self):
         data = []
+        categories = set()
         for file in self.files.splitlines(keepends=False):
             instance = core.Project.load(file)
             all_keys = copy.deepcopy(self.attribute_keys)
             all_keys.append(self.category_key)
             image_data = instance.graph.calc_condensed_property_data(filter_=self.filter_, recalc=self.recalc, keys=all_keys)
             data += image_data
-        return data
+        for dataline in data:
+            categories.add(dataline[self.category_key])
+        categories = list(categories)
+        categories.sort()
+        return data, categories
 
     def vectorize_data(self):
         data = []
@@ -332,10 +388,7 @@ class VertexDataManager:
                 data[category].append([])
         for data_item in self.original_dict_data:
             for h, attribute in enumerate(self.attribute_keys):
-                if self.custom_categories:
-                    data[self.category_titles.index('{} = {}'.format(self.category_key, data_item[self.category_key]))][h].append(data_item[attribute])
-                else:
-                    data[data_item[self.category_key]][h].append(data_item[attribute])
+                data[self.category_list.index(data_item[self.category_key])][h].append(data_item[attribute])
         matrix_data = []
         for category_data in data:
             matrix_data.append(np.array(category_data))
@@ -343,7 +396,7 @@ class VertexDataManager:
 
     def concatenate_categories(self):
         concatenated_data = self.matrix_data[0]
-        for i, category in enumerate(self.category_titles):
+        for i, category in enumerate(self.category_list):
             if not i == 0:
                 concatenated_data = np.concatenate((concatenated_data, self.matrix_data[i]), axis=1)
         return concatenated_data
@@ -355,7 +408,7 @@ class VertexDataManager:
             for data_item in self.normalized_concatenated_matrix_data[attr_index, :]:
                 data_item -= mean
         # Normalize categorized data
-        for c, category in enumerate(self.category_titles):
+        for c, category in enumerate(self.category_list):
             for attr_index, attr_key, in enumerate(self.attribute_keys):
                 mean = self.composite_model[c].means[attr_index]
                 for data_item in self.normalized_matrix_data[c][attr_index, :]:
@@ -363,7 +416,7 @@ class VertexDataManager:
 
     def calc_prediction(self, dict_):
         prediction = {}
-        for c, category in enumerate(self.category_titles):
+        for c, category in enumerate(self.category_list):
             prediction[category] = self.composite_model[c].prediction(dict_)
         prediction = utils.normalize_dict(prediction, 1)
         return prediction
@@ -385,13 +438,13 @@ class VertexDataManager:
         gs = GridSpec(1, 1, figure=fig)
         ax_attr = fig.add_subplot(gs[0, 0])
 
-        for c, category in enumerate(self.category_titles):
+        for c, category in enumerate(self.category_list):
             mean = self.composite_model[c].means[attr_index]
             var = self.composite_model[c].variances[attr_index]
             ax_attr.plot(
                 line,
                 utils.normal_dist(line, mean, var),
-                self.colours[c],
+                c=np.array(utils.norm_rgb_tuple(self.species_dict[category]['color'])),
                 label='{} ($\mu = ${:.2f}, $\sigma^2 = ${:.2f})'.format(category, mean, var)
             )
 
@@ -428,13 +481,13 @@ class VertexDataManager:
         ax_attr_2 = fig.add_subplot(gs[1, 0])
         ax_scatter = fig.add_subplot(gs[:, 1])
 
-        for c, category in enumerate(self.category_titles):
+        for c, category in enumerate(self.category_list):
             mean = self.composite_model[c].means[attr_1_index]
             var = self.composite_model[c].variances[attr_1_index]
             ax_attr_1.plot(
                 line_1,
                 utils.normal_dist(line_1, mean, var),
-                c=self.colours[c],
+                c=np.array(utils.norm_rgb_tuple(self.species_dict[category]['color'])),
                 label='{} ($\mu$ = {:.2f}, $\sigma^2$ = {:.2f})'.format(category, mean, var)
             )
 
@@ -442,13 +495,13 @@ class VertexDataManager:
         ax_attr_1.set_xlabel('{} {}'.format(attr_1_key, self.attribute_units[attr_1_index]))
         ax_attr_1.legend()
 
-        for c, category in enumerate(self.category_titles):
+        for c, category in enumerate(self.category_list):
             mean = self.composite_model[c].means[attr_2_index]
             var = self.composite_model[c].variances[attr_2_index]
             ax_attr_2.plot(
                 line_2,
                 utils.normal_dist(line_2, mean, var),
-                c=self.colours[c],
+                c=np.array(utils.norm_rgb_tuple(self.species_dict[category]['color'])),
                 label='{} ($\mu$ = {:.2f}, $\sigma^2$ = {:.2f})'.format(category, mean, var)
             )
 
@@ -456,11 +509,11 @@ class VertexDataManager:
         ax_attr_2.set_xlabel('{} {}'.format(attr_2_key, self.attribute_units[attr_2_index]))
         ax_attr_2.legend()
 
-        for c, category in enumerate(self.category_titles):
+        for c, category in enumerate(self.category_list):
             ax_scatter.scatter(
                 self.matrix_data[c][attr_1_index, :],
                 self.matrix_data[c][attr_2_index, :],
-                c=self.colours[c],
+                c=np.array(utils.norm_rgb_tuple(self.species_dict[category]['color'])),
                 label='{}'.format(category),
                 s=8
             )
@@ -494,13 +547,13 @@ class VertexDataManager:
             max_val = self.concatenated_matrix_data[attr_index, :].max()
             line = np.linspace(min_val, max_val, 1000)
 
-            for c, category in enumerate(self.category_titles):
+            for c, category in enumerate(self.category_list):
                 mean = self.composite_model[c].means[attr_index]
                 var = self.composite_model[c].variances[attr_index]
                 ax[attr_index].plot(
                     line,
                     utils.normal_dist(line, mean, var),
-                    c=self.colours[c],
+                    c=np.array(utils.norm_rgb_tuple(self.species_dict[category]['color'])),
                     label='{} ($\mu = ${:.2f}, $\sigma = ${:.2f})'.format(category, mean, var)
                 )
 
@@ -530,13 +583,13 @@ class VertexDataManager:
 
         for attr_index, attr_key in enumerate(self.attribute_keys):
 
-            for c, category in enumerate(self.category_titles):
+            for c, category in enumerate(self.category_list):
                 mean = self.composite_model[c].means[attr_index]
                 var = self.composite_model[c].variances[attr_index]
                 ax[attr_index].scatter(
                     self.matrix_data[c][attr_index, :],
                     utils.z_score(self.matrix_data[c][attr_index, :], mean, var),
-                    c=self.colours[c],
+                    c=np.array(utils.norm_rgb_tuple(self.species_dict[category]['color'])),
                     label='{}'.format(category),
                     s=1
                 )
@@ -569,13 +622,13 @@ class VertexDataManager:
 
         if show_category:
 
-            for c, category in enumerate(self.category_titles):
+            for c, category in enumerate(self.category_list):
                 mean = self.composed_normal_dist[c].means[attr_1_index]
                 var = self.composed_normal_dist[c].variances[attr_1_index]
                 ax_attr_1.plot(
                     line_1,
                     utils.normal_dist(line_1, mean, var),
-                    c=self.colours[c],
+                    c=np.array(list(utils.norm_rgb_tuple(self.species_dict[category]['color']))),
                     label='{} ($\mu$ = {:.2f}, $\sigma^2$ = {:.2f})'.format(category, mean, var)
                 )
 
@@ -583,13 +636,13 @@ class VertexDataManager:
             ax_attr_1.set_xlabel('{}'.format(attr_1_key))
             ax_attr_1.legend()
 
-            for c, category in enumerate(self.category_titles):
+            for c, category in enumerate(self.category_list):
                 mean = self.composed_normal_dist[c].means[attr_2_index]
                 var = self.composed_normal_dist[c].variances[attr_2_index]
                 ax_attr_2.plot(
                     line_2,
                     utils.normal_dist(line_2, mean, var),
-                    c=self.colours[c],
+                    c=np.array(list(utils.norm_rgb_tuple(self.species_dict[category]['color']))),
                     label='{} ($\mu$ = {:.2f}, $\sigma^2$ = {:.2f})'.format(category, mean, var)
                 )
 
@@ -597,11 +650,11 @@ class VertexDataManager:
             ax_attr_2.set_xlabel('{}'.format(attr_2_key))
             ax_attr_2.legend()
 
-            for c, category in enumerate(self.category_titles):
+            for c, category in enumerate(self.category_list):
                 ax_scatter.scatter(
                     self.composed_data[c][attr_1_index, :],
                     self.composed_data[c][attr_2_index, :],
-                    c=self.colours[c],
+                    c=np.array(list(utils.norm_rgb_tuple(self.species_dict[category]['color']))),
                     label='{}'.format(category),
                     s=8
                 )

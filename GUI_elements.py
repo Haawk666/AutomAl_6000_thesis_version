@@ -2314,7 +2314,7 @@ class DataExportWizard(QtWidgets.QDialog):
             if self.cmb_categorization.currentText() == 'simple' and 'species_index' not in export_keys:
                 keys.append('species_index')
             # Initate manager
-            manager = statistics.VertexDataManager(files, filter_=filter_, save_filename=filename[0], recalc=self.chb_recalculate_graphs.isChecked(), keys=keys, categorization=self.cmb_categorization.currentText())
+            manager = statistics.VertexDataManager(files, filter_=filter_, save_filename=filename[0], recalc=self.chb_recalculate_graphs.isChecked(), attr_keys=keys, categorization=self.cmb_categorization.currentText())
             manager.export_csv(filename[0] + filename[1], export_keys)
             GUI.logger.info('Successfully exported data to {}'.format(filename[0]))
         self.ui_obj.sys_message('Ready.')
@@ -2737,7 +2737,7 @@ class CalcModels(QtWidgets.QDialog):
                 filter_=filter_,
                 save_filename=filename[0],
                 recalc=self.chb_recalculate_graphs.isChecked(),
-                keys=attr_keys,
+                attr_keys=attr_keys,
                 category_key=cat_key
             )
             manager.save()
@@ -2881,7 +2881,7 @@ class PlotModels(QtWidgets.QDialog):
             attr_string += '{}\n'.format(attribute)
         self.lbl_attributes.setText('{}'.format(attr_string))
         cat_string = ''
-        for c, category_key in enumerate(self.model.category_titles):
+        for c, category_key in enumerate(self.model.category_list):
             cat_string += '{}\t\tn = {}\n'.format(category_key, self.model.composite_model[c].n)
         self.lbl_categories.setText('{}'.format(cat_string))
 

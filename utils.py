@@ -484,3 +484,6 @@ def im_out_static(im_mat, filename_full):
     im_dsp.save(os.path.join(filename_full))
 
 
+def norm_rgb_tuple(rgb):
+    return (rgb[0] / 255, rgb[1] / 255, rgb[2] / 255)
+
