@@ -142,9 +142,9 @@ def precipitate_finder(graph, i):
 
     for partner in graph.vertices[i].partners:
 
-        if not graph.vertices[partner].species_index == 2:
+        if not graph.vertices[partner].atomic_species == 'Al':
 
-            if not graph.vertices[partner].species_index == 4:
+            if not graph.vertices[partner].atomic_species == 'Un':
                 graph.vertices[i].flag_2 = True
 
         else:

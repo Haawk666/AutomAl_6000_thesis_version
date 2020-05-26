@@ -52,7 +52,7 @@ class InteractiveColumn(QtWidgets.QGraphicsEllipseItem):
 
         if movable:
             offset = self.boundingRect().center()
-            self.moveBy(self.center_coor[0] - offset.x(), self.center_coor[1] - offset.y())
+            self.moveBy(self.scale_factor * self.center_coor[0] - offset.x(), self.scale_factor * self.center_coor[1] - offset.y())
         if selectable:
             self.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable)
 

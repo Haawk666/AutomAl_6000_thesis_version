@@ -196,6 +196,8 @@ class Vertex:
         pass
 
     def reset_probability_vector(self, bias='Un_1'):
+        if self.is_edge_column:
+            print('i: {}\n    bias: {}\n    '.format(self.i, bias))
         self.advanced_probability_vector = {}
         self.probability_vector = {}
         if self.parent_graph is not None:
@@ -222,6 +224,7 @@ class Vertex:
         self.atomic_species = self.parent_graph.species_dict[self.advanced_species]['atomic_species']
         self.set_probability_from_advanced()
         self.n = self.parent_graph.species_dict[self.advanced_species]['symmetry']
+        self.out_degree = self.n
 
     def reset_probability_vector_from_atomic_species(self):
         self.reset_probability_vector(bias=self.advanced_species)
@@ -275,6 +278,26 @@ class Vertex:
             return 1
         else:
             return 0
+
+    def decrement_n(self):
+        for species, item in self.parent_graph.species_dict.items():
+            if item['symmetry'] == self.n - 1:
+                self.reset_probability_vector(bias=species)
+                self.determine_species_from_probability_vector()
+                break
+        else:
+            return False
+        return True
+
+    def increment_n(self):
+        for species, item in self.parent_graph.species_dict.items():
+            if item['symmetry'] == self.n + 1:
+                self.reset_probability_vector(bias=species)
+                self.determine_species_from_probability_vector()
+                break
+        else:
+            return False
+        return True
 
 
 class Arc:
@@ -343,8 +366,8 @@ class AtomicGraph:
                 'Al_1': {'symmetry': 4, 'atomic_species': 'Al', 'atomic_radii': 143.00, 'color': (0, 255, 0), 'species_color': (0, 255, 0)},
                 'Al_2': {'symmetry': 4, 'atomic_species': 'Al', 'atomic_radii': 143.00, 'color': (20, 235, 20), 'species_color': (0, 255, 0)},
                 'Mg_1': {'symmetry': 5, 'atomic_species': 'Mg', 'atomic_radii': 160.00, 'color': (138, 43, 226), 'species_color': (138, 43, 226)},
-                'Mg_2': {'symmetry': 6, 'atomic_species': 'Mg', 'atomic_radii': 160.00, 'color': (118, 63, 206), 'species_color': (138, 43, 226)},
-                'Un_1': {'symmetry': 3, 'atomic_species': 'Un', 'atomic_radii': 200.00, 'color': (255, 0, 0), 'species_color': (255, 0, 0)}
+                'Mg_2': {'symmetry': 5, 'atomic_species': 'Mg', 'atomic_radii': 160.00, 'color': (118, 63, 206), 'species_color': (138, 43, 226)},
+                'Un_1': {'symmetry': 3, 'atomic_species': 'Un', 'atomic_radii': 200.00, 'color': (0, 0, 255), 'species_color': (0, 0, 255)}
             }
         else:
             self.species_dict = species_dict
@@ -732,6 +755,8 @@ class AtomicGraph:
 
     def set_species(self, i, advanced_species):
         self.vertices[i].reset_probability_vector(bias=advanced_species)
+        self.vertices[i].determine_species_from_probability_vector()
+        self.build_local_map([i] + self.vertices[i].district)
 
     @staticmethod
     def rebase(corners, next_, j, append=True):
@@ -967,9 +992,9 @@ class AtomicGraph:
 
     def terminate_arc(self, i, j):
 
-        if self.vertices[i].permute_j_k(j, self.vertices[i].out_neighbourhood[-1]):
-            if self.vertices[i].decrement_species_index():
-                self.build_local_map(i)
+        if self.vertices[i].permute_j_k(j, self.vertices[i].district[self.vertices[i].n - 1]):
+            if self.vertices[i].decrement_n():
+                self.build_local_map([i] + self.vertices[i].district)
                 return True
             else:
                 return False
@@ -1123,7 +1148,32 @@ class AtomicGraph:
         logger.info('Graph refreshed!')
 
     def evaluate_sub_categories(self):
-        pass
+        for vertex in self.vertices:
+            if not vertex.void:
+                if vertex.atomic_species == 'Si':
+                    sub_graph = self.get_column_centered_subgraph(vertex.i)
+                    for mesh in sub_graph.meshes:
+                        if mesh.vertices[1].atomic_species == 'Mg' and mesh.vertices[2].atomic_species == 'Cu' and mesh.vertices[3].atomic_species == 'Mg':
+                            if not vertex.advanced_species == 'Si_2':
+                                self.set_species(vertex.i, 'Si_2')
+                            break
+                    else:
+                        if not vertex.advanced_species == 'Si_1':
+                            self.set_species(vertex.i, 'Si_1')
+                elif vertex.atomic_species == 'Al':
+                    if vertex.is_in_precipitate:
+                        if not vertex.advanced_species == 'Al_2':
+                            self.set_species(vertex.i, 'Al_2')
+                    else:
+                        if not vertex.advanced_species == 'Al_1':
+                            self.set_species(vertex.i, 'Al_1')
+                elif vertex.atomic_species == 'Mg':
+                    if vertex.alpha_max < 3.175:
+                        if not vertex.advanced_species == 'Mg_1':
+                            self.set_species(vertex.i, 'Mg_1')
+                    else:
+                        if not vertex.advanced_species == 'Mg_2':
+                            self. set_species(vertex.i, 'Mg_2')
 
     def calc_condensed_property_data(self, filter_=None, recalc=True, keys=None):
 

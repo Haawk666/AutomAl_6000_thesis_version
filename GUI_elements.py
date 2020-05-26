@@ -2482,9 +2482,8 @@ class CalcModels(QtWidgets.QDialog):
     def frame_1_layout(self):
 
         self.cmb_nominal_data.addItems([
-            'species_index',
-            'species_variant',
-            'advanced_category_index',
+            'atomic_species',
+            'advanced_species',
             'n',
             'zeta',
             'flag_1',
@@ -2732,7 +2731,7 @@ class CalcModels(QtWidgets.QDialog):
                 attr_keys.append(self.list_1.item(i).text())
             cat_key = self.cmb_nominal_data.currentText()
 
-            # Initate manager
+            # Initiate manager
             manager = statistics.VertexDataManager(
                 files,
                 filter_=filter_,

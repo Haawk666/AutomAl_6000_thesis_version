@@ -14,6 +14,7 @@ logger.setLevel(logging.DEBUG)
 
 
 def column_detection(project, search_mode='t', plot=False):
+
     peak_values = []
     non_edge_peak_values = []
     if len(project.graph.vertices) == 0:
@@ -86,10 +87,10 @@ def column_detection(project, search_mode='t', plot=False):
         project.num_columns += 1
         counter += 1
 
-        if search_type == 's':
+        if search_mode == 's':
             if counter >= project.search_size:
                 cont = False
-        elif search_type == 't':
+        elif search_mode == 't':
             if np.max(project.search_mat) < project.threshold:
                 cont = False
         else:
@@ -102,7 +103,7 @@ def column_detection(project, search_mode='t', plot=False):
         if not vertex.is_edge_column:
             non_edge_peak_values.append(vertex.peak_gamma)
 
-    logger.info('Column detection complete! Found {} columns.'.format(self.num_columns))
+    logger.info('Column detection complete! Found {} columns.'.format(project.num_columns))
 
     if plot:
         fig = plt.figure(constrained_layout=True)

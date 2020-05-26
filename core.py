@@ -17,6 +17,7 @@ import scipy.ndimage
 import dm3_lib as dm3
 import sys
 import copy
+import time
 import pickle
 import configparser
 import logging
@@ -46,7 +47,7 @@ class Project:
         'Al_1': {'symmetry': 4, 'atomic_species': 'Al', 'atomic_radii': 143.00, 'color': (0, 255, 0), 'species_color': (0, 255, 0), 'description': ''},
         'Al_2': {'symmetry': 4, 'atomic_species': 'Al', 'atomic_radii': 143.00, 'color': (20, 235, 20), 'species_color': (0, 255, 0), 'description': ''},
         'Mg_1': {'symmetry': 5, 'atomic_species': 'Mg', 'atomic_radii': 160.00, 'color': (138, 43, 226), 'species_color': (138, 43, 226), 'description': ''},
-        'Mg_2': {'symmetry': 6, 'atomic_species': 'Mg', 'atomic_radii': 160.00, 'color': (118, 63, 206), 'species_color': (138, 43, 226), 'description': ''},
+        'Mg_2': {'symmetry': 5, 'atomic_species': 'Mg', 'atomic_radii': 160.00, 'color': (118, 63, 206), 'species_color': (138, 43, 226), 'description': ''},
         'Un_1': {'symmetry': 3, 'atomic_species': 'Un', 'atomic_radii': 100.00, 'color': (0, 0, 255), 'species_color': (0, 0, 255), 'description': ''}
     }
 
@@ -243,6 +244,7 @@ class Project:
                 if vertex.peak_gamma < min_val:
                     min_val = vertex.peak_gamma
             if min_val < self.threshold:
+                logger.info('Columns overdetected. Rolling back..')
                 new_graph = graph_2.AtomicGraph(
                     self.scale,
                     active_model=self.graph.active_model,
@@ -270,6 +272,9 @@ class Project:
                 cont = True
 
         counter = self.num_columns
+        original_counter = copy.deepcopy(counter)
+
+        time_1 = time.time()
 
         while cont:
 
@@ -318,7 +323,12 @@ class Project:
             if not vertex.is_edge_column:
                 non_edge_peak_values.append(vertex.peak_gamma)
 
-        logger.info('Column detection complete! Found {} columns.'.format(self.num_columns))
+        time_2 = time.time()
+
+        logger.info('Column detection complete! Found {} columns in {} seconds.'.format(
+            self.num_columns - original_counter,
+            time_2 - time_1
+        ))
 
         if plot:
             fig = plt.figure(constrained_layout=True)
@@ -388,36 +398,6 @@ class Project:
                     inflection_points.append(ind)
 
             plt.show()
-
-    def find_edge_columns(self):
-        """Locate vertices that are close to the edge of the image.
-
-        These vertices get special treatment throughout the program because information about their surroundings will
-        be incomplete. This method will find all vertices that are within a distance 6 * self.r from the edge, and set
-        the field self.graph.vertices[i].is_edge_column = True.
-
-        """
-
-        for vertex in self.graph.vertices:
-
-            x_coor = vertex.im_coor_x
-            y_coor = vertex.im_coor_y
-            margin = 4 * self.r
-
-            if x_coor < margin or x_coor > self.im_width - margin - 1 or y_coor < margin or y_coor > self.im_height - margin - 1:
-                self.graph.vertices[vertex.i].is_edge_column = True
-            else:
-                self.graph.vertices[vertex.i].is_edge_column = False
-
-    def normalize_gamma(self):
-        """Find the mean of the intensity of the Al-matrix, and scale all intensities.
-
-        Scale all intensities such that the mean of the Al-matrix is a fixed point. Store the result in each vertex *i*
-        :code:`self.graph.vertices[i].normalized_peak_gamma` and
-        :code:`self.graph.vertices[i].normalized_avg_gamma` fields.
-
-        """
-        self.graph.calc_normalized_gamma()
 
     def column_characterization(self, starting_index, search_type=0, ui_obj=None):
         """Column characterization algorithm.
@@ -916,6 +896,36 @@ class Project:
 
         else:
             logger.error('No such search type!')
+
+    def find_edge_columns(self):
+        """Locate vertices that are close to the edge of the image.
+
+        These vertices get special treatment throughout the program because information about their surroundings will
+        be incomplete. This method will find all vertices that are within a distance 6 * self.r from the edge, and set
+        the field self.graph.vertices[i].is_edge_column = True.
+
+        """
+
+        for vertex in self.graph.vertices:
+
+            x_coor = vertex.im_coor_x
+            y_coor = vertex.im_coor_y
+            margin = 4 * self.r
+
+            if x_coor < margin or x_coor > self.im_width - margin - 1 or y_coor < margin or y_coor > self.im_height - margin - 1:
+                self.graph.vertices[vertex.i].is_edge_column = True
+            else:
+                self.graph.vertices[vertex.i].is_edge_column = False
+
+    def normalize_gamma(self):
+        """Find the mean of the intensity of the Al-matrix, and scale all intensities.
+
+        Scale all intensities such that the mean of the Al-matrix is a fixed point. Store the result in each vertex *i*
+        :code:`self.graph.vertices[i].normalized_peak_gamma` and
+        :code:`self.graph.vertices[i].normalized_avg_gamma` fields.
+
+        """
+        self.graph.calc_normalized_gamma()
 
     def calc_avg_gamma(self):
         """Calculate average intensity for every vertex based on image information.
