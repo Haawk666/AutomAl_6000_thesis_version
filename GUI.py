@@ -153,7 +153,7 @@ class MainUI(QtWidgets.QMainWindow):
         if self.project_instance is not None and not self.selected_column == -1:
             # Update relevant graphics:
             self.project_instance.graph.set_species(self.selected_column, h)
-            self.gs_overlay_composition.interactive_overlay_objects[self.selected_column].set_style()
+            self.gs_overlay_composition.re_draw_vertex(self.selected_column)
             self.gs_atomic_graph.redraw_neighbourhood(self.selected_column)
             # Update control window info:
             self.control_window.select_column()
@@ -163,7 +163,7 @@ class MainUI(QtWidgets.QMainWindow):
         if self.project_instance is not None and not self.selected_column == -1:
             # Update relevant graphics:
             self.project_instance.graph.vertices[self.selected_column].zeta = zeta
-            self.gs_overlay_composition.interactive_overlay_objects[self.selected_column].set_style()
+            self.gs_overlay_composition.re_draw_vertex(self.selected_column)
             self.gs_atomic_graph.interactive_vertex_objects[self.selected_column].set_style()
             self.gs_atomic_graph.redraw_neighbourhood(self.selected_column)
             # Update control window info:
@@ -956,17 +956,17 @@ class MainUI(QtWidgets.QMainWindow):
                        '6 - Identify edge columns',
                        '7 - Apply alpha model',
                        '8 - Particle detection',
-                       '9 - Basic weak untangling',
-                       '10 - Weak untangling',
-                       '11 - Strong untangling',
+                       '9 - Calculate normalized gamma',
+                       '10 - Evaluate sub-species',
+                       '11 - Not in use',
                        '12 - Reset probability vectors',
                        '13 - Reset user-set columns',
                        '14 - Search for intersections',
                        '15 - Experimental symmetry characterization',
-                       '16 - Base alpha score',
+                       '16 - Not in use',
                        '17 - Not in use',
                        '18 - Not in use',
-                       '19 - Calculate globally normalized gamma levels',
+                       '19 - Not in use',
                        '20 - Run experimental mesh analysis',
                        '21 - Sort all subsets',
                        '22 - Product predictions',

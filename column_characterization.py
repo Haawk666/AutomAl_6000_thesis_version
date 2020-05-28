@@ -43,9 +43,7 @@ def map_districts(graph_obj, district_size=8, method='matrix'):
         summary_string += '    Distance calculations took {} seconds.\n'.format(time_2 - time_1)
         summary_string += '    Sorting took {} seconds.'.format(time_3 - time_2)
         logger.info(summary_string)
-        return matrix
-    else:
-        return None
+        graph_obj.separation_matrix = matrix
 
 
 def particle_detection(graph_obj):
@@ -93,6 +91,24 @@ def zeta_analysis(graph_obj, starting_index, starting_zeta=0):
         else:
             vertex.zeta = 1
 
+    for vertex in graph_obj.vertices:
+        sep_1 = []
+        sep_2 = []
+        for citizen in vertex.district:
+            if graph_obj.vertices[citizen].zeta == vertex.zeta:
+                if len(sep_2) < 3:
+                    sep_2.append(graph_obj.separation_matrix[vertex.i, citizen])
+            else:
+                if len(sep_1) < 3:
+                    sep_1.append(graph_obj.separation_matrix[vertex.i, citizen])
+        sep_1 = sum(sep_1) / len(sep_1)
+        sep_2 = sum(sep_2) / len(sep_2)
+
+        if sep_2 < sep_1:
+            vertex.zeta = vertex.anti_zeta()
+            logger.info('Altering zeta of vertex {}'.format(vertex.i))
+    graph_obj.build_maps()
+
     time_2 = time.time()
 
     logger.info('Zeta analysis completed in {} seconds'.format(time_2 - time_1))
@@ -101,7 +117,6 @@ def zeta_analysis(graph_obj, starting_index, starting_zeta=0):
 def symmetry_characterization(graph_obj, im_width, im_height, starting_index, separation_threshold=320):
     logger.info('Running symmetry characterization')
     time_1 = time.time()
-    separation_matrix = map_districts(graph_obj)
     graph_obj.build_maps()
     for vertex in graph_obj.vertices:
         if vertex.is_edge_column:
@@ -113,10 +128,10 @@ def symmetry_characterization(graph_obj, im_width, im_height, starting_index, se
         for citizen in vertex.district:
             if graph_obj.vertices[citizen].zeta == vertex.zeta:
                 if len(sep_2) < 3:
-                    sep_2.append(separation_matrix[vertex.i, citizen])
+                    sep_2.append(graph_obj.separation_matrix[vertex.i, citizen])
             else:
                 if len(sep_1) < 3:
-                    sep_1.append(separation_matrix[vertex.i, citizen])
+                    sep_1.append(graph_obj.separation_matrix[vertex.i, citizen])
         sep_1 = sum(sep_1) / len(sep_1)
         sep_2 = sum(sep_2) / len(sep_2)
 
@@ -170,7 +185,7 @@ def apply_alpha_model(graph_obj, model=None, alpha_selection_type='zeta'):
     else:
         this_model = model
     for vertex in graph_obj.vertices:
-        vertex.alpha_angles = graph_obj.get_alpha_angles(vertex.i)
+        vertex.alpha_angles = graph_obj.get_alpha_angles(vertex.i, selection_type='zeta')
         if vertex.alpha_angles is not None and not len(vertex.alpha_angles) == 0:
             vertex.alpha_max = max(vertex.alpha_angles)
             vertex.alpha_min = min(vertex.alpha_angles)

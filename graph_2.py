@@ -388,6 +388,9 @@ class AtomicGraph:
         self.particle_boarder_indices = []
         self.structures = []
 
+        self.adjacency_matrix = None
+        self.separation_matrix = None
+
         self.scale = scale
         self.district_size = district_size
 
@@ -855,8 +858,20 @@ class AtomicGraph:
         for vertex in self.get_vertex_objects_from_indices(indices):
             vertex.out_neighbourhood = set()
             if not vertex.void:
-                for out_neighbour in vertex.district[:vertex.n]:
-                    vertex.out_neighbourhood.add(out_neighbour)
+                counter = 0
+                for citizen in vertex.district:
+                    if not vertex.zeta == self.vertices[citizen].zeta:
+                        vertex.out_neighbourhood.add(citizen)
+                        counter += 1
+                    if counter == vertex.n:
+                        break
+                else:
+                    for alternative_citizen in vertex.district[0:vertex.n]:
+                        if alternative_citizen not in vertex.out_neighbourhood:
+                            vertex.out_neighbourhood.add(alternative_citizen)
+                            counter += 1
+                        if counter == vertex.n:
+                            break
         # Determine in_neighbourhoods:
         for vertex in self.get_vertex_objects_from_indices(indices):
             vertex.in_neighbourhood = set()
@@ -1050,7 +1065,6 @@ class AtomicGraph:
         return intersecting_segments
 
     def terminate_arc(self, i, j):
-
         if self.vertices[i].permute_j_k(j, self.vertices[i].district[self.vertices[i].n - 1]):
             if self.vertices[i].decrement_n():
                 self.build_local_map([i] + self.vertices[i].district)
@@ -1191,7 +1205,7 @@ class AtomicGraph:
     def refresh_graph(self):
         logger.info('Refreshing graph...')
         logger.info('    Mapping districts')
-        self.build_maps(search_extended_district=True)
+        self.build_maps(search_extended_district=False)
         logger.info('    Calculating vertex parameters')
         self.calc_all_parameters()
         logger.info('    Evaluating species variants')

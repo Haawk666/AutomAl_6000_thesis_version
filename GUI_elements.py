@@ -182,6 +182,29 @@ class OverlayComposition(QtWidgets.QGraphicsScene):
                 if vertex.void:
                     self.interactive_overlay_objects[-1].hide()
 
+    def re_draw_vertex(self, i):
+        self.removeItem(self.interactive_overlay_objects[i])
+        vertex = self.ui_obj.project_instance.graph.vertices[i]
+        species = vertex.atomic_species.lower()
+        if vertex.zeta == 0:
+            brush = self.zeta_0_brushes[self.categories.index(species)]
+        else:
+            brush = self.zeta_1_brushes[self.categories.index(species)]
+        self.interactive_overlay_objects[i] = GUI_custom_components.InteractiveOverlayColumn(
+            ui_obj=self.ui_obj,
+            vertex=vertex,
+            r=self.radii[self.categories.index(species)],
+            pen=self.pens[self.categories.index(species)],
+            brush=brush
+        )
+        self.addItem(self.interactive_overlay_objects[i])
+        if vertex.show_in_overlay:
+            self.interactive_overlay_objects[-1].show()
+        else:
+            self.interactive_overlay_objects[-1].hide()
+        if vertex.void:
+            self.interactive_overlay_objects[-1].hide()
+
 
 class AtomicGraph(QtWidgets.QGraphicsScene):
 

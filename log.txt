@@ -3,3 +3,264 @@ GUI: GUI version: 0.0.2
 GUI: core version: 0.1.0
 GUI: Build version: Alpha 1.0
 ------------------------
+GUI: Opening file C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/0_Medium_Qprime.dm3
+core: Failed to load save-file!
+GUI: File was not loaded. Something must have gone wrong!
+core: Generated instance from C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/0_Medium_Qprime.dm3
+core: Saved C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/0_Medium_Qprime_initial
+core: Starting column detection. Search mode is 't'
+core: Column detection complete! Found 2432 columns in 142.25690245628357 seconds.
+core: Continuing column detection. Search mode is 't'
+core: Column detection complete! Found 76 columns in 7.734351634979248 seconds.
+core: Saved C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/0_Medium_Qprime_columns
+core: Doing the basics...
+core: Mapping spatial locality...
+column_characterization: Districts mapped in 53.90987229347229 seconds with matrix method.
+    Distance calculations took 53.58003830909729 seconds.
+    Sorting took 0.329833984375 seconds.
+core: Spatial mapping complete.
+core: Finding edge columns....
+column_characterization: Detecting edge columns
+column_characterization: Found edge columns in 0.006997346878051758 seconds
+core: Edge columns found.
+core: Mapping vertex connectivity...
+core: Vertices mapped.
+core: Running zeta analysis....
+column_characterization: Starting zeta analysis
+column_characterization: Altering zeta of vertex 1
+column_characterization: Altering zeta of vertex 38
+column_characterization: Altering zeta of vertex 51
+column_characterization: Altering zeta of vertex 72
+column_characterization: Altering zeta of vertex 154
+column_characterization: Altering zeta of vertex 163
+column_characterization: Altering zeta of vertex 168
+column_characterization: Altering zeta of vertex 185
+column_characterization: Altering zeta of vertex 225
+column_characterization: Altering zeta of vertex 306
+column_characterization: Altering zeta of vertex 380
+column_characterization: Altering zeta of vertex 404
+column_characterization: Altering zeta of vertex 421
+column_characterization: Altering zeta of vertex 460
+column_characterization: Altering zeta of vertex 474
+column_characterization: Altering zeta of vertex 483
+column_characterization: Altering zeta of vertex 495
+column_characterization: Altering zeta of vertex 535
+column_characterization: Altering zeta of vertex 569
+column_characterization: Altering zeta of vertex 600
+column_characterization: Altering zeta of vertex 624
+column_characterization: Altering zeta of vertex 650
+column_characterization: Altering zeta of vertex 681
+column_characterization: Altering zeta of vertex 775
+column_characterization: Altering zeta of vertex 822
+column_characterization: Altering zeta of vertex 853
+column_characterization: Altering zeta of vertex 881
+column_characterization: Altering zeta of vertex 918
+column_characterization: Altering zeta of vertex 961
+column_characterization: Altering zeta of vertex 1019
+column_characterization: Altering zeta of vertex 1023
+column_characterization: Altering zeta of vertex 1043
+column_characterization: Altering zeta of vertex 1063
+column_characterization: Altering zeta of vertex 1168
+column_characterization: Altering zeta of vertex 1174
+column_characterization: Altering zeta of vertex 1224
+column_characterization: Altering zeta of vertex 1236
+column_characterization: Altering zeta of vertex 1303
+column_characterization: Altering zeta of vertex 1336
+column_characterization: Altering zeta of vertex 1344
+column_characterization: Altering zeta of vertex 1393
+column_characterization: Altering zeta of vertex 1428
+column_characterization: Altering zeta of vertex 1431
+column_characterization: Altering zeta of vertex 1443
+column_characterization: Altering zeta of vertex 1444
+column_characterization: Altering zeta of vertex 1528
+column_characterization: Altering zeta of vertex 1531
+column_characterization: Altering zeta of vertex 1664
+column_characterization: Altering zeta of vertex 1680
+column_characterization: Altering zeta of vertex 1735
+column_characterization: Altering zeta of vertex 1752
+column_characterization: Altering zeta of vertex 1753
+column_characterization: Altering zeta of vertex 1826
+column_characterization: Altering zeta of vertex 1909
+column_characterization: Altering zeta of vertex 1960
+column_characterization: Altering zeta of vertex 2045
+column_characterization: Altering zeta of vertex 2052
+column_characterization: Altering zeta of vertex 2064
+column_characterization: Altering zeta of vertex 2070
+column_characterization: Altering zeta of vertex 2086
+column_characterization: Altering zeta of vertex 2098
+column_characterization: Altering zeta of vertex 2129
+column_characterization: Altering zeta of vertex 2144
+column_characterization: Altering zeta of vertex 2155
+column_characterization: Altering zeta of vertex 2199
+column_characterization: Altering zeta of vertex 2273
+column_characterization: Altering zeta of vertex 2358
+column_characterization: Altering zeta of vertex 2377
+column_characterization: Altering zeta of vertex 2394
+column_characterization: Altering zeta of vertex 2400
+column_characterization: Altering zeta of vertex 2425
+column_characterization: Altering zeta of vertex 2446
+column_characterization: Altering zeta of vertex 2448
+column_characterization: Altering zeta of vertex 2459
+column_characterization: Altering zeta of vertex 2485
+column_characterization: Altering zeta of vertex 2507
+column_characterization: Zeta analysis completed in 8.301702499389648 seconds
+core: zeta's set.
+core: Calculating probabilities from alpha attributes...
+core: Calculated probabilities from alpha attributes.
+core: Finding particle...
+core: Found particle.
+core: Finding normalized intensities...
+core: Found intensities.
+core: Mapping vertex connectivity...
+core: Vertices mapped.
+core: Basics done
+core: Saved C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/0_Medium_Qprime_basics
+GUI: Successfully exported raw image to file!
+core: Project summary:
+    Atomic Graph summary:
+        Scale: 4.705772
+        Order: 2508
+        Size: 0
+        Chi: 0.000
+        Average degree: 0.000
+        Matrix redshift: 0.000
+        Particle redshift: 0.000
+        Total redshift: 0.000
+    General:
+        Number of columns: 2508
+
+core: Mapping vertex connectivity...
+core: Vertices mapped.
+core: Running zeta analysis....
+column_characterization: Starting zeta analysis
+column_characterization: Altering zeta of vertex 4
+column_characterization: Altering zeta of vertex 6
+column_characterization: Altering zeta of vertex 9
+column_characterization: Altering zeta of vertex 26
+column_characterization: Altering zeta of vertex 123
+column_characterization: Altering zeta of vertex 154
+column_characterization: Altering zeta of vertex 209
+column_characterization: Altering zeta of vertex 254
+column_characterization: Altering zeta of vertex 265
+column_characterization: Altering zeta of vertex 340
+column_characterization: Altering zeta of vertex 347
+column_characterization: Altering zeta of vertex 391
+column_characterization: Altering zeta of vertex 429
+column_characterization: Altering zeta of vertex 479
+column_characterization: Altering zeta of vertex 494
+column_characterization: Altering zeta of vertex 496
+column_characterization: Altering zeta of vertex 544
+column_characterization: Altering zeta of vertex 602
+column_characterization: Altering zeta of vertex 650
+column_characterization: Altering zeta of vertex 715
+column_characterization: Altering zeta of vertex 840
+column_characterization: Altering zeta of vertex 898
+column_characterization: Altering zeta of vertex 937
+column_characterization: Altering zeta of vertex 961
+column_characterization: Altering zeta of vertex 1032
+column_characterization: Altering zeta of vertex 1061
+column_characterization: Altering zeta of vertex 1090
+column_characterization: Altering zeta of vertex 1168
+column_characterization: Altering zeta of vertex 1232
+column_characterization: Altering zeta of vertex 1309
+column_characterization: Altering zeta of vertex 1395
+column_characterization: Altering zeta of vertex 1396
+column_characterization: Altering zeta of vertex 1450
+column_characterization: Altering zeta of vertex 1671
+column_characterization: Altering zeta of vertex 1685
+column_characterization: Altering zeta of vertex 1696
+column_characterization: Altering zeta of vertex 1748
+column_characterization: Altering zeta of vertex 1826
+column_characterization: Altering zeta of vertex 1854
+column_characterization: Altering zeta of vertex 1897
+column_characterization: Altering zeta of vertex 1916
+column_characterization: Altering zeta of vertex 2075
+column_characterization: Altering zeta of vertex 2098
+column_characterization: Altering zeta of vertex 2129
+column_characterization: Altering zeta of vertex 2155
+column_characterization: Altering zeta of vertex 2160
+column_characterization: Altering zeta of vertex 2256
+column_characterization: Altering zeta of vertex 2291
+column_characterization: Altering zeta of vertex 2295
+column_characterization: Altering zeta of vertex 2341
+column_characterization: Altering zeta of vertex 2347
+column_characterization: Altering zeta of vertex 2374
+column_characterization: Altering zeta of vertex 2386
+column_characterization: Altering zeta of vertex 2418
+column_characterization: Altering zeta of vertex 2453
+column_characterization: Altering zeta of vertex 2485
+column_characterization: Altering zeta of vertex 2496
+column_characterization: Zeta analysis completed in 10.123379230499268 seconds
+core: zeta's set.
+core: Mapping vertex connectivity...
+core: Vertices mapped.
+core: Mapping spatial locality...
+column_characterization: Districts mapped in 40.194544315338135 seconds with matrix method.
+    Distance calculations took 39.85866117477417 seconds.
+    Sorting took 0.33588314056396484 seconds.
+core: Spatial mapping complete.
+core: Mapping vertex connectivity...
+core: Vertices mapped.
+core: Mapping vertex connectivity...
+core: Vertices mapped.
+core: Mapping vertex connectivity...
+core: Vertices mapped.
+core: Saved C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/0_Medium_Qprime_control
+core: Running zeta analysis....
+column_characterization: Starting zeta analysis
+column_characterization: Altering zeta of vertex 59
+column_characterization: Altering zeta of vertex 62
+column_characterization: Altering zeta of vertex 77
+column_characterization: Altering zeta of vertex 123
+column_characterization: Altering zeta of vertex 154
+column_characterization: Altering zeta of vertex 248
+column_characterization: Altering zeta of vertex 269
+column_characterization: Altering zeta of vertex 347
+column_characterization: Altering zeta of vertex 354
+column_characterization: Altering zeta of vertex 385
+column_characterization: Altering zeta of vertex 410
+column_characterization: Altering zeta of vertex 421
+column_characterization: Altering zeta of vertex 482
+column_characterization: Altering zeta of vertex 528
+column_characterization: Altering zeta of vertex 600
+column_characterization: Altering zeta of vertex 650
+column_characterization: Altering zeta of vertex 700
+column_characterization: Altering zeta of vertex 716
+column_characterization: Altering zeta of vertex 898
+column_characterization: Altering zeta of vertex 960
+column_characterization: Altering zeta of vertex 1006
+column_characterization: Altering zeta of vertex 1015
+column_characterization: Altering zeta of vertex 1091
+column_characterization: Altering zeta of vertex 1224
+column_characterization: Altering zeta of vertex 1297
+column_characterization: Altering zeta of vertex 1309
+column_characterization: Altering zeta of vertex 1360
+column_characterization: Altering zeta of vertex 1395
+column_characterization: Altering zeta of vertex 1473
+column_characterization: Altering zeta of vertex 1494
+column_characterization: Altering zeta of vertex 1506
+column_characterization: Altering zeta of vertex 1637
+column_characterization: Altering zeta of vertex 1696
+column_characterization: Altering zeta of vertex 1699
+column_characterization: Altering zeta of vertex 1753
+column_characterization: Altering zeta of vertex 1782
+column_characterization: Altering zeta of vertex 1826
+column_characterization: Altering zeta of vertex 1859
+column_characterization: Altering zeta of vertex 1935
+column_characterization: Altering zeta of vertex 1950
+column_characterization: Altering zeta of vertex 1979
+column_characterization: Altering zeta of vertex 2254
+column_characterization: Altering zeta of vertex 2273
+column_characterization: Altering zeta of vertex 2281
+column_characterization: Altering zeta of vertex 2300
+column_characterization: Altering zeta of vertex 2347
+column_characterization: Altering zeta of vertex 2363
+column_characterization: Altering zeta of vertex 2386
+column_characterization: Altering zeta of vertex 2396
+column_characterization: Altering zeta of vertex 2405
+column_characterization: Altering zeta of vertex 2453
+column_characterization: Altering zeta of vertex 2454
+column_characterization: Altering zeta of vertex 2485
+column_characterization: Zeta analysis completed in 10.46402359008789 seconds
+core: zeta's set.
+core: Saved C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/0_Medium_Qprime_control

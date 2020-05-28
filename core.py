@@ -435,87 +435,31 @@ class Project:
         sys.setrecursionlimit(10000)
 
         if search_type == 0:
-
             self.column_characterization(starting_index, search_type=1, ui_obj=ui_obj)
-
             self.column_characterization(starting_index, search_type=2, ui_obj=ui_obj)
 
         elif search_type == 1:
-
             logger.info('Doing the basics...')
-            # Reset prob vectors:
-            self.column_characterization(starting_index, search_type=12)
-            # Spatial mapping:
-            self.column_characterization(starting_index, search_type=3)
-            if ui_obj is not None:
-                ui_obj.update_overlay()
-                ui_obj.update_graph()
-            # Angle analysis:
-            self.column_characterization(starting_index, search_type=16)
-            if ui_obj is not None:
-                ui_obj.update_overlay()
-                ui_obj.update_graph()
+            # Spatial map:
+            self.column_characterization(starting_index, search_type=3, ui_obj=ui_obj)
+            # Detect edges:
+            self.column_characterization(starting_index, search_type=6, ui_obj=ui_obj)
+            # Map connectivity:
+            self.column_characterization(starting_index, search_type=4, ui_obj=ui_obj)
+            # Zeta analysis:
+            self.column_characterization(starting_index, search_type=5, ui_obj=ui_obj)
+            # Alpha model:
+            self.column_characterization(starting_index, search_type=7, ui_obj=ui_obj)
             # Find particle:
-            self.column_characterization(starting_index, search_type=5)
-            # Set levels:
-            self.column_characterization(starting_index, search_type=6)
-            # Add edges:
-            self.column_characterization(starting_index, search_type=4)
-            if ui_obj is not None:
-                ui_obj.update_overlay()
-                ui_obj.update_graph()
-            # Search for intersections
-            self.column_characterization(starting_index, search_type=14, ui_obj=ui_obj)
-            # Summarize:
-            logger.info('Summarizing stats.')
-            self.graph.refresh_graph()
+            self.column_characterization(starting_index, search_type=8, ui_obj=ui_obj)
+            # Calc gamma:
+            self.column_characterization(starting_index, search_type=9, ui_obj=ui_obj)
+            # Map connectivity:
+            self.column_characterization(starting_index, search_type=4, ui_obj=ui_obj)
             logger.info('Basics done')
 
         elif search_type == 2:
-
             logger.info('Running models and untangling...')
-            # Weak untangling
-            self.column_characterization(starting_index, search_type=10, ui_obj=ui_obj)
-            # Base stat score:
-            self.column_characterization(starting_index, search_type=22)
-            if ui_obj is not None:
-                ui_obj.update_overlay()
-                ui_obj.update_graph()
-            # Weak untangling
-            self.column_characterization(starting_index, search_type=10, ui_obj=ui_obj)
-            # Find particle
-            self.column_characterization(starting_index, search_type=5)
-            # Set levels:
-            self.column_characterization(starting_index, search_type=6)
-            self.column_characterization(starting_index, search_type=7)
-            # Calc normalized gamma:
-            self.column_characterization(starting_index, search_type=19)
-            # Base stat score:
-            self.column_characterization(starting_index, search_type=22)
-            if ui_obj is not None:
-                ui_obj.update_overlay()
-                ui_obj.update_graph()
-            # Weak untangling
-            self.column_characterization(starting_index, search_type=10, ui_obj=ui_obj)
-            # Base model score:
-            self.column_characterization(starting_index, search_type=22)
-            # Weak untangling
-            self.column_characterization(starting_index, search_type=10, ui_obj=ui_obj)
-            # Find particle:
-            self.column_characterization(starting_index, search_type=5)
-            # Set levels:
-            self.column_characterization(starting_index, search_type=7)
-            # Add edges:
-            self.column_characterization(starting_index, search_type=4)
-            # Search for intersections
-            self.column_characterization(starting_index, search_type=14, ui_obj=ui_obj)
-            # Map subsets:
-            self.column_characterization(starting_index, search_type=21)
-            # Summarize:
-            logger.info('Summarizing stats.')
-            self.summarize_stats()
-            # Complete:
-            logger.info('Column characterization complete.')
 
         elif search_type == 3:
             # Run spatial mapping
@@ -557,176 +501,19 @@ class Project:
             logger.info('Found particle.')
 
         elif search_type == 9:
-            # Basic Weak untangling
-            logger.info('Starting experimental weak untangling...')
-
-            self.column_characterization(starting_index, search_type=14)
-
-            static = False
-            total_changes = 0
-            total_counter = 0
-
-            while not static:
-
-                for type_num in range(1, 2):
-
-                    cont = True
-                    counter = 0
-                    while cont:
-                        self.graph.map_arcs()
-                        chi_before = self.graph.chi
-                        logger.info('Looking for type {}:'.format(type_num))
-                        logger.info('Chi: {}'.format(chi_before))
-                        self.graph.build_maps()
-
-                        num_types, changes = untangling.untangle(self.graph, type_num, strong=False, ui_obj=ui_obj)
-
-                        total_changes += changes
-                        self.graph.map_arcs()
-                        chi_after = self.graph.chi
-                        logger.info('Found {} type {}\'s, made {} changes'.format(num_types, type_num, changes))
-                        logger.info('Chi: {}'.format(chi_before))
-
-                        if chi_after <= chi_before:
-                            logger.info('repeating...')
-                            counter += 1
-                        else:
-                            cont = False
-
-                        if changes == 0:
-                            cont = False
-                            logger.info('No changes made, continuing...')
-
-                        if counter > 4:
-                            cont = False
-                            logger.info('Emergency abort!')
-
-                total_counter += 1
-
-                if total_changes == 0:
-                    static = True
-
-                if total_counter > 3:
-                    static = True
-
-            self.column_characterization(starting_index, search_type=14)
-
-            self.graph.map_arcs()
-            logger.info('Weak untangling complete')
+            # Determine normalized intensities
+            logger.info('Finding normalized intensities...')
+            self.normalize_gamma()
+            logger.info('Found intensities.')
 
         elif search_type == 10:
-            # Weak untangling
-            logger.info('Starting experimental weak untangling...')
-
-            self.column_characterization(starting_index, search_type=14, ui_obj=ui_obj)
-
-            static = False
-            total_changes = 0
-            total_counter = 0
-
-            while not static:
-
-                for type_num in range(1, 7):
-
-                    cont = True
-                    counter = 0
-                    while cont:
-                        self.graph.map_arcs()
-                        chi_before = self.graph.chi
-                        logger.info('Looking for type {}:'.format(type_num))
-                        logger.info('Chi: {}'.format(chi_before))
-                        self.graph.build_maps()
-
-                        num_types, changes = untangling.untangle(self.graph, type_num, strong=False, ui_obj=ui_obj)
-
-                        total_changes += changes
-                        self.graph.map_arcs()
-                        self.graph.summarize_stats()
-                        chi_after = self.graph.chi
-                        logger.info('Found {} type {}\'s, made {} changes'.format(num_types, type_num, changes))
-                        logger.info('Chi: {}'.format(chi_before))
-
-                        if chi_after <= chi_before:
-                            logger.info('repeating...')
-                            counter += 1
-                        else:
-                            cont = False
-
-                        if changes == 0:
-                            cont = False
-                            logger.info('No changes made, continuing...')
-
-                        if counter > 4:
-                            cont = False
-                            logger.info('Emergency abort!')
-
-                total_counter += 1
-
-                if total_changes == 0:
-                    static = True
-
-                if total_counter > 3:
-                    static = True
-
-            self.column_characterization(starting_index, search_type=14, ui_obj=ui_obj)
-
-            self.graph.map_arcs()
-            logger.info('Weak untangling complete')
+            # Evaluate sub-species:
+            logger.info('Evaluating advanced species...')
+            self.graph.evaluate_sub_categories()
+            logger.info('Advanced species set.')
 
         elif search_type == 11:
-            # Strong untangling
-            logger.info('Starting experimental strong untangling...')
-
-            static = False
-            total_changes = 0
-            total_counter = 0
-
-            while not static:
-
-                for type_num in range(1, 7):
-
-                    cont = True
-                    counter = 0
-                    while cont:
-                        self.graph.redraw_edges()
-                        chi_before = self.graph.chi
-                        self.column_characterization(starting_index, search_type=14)
-                        logger.info('Looking for type {}:'.format(type_num))
-                        logger.info('Chi: {}'.format(chi_before))
-                        self.graph.build_maps()
-
-                        num_types, changes = untangling.untangle(self.graph, type_num, strong=True)
-
-                        total_changes += changes
-                        self.graph.redraw_edges()
-                        chi_after = self.graph.chi
-                        logger.info('Found {} type {}\'s, made {} changes'.format(num_types, type_num, changes))
-                        logger.info('Chi: {}'.format(chi_before))
-
-                        if chi_after <= chi_before:
-                            logger.info('repeating...')
-                            counter += 1
-                        else:
-                            cont = False
-
-                        if changes == 0:
-                            cont = False
-                            logger.info('No changes made, continuing...')
-
-                        if counter > 4:
-                            cont = False
-                            logger.info('Emergency abort!')
-
-                total_counter += 1
-
-                if total_changes == 0:
-                    static = True
-
-                if total_counter > 3:
-                    static = True
-
-            self.graph.map_arcs()
-            logger.info('Strong untangling complete')
+            pass
 
         elif search_type == 12:
             # reset probs
@@ -764,13 +551,7 @@ class Project:
             logger.info('Symmetry characterization complete.')
 
         elif search_type == 16:
-            # Alpha angle analysis
-            logger.info('Running experimental angle analysis')
-            for vertex in self.graph.vertices:
-                if not vertex.is_edge_column and not vertex.is_set_by_user and not vertex.void:
-                    vertex.advanced_probability_vector = legacy_items.base_angle_score(self.graph, vertex.i)
-                    vertex.determine_species_from_probability_vector()
-            logger.info('Angle analysis complete!')
+            pass
 
         elif search_type == 17:
             pass
@@ -779,10 +560,7 @@ class Project:
             pass
 
         elif search_type == 19:
-            # Determine normalized intensities
-            logger.info('Finding normalized intensities...')
-            self.normalize_gamma()
-            logger.info('Found intensities.')
+            pass
 
         elif search_type == 20:
             # Mesh analysis with strong resolve

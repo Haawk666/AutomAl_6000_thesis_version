@@ -534,6 +534,63 @@ class SetButtonLayout(QtWidgets.QHBoxLayout):
         self.addStretch()
 
 
+class StudioButton(QtWidgets.QWidget):
+
+    def __init__(self, *args, studio_parent=None, mute_func=None, solo_func=None):
+        super().__init__(*args)
+
+        self.studio_parent = studio_parent
+
+        self.btn_mute = QtWidgets.QPushButton('M')
+        self.btn_mute.setCheckable(True)
+        self.btn_mute.setChecked(False)
+        self.btn_mute.toggled.connect(mute_func)
+
+        self.btn_solo = QtWidgets.QPushButton('S')
+        self.btn_solo.setCheckable(True)
+        self.btn_solo.setChecked(False)
+        self.btn_solo.toggled.connect(solo_func)
+
+        layout = QtWidgets.QHBoxLayout()
+        layout.addWidget(self.btn_mute)
+        layout.addWidget(self.btn_solo)
+
+
+class StudioView(QtWidgets.QWidget):
+
+    def __init__(self, *args, ui_obj=None, species_dict=None):
+        super().__init__(*args)
+
+        if species_dict is None:
+            self.species_dict = ui_obj.core.Project.default_dict
+        else:
+            self.species_dict = species_dict
+
+        self.channels_list = []
+
+        self.channels_list.append({
+            'lbl': QtWidgets.QLabel('All columns'),
+            'btn': StudioButton(studio_parent=self, mute_func=self.mute_all, solo_func=self.solo_all)
+        })
+
+    def mute_all(self):
+        pass
+
+    def solo_all(self):
+        pass
+
+
+
+    def set_layout(self):
+        pass
+
+
+
+
+
+
+
+
 class GroupBox(QtWidgets.QGroupBox):
 
     def __init__(self, title, menu_action=None):
