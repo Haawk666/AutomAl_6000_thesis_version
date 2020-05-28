@@ -190,14 +190,19 @@ class Vertex:
         return self.spatial_coor_x, self.spatial_coor_y, self.spatial_coor_z
 
     def set_probability_from_advanced(self):
-        pass
+        self.probability_vector = {}
+        for advanced_species, advanced_prob in self.advanced_probability_vector.items():
+            atomic_species = self.parent_graph.species_dict[advanced_species]['atomic_species']
+            if atomic_species in self.probability_vector:
+                self.probability_vector[atomic_species] += advanced_prob
+            else:
+                self.probability_vector[atomic_species] = advanced_prob
+        self.probability_vector = utils.normalize_dict(self.probability_vector)
 
     def set_advanced_from_probability(self):
         pass
 
     def reset_probability_vector(self, bias='Un_1'):
-        if self.is_edge_column:
-            print('i: {}\n    bias: {}\n    '.format(self.i, bias))
         self.advanced_probability_vector = {}
         self.probability_vector = {}
         if self.parent_graph is not None:
@@ -224,7 +229,6 @@ class Vertex:
         self.atomic_species = self.parent_graph.species_dict[self.advanced_species]['atomic_species']
         self.set_probability_from_advanced()
         self.n = self.parent_graph.species_dict[self.advanced_species]['symmetry']
-        self.out_degree = self.n
 
     def reset_probability_vector_from_atomic_species(self):
         self.reset_probability_vector(bias=self.advanced_species)
@@ -512,19 +516,53 @@ class AtomicGraph:
             vertices.append(self.vertices[index])
         return vertices
 
-    def get_alpha_angles(self, i, prioritize_friendly=False):
+    def get_alpha_angles(self, i, selection_type='district'):
         pivot = (self.vertices[i].im_coor_x, self.vertices[i].im_coor_y)
         district = self.vertices[i].district
         if len(district) == 0:
             return []
-        in_neighbourhood = self.vertices[i].in_neighbourhood
         out_neighbourhood = self.vertices[i].out_neighbourhood
+        partners = self.vertices[i].partners
 
-        if prioritize_friendly:
+        if selection_type == 'partners':
             j = []
-            for out_neighbour in out_neighbourhood:
-                if out_neighbour in in_neighbourhood:
-                    j.append(out_neighbour)
+            for citizen in district:
+                if citizen in partners:
+                    j.append(citizen)
+                if len(j) == 3:
+                    break
+            else:
+                for citizen in district:
+                    if citizen not in j:
+                        j.append(citizen)
+                    if len(j) == 3:
+                        break
+            j.append(j[0])
+            for k, index in enumerate(j):
+                j[k] = (self.vertices[index].im_coor_x, self.vertices[index].im_coor_y)
+
+        elif selection_type == 'zeta':
+            j = []
+            for citizen in district:
+                if not self.vertices[citizen].zeta == self.vertices[i].zeta:
+                    j.append(citizen)
+                if len(j) == 3:
+                    break
+            else:
+                for citizen in district:
+                    if citizen not in j:
+                        j.append(citizen)
+                    if len(j) == 3:
+                        break
+            j.append(j[0])
+            for k, index in enumerate(j):
+                j[k] = (self.vertices[index].im_coor_x, self.vertices[index].im_coor_y)
+
+        elif selection_type == 'out':
+            j = []
+            for citizen in district:
+                if citizen in out_neighbourhood:
+                    j.append(citizen)
                 if len(j) == 3:
                     break
             else:
@@ -753,6 +791,14 @@ class AtomicGraph:
             zeta = 0
         self.vertices[i].zeta = zeta
 
+    def set_n(self, i, n):
+        for key, item in self.species_dict.items():
+            if item['symmetry'] == n:
+                self.set_species(i, key)
+                break
+        else:
+            logger.info('Could not set the symmetry of vertex {}, n = {} is not present in the species dictionary!'.format(i, n))
+
     def set_species(self, i, advanced_species):
         self.vertices[i].reset_probability_vector(bias=advanced_species)
         self.vertices[i].determine_species_from_probability_vector()
@@ -851,8 +897,21 @@ class AtomicGraph:
         for vertex in self.vertices:
             vertex.out_neighbourhood = set()
             if not vertex.void:
-                for out_neighbour in vertex.district[:vertex.n]:
-                    vertex.out_neighbourhood.add(out_neighbour)
+                counter = 0
+                for citizen in vertex.district:
+                    if not vertex.zeta == self.vertices[citizen].zeta:
+                        vertex.out_neighbourhood.add(citizen)
+                        counter += 1
+                    if counter == vertex.n:
+                        break
+                else:
+                    for alternative_citizen in vertex.district[0:vertex.n]:
+                        if alternative_citizen not in vertex.out_neighbourhood:
+                            vertex.out_neighbourhood.add(alternative_citizen)
+                            counter += 1
+                        if counter == vertex.n:
+                            break
+
         # Determine in_neighbourhoods:
         for vertex in self.vertices:
             vertex.in_neighbourhood = set()

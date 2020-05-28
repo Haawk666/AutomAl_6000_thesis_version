@@ -2314,7 +2314,7 @@ class DataExportWizard(QtWidgets.QDialog):
             if self.cmb_categorization.currentText() == 'simple' and 'species_index' not in export_keys:
                 keys.append('species_index')
             # Initate manager
-            manager = statistics.VertexDataManager(files, filter_=filter_, save_filename=filename[0], recalc=self.chb_recalculate_graphs.isChecked(), attr_keys=keys, categorization=self.cmb_categorization.currentText())
+            manager = statistics.VertexDataManager(files, filter_=filter_, save_filename=filename[0], recalc=self.chb_recalculate_graphs.isChecked(), attr_keys=keys)
             manager.export_csv(filename[0] + filename[1], export_keys)
             GUI.logger.info('Successfully exported data to {}'.format(filename[0]))
         self.ui_obj.sys_message('Ready.')
@@ -2837,8 +2837,10 @@ class PlotModels(QtWidgets.QDialog):
         self.btn_plot_all.clicked.connect(self.btn_plot_all_trigger)
         self.btn_plot_z_scores = QtWidgets.QPushButton('Plot z-scores')
         self.btn_plot_z_scores.clicked.connect(self.btn_plot_z_scores_trigger)
-        self.btn_plot_pca = QtWidgets.QPushButton('Plot')
+        self.btn_plot_pca = QtWidgets.QPushButton('Plot 2 first PC')
         self.btn_plot_pca.clicked.connect(self.btn_plot_pca_trigger)
+        self.btn_plot_all_pca = QtWidgets.QPushButton('Plot all PC distributions')
+        self.btn_plot_all_pca.clicked.connect(self.btn_plot_all_pca_trigger)
         self.btn_plot_single = QtWidgets.QPushButton('Plot')
         self.btn_plot_single.clicked.connect(self.btn_plot_single_trigger)
 
@@ -2947,6 +2949,7 @@ class PlotModels(QtWidgets.QDialog):
         layout = QtWidgets.QHBoxLayout()
         layout.addStretch()
         layout.addWidget(self.btn_plot_pca)
+        layout.addWidget(self.btn_plot_all_pca)
         layout.addStretch()
         grp_plot_pca_layout.addLayout(layout)
         grp_plot_pca.setLayout(grp_plot_pca_layout)
@@ -3019,6 +3022,9 @@ class PlotModels(QtWidgets.QDialog):
             self.model.plot_pca(show_category=True)
         else:
             self.model.plot_pca(show_category=False)
+
+    def btn_plot_all_pca_trigger(self):
+        self.model.plot_all_pc()
 
     def btn_plot_single_trigger(self):
         self.model.single_plot(self.cmb_single_attribute.currentText())

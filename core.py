@@ -41,14 +41,14 @@ class Project:
     version = [0, 1, 0]
 
     default_dict = {
-        'Si_1': {'symmetry': 3, 'atomic_species': 'Si', 'atomic_radii': 117.50, 'color': (255, 0, 0), 'species_color': (255, 0, 0), 'description': 'Q-prime Si'},
-        'Si_2': {'symmetry': 3, 'atomic_species': 'Si', 'atomic_radii': 117.50, 'color': (235, 20, 20), 'species_color': (255, 0, 0), 'description': 'Beta-pprime Si'},
-        'Cu_1': {'symmetry': 3, 'atomic_species': 'Cu', 'atomic_radii': 127.81, 'color': (255, 255, 0), 'species_color': (255, 255, 0), 'description': ''},
-        'Al_1': {'symmetry': 4, 'atomic_species': 'Al', 'atomic_radii': 143.00, 'color': (0, 255, 0), 'species_color': (0, 255, 0), 'description': ''},
-        'Al_2': {'symmetry': 4, 'atomic_species': 'Al', 'atomic_radii': 143.00, 'color': (20, 235, 20), 'species_color': (0, 255, 0), 'description': ''},
+        'Si_1': {'symmetry': 3, 'atomic_species': 'Si', 'atomic_radii': 117.50, 'color': (255, 20, 20), 'species_color': (255, 20, 20), 'description': 'Q-prime Si'},
+        'Si_2': {'symmetry': 3, 'atomic_species': 'Si', 'atomic_radii': 117.50, 'color': (235, 40, 40), 'species_color': (255, 20, 20), 'description': 'Beta-pprime Si'},
+        'Cu_1': {'symmetry': 3, 'atomic_species': 'Cu', 'atomic_radii': 127.81, 'color': (255, 255, 20), 'species_color': (255, 255, 20), 'description': ''},
+        'Al_1': {'symmetry': 4, 'atomic_species': 'Al', 'atomic_radii': 143.00, 'color': (20, 255, 20), 'species_color': (20, 255, 20), 'description': ''},
+        'Al_2': {'symmetry': 4, 'atomic_species': 'Al', 'atomic_radii': 143.00, 'color': (40, 235, 40), 'species_color': (20, 255, 20), 'description': ''},
         'Mg_1': {'symmetry': 5, 'atomic_species': 'Mg', 'atomic_radii': 160.00, 'color': (138, 43, 226), 'species_color': (138, 43, 226), 'description': ''},
         'Mg_2': {'symmetry': 5, 'atomic_species': 'Mg', 'atomic_radii': 160.00, 'color': (118, 63, 206), 'species_color': (138, 43, 226), 'description': ''},
-        'Un_1': {'symmetry': 3, 'atomic_species': 'Un', 'atomic_radii': 100.00, 'color': (0, 0, 255), 'species_color': (0, 0, 255), 'description': ''}
+        'Un_1': {'symmetry': 3, 'atomic_species': 'Un', 'atomic_radii': 100.00, 'color': (20, 20, 255), 'species_color': (20, 20, 255), 'description': ''}
     }
 
     # District size
@@ -524,91 +524,37 @@ class Project:
             logger.info('Spatial mapping complete.')
 
         elif search_type == 4:
-            # redraw edges
-            logger.info('Mapping arcs...')
-            self.graph.map_arcs()
-            logger.info('Arcs mapped.')
+            # Run local graph mapping
+            logger.info('Mapping vertex connectivity...')
+            self.graph.build_maps()
+            logger.info('Vertices mapped.')
 
         elif search_type == 5:
-            # Legacy particle detection
-            logger.info('Finding particle with legacy method....')
-            legacy_items.precipitate_controller(self.graph, starting_index)
-            # graph_op.precipitate_controller(self.graph, starting_index)
-            logger.info('Found particle.')
+            # Zeta analysis
+            logger.info('Running zeta analysis....')
+            column_characterization.zeta_analysis(self.graph, starting_index, self.graph.vertices[starting_index].zeta)
+            logger.info('zeta\'s set.')
 
         elif search_type == 6:
-            # Legacy level determination
-            logger.info('Running legacy level definition algorithm....')
-            legacy_items.define_levels(self.graph, starting_index, self.graph.vertices[starting_index].zeta)
-            logger.info('Levels set.')
+            # Identify edge columns
+            logger.info('Finding edge columns....')
+            column_characterization.find_edge_columns(self.graph, self.im_width, self.im_height)
+            for vertex in self.graph.vertices:
+                if vertex.is_edge_column:
+                    self.graph.set_species(vertex.i, 'Al_1')
+            logger.info('Edge columns found.')
 
         elif search_type == 7:
-            # Experimental level determination
-            logger.info('Running experimental level definition algorithm....')
-            self.graph.reset_all_flags()
-            self.graph.build_maps()
-            graph_op.naive_determine_z(self.graph, starting_index, self.graph.vertices[starting_index].zeta)
-            graph_op.revise_z(self.graph)
-            graph_op.revise_z(self.graph)
-            logger.info('Levels set.')
+            # Applying alpha model
+            logger.info('Calculating probabilities from alpha attributes...')
+            column_characterization.apply_alpha_model(self.graph)
+            logger.info('Calculated probabilities from alpha attributes.')
 
         elif search_type == 8:
-            # Aggressive weak untangling
-            logger.info('Starting experimental weak untangling...')
-
-            self.column_characterization(starting_index, search_type=14, ui_obj=ui_obj)
-
-            static = False
-            total_changes = 0
-            total_counter = 0
-
-            while not static:
-
-                for type_num in range(1, 7):
-
-                    cont = True
-                    counter = 0
-                    while cont:
-                        self.graph.map_arcs()
-                        chi_before = self.graph.chi
-                        logger.info('Looking for type {}:'.format(type_num))
-                        logger.info('Chi: {}'.format(chi_before))
-                        self.graph.build_maps()
-
-                        num_types, changes = untangling.untangle(self.graph, type_num, strong=False, ui_obj=ui_obj, aggressive=True)
-
-                        total_changes += changes
-                        self.graph.map_arcs()
-                        chi_after = self.graph.chi
-                        logger.info('Found {} type {}\'s, made {} changes'.format(num_types, type_num, changes))
-                        logger.info('Chi: {}'.format(chi_before))
-
-                        if chi_after <= chi_before:
-                            logger.info('repeating...')
-                            counter += 1
-                        else:
-                            cont = False
-
-                        if changes == 0:
-                            cont = False
-                            logger.info('No changes made, continuing...')
-
-                        if counter > 4:
-                            cont = False
-                            logger.info('Emergency abort!')
-
-                total_counter += 1
-
-                if total_changes == 0:
-                    static = True
-
-                if total_counter > 3:
-                    static = True
-
-            self.column_characterization(starting_index, search_type=14, ui_obj=ui_obj)
-
-            self.graph.map_arcs()
-            logger.info('Weak untangling complete')
+            # Particle detection
+            logger.info('Finding particle...')
+            column_characterization.particle_detection(self.graph)
+            logger.info('Found particle.')
 
         elif search_type == 9:
             # Basic Weak untangling
@@ -803,21 +749,19 @@ class Project:
             logger.info('Looking for intersections')
             intersections = self.graph.find_intersections()
             num_intersections = len(intersections)
-            # not_removed, strong_intersections, ww, ss = graph_op.remove_intersections(self.graph)
-            graph_op.experimental_remove_intersections(self.graph)
+            column_characterization.arc_intersection_denial(self.graph)
             intersections = self.graph.find_intersections()
-            self.graph.build_maps()
             if ui_obj is not None:
                 ui_obj.update_overlay()
                 ui_obj.update_graph()
             logger.info('Found {} intersections'.format(num_intersections))
-            # self.report('        Found {} strong intersections'.format(ss), force=True)
-            # self.report('        Found {} weak-weak intersections'.format(ww), force=True)
-            # self.report('        {} weak intersections were not removed'.format(not_removed), force=True)
             logger.info('{} literal intersections still remain'.format(len(intersections)))
 
         elif search_type == 15:
-            pass
+            # Experimental symmetry analysis
+            logger.info('Running experimental symmetry characterization...')
+            column_characterization.symmetry_characterization(self.graph, self.im_width, self.im_height, starting_index)
+            logger.info('Symmetry characterization complete.')
 
         elif search_type == 16:
             # Alpha angle analysis
@@ -832,13 +776,7 @@ class Project:
             pass
 
         elif search_type == 18:
-            # Find edge columns
-            logger.info('Finding edge columns....')
-            self.find_edge_columns()
-            for vertex in self.graph.vertices:
-                if vertex.is_edge_column and not vertex.is_set_by_user:
-                    vertex.reset_probability_vector(bias='Al_1')
-            logger.info('Found edge columns.')
+            pass
 
         elif search_type == 19:
             # Determine normalized intensities

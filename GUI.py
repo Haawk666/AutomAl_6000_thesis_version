@@ -325,7 +325,7 @@ class MainUI(QtWidgets.QMainWindow):
                     self.set_species('Mg_1')
             elif key == QtCore.Qt.Key_Plus:
                 if not self.selected_column == -1:
-                    self.set_level(self.project_instance.graph.vertices[self.selected_column].anti_level())
+                    self.set_level(self.project_instance.graph.vertices[self.selected_column].anti_zeta())
             elif key == QtCore.Qt.Key_W:
                 if self.control_window.chb_move.isChecked():
                     self.gs_atomic_positions.interactive_position_objects[self.selected_column].moveBy(0.0, -1.0)
@@ -951,21 +951,21 @@ class MainUI(QtWidgets.QMainWindow):
                        '1 - Basic mappings...',
                        '2 - ...The rest',
                        '3 - Spatial mapping',
-                       '4 - Redraw edges',
-                       '5 - Legacy particle detection',
-                       '6 - Legacy z-height determination',
-                       '7 - Experimental z-height determination',
-                       '8 - Not in use',
+                       '4 - Map vertex connectivity',
+                       '5 - Zeta analysis',
+                       '6 - Identify edge columns',
+                       '7 - Apply alpha model',
+                       '8 - Particle detection',
                        '9 - Basic weak untangling',
                        '10 - Weak untangling',
                        '11 - Strong untangling',
                        '12 - Reset probability vectors',
                        '13 - Reset user-set columns',
                        '14 - Search for intersections',
-                       '15 - Not in use',
+                       '15 - Experimental symmetry characterization',
                        '16 - Base alpha score',
                        '17 - Not in use',
-                       '18 - Find edge columns',
+                       '18 - Not in use',
                        '19 - Calculate globally normalized gamma levels',
                        '20 - Run experimental mesh analysis',
                        '21 - Sort all subsets',

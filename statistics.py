@@ -83,8 +83,7 @@ class MultivariateNormalDist:
         new_means = []
         for attr_index in attr_indices:
             new_means.append(self.means[attr_index])
-        attr_indices = np.array(attr_indices)
-        new_covar_matrix = np.array(self.covar_matrix[attr_indices, attr_indices])
+        new_covar_matrix = np.array(self.covar_matrix[np.ix_(attr_indices, attr_indices)])
         new_inverse_covar_matrix = np.linalg.inv(new_covar_matrix)
         new_covar_matrix_determinant = np.linalg.det(new_covar_matrix)
         return new_means, new_covar_matrix_determinant, new_inverse_covar_matrix
@@ -101,7 +100,7 @@ class MultivariateNormalDist:
         if len(kwargs) == len(self.attribute_keys):
             prob = utils.multivariate_normal_dist(args, self.means, self.covar_matrix_determinant, self.inverse_covar_matrix)
         else:
-            new_means, new_covar_matrix_determinant, new_inverse_covar_matrix = self.get_partial_model(kwargs)
+            new_means, new_covar_matrix_determinant, new_inverse_covar_matrix = self.get_partial_model(attr_indices)
             prob = utils.multivariate_normal_dist(args, new_means, new_covar_matrix_determinant, new_inverse_covar_matrix)
         return prob
 
@@ -161,15 +160,7 @@ class VertexDataManager:
     :code:`'spatial_coor_z'`                    :code:`vertex.spatial_coor_z` - float                       No                      No
     ========================================== =========================================================== ======================= ============
 
-    The :code:`categorization` keyword determines how the data will be categorized. The options are
 
-    ======================= ===========================================================================
-    :code:`categorization`  Explanation
-    ======================= ===========================================================================
-    :code:`'advanced'`      Categorize data by the :code:`vertex.advanced_category_index` attribute
-    :code:`'simple'`        Categorize data by the :code:`vertex.species_index` attribute
-    :code:`'none'`          Don't categorize data
-    ======================= ===========================================================================
 
     note
     ----------
@@ -704,6 +695,47 @@ class VertexDataManager:
             ax_scatter.set_xlabel('{}'.format(attr_1_key))
             ax_scatter.set_ylabel('{}'.format(attr_2_key))
             ax_scatter.legend()
+
+        plt.show()
+
+    def plot_all_pc(self):
+
+        fig = plt.figure(constrained_layout=True)
+        gs = GridSpec(3, 3, figure=fig)
+        ax = [
+            fig.add_subplot(gs[0, 0]),
+            fig.add_subplot(gs[0, 1]),
+            fig.add_subplot(gs[0, 2]),
+            fig.add_subplot(gs[1, 0]),
+            fig.add_subplot(gs[1, 1]),
+            fig.add_subplot(gs[1, 2]),
+            fig.add_subplot(gs[2, 0]),
+            fig.add_subplot(gs[2, 1]),
+            fig.add_subplot(gs[2, 2])
+        ]
+        ax = ax[0:len(self.attribute_keys)]
+
+        for attr_index, attr_key in enumerate(self.pc_keys):
+
+            min_val = self.composed_uncategorized_data[attr_index, :].min()
+            max_val = self.composed_uncategorized_data[attr_index, :].max()
+            line = np.linspace(min_val, max_val, 1000)
+
+            for c, category in enumerate(self.category_list):
+                mean = self.composed_normal_dist[c].means[attr_index]
+                var = self.composed_normal_dist[c].variances[attr_index]
+                ax[attr_index].plot(
+                    line,
+                    utils.normal_dist(line, mean, var),
+                    c=np.array(utils.norm_rgb_tuple(self.species_dict[category]['color'])),
+                    label='{} ($\mu = ${:.2f}, $\sigma = ${:.2f})'.format(category, mean, var)
+                )
+
+            ax[attr_index].set_title('{} fitted density'.format(attr_key))
+            ax[attr_index].set_xlabel('{} {}'.format(attr_key, self.attribute_units[attr_index]))
+            ax[attr_index].legend()
+
+        fig.suptitle('Principle components')
 
         plt.show()
 
