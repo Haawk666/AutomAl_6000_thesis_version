@@ -947,30 +947,32 @@ class MainUI(QtWidgets.QMainWindow):
     def btn_continue_analysis_trigger(self):
         if self.project_instance is not None:
 
-            strings = ['0 - Full column characterization algorithm',
-                       '1 - Basic mappings...',
-                       '2 - ...The rest',
-                       '3 - Spatial mapping',
-                       '4 - Map vertex connectivity',
-                       '5 - Zeta analysis',
-                       '6 - Identify edge columns',
-                       '7 - Apply alpha model',
-                       '8 - Particle detection',
-                       '9 - Calculate normalized gamma',
-                       '10 - Evaluate sub-species',
-                       '11 - Not in use',
-                       '12 - Reset probability vectors',
-                       '13 - Reset user-set columns',
-                       '14 - Search for intersections',
-                       '15 - Experimental symmetry characterization',
-                       '16 - Not in use',
-                       '17 - Not in use',
-                       '18 - Not in use',
-                       '19 - Not in use',
-                       '20 - Run experimental mesh analysis',
-                       '21 - Sort all subsets',
-                       '22 - Product predictions',
-                       '23 - Model predictions']
+            strings = [
+                '0 - Full column characterization algorithm',
+                '1 - Basic mappings...',
+                '2 - ...The rest',
+                '3 - Spatial mapping',
+                '4 - Map vertex connectivity',
+                '5 - Zeta analysis',
+                '6 - Identify edge columns',
+                '7 - Apply alpha model',
+                '8 - Particle detection',
+                '9 - Calculate normalized gamma',
+                '10 - Evaluate sub-species',
+                '11 - Apply composite model',
+                '12 - Reset probability vectors',
+                '13 - Reset user-set columns',
+                '14 - Search for intersections',
+                '15 - Experimental symmetry characterization',
+                '16 - Not in use',
+                '17 - Not in use',
+                '18 - Not in use',
+                '19 - Not in use',
+                '20 - Run experimental mesh analysis',
+                '21 - Sort all subsets',
+                '22 - Product predictions',
+                '23 - Model predictions'
+            ]
 
             string, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Search step", strings, 0, False)
             if ok_pressed and strings:

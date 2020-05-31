@@ -1,5 +1,6 @@
 # Internal imports:
 import statistics
+import utils
 # External imports:
 import numpy as np
 import time
@@ -70,17 +71,21 @@ def zeta_analysis(graph_obj, starting_index, starting_zeta=0):
     time_1 = time.time()
     votes = [0] * graph_obj.order
     if starting_zeta == 0:
-        votes[starting_index] = 2
+        votes[starting_index] = 1
     else:
-        votes[starting_index] = -2
+        votes[starting_index] = -1
 
     counter = 0
     cont = True
     while cont:
         for vertex in graph_obj.vertices:
             if not vertex.void:
-                for out_neighbour in vertex.out_neighbourhood:
-                    votes[out_neighbour] -= votes[vertex.i]
+                if vertex.is_edge_column:
+                    for i, citizen in enumerate(vertex.district[0:2]):
+                        votes[citizen] -= 1 * votes[vertex.i]
+                else:
+                    for i, citizen in enumerate(vertex.district[0:3]):
+                        votes[citizen] -= 1 * votes[vertex.i]
         counter += 1
         if counter > 1000:
             cont = False
@@ -91,26 +96,9 @@ def zeta_analysis(graph_obj, starting_index, starting_zeta=0):
         else:
             vertex.zeta = 1
 
-    for vertex in graph_obj.vertices:
-        sep_1 = []
-        sep_2 = []
-        for citizen in vertex.district:
-            if graph_obj.vertices[citizen].zeta == vertex.zeta:
-                if len(sep_2) < 3:
-                    sep_2.append(graph_obj.separation_matrix[vertex.i, citizen])
-            else:
-                if len(sep_1) < 3:
-                    sep_1.append(graph_obj.separation_matrix[vertex.i, citizen])
-        sep_1 = sum(sep_1) / len(sep_1)
-        sep_2 = sum(sep_2) / len(sep_2)
-
-        if sep_2 < sep_1:
-            vertex.zeta = vertex.anti_zeta()
-            logger.info('Altering zeta of vertex {}'.format(vertex.i))
     graph_obj.build_maps()
 
     time_2 = time.time()
-
     logger.info('Zeta analysis completed in {} seconds'.format(time_2 - time_1))
 
 
@@ -185,7 +173,7 @@ def apply_alpha_model(graph_obj, model=None, alpha_selection_type='zeta'):
     else:
         this_model = model
     for vertex in graph_obj.vertices:
-        vertex.alpha_angles = graph_obj.get_alpha_angles(vertex.i, selection_type='zeta')
+        vertex.alpha_angles = graph_obj.get_alpha_angles(vertex.i, selection_type=alpha_selection_type)
         if vertex.alpha_angles is not None and not len(vertex.alpha_angles) == 0:
             vertex.alpha_max = max(vertex.alpha_angles)
             vertex.alpha_min = min(vertex.alpha_angles)
@@ -203,5 +191,42 @@ def apply_alpha_model(graph_obj, model=None, alpha_selection_type='zeta'):
     graph_obj.build_maps()
 
 
-
+def apply_composite_model(graph_obj, model=None, alpha_selection_type='zeta'):
+    if model is None:
+        this_model = statistics.VertexDataManager.load(graph_obj.active_model)
+    else:
+        this_model = model
+    for vertex in graph_obj.vertices:
+        vertex.alpha_angles = graph_obj.get_alpha_angles(vertex.i, selection_type=alpha_selection_type)
+        if vertex.alpha_angles is not None and not len(vertex.alpha_angles) == 0:
+            vertex.alpha_max = max(vertex.alpha_angles)
+            vertex.alpha_min = min(vertex.alpha_angles)
+        else:
+            vertex.alpha_max = 0
+            vertex.alpha_min = 0
+        vertex.theta_angles = graph_obj.get_theta_angles(vertex.i)
+        if vertex.theta_angles is not None and not len(vertex.theta_angles) == 0:
+            vertex.theta_max = max(vertex.theta_angles)
+            vertex.theta_min = min(vertex.theta_angles)
+            vertex.theta_angle_variance = utils.variance(vertex.theta_angles)
+            vertex.theta_angle_mean = utils.mean_val(vertex.theta_angles)
+        else:
+            vertex.theta_max = 0
+            vertex.theta_min = 0
+            vertex.theta_angle_variance = 0
+            vertex.theta_angle_mean = 0
+    for vertex in graph_obj.vertices:
+        if not vertex.is_edge_column and not vertex.void and not vertex.is_set_by_user:
+            vertex.advanced_probability_vector = this_model.calc_prediction({
+                'alpha_max': vertex.alpha_max,
+                'alpha_min': vertex.alpha_min,
+                'theta_max': vertex.theta_max,
+                'theta_min': vertex.theta_min,
+                'theta_angle_mean': vertex.theta_angle_mean,
+                'normalized_peak_gamma': vertex.normalized_peak_gamma,
+                'normalized_avg_gamma': vertex.normalized_peak_gamma
+            })
+            vertex.advanced_probability_vector['Un_1'] = 0.0
+            vertex.determine_species_from_probability_vector()
+    graph_obj.build_maps()
 

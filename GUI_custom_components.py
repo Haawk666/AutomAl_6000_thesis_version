@@ -566,19 +566,20 @@ class StudioView(QtWidgets.QWidget):
         else:
             self.species_dict = species_dict
 
+        self.ui_obj = ui_obj
+
         self.channels_list = []
 
         self.channels_list.append({
-            'lbl': QtWidgets.QLabel('All columns'),
-            'btn': StudioButton(studio_parent=self, mute_func=self.mute_all, solo_func=self.solo_all)
+            'All': {
+                'lbl': QtWidgets.QLabel('All columns'),
+                'btn': StudioButton(studio_parent=self, mute_func=self.mute_all, solo_func=self.solo_all)
+            }
         })
 
-    def mute_all(self):
-        pass
+    def refresh_overlay(self):
 
-    def solo_all(self):
         pass
-
 
 
     def set_layout(self):

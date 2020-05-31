@@ -456,6 +456,8 @@ class Project:
             self.column_characterization(starting_index, search_type=9, ui_obj=ui_obj)
             # Map connectivity:
             self.column_characterization(starting_index, search_type=4, ui_obj=ui_obj)
+            # Composite model:
+            self.column_characterization(starting_index, search_type=11, ui_obj=ui_obj)
             logger.info('Basics done')
 
         elif search_type == 2:
@@ -513,7 +515,10 @@ class Project:
             logger.info('Advanced species set.')
 
         elif search_type == 11:
-            pass
+            # Applying composite model
+            logger.info('Calculating probabilities from all attributes...')
+            column_characterization.apply_composite_model(self.graph)
+            logger.info('Calculated probabilities from all attributes.')
 
         elif search_type == 12:
             # reset probs
