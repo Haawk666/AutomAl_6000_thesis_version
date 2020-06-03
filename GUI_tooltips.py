@@ -17,6 +17,9 @@ btn_set_start_layout = 'Set a default starting column for the column charateriza
 btn_find_column_layout = 'Select column by index reference.'
 btn_set_species_layout = 'Manually determine the atomic species of the selected column.'
 btn_set_level_layout = 'Manually set the z-height of the selected column.'
+btn_set_map_type_layout = 'Set which method used to automatically reassign the out-neighbourhoods. Zeta prioritizes\n' \
+                          'vertices with opposite zeta values. District selects the first n elements in each vertex\n' \
+                          'district. Separation selects the n closest vertices in terms of projected separation.'
 btn_set_sub_graph_layout = 'Select the sub graph type.. Options are: Column-centered, Edge-centered or Mesh-centered.'
 btn_set_sub_graph_order_layout = 'Set the order of the sub-graph.. Options are: 1st, 2nd or 3rd.'
 

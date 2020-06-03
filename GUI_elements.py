@@ -228,7 +228,7 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
     def perturb_edge(self, i, j, k, permute_data=True, center_view=False):
         """Finds the edge from i to j, and makes it point from i to k."""
         if permute_data:
-            self.ui_obj.project_instance.graph.permute_j_k(i, j, k)
+            self.ui_obj.project_instance.graph.permute_j_k(i, j, k, map_type=self.ui_obj.map_type)
         self.redraw_neighbourhood(i)
         for n, edge in enumerate(self.arcs[j]):
             if edge.j == i:
@@ -956,6 +956,8 @@ class ControlWindow(QtWidgets.QWidget):
         self.lbl_avg_symmetry_confidence = QtWidgets.QLabel('Average symmetry confidence: ')
         self.lbl_avg_species_confidence = QtWidgets.QLabel('Average species confidence: ')
 
+        self.lbl_map_type = QtWidgets.QLabel('Map type: ')
+
         self.lbl_sub_graph_type = QtWidgets.QLabel('Sub-graph type: ')
         self.lbl_sub_graph_order = QtWidgets.QLabel('Sub-graph order: ')
 
@@ -1129,6 +1131,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_find_column_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_find_column_trigger, label=self.lbl_column_index)
         self.btn_set_species_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_species_trigger, label=self.lbl_column_species)
         self.btn_set_level_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_level_trigger, label=self.lbl_column_level)
+        self.btn_set_map_type_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_map_type_trigger, label=self.lbl_map_type)
         self.btn_set_sub_graph_type_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_sub_graph_type_trigger, label=self.lbl_sub_graph_type)
         self.btn_set_sub_graph_order_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_sub_graph_order_trigger, label=self.lbl_sub_graph_order)
 
@@ -1338,6 +1341,7 @@ class ControlWindow(QtWidgets.QWidget):
 
         self.graph_box_layout = QtWidgets.QVBoxLayout()
         self.graph_box_layout.addLayout(btn_graph_btns_layout)
+        self.graph_box_layout.addLayout(self.btn_set_map_type_layout)
         self.graph_box_layout.addWidget(self.chb_perturb_mode)
         self.graph_box_layout.addWidget(self.chb_enable_ruler)
         self.graph_box_layout.addWidget(self.chb_graph)
@@ -1409,6 +1413,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.set_btn_list.append(self.btn_find_column_layout.itemAt(0).widget())
         self.set_btn_list.append(self.btn_set_species_layout.itemAt(0).widget())
         self.set_btn_list.append(self.btn_set_level_layout.itemAt(0).widget())
+        self.set_btn_list.append(self.btn_set_map_type_layout.itemAt(0).widget())
         self.set_btn_list.append(self.btn_set_sub_graph_type_layout.itemAt(0).widget())
         self.set_btn_list.append(self.btn_set_sub_graph_order_layout.itemAt(0).widget())
 
@@ -1692,6 +1697,8 @@ class ControlWindow(QtWidgets.QWidget):
 
             self.lbl_alloy.setText('Alloy: {}'.format(self.ui_obj.project_instance.get_alloy_string()))
 
+            self.lbl_map_type.setText('Map type: {}'.format(self.ui_obj.map_type))
+
             if self.ui_obj.selected_column == -1:
                 self.deselect_column()
             else:
@@ -1723,6 +1730,8 @@ class ControlWindow(QtWidgets.QWidget):
         self.lbl_scale.setText('Scale (pm / pixel): ')
 
         self.lbl_alloy.setText('Alloy: ')
+
+        self.lbl_map_type.setText('Map type: ')
 
         self.lbl_starting_index.setText('Default starting index: ')
 

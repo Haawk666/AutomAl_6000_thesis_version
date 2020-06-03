@@ -445,7 +445,7 @@ class Project:
             # Detect edges:
             self.column_characterization(starting_index, search_type=6, ui_obj=ui_obj)
             # Map connectivity:
-            self.column_characterization(starting_index, search_type=4, ui_obj=ui_obj)
+            self.column_characterization(starting_index, search_type=17, ui_obj=ui_obj)
             # Zeta analysis:
             self.column_characterization(starting_index, search_type=5, ui_obj=ui_obj)
             # Alpha model:
@@ -470,10 +470,7 @@ class Project:
             logger.info('Spatial mapping complete.')
 
         elif search_type == 4:
-            # Run local graph mapping
-            logger.info('Mapping vertex connectivity...')
-            self.graph.build_maps()
-            logger.info('Vertices mapped.')
+            pass
 
         elif search_type == 5:
             # Zeta analysis
@@ -556,64 +553,37 @@ class Project:
             logger.info('Symmetry characterization complete.')
 
         elif search_type == 16:
-            pass
+            # Run local graph mapping
+            logger.info('Mapping vertex connectivity...')
+            self.graph.build_maps(out_selection_type='zeta')
+            logger.info('Vertices mapped.')
 
         elif search_type == 17:
-            pass
+            # Run local graph mapping
+            logger.info('Mapping vertex connectivity...')
+            self.graph.build_maps(out_selection_type='district')
+            logger.info('Vertices mapped.')
 
         elif search_type == 18:
-            pass
+            # Run local graph mapping
+            logger.info('Mapping vertex connectivity...')
+            self.graph.build_maps(out_selection_type='separation')
+            logger.info('Vertices mapped.')
 
         elif search_type == 19:
             pass
 
         elif search_type == 20:
-            # Mesh analysis with strong resolve
-            logger.info('Running mesh analysis...')
-            self.graph.map_meshes(starting_index)
-            changes = untangling.mesh_analysis(self.graph)
-            self.graph.map_meshes(starting_index)
-            logger.info('Mesh analysis complete. Made {} changes'.format(changes))
+            pass
 
         elif search_type == 21:
-            # Sort neighbours
-            logger.info('Sorting neighbours...')
-            self.graph.build_maps()
-            logger.info('Neighbours sorted')
+            pass
 
         elif search_type == 22:
-            # product predictions
-            logger.info('Apply product predictions')
-            self.graph.build_maps()
-            probs = []
-            for i in range(0, self.num_columns):
-                if not self.graph.vertices[i].is_set_by_user and not self.graph.vertices[i].is_edge_column:
-                    probs.append(np.array(graph_op.base_stat_score(self.graph, i, get_individual_predictions=True)[8]))
-                else:
-                    probs.append([0, 0, 0, 0, 0, 0, 0])
-            for i in range(0, self.num_columns):
-                if not self.graph.vertices[i].is_set_by_user and not self.graph.vertices[i].is_edge_column:
-                    self.graph.vertices[i].probability_vector = probs[i]
-                    self.graph.vertices[i].determine_species_from_probability_vector()
-            self.graph.build_maps()
-            logger.info('Applied product predictions!')
+            pass
 
         elif search_type == 23:
-            # Model predictions
-            logger.info('Apply model predictions')
-            self.graph.build_maps()
-            probs = []
-            for i in range(0, self.num_columns):
-                if not self.graph.vertices[i].is_set_by_user and not self.graph.vertices[i].is_edge_column:
-                    probs.append(np.array(graph_op.base_stat_score(self.graph, i, get_individual_predictions=False)))
-                else:
-                    probs.append([0, 0, 0, 0, 0, 0, 0])
-            for i in range(0, self.num_columns):
-                if not self.graph.vertices[i].is_set_by_user and not self.graph.vertices[i].is_edge_column:
-                    self.graph.vertices[i].probability_vector = probs[i]
-                    self.graph.vertices[i].determine_species_from_probability_vector()
-            self.graph.build_maps()
-            logger.info('Applied model predictions!')
+            pass
 
         else:
             logger.error('No such search type!')

@@ -995,11 +995,11 @@ class AtomicGraph:
                 vertex.out_degree = len(vertex.out_neighbourhood)
                 vertex.degree = len(vertex.neighbourhood)
 
-    def permute_j_k(self, i, j, k):
+    def permute_j_k(self, i, j, k, map_type='district'):
         if self.vertices[i].permute_j_k(j, k):
             closed_district = copy.deepcopy(self.vertices[i].district)
             closed_district.append(i)
-            self.build_local_map(closed_district)
+            self.build_local_map(closed_district, out_selection_type=map_type)
 
     def weak_remove_edge(self, i, j, aggressive=False):
 

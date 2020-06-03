@@ -35,6 +35,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.previous_selected_column = -1
         self.selection_history = []
         self.perturb_mode = False
+        self.map_type = 'district'
         self.lock_views = False
 
         # Create menu bar
@@ -827,6 +828,14 @@ class MainUI(QtWidgets.QMainWindow):
                     level = 0
                 self.set_level(level)
 
+    def btn_set_map_type_trigger(self):
+        if self.project_instance is not None:
+            items = ['zeta', 'district', 'separation']
+            item, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Vertex automapping method", items, 0, False)
+            if ok_pressed and item:
+                self.map_type = item
+                self.control_window.lbl_map_type.setText('Map type: {}'.format(item))
+
     def btn_set_sub_graph_type_trigger(self):
         if self.project_instance is not None:
             items = ('Column-centered', 'Edge-centered', 'Mesh-centered')
@@ -952,7 +961,7 @@ class MainUI(QtWidgets.QMainWindow):
                 '1 - Basic mappings...',
                 '2 - ...The rest',
                 '3 - Spatial mapping',
-                '4 - Map vertex connectivity',
+                '4 - Not in use',
                 '5 - Zeta analysis',
                 '6 - Identify edge columns',
                 '7 - Apply alpha model',
@@ -964,14 +973,14 @@ class MainUI(QtWidgets.QMainWindow):
                 '13 - Reset user-set columns',
                 '14 - Search for intersections',
                 '15 - Experimental symmetry characterization',
-                '16 - Not in use',
-                '17 - Not in use',
-                '18 - Not in use',
+                '16 - Map vertices with zeta',
+                '17 - Map vertices with district',
+                '18 - Map vertices with separation',
                 '19 - Not in use',
-                '20 - Run experimental mesh analysis',
-                '21 - Sort all subsets',
-                '22 - Product predictions',
-                '23 - Model predictions'
+                '20 - Not in use',
+                '21 - Not in use',
+                '22 - Not in use',
+                '23 - Not in use'
             ]
 
             string, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Search step", strings, 0, False)
