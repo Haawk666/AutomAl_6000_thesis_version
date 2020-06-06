@@ -853,41 +853,42 @@ class AtomicGraph:
             vertex.flag_9 = False
         logger.info('All flags reset!')
 
-    def build_local_map(self, indices, out_selection_type='district'):
+    def build_local_map(self, indices, out_selection_type='district', build_out=True):
         # Determine out_neighbourhoods:
-        for vertex in self.get_vertex_objects_from_indices(indices):
-            vertex.out_neighbourhood = set()
-            if not vertex.void:
-                counter = 0
+        if build_out:
+            for vertex in self.get_vertex_objects_from_indices(indices):
+                vertex.out_neighbourhood = set()
+                if not vertex.void:
+                    counter = 0
 
-                if out_selection_type == 'zeta':
-                    for citizen in vertex.district:
-                        if not vertex.zeta == self.vertices[citizen].zeta:
-                            vertex.out_neighbourhood.add(citizen)
-                            counter += 1
-                        if counter == vertex.n:
-                            break
-                    else:
-                        for alternative_citizen in vertex.district[0:vertex.n]:
-                            if alternative_citizen not in vertex.out_neighbourhood:
-                                vertex.out_neighbourhood.add(alternative_citizen)
+                    if out_selection_type == 'zeta':
+                        for citizen in vertex.district:
+                            if not vertex.zeta == self.vertices[citizen].zeta:
+                                vertex.out_neighbourhood.add(citizen)
                                 counter += 1
                             if counter == vertex.n:
                                 break
+                        else:
+                            for alternative_citizen in vertex.district[0:vertex.n]:
+                                if alternative_citizen not in vertex.out_neighbourhood:
+                                    vertex.out_neighbourhood.add(alternative_citizen)
+                                    counter += 1
+                                if counter == vertex.n:
+                                    break
 
-                elif out_selection_type == 'district':
-                    for citizen in vertex.district:
-                        vertex.out_neighbourhood.add(citizen)
-                        counter += 1
-                        if counter == vertex.n:
-                            break
+                    elif out_selection_type == 'district':
+                        for citizen in vertex.district:
+                            vertex.out_neighbourhood.add(citizen)
+                            counter += 1
+                            if counter == vertex.n:
+                                break
 
-                elif out_selection_type == 'separation':
-                    for citizen in np.argsort(self.separation_matrix[vertex.i, :])[1:vertex.n + 1].tolist():
-                        vertex.out_neighbourhood.add(citizen)
+                    elif out_selection_type == 'separation':
+                        for citizen in np.argsort(self.separation_matrix[vertex.i, :])[1:vertex.n + 1].tolist():
+                            vertex.out_neighbourhood.add(citizen)
 
-                else:
-                    logger.info('Unknown out-neighbourhood selection type')
+                    else:
+                        logger.info('Unknown out-neighbourhood selection type')
 
         # Determine in_neighbourhoods:
         for vertex in self.get_vertex_objects_from_indices(indices):
@@ -999,7 +1000,9 @@ class AtomicGraph:
         if self.vertices[i].permute_j_k(j, k):
             closed_district = copy.deepcopy(self.vertices[i].district)
             closed_district.append(i)
-            self.build_local_map(closed_district, out_selection_type=map_type)
+            self.vertices[i].out_neighbourhood.discard(j)
+            self.vertices[i].out_neighbourhood.add(k)
+            self.build_local_map(closed_district, out_selection_type=map_type, build_out=False)
 
     def weak_remove_edge(self, i, j, aggressive=False):
 

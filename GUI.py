@@ -1380,7 +1380,7 @@ class MainUI(QtWidgets.QMainWindow):
         if self.project_instance is not None and self.project_instance.num_columns > 0:
             self.sys_message('Working...')
             for vertex in self.project_instance.graph.vertices:
-                if vertex.h_index == 3:
+                if vertex.atomic_species == 'Al':
                     vertex.show_in_overlay = state
             for graphic_item in self.gs_overlay_composition.interactive_overlay_objects:
                 graphic_item.set_style()
@@ -1461,7 +1461,7 @@ class MainUI(QtWidgets.QMainWindow):
         if self.project_instance is not None and self.project_instance.num_columns > 0:
             self.sys_message('Working...')
             for vertex in self.project_instance.graph.vertices:
-                if vertex.level == 0:
+                if vertex.zeta == 0:
                     vertex.show_in_overlay = state
             for graphic_item in self.gs_overlay_composition.interactive_overlay_objects:
                 graphic_item.set_style()
@@ -1471,7 +1471,7 @@ class MainUI(QtWidgets.QMainWindow):
         if self.project_instance is not None and self.project_instance.num_columns > 0:
             self.sys_message('Working...')
             for vertex in self.project_instance.graph.vertices:
-                if vertex.level == 1:
+                if vertex.zeta == 1:
                     vertex.show_in_overlay = state
             for graphic_item in self.gs_overlay_composition.interactive_overlay_objects:
                 graphic_item.set_style()

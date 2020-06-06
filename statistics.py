@@ -98,7 +98,9 @@ class MultivariateNormalDist:
                 kwargs.append(key)
                 attr_indices.append(self.attribute_keys.index(key))
         if len(kwargs) == len(self.attribute_keys):
+            print(self.covar_matrix_determinant)
             prob = utils.multivariate_normal_dist(args, self.means, self.covar_matrix_determinant, self.inverse_covar_matrix)
+            print(prob)
         else:
             new_means, new_covar_matrix_determinant, new_inverse_covar_matrix = self.get_partial_model(attr_indices)
             prob = utils.multivariate_normal_dist(args, new_means, new_covar_matrix_determinant, new_inverse_covar_matrix)
@@ -410,6 +412,7 @@ class VertexDataManager:
         for c, category in enumerate(self.category_list):
             prediction[category] = self.composite_model[c].prediction(dict_)
         prediction = utils.normalize_dict(prediction, 1)
+        print(prediction)
         return prediction
 
     def single_plot(self, attr):

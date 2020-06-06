@@ -457,7 +457,7 @@ class Project:
             # Map connectivity:
             self.column_characterization(starting_index, search_type=4, ui_obj=ui_obj)
             # Composite model:
-            self.column_characterization(starting_index, search_type=11, ui_obj=ui_obj)
+            # self.column_characterization(starting_index, search_type=11, ui_obj=ui_obj)
             logger.info('Basics done')
 
         elif search_type == 2:
