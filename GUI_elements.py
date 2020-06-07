@@ -230,20 +230,6 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
         if permute_data:
             self.ui_obj.project_instance.graph.permute_j_k(i, j, k, map_type=self.ui_obj.map_type)
         self.redraw_neighbourhood(i)
-        for n, edge in enumerate(self.arcs[j]):
-            if edge.j == i:
-                self.arcs[j][n].consistent, self.arcs[j][n].dislocation, partner = self.eval_style(j, n)
-                if partner:
-                    self.arcs[j][n].set_style()
-                else:
-                    self.arcs[j][n].hide()
-        for n, edge in enumerate(self.arcs[k]):
-            if edge.j == i:
-                self.arcs[k][n].consistent, self.arcs[k][n].dislocation, partner = self.eval_style(k, n)
-                if partner:
-                    self.arcs[k][n].set_style()
-                else:
-                    self.arcs[k][n].hide()
         if center_view:
             pass
             # self.ui_obj.btn_snap_trigger(column_index=i)
@@ -258,11 +244,7 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
             dislocation = True
         else:
             dislocation = False
-        if m >= vertex_a.n:
-            partner = False
-        else:
-            partner = True
-        return consistent, dislocation, partner
+        return consistent, dislocation
 
     def re_draw(self):
         """Redraw contents."""
@@ -292,35 +274,34 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
         self.arcs = []
 
         for vertex_a in self.ui_obj.project_instance.graph.vertices:
-            if not vertex_a.void:
-                self.arcs.append([])
-                for vertex_b in self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(vertex_a.partners):
-                    p1 = vertex_a.im_pos()
-                    p2 = vertex_b.im_pos()
-                    if vertex_a.zeta == vertex_b.zeta:
-                        co_planar = True
-                    else:
-                        co_planar = False
-                    self.arcs[-1].append(GUI_custom_components.Arrow(
-                        i=vertex_a.i, j=vertex_b.i, p1=p1, p2=p2,
-                        r=self.ui_obj.project_instance.r,
-                        scale_factor=self.scale_factor, dual_arc=True,
-                        co_planar=co_planar
-                    ))
-                    self.addItem(self.arcs[-1][-1])
+            self.arcs.append([])
+            for vertex_b in self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(vertex_a.partners):
+                p1 = vertex_a.im_pos()
+                p2 = vertex_b.im_pos()
+                if vertex_a.zeta == vertex_b.zeta:
+                    co_planar = True
+                else:
+                    co_planar = False
+                self.arcs[-1].append(GUI_custom_components.Arrow(
+                    i=vertex_a.i, j=vertex_b.i, p1=p1, p2=p2,
+                    r=self.ui_obj.project_instance.r,
+                    scale_factor=self.scale_factor, dual_arc=True,
+                    co_planar=co_planar
+                ))
+                self.addItem(self.arcs[-1][-1])
 
-                for vertex_b in self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(vertex_a.out_semi_partners):
-                    p1 = vertex_a.im_pos()
-                    p2 = vertex_b.im_pos()
-                    self.arcs[-1].append(GUI_custom_components.Arrow(
-                        i=vertex_a.i, j=vertex_b.i, p1=p1, p2=p2,
-                        r=self.ui_obj.project_instance.r,
-                        scale_factor=self.scale_factor, dual_arc=False,
-                        co_planar=False
-                    ))
-                    self.addItem(self.arcs[-1][-1])
-                    if not self.ui_obj.control_window.chb_graph.isChecked():
-                        self.arcs[-1][-1].hide()
+            for vertex_b in self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(vertex_a.out_semi_partners):
+                p1 = vertex_a.im_pos()
+                p2 = vertex_b.im_pos()
+                self.arcs[-1].append(GUI_custom_components.Arrow(
+                    i=vertex_a.i, j=vertex_b.i, p1=p1, p2=p2,
+                    r=self.ui_obj.project_instance.r,
+                    scale_factor=self.scale_factor, dual_arc=False,
+                    co_planar=False
+                ))
+                self.addItem(self.arcs[-1][-1])
+                if not self.ui_obj.control_window.chb_graph.isChecked():
+                    self.arcs[-1][-1].hide()
 
     def re_draw_mesh_details(self):
         """Redraws all mesh details"""
@@ -339,7 +320,9 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
 
     def redraw_star(self, i):
         for edge_item in self.arcs[i]:
+            edge_item.hide()
             self.removeItem(edge_item)
+            print('Removing {} -> {}'.format(edge_item.i, edge_item.j))
         self.arcs[i] = []
         vertex_a = self.ui_obj.project_instance.graph.vertices[i]
         for vertex_b in self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(vertex_a.partners):
@@ -374,8 +357,7 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
                 self.arcs[i][-1].hide()
 
     def redraw_neighbourhood(self, i):
-        self.redraw_star(i)
-        for neighbours in self.ui_obj.project_instance.graph.vertices[i].district:
+        for neighbours in self.ui_obj.project_instance.graph.vertices[i].district + [i]:
             self.redraw_star(neighbours)
 
 

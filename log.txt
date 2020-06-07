@@ -3,3 +3,9 @@ GUI: GUI version: 0.0.2
 GUI: core version: 0.1.0
 GUI: Build version: Alpha 1.0
 ------------------------
+GUI: Opening file C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_b/0_Large_L_phase_control
+core: Loaded C:/Users/haako_000/OneDrive/NTNU/TFY4900 Master/Data_b/0_Large_L_phase_control
+core: Running zeta analysis with n...
+column_characterization: Starting zeta analysis
+column_characterization: Zeta analysis completed in 10.195424318313599 seconds
+core: zeta's set.

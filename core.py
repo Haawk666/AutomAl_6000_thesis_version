@@ -470,7 +470,10 @@ class Project:
             logger.info('Spatial mapping complete.')
 
         elif search_type == 4:
-            pass
+            # Advanced zeta
+            logger.info('Running zeta analysis with n...')
+            column_characterization.zeta_analysis(self.graph, starting_index, self.graph.vertices[starting_index].zeta, use_n=True)
+            logger.info('zeta\'s set.')
 
         elif search_type == 5:
             # Zeta analysis

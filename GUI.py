@@ -961,7 +961,7 @@ class MainUI(QtWidgets.QMainWindow):
                 '1 - Basic mappings...',
                 '2 - ...The rest',
                 '3 - Spatial mapping',
-                '4 - Not in use',
+                '4 - Zeta analysis with n',
                 '5 - Zeta analysis',
                 '6 - Identify edge columns',
                 '7 - Apply alpha model',

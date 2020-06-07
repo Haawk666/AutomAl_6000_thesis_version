@@ -34,11 +34,16 @@ def map_districts(graph_obj, district_size=8, method='matrix'):
             for j in range(i, len(graph_obj.vertices)):
                 if not i == j:
                     dist = graph_obj.get_projected_separation(i, j)
+                    if graph_obj.vertices[i].void or graph_obj.vertices[j].void:
+                        dist = 10000000000
                     matrix[j, i] = dist
                     matrix[i, j] = dist
         time_2 = time.time()
         for vertex in graph_obj.vertices:
-            vertex.district = np.argsort(matrix[vertex.i, :])[1:district_size + 1].tolist()
+            if not vertex.void:
+                vertex.district = np.argsort(matrix[vertex.i, :])[1:district_size + 1].tolist()
+            else:
+                vertex.district = []
         time_3 = time.time()
         summary_string = 'Districts mapped in {} seconds with matrix method.\n'.format(time_3 - time_1)
         summary_string += '    Distance calculations took {} seconds.\n'.format(time_2 - time_1)
@@ -66,7 +71,7 @@ def particle_detection(graph_obj):
                 vertex.is_in_precipitate = True
 
 
-def zeta_analysis(graph_obj, starting_index, starting_zeta=0):
+def zeta_analysis(graph_obj, starting_index, starting_zeta=0, method='district', use_n=False):
     logger.info('Starting zeta analysis')
     time_1 = time.time()
     votes = [0] * graph_obj.order
@@ -80,11 +85,23 @@ def zeta_analysis(graph_obj, starting_index, starting_zeta=0):
     while cont:
         for vertex in graph_obj.vertices:
             if not vertex.void:
-                if vertex.is_edge_column:
-                    for i, citizen in enumerate(vertex.district[0:2]):
-                        votes[citizen] -= 1 * votes[vertex.i]
+                if use_n:
+                    n = vertex.n
                 else:
-                    for i, citizen in enumerate(vertex.district[0:3]):
+                    n = 3
+                if method == 'district':
+                    candidates = vertex.district[0:n]
+                elif method == 'separation':
+                    candidates = np.argsort(graph_obj.separation_matrix[vertex.i, :])[1:n+1].tolist()
+                elif method == 'out_neighbourhood':
+                    candidates = list(vertex.out_neighbourhood)
+                else:
+                    candidates = vertex.district[0:n]
+                if vertex.is_edge_column:
+                    for i, citizen in enumerate(candidates):
+                        votes[citizen] -= 0.3 * votes[vertex.i]
+                else:
+                    for i, citizen in enumerate(candidates):
                         votes[citizen] -= 1 * votes[vertex.i]
         counter += 1
         if counter > 1000:

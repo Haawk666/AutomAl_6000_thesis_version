@@ -456,6 +456,7 @@ class AtomicGraph:
 
         # Replace vertex with void vertex
         self.vertices[i].void = True
+        self.vertices[i].district = []
         self.num_void_vertices += 1
         self.reduced_order -= 1
 
