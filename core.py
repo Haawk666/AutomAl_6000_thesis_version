@@ -472,7 +472,7 @@ class Project:
         elif search_type == 4:
             # Advanced zeta
             logger.info('Running zeta analysis with n...')
-            column_characterization.zeta_analysis(self.graph, starting_index, self.graph.vertices[starting_index].zeta, use_n=True)
+            column_characterization.zeta_analysis(self.graph, starting_index, self.graph.vertices[starting_index].zeta, use_n=True, method='separation')
             logger.info('zeta\'s set.')
 
         elif search_type == 5:

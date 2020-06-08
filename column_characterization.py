@@ -97,6 +97,7 @@ def zeta_analysis(graph_obj, starting_index, starting_zeta=0, method='district',
                     candidates = list(vertex.out_neighbourhood)
                 else:
                     candidates = vertex.district[0:n]
+                print(candidates)
                 if vertex.is_edge_column:
                     for i, citizen in enumerate(candidates):
                         votes[citizen] -= 0.3 * votes[vertex.i]

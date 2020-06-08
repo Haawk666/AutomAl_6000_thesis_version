@@ -322,7 +322,6 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
         for edge_item in self.arcs[i]:
             edge_item.hide()
             self.removeItem(edge_item)
-            print('Removing {} -> {}'.format(edge_item.i, edge_item.j))
         self.arcs[i] = []
         vertex_a = self.ui_obj.project_instance.graph.vertices[i]
         for vertex_b in self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(vertex_a.partners):
