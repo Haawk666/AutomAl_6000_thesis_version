@@ -843,15 +843,29 @@ class Terminal(QtWidgets.QWidget):
 
         self.btn_save_log = GUI_custom_components.SmallButton('Save log', self, trigger_func=self.ui_obj.btn_save_log_trigger)
         self.btn_clear_log = GUI_custom_components.SmallButton('Clear log', self, trigger_func=self.ui_obj.btn_clear_log_trigger)
+        self.btn_eval = GUI_custom_components.SmallButton('Eval', self, trigger_func=self.eval_input)
+        self.btn_eval.setDisabled(True)
+
+        self.chb_input = QtWidgets.QCheckBox('Enable input (advanced)')
+        self.chb_input.setChecked(False)
+        self.chb_input.toggled.connect(self.set_input)
 
         self.terminal_btns_layout = QtWidgets.QHBoxLayout()
         self.terminal_btns_layout.addWidget(self.btn_save_log)
         self.terminal_btns_layout.addWidget(self.btn_clear_log)
+        self.terminal_btns_layout.addWidget(self.chb_input)
         self.terminal_btns_layout.addStretch()
+
+        self.eval_text = QtWidgets.QLineEdit()
+        self.eval_text.setDisabled(True)
+        self.input_layout = QtWidgets.QHBoxLayout()
+        self.input_layout.addWidget(self.eval_text)
+        self.input_layout.addWidget(self.btn_eval)
 
         self.terminal_display_layout = QtWidgets.QVBoxLayout()
         self.terminal_display_layout.addLayout(self.terminal_btns_layout)
         self.terminal_display_layout.addWidget(self.handler.widget)
+        self.terminal_display_layout.addLayout(self.input_layout)
 
         self.setLayout(self.terminal_display_layout)
 
@@ -865,6 +879,14 @@ class Terminal(QtWidgets.QWidget):
         else:
             self.btn_save_log.setToolTip('')
             self.btn_clear_log.setToolTip('')
+
+    def set_input(self, state):
+        self.eval_text.setDisabled(not state)
+        self.btn_eval.setDisabled(not state)
+
+    def eval_input(self):
+        if self.chb_input.isChecked():
+            self.ui_obj.btn_eval_trigger(self.eval_text.text())
 
 
 class ControlWindow(QtWidgets.QWidget):

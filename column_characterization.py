@@ -26,7 +26,7 @@ def find_edge_columns(graph_obj, im_width, im_height):
     logger.info('Found edge columns in {} seconds'.format(time_2 - time_1))
 
 
-def map_districts(graph_obj, district_size=8, method='matrix'):
+def map_districts(graph_obj, method='matrix'):
     if method == 'matrix':
         time_1 = time.time()
         matrix = np.zeros([graph_obj.order, graph_obj.order], dtype=float)
@@ -41,9 +41,11 @@ def map_districts(graph_obj, district_size=8, method='matrix'):
         time_2 = time.time()
         for vertex in graph_obj.vertices:
             if not vertex.void:
-                vertex.district = np.argsort(matrix[vertex.i, :])[1:district_size + 1].tolist()
+                vertex.projected_separation_district = np.argsort(matrix[vertex.i, :])[1:graph_obj.district_size + 1].tolist()
+                vertex.district = copy.deepcopy(vertex.projected_separation_district)
             else:
                 vertex.district = []
+                vertex.projected_separation_district = []
         time_3 = time.time()
         summary_string = 'Districts mapped in {} seconds with matrix method.\n'.format(time_3 - time_1)
         summary_string += '    Distance calculations took {} seconds.\n'.format(time_2 - time_1)
@@ -79,7 +81,6 @@ def zeta_analysis(graph_obj, starting_index, starting_zeta=0, method='district',
         votes[starting_index] = 1
     else:
         votes[starting_index] = -1
-
     counter = 0
     cont = True
     while cont:
@@ -92,18 +93,17 @@ def zeta_analysis(graph_obj, starting_index, starting_zeta=0, method='district',
                 if method == 'district':
                     candidates = vertex.district[0:n]
                 elif method == 'separation':
-                    candidates = np.argsort(graph_obj.separation_matrix[vertex.i, :])[1:n+1].tolist()
-                elif method == 'out_neighbourhood':
-                    candidates = list(vertex.out_neighbourhood)
+                    candidates = vertex.projected_separation_district[0:n]
+                elif method == 'partners':
+                    candidates = list(vertex.partners)
                 else:
                     candidates = vertex.district[0:n]
-                print(candidates)
                 if vertex.is_edge_column:
-                    for i, citizen in enumerate(candidates):
-                        votes[citizen] -= 0.3 * votes[vertex.i]
+                    for citizen in candidates:
+                        votes[citizen] -= 0.01 * votes[vertex.i]
                 else:
-                    for i, citizen in enumerate(candidates):
-                        votes[citizen] -= 1 * votes[vertex.i]
+                    for citizen in candidates:
+                        votes[citizen] -= 0.05 * votes[vertex.i]
         counter += 1
         if counter > 1000:
             cont = False

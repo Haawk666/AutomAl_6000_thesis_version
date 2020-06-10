@@ -93,6 +93,8 @@ class Vertex:
         self.avg_central_separation = 0
 
         # Local graph mapping
+        self.projected_separation_district = []
+        self.separation_district = []
         self.district = []
         self.out_neighbourhood = set()
         self.in_neighbourhood = set()
@@ -306,7 +308,6 @@ class Vertex:
 
 class Arc:
 
-    # Standard AutomAl 6000 class header:
     al_lattice_const = 404.95
 
     def __init__(self, j, vertex_a, vertex_b, parent_graph=None):
@@ -359,7 +360,7 @@ class AtomicGraph:
 
     al_lattice_const = 404.95
 
-    def __init__(self, scale, active_model=None, district_size=8, species_dict=None):
+    def __init__(self, scale, active_model=None, district_size=10, species_dict=None):
 
         # Categorization:
         if species_dict is None:
@@ -1242,7 +1243,7 @@ class AtomicGraph:
     def refresh_graph(self):
         logger.info('Refreshing graph...')
         logger.info('    Mapping districts')
-        self.build_maps(search_extended_district=False)
+        self.build_maps()
         logger.info('    Calculating vertex parameters')
         self.calc_all_parameters()
         logger.info('    Evaluating species variants')
@@ -1610,6 +1611,8 @@ class SubGraph:
             if mesh.vertex_indices[1] == self.vertices[0].district[0]:
                 new_list.append(mesh)
                 break
+        else:
+            new_list.append(self.meshes[0])
         closed = False
         if len(self.meshes) == 0:
             closed = True

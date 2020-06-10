@@ -1261,6 +1261,12 @@ class MainUI(QtWidgets.QMainWindow):
     def btn_clear_log_trigger(self):
         self.terminal_window.handler.widget.clear()
 
+    def btn_eval_trigger(self, string):
+        try:
+            eval(string)
+        except:
+            logger.info('The input\n    {}\n    threw an exception!'.format(string))
+
     # ----------
     # Checkbox triggers:
     # ----------

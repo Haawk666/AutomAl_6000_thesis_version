@@ -73,28 +73,8 @@ class Project:
         parser.read('config.ini')
         if species_dict is None:
             self.species_dict = Project.default_dict
-            for key, item in self.species_dict.items():
-                item['color'] = (
-                    parser.getint('advanced_colors', '{}_r'.format(key)),
-                    parser.getint('advanced_colors', '{}_g'.format(key)),
-                    parser.getint('advanced_colors', '{}_b'.format(key))
-                )
-                item['species_color'] = (
-                    parser.getint('simple_colors', '{}_r'.format(item['atomic_species'])),
-                    parser.getint('simple_colors', '{}_g'.format(item['atomic_species'])),
-                    parser.getint('simple_colors', '{}_b'.format(item['atomic_species']))
-                )
         else:
             self.species_dict = species_dict
-            for key, item in self.species_dict.items():
-                parser.set('advanced_colors', '{}_r', '{}'.format(key, item['color'][0]))
-                parser.set('advanced_colors', '{}_g', '{}'.format(key, item['color'][1]))
-                parser.set('advanced_colors', '{}_b', '{}'.format(key, item['color'][2]))
-                parser.set('simple_colors', '{}_r', '{}'.format(item['atomic_species'], item['species_color'][0]))
-                parser.set('simple_colors', '{}_g', '{}'.format(item['atomic_species'], item['species_color'][1]))
-                parser.set('simple_colors', '{}_b', '{}'.format(item['atomic_species'], item['species_color'][2]))
-            with open('config.ini', 'w') as configfile:
-                parser.write(configfile)
 
         # For communicating with the interface, if any:
         self.debug_obj = debug_obj
@@ -472,7 +452,13 @@ class Project:
         elif search_type == 4:
             # Advanced zeta
             logger.info('Running zeta analysis with n...')
-            column_characterization.zeta_analysis(self.graph, starting_index, self.graph.vertices[starting_index].zeta, use_n=True, method='separation')
+            column_characterization.zeta_analysis(
+                self.graph,
+                starting_index,
+                self.graph.vertices[starting_index].zeta,
+                use_n=True,
+                method='partners'
+            )
             logger.info('zeta\'s set.')
 
         elif search_type == 5:
