@@ -110,19 +110,13 @@ def multivariate_normal_dist(x, means, covar_determinant, inverse_covar_matrix):
     k = len(x)
 
     deviance_vector = np.array([a - b for a, b in zip(x, means)])
-    print(deviance_vector)
     result = np.matmul(deviance_vector.T, np.array(inverse_covar_matrix))
-    print(result)
     result = np.matmul(result, deviance_vector)
-    print(result)
     result = np.exp(-0.5 * result)
-    print(result)
     if not (np.sqrt(((2 * np.pi) ** k) * covar_determinant)) == 0:
         result = result / (np.sqrt(((2 * np.pi) ** k) * covar_determinant))
-        print('not == 0: {}'.format(result))
     else:
         result = result / (np.sqrt(((2 * np.pi) ** k) * covar_determinant) + 0.00001)
-        print('is == 0: {}'.format(result))
     return float(result)
 
 

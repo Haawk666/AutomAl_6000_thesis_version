@@ -208,13 +208,14 @@ class OverlayComposition(QtWidgets.QGraphicsScene):
 
 class AtomicGraph(QtWidgets.QGraphicsScene):
 
-    def __init__(self, *args, ui_obj=None, background=None, scale_factor=1):
+    def __init__(self, *args, ui_obj=None, background=None, scale_factor=1, mode='district'):
         """Initialize a custom QtWidgets.QGraphicsScene object for **atomic graphs**."""
 
         super().__init__(*args)
 
         self.ui_obj = ui_obj
         self.scale_factor = scale_factor
+        self.mode = mode
         self.interactive_vertex_objects = []
         self.arcs = []
         self.mesh_details = []
@@ -228,7 +229,13 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
     def perturb_edge(self, i, j, k, permute_data=True, center_view=False):
         """Finds the edge from i to j, and makes it point from i to k."""
         if permute_data:
-            self.ui_obj.project_instance.graph.permute_j_k(i, j, k, map_type=self.ui_obj.map_type)
+            if self.mode == 'district':
+                self.ui_obj.project_instance.graph.permute_j_k(i, j, k)
+            elif self.mode == 'zeta':
+                self.ui_obj.project_instance.graph.permute_zeta_j_k(i, j, k)
+            else:
+                logger.warning('Unknown mode. Using district!')
+                self.ui_obj.project_instance.graph.permute_j_k(i, j, k)
         self.redraw_neighbourhood(i)
         if center_view:
             pass
@@ -275,7 +282,30 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
 
         for vertex_a in self.ui_obj.project_instance.graph.vertices:
             self.arcs.append([])
-            for vertex_b in self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(vertex_a.partners):
+            if self.mode == 'district':
+                partners = self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(
+                    vertex_a.partners
+                )
+                out_semi_partners = self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(
+                    vertex_a.out_semi_partners
+                )
+            elif self.mode == 'zeta':
+                partners = self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(
+                    vertex_a.local_zeta_map['partners']
+                )
+                out_semi_partners = self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(
+                    vertex_a.local_zeta_map['out_semi_partners']
+                )
+            else:
+                logger.warning('Unknown mode. Using district!')
+                partners = self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(
+                    vertex_a.partners
+                )
+                out_semi_partners = self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(
+                    vertex_a.out_semi_partners
+                )
+
+            for vertex_b in partners:
                 p1 = vertex_a.im_pos()
                 p2 = vertex_b.im_pos()
                 if vertex_a.zeta == vertex_b.zeta:
@@ -290,7 +320,7 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
                 ))
                 self.addItem(self.arcs[-1][-1])
 
-            for vertex_b in self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(vertex_a.out_semi_partners):
+            for vertex_b in out_semi_partners:
                 p1 = vertex_a.im_pos()
                 p2 = vertex_b.im_pos()
                 self.arcs[-1].append(GUI_custom_components.Arrow(
@@ -324,7 +354,29 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
             self.removeItem(edge_item)
         self.arcs[i] = []
         vertex_a = self.ui_obj.project_instance.graph.vertices[i]
-        for vertex_b in self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(vertex_a.partners):
+        if self.mode == 'district':
+            partners = self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(
+                vertex_a.partners
+            )
+            out_semi_partners = self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(
+                vertex_a.out_semi_partners
+            )
+        elif self.mode == 'zeta':
+            partners = self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(
+                vertex_a.local_zeta_map['partners']
+            )
+            out_semi_partners = self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(
+                vertex_a.local_zeta_map['out_semi_partners']
+            )
+        else:
+            logger.warning('Unknown mode. Using district!')
+            partners = self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(
+                vertex_a.partners
+            )
+            out_semi_partners = self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(
+                vertex_a.out_semi_partners
+            )
+        for vertex_b in partners:
             p1 = vertex_a.im_pos()
             p1 = (p1[0], p1[1])
             p2 = vertex_b.im_pos()
@@ -340,7 +392,7 @@ class AtomicGraph(QtWidgets.QGraphicsScene):
                 co_planar=co_planar
             ))
             self.addItem(self.arcs[i][-1])
-        for vertex_b in self.ui_obj.project_instance.graph.get_vertex_objects_from_indices(vertex_a.out_semi_partners):
+        for vertex_b in out_semi_partners:
             p1 = vertex_a.im_pos()
             p1 = (p1[0], p1[1])
             p2 = vertex_b.im_pos()

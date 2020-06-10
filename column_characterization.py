@@ -114,7 +114,8 @@ def zeta_analysis(graph_obj, starting_index, starting_zeta=0, method='district',
         else:
             vertex.zeta = 1
 
-    graph_obj.build_maps()
+    graph_obj.build_local_zeta_maps()
+    graph_obj.build_local_maps()
 
     time_2 = time.time()
     logger.info('Zeta analysis completed in {} seconds'.format(time_2 - time_1))
@@ -123,7 +124,7 @@ def zeta_analysis(graph_obj, starting_index, starting_zeta=0, method='district',
 def symmetry_characterization(graph_obj, im_width, im_height, starting_index, separation_threshold=320):
     logger.info('Running symmetry characterization')
     time_1 = time.time()
-    graph_obj.build_maps()
+    graph_obj.build_local_maps()
     for vertex in graph_obj.vertices:
         if vertex.is_edge_column:
             graph_obj.set_species(vertex.i, 'Al_1')
@@ -144,7 +145,7 @@ def symmetry_characterization(graph_obj, im_width, im_height, starting_index, se
         if sep_2 < sep_1:
             vertex.zeta = vertex.anti_zeta()
             logger.info('Altering zeta of vertex {}'.format(vertex.i))
-    graph_obj.build_maps()
+    graph_obj.build_local_maps()
     time_2 = time.time()
     logger.info('Completed symmetry characterization in {} seconds'.format(time_2 - time_1))
 
@@ -165,7 +166,7 @@ def arc_intersection_denial(graph_obj):
             if not graph_obj.terminate_arc(intersection[2], intersection[3]):
                 if not graph_obj.terminate_arc(intersection[0], intersection[1]):
                     logger.info('Could not remove intersection {}'.format(intersection))
-    graph_obj.build_maps()
+    graph_obj.build_local_maps()
     intersections = graph_obj.find_intersections()
     for intersection in intersections:
         if not graph_obj.vertices[intersection[0]].partner_query(intersection[1]):
@@ -180,7 +181,7 @@ def arc_intersection_denial(graph_obj):
             if not graph_obj.terminate_arc(intersection[2], intersection[3]):
                 if not graph_obj.terminate_arc(intersection[0], intersection[1]):
                     logger.info('Could not remove intersection {}'.format(intersection))
-    graph_obj.build_maps()
+    graph_obj.build_local_maps()
     time_3 = time.time()
     logger.info('Performed arc intersection denial in {} seconds'.format(time_3 - time_1))
 
@@ -206,7 +207,7 @@ def apply_alpha_model(graph_obj, model=None, alpha_selection_type='zeta'):
             })
             vertex.advanced_probability_vector['Un_1'] = 0.0
             vertex.determine_species_from_probability_vector()
-    graph_obj.build_maps()
+    graph_obj.build_local_maps()
 
 
 def apply_composite_model(graph_obj, model=None, alpha_selection_type='zeta'):
@@ -246,5 +247,5 @@ def apply_composite_model(graph_obj, model=None, alpha_selection_type='zeta'):
             })
             vertex.advanced_probability_vector['Un_1'] = 0.0
             vertex.determine_species_from_probability_vector()
-    graph_obj.build_maps()
+    graph_obj.build_local_maps()
 

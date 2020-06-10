@@ -412,7 +412,6 @@ class VertexDataManager:
         for c, category in enumerate(self.category_list):
             prediction[category] = self.composite_model[c].prediction(dict_)
         prediction = utils.normalize_dict(prediction, 1)
-        print(prediction)
         return prediction
 
     def single_plot(self, attr):

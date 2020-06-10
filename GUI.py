@@ -83,6 +83,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.gs_atomic_positions = GUI_elements.AtomicPositions(ui_obj=self, background=self.no_graphic)
         self.gs_overlay_composition = GUI_elements.OverlayComposition(ui_obj=self, background=self.no_graphic)
         self.gs_atomic_graph = GUI_elements.AtomicGraph(ui_obj=self, background=self.no_graphic)
+        self.gs_zeta_graph = GUI_elements.AtomicGraph(ui_obj=self, background=self.no_graphic, mode='zeta')
         self.gs_atomic_sub_graph = GUI_elements.AtomicSubGraph(ui_obj=self, background=self.no_graphic)
         self.gs_anti_graph = GUI_elements.AtomicGraph(ui_obj=self, background=self.no_graphic)
         self.gs_info_graph = GUI_elements.InfoGraph(ui_obj=self, background=self.no_graphic)
@@ -94,17 +95,19 @@ class MainUI(QtWidgets.QMainWindow):
         self.gv_atomic_positions = GUI_elements.ZoomGraphicsView(self.gs_atomic_positions, ui_obj=self, trigger_func=self.key_press_trigger, tab_index=1)
         self.gv_overlay_composition = GUI_elements.ZoomGraphicsView(self.gs_overlay_composition, ui_obj=self, trigger_func=self.key_press_trigger, tab_index=2)
         self.gv_atomic_graph = GUI_elements.ZoomGraphicsView(self.gs_atomic_graph, ui_obj=self, trigger_func=self.key_press_trigger, tab_index=3)
-        self.gv_atomic_sub_graph = GUI_elements.ZoomGraphicsView(self.gs_atomic_sub_graph, ui_obj=self, trigger_func=self.key_press_trigger, tab_index=4)
-        self.gv_anti_graph = GUI_elements.ZoomGraphicsView(self.gs_anti_graph, ui_obj=self, trigger_func=self.key_press_trigger, tab_index=5)
-        self.gv_info_graph = GUI_elements.ZoomGraphicsView(self.gs_info_graph, ui_obj=self, trigger_func=self.key_press_trigger, tab_index=6)
-        self.gv_search_matrix = GUI_elements.ZoomGraphicsView(self.gs_search_matrix, ui_obj=self, trigger_func=self.key_press_trigger, tab_index=7)
-        self.gv_fft = GUI_elements.ZoomGraphicsView(self.gs_fft, ui_obj=self, trigger_func=self.key_press_trigger, tab_index=8)
+        self.gv_zeta_graph = GUI_elements.ZoomGraphicsView(self.gs_zeta_graph, ui_obj=self, trigger_func=self.key_press_trigger, tab_index=4)
+        self.gv_atomic_sub_graph = GUI_elements.ZoomGraphicsView(self.gs_atomic_sub_graph, ui_obj=self, trigger_func=self.key_press_trigger, tab_index=5)
+        self.gv_anti_graph = GUI_elements.ZoomGraphicsView(self.gs_anti_graph, ui_obj=self, trigger_func=self.key_press_trigger, tab_index=6)
+        self.gv_info_graph = GUI_elements.ZoomGraphicsView(self.gs_info_graph, ui_obj=self, trigger_func=self.key_press_trigger, tab_index=7)
+        self.gv_search_matrix = GUI_elements.ZoomGraphicsView(self.gs_search_matrix, ui_obj=self, trigger_func=self.key_press_trigger, tab_index=8)
+        self.gv_fft = GUI_elements.ZoomGraphicsView(self.gs_fft, ui_obj=self, trigger_func=self.key_press_trigger, tab_index=9)
 
         self.gv_list = [
             self.gv_raw_image,
             self.gv_atomic_positions,
             self.gv_overlay_composition,
             self.gv_atomic_graph,
+            self.gv_zeta_graph,
             self.gv_atomic_sub_graph,
             self.gv_anti_graph,
             self.gv_info_graph,
@@ -119,6 +122,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.tab_atomic_positions = self.tabs.addTab(self.gv_atomic_positions, 'Atomic positions')
         self.tab_overlay_composition = self.tabs.addTab(self.gv_overlay_composition, 'Overlay composition')
         self.tab_atomic_graph = self.tabs.addTab(self.gv_atomic_graph, 'Atomic graph')
+        self.tab_zeta_graph = self.tabs.addTab(self.gv_zeta_graph, 'Zeta graph')
         self.tab_atomic_sub_graph = self.tabs.addTab(self.gv_atomic_sub_graph, 'Atomic sub-graph')
         self.tab_anti_graph = self.tabs.addTab(self.gv_anti_graph, 'Anti-graph')
         self.tab_info_graph = self.tabs.addTab(self.gv_info_graph, 'Info-graph')
@@ -156,6 +160,7 @@ class MainUI(QtWidgets.QMainWindow):
             self.project_instance.graph.set_species(self.selected_column, h)
             self.gs_overlay_composition.re_draw_vertex(self.selected_column)
             self.gs_atomic_graph.redraw_neighbourhood(self.selected_column)
+            self.gs_zeta_graph.redraw_neighbourhood(self.selected_column)
             # Update control window info:
             self.control_window.select_column()
 
@@ -163,10 +168,12 @@ class MainUI(QtWidgets.QMainWindow):
         """Set level of selected column"""
         if self.project_instance is not None and not self.selected_column == -1:
             # Update relevant graphics:
-            self.project_instance.graph.vertices[self.selected_column].zeta = zeta
+            self.project_instance.graph.set_zeta(self.selected_column, zeta)
             self.gs_overlay_composition.re_draw_vertex(self.selected_column)
             self.gs_atomic_graph.interactive_vertex_objects[self.selected_column].set_style()
             self.gs_atomic_graph.redraw_neighbourhood(self.selected_column)
+            self.gs_zeta_graph.interactive_vertex_objects[self.selected_column].set_style()
+            self.gs_zeta_graph.redraw_neighbourhood(self.selected_column)
             # Update control window info:
             self.control_window.lbl_column_level.setText('Level: {}'.format(zeta))
 
@@ -191,6 +198,7 @@ class MainUI(QtWidgets.QMainWindow):
         self.update_column_positions(void=void)
         self.update_overlay(void=void)
         self.update_graph()
+        self.update_zeta_graph()
 
         self.update_search_matrix(void=void)
         self.update_fft(void=void)
@@ -225,6 +233,11 @@ class MainUI(QtWidgets.QMainWindow):
         # Do not change scale factor, many bugs activate if scale is not 1!
         self.gs_atomic_graph = GUI_elements.AtomicGraph(ui_obj=self, scale_factor=2)
         self.gv_atomic_graph.setScene(self.gs_atomic_graph)
+
+    def update_zeta_graph(self):
+        # Do not change scale factor, many bugs activate if scale is not 1!
+        self.gs_zeta_graph = GUI_elements.AtomicGraph(ui_obj=self, scale_factor=2, mode='zeta')
+        self.gv_zeta_graph.setScene(self.gs_zeta_graph)
 
     def update_sub_graph(self):
         self.gs_atomic_sub_graph = GUI_elements.AtomicSubGraph(ui_obj=self)
@@ -268,13 +281,18 @@ class MainUI(QtWidgets.QMainWindow):
                 self.gs_atomic_positions.interactive_position_objects[j].set_style()
                 self.gs_overlay_composition.interactive_overlay_objects[j].set_style()
                 self.gs_atomic_graph.interactive_vertex_objects[j].set_style()
+                self.gs_zeta_graph.interactive_vertex_objects[j].set_style()
             if not i == -1:
                 self.gs_atomic_positions.interactive_position_objects[i].set_style()
                 self.gs_overlay_composition.interactive_overlay_objects[i].set_style()
                 self.gs_atomic_graph.interactive_vertex_objects[i].set_style()
+                self.gs_zeta_graph.interactive_vertex_objects[i].set_style()
             if self.perturb_mode:
                 if len(self.selection_history) == 2:
-                    self.gs_atomic_graph.perturb_edge(self.selection_history[0], self.selection_history[1], self.selected_column)
+                    if self.tabs.currentIndex() == 3:
+                        self.gs_atomic_graph.perturb_edge(self.selection_history[0], self.selection_history[1], self.selected_column)
+                    elif self.tabs.currentIndex() == 4:
+                        self.gs_zeta_graph.perturb_edge(self.selection_history[0], self.selection_history[1], self.selected_column)
                     self.selection_history = []
                 else:
                     self.selection_history.append(self.selected_column)
@@ -351,11 +369,11 @@ class MainUI(QtWidgets.QMainWindow):
                 self.btn_align_views_trigger()
             elif key == QtCore.Qt.Key_Z:
                 if self.tabs.currentIndex() == 0:
-                    self.tabs.setCurrentIndex(8)
+                    self.tabs.setCurrentIndex(-1)
                 else:
                     self.tabs.setCurrentIndex(self.tabs.currentIndex() - 1)
             elif key == QtCore.Qt.Key_X:
-                if self.tabs.currentIndex() == 8:
+                if self.tabs.currentIndex() == len(self.gv_list) - 1:
                     self.tabs.setCurrentIndex(0)
                 else:
                     self.tabs.setCurrentIndex(self.tabs.currentIndex() + 1)
@@ -961,8 +979,8 @@ class MainUI(QtWidgets.QMainWindow):
                 '1 - Basic mappings...',
                 '2 - ...The rest',
                 '3 - Spatial mapping',
-                '4 - Zeta analysis with n',
-                '5 - Zeta analysis',
+                '4 - Basic zeta analysis',
+                '5 - Advanced zeta analysis',
                 '6 - Identify edge columns',
                 '7 - Apply alpha model',
                 '8 - Particle detection',
@@ -972,10 +990,10 @@ class MainUI(QtWidgets.QMainWindow):
                 '12 - Reset probability vectors',
                 '13 - Reset user-set columns',
                 '14 - Search for intersections',
-                '15 - Experimental symmetry characterization',
-                '16 - Map vertices with zeta',
-                '17 - Map vertices with district',
-                '18 - Map vertices with separation',
+                '15 - Not in use',
+                '16 - Map vertex connectivity',
+                '17 - Map vertex in-connectivity',
+                '18 - Not in use',
                 '19 - Not in use',
                 '20 - Not in use',
                 '21 - Not in use',
@@ -1085,11 +1103,10 @@ class MainUI(QtWidgets.QMainWindow):
             if self.project_instance.num_columns > 0:
                 if len(self.project_instance.graph.vertices[0].district) > 0:
                     if not self.selected_column == -1:
-                        self.project_instance.graph.build_maps()
+                        self.project_instance.graph.build_local_maps()
                         sub_graph = self.project_instance.graph.get_column_centered_subgraph(self.selected_column)
                         self.gs_atomic_sub_graph = GUI_elements.AtomicSubGraph(ui_obj=self, sub_graph=sub_graph, scale_factor=4)
                         self.gv_atomic_sub_graph.setScene(self.gs_atomic_sub_graph)
-                        self.tabs.setCurrentIndex(4)
 
     def btn_refresh_graph_trigger(self):
         self.sys_message('Working...')

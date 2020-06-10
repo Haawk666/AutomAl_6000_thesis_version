@@ -17,6 +17,16 @@ logger.setLevel(logging.DEBUG)
 class Vertex:
 
     al_lattice_const = 404.95
+    empty_map = {
+        'out_neighbourhood': set(),
+        'in_neighbourhood': set(),
+        'neighbourhood': set(),
+        'anti_neighbourhood': set(),
+        'partners': set(),
+        'semi_partners': set(),
+        'out_semi_partners': set(),
+        'in_semi_partners': set(),
+    }
 
     def __init__(self, index, im_coor_x, im_coor_y, r, scale, zeta=0, advanced_species='Un_1', n=3, atomic_species='Un', void=False, parent_graph=None):
 
@@ -93,9 +103,8 @@ class Vertex:
         self.avg_central_separation = 0
 
         # Local graph mapping
-        self.projected_separation_district = []
-        self.separation_district = []
         self.district = []
+
         self.out_neighbourhood = set()
         self.in_neighbourhood = set()
         self.neighbourhood = set()
@@ -104,6 +113,14 @@ class Vertex:
         self.semi_partners = set()
         self.out_semi_partners = set()
         self.in_semi_partners = set()
+
+        self.projected_separation_district = []
+        self.separation_district = []
+        self.zeta_district = []
+
+        self.local_zeta_map = copy.deepcopy(Vertex.empty_map)
+        self.local_projected_separation_map = {}
+        self.local_separation_map = {}
 
         # Graph parameters
         self.n = n
@@ -257,6 +274,29 @@ class Vertex:
         else:
             self.district[-1] = k
             self.district[pos_j], self.district[pos_k] = self.district[pos_k], self.district[pos_j]
+            return True
+
+    def permute_zeta_j_k(self, j, k):
+        if j == k:
+            return False
+        pos_j = -1
+        pos_k = -1
+        if j in self.zeta_district:
+            pos_j = self.zeta_district.index(j)
+        if k in self.zeta_district:
+            pos_k = self.zeta_district.index(k)
+
+        if pos_j == -1 and pos_k == -1:
+            self.zeta_district[-1] = k
+            return True
+        elif not pos_j == -1 and not pos_k == -1:
+            self.zeta_district[pos_j], self.zeta_district[pos_k] = self.zeta_district[pos_k], self.zeta_district[pos_j]
+            return True
+        elif pos_j == -1:
+            return False
+        else:
+            self.zeta_district[-1] = k
+            self.zeta_district[pos_j], self.zeta_district[pos_k] = self.zeta_district[pos_k], self.zeta_district[pos_j]
             return True
 
     def permute_pos_j_pos_k(self, pos_j, pos_k):
@@ -462,7 +502,7 @@ class AtomicGraph:
         self.reduced_order -= 1
 
         # Remap district sets all over the graph
-        self.build_maps()
+        self.build_local_maps()
         self.summarize_stats()
 
     def get_non_void_vertices(self):
@@ -795,6 +835,7 @@ class AtomicGraph:
         elif zeta is False:
             zeta = 0
         self.vertices[i].zeta = zeta
+        self.build_local_zeta_map([i] + self.vertices[i].district)
 
     def set_n(self, i, n):
         for key, item in self.species_dict.items():
@@ -808,6 +849,7 @@ class AtomicGraph:
         self.vertices[i].reset_probability_vector(bias=advanced_species)
         self.vertices[i].determine_species_from_probability_vector()
         self.build_local_map([i] + self.vertices[i].district)
+        self.build_local_zeta_map([i] + self.vertices[i].district)
 
     @staticmethod
     def rebase(corners, next_, j, append=True):
@@ -855,135 +897,51 @@ class AtomicGraph:
             vertex.flag_9 = False
         logger.info('All flags reset!')
 
-    def build_local_map(self, indices, out_selection_type='district', build_out=True):
+    def determine_zeta_districts(self):
+        for vertex in self.vertices:
+            vertex.zeta_district = []
+            if not vertex.void:
+                for citizen in vertex.district:
+                    if self.vertices[citizen].zeta == vertex.anti_zeta():
+                        vertex.zeta_district.append(citizen)
+
+    def build_local_maps(self, build_out=True):
+        self.build_local_map([vertex.i for vertex in self.vertices], build_out=build_out)
+
+    def build_local_map(self, indices, build_out=True):
         # Determine out_neighbourhoods:
         if build_out:
             for vertex in self.get_vertex_objects_from_indices(indices):
                 vertex.out_neighbourhood = set()
                 if not vertex.void:
                     counter = 0
-
-                    if out_selection_type == 'zeta':
-                        for citizen in vertex.district:
-                            if not vertex.zeta == self.vertices[citizen].zeta:
-                                vertex.out_neighbourhood.add(citizen)
-                                counter += 1
-                            if counter == vertex.n:
-                                break
-                        else:
-                            for alternative_citizen in vertex.district[0:vertex.n]:
-                                if alternative_citizen not in vertex.out_neighbourhood:
-                                    vertex.out_neighbourhood.add(alternative_citizen)
-                                    counter += 1
-                                if counter == vertex.n:
-                                    break
-
-                    elif out_selection_type == 'district':
-                        for citizen in vertex.district:
-                            vertex.out_neighbourhood.add(citizen)
-                            counter += 1
-                            if counter == vertex.n:
-                                break
-
-                    elif out_selection_type == 'separation':
-                        for citizen in np.argsort(self.separation_matrix[vertex.i, :])[1:vertex.n + 1].tolist():
-                            vertex.out_neighbourhood.add(citizen)
-
-                    else:
-                        logger.info('Unknown out-neighbourhood selection type')
-
-        # Determine in_neighbourhoods:
-        for vertex in self.get_vertex_objects_from_indices(indices):
-            vertex.in_neighbourhood = set()
-            if not vertex.void:
-                for candidate in self.vertices:
-                    if vertex.i in candidate.out_neighbourhood:
-                        vertex.in_neighbourhood.add(candidate.i)
-        # Determine neighbourhood:
-        for vertex in self.get_vertex_objects_from_indices(indices):
-            vertex.neighbourhood = set()
-            if not vertex.void:
-                vertex.neighbourhood = vertex.out_neighbourhood.union(vertex.in_neighbourhood)
-        # Determine anti_neighbourhood:
-        for vertex in self.get_vertex_objects_from_indices(indices):
-            vertex.anti_neighbourhood = set()
-            if not vertex.void:
-                for citizen in vertex.district:
-                    if citizen not in vertex.neighbourhood:
-                        vertex.anti_neighbourhood.add(citizen)
-        # Determine partners and semi-partners:
-        for vertex in self.get_vertex_objects_from_indices(indices):
-            vertex.partners = set()
-            vertex.semi_partners = set()
-            vertex.in_semi_partners = set()
-            vertex.out_semi_partners = set()
-            if not vertex.void:
-                vertex.partners = vertex.out_neighbourhood.intersection(vertex.in_neighbourhood)
-                vertex.semi_partners = vertex.neighbourhood - vertex.partners
-                vertex.out_semi_partners = vertex.semi_partners.intersection(vertex.out_neighbourhood)
-                vertex.in_semi_partners = vertex.semi_partners.intersection(vertex.in_neighbourhood)
-
-                vertex.in_degree = len(vertex.in_neighbourhood)
-                vertex.out_degree = len(vertex.out_neighbourhood)
-                vertex.degree = len(vertex.neighbourhood)
-
-    def build_maps(self, out_selection_type='district'):
-        # Determine out_neighbourhoods:
-        for vertex in self.vertices:
-            vertex.out_neighbourhood = set()
-            if not vertex.void:
-                counter = 0
-
-                if out_selection_type == 'zeta':
-                    for citizen in vertex.district:
-                        if not vertex.zeta == self.vertices[citizen].zeta:
-                            vertex.out_neighbourhood.add(citizen)
-                            counter += 1
-                        if counter == vertex.n:
-                            break
-                    else:
-                        for alternative_citizen in vertex.district[0:vertex.n]:
-                            if alternative_citizen not in vertex.out_neighbourhood:
-                                vertex.out_neighbourhood.add(alternative_citizen)
-                                counter += 1
-                            if counter == vertex.n:
-                                break
-
-                elif out_selection_type == 'district':
                     for citizen in vertex.district:
                         vertex.out_neighbourhood.add(citizen)
                         counter += 1
                         if counter == vertex.n:
                             break
 
-                elif out_selection_type == 'separation':
-                    for citizen in np.argsort(self.separation_matrix[vertex.i, :])[1:vertex.n + 1].tolist():
-                        vertex.out_neighbourhood.add(citizen)
-
-                else:
-                    logger.info('Unknown out-neighbourhood selection type')
-
         # Determine in_neighbourhoods:
-        for vertex in self.vertices:
+        for vertex in self.get_vertex_objects_from_indices(indices):
             vertex.in_neighbourhood = set()
             if not vertex.void:
                 for candidate in self.vertices:
                     if vertex.i in candidate.out_neighbourhood:
                         vertex.in_neighbourhood.add(candidate.i)
         # Determine neighbourhood:
-        for vertex in self.vertices:
+        for vertex in self.get_vertex_objects_from_indices(indices):
             vertex.neighbourhood = set()
             if not vertex.void:
                 vertex.neighbourhood = vertex.out_neighbourhood.union(vertex.in_neighbourhood)
         # Determine anti_neighbourhood:
-        for vertex in self.vertices:
+        for vertex in self.get_vertex_objects_from_indices(indices):
             vertex.anti_neighbourhood = set()
             if not vertex.void:
                 for citizen in vertex.district:
                     if citizen not in vertex.neighbourhood:
                         vertex.anti_neighbourhood.add(citizen)
         # Determine partners and semi-partners:
-        for vertex in self.vertices:
+        for vertex in self.get_vertex_objects_from_indices(indices):
             vertex.partners = set()
             vertex.semi_partners = set()
             vertex.in_semi_partners = set()
@@ -998,13 +956,81 @@ class AtomicGraph:
                 vertex.out_degree = len(vertex.out_neighbourhood)
                 vertex.degree = len(vertex.neighbourhood)
 
-    def permute_j_k(self, i, j, k, map_type='district'):
+    def build_local_zeta_maps(self, build_out=True):
+        self.build_local_zeta_map([vertex.i for vertex in self.vertices], build_out=build_out)
+
+    def build_local_zeta_map(self, indices, build_out=True):
+        # Rebuild zeta districts:
+        self.determine_zeta_districts()
+        # Build out-neighbourhoods
+        if build_out:
+            for vertex in self.get_vertex_objects_from_indices(indices):
+                vertex.local_zeta_map['out_neighbourhood'] = set()
+                if not vertex.void:
+                    counter = 0
+                    for zeta_citizen in vertex.zeta_district:
+                        vertex.local_zeta_map['out_neighbourhood'].add(zeta_citizen)
+                        counter += 1
+                        if counter == vertex.n:
+                            break
+                    else:
+                        for alternative_citizen in vertex.district:
+                            if alternative_citizen not in vertex.local_zeta_map['out_neighbourhood']:
+                                vertex.local_zeta_map['out_neighbourhood'].add(alternative_citizen)
+                                counter += 1
+                            if counter == vertex.n:
+                                break
+        # Determine in_neighbourhoods:
+        for vertex in self.get_vertex_objects_from_indices(indices):
+            vertex.local_zeta_map['in_neighbourhood'] = set()
+            if not vertex.void:
+                for candidate in self.vertices:
+                    if vertex.i in candidate.local_zeta_map['out_neighbourhood']:
+                        vertex.local_zeta_map['in_neighbourhood'].add(candidate.i)
+        # Determine neighbourhood:
+        for vertex in self.get_vertex_objects_from_indices(indices):
+            vertex.local_zeta_map['neighbourhood'] = set()
+            if not vertex.void:
+                vertex.local_zeta_map['neighbourhood'] = \
+                    vertex.local_zeta_map['out_neighbourhood'].union(vertex.local_zeta_map['in_neighbourhood'])
+        # Determine anti_neighbourhood:
+        for vertex in self.get_vertex_objects_from_indices(indices):
+            vertex.local_zeta_map['anti_neighbourhood'] = set()
+            if not vertex.void:
+                for citizen in vertex.zeta_district:
+                    if citizen not in vertex.local_zeta_map['neighbourhood']:
+                        vertex.local_zeta_map['anti_neighbourhood'].add(citizen)
+        # Determine partners and semi-partners:
+        for vertex in self.get_vertex_objects_from_indices(indices):
+            vertex.local_zeta_map['partners'] = set()
+            vertex.local_zeta_map['semi_partners'] = set()
+            vertex.local_zeta_map['in_semi_partners'] = set()
+            vertex.local_zeta_map['out_semi_partners'] = set()
+            if not vertex.void:
+                vertex.local_zeta_map['partners'] = \
+                    vertex.local_zeta_map['out_neighbourhood'].intersection(vertex.local_zeta_map['in_neighbourhood'])
+                vertex.local_zeta_map['semi_partners'] = \
+                    vertex.local_zeta_map['neighbourhood'] - vertex.local_zeta_map['partners']
+                vertex.local_zeta_map['out_semi_partners'] = \
+                    vertex.local_zeta_map['semi_partners'].intersection(vertex.local_zeta_map['out_neighbourhood'])
+                vertex.local_zeta_map['in_semi_partners'] = \
+                    vertex.local_zeta_map['semi_partners'].intersection(vertex.local_zeta_map['in_neighbourhood'])
+
+    def permute_j_k(self, i, j, k):
         if self.vertices[i].permute_j_k(j, k):
             closed_district = copy.deepcopy(self.vertices[i].district)
             closed_district.append(i)
             self.vertices[i].out_neighbourhood.discard(j)
             self.vertices[i].out_neighbourhood.add(k)
-            self.build_local_map(closed_district, out_selection_type=map_type, build_out=False)
+            self.build_local_map(closed_district, build_out=False)
+
+    def permute_zeta_j_k(self, i, j, k):
+        if self.vertices[i].permute_zeta_j_k(j, k):
+            closed_zeta_district = copy.deepcopy(self.vertices[i].zeta_district)
+            closed_zeta_district.append(i)
+            self.vertices[i].local_zeta_map['out_neighbourhood'].discard(j)
+            self.vertices[i].local_zeta_map['out_neighbourhood'].add(k)
+            self.build_local_zeta_map(closed_zeta_district, build_out=False)
 
     def weak_remove_edge(self, i, j, aggressive=False):
 
@@ -1243,7 +1269,7 @@ class AtomicGraph:
     def refresh_graph(self):
         logger.info('Refreshing graph...')
         logger.info('    Mapping districts')
-        self.build_maps()
+        self.build_local_maps()
         logger.info('    Calculating vertex parameters')
         self.calc_all_parameters()
         logger.info('    Evaluating species variants')
@@ -1710,7 +1736,7 @@ class AntiGraph:
         self.graph = AtomicGraph(self.graph.scale)
         for vertex in self.vertices:
             self.graph.add_vertex(vertex)
-        self.graph.build_maps()
+        self.graph.build_local_maps()
         self.graph.summarize_stats()
 
     def map_arcs(self):

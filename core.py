@@ -425,7 +425,7 @@ class Project:
             # Detect edges:
             self.column_characterization(starting_index, search_type=6, ui_obj=ui_obj)
             # Map connectivity:
-            self.column_characterization(starting_index, search_type=17, ui_obj=ui_obj)
+            self.column_characterization(starting_index, search_type=16, ui_obj=ui_obj)
             # Zeta analysis:
             self.column_characterization(starting_index, search_type=5, ui_obj=ui_obj)
             # Alpha model:
@@ -450,8 +450,20 @@ class Project:
             logger.info('Spatial mapping complete.')
 
         elif search_type == 4:
+            # Basic zeta
+            logger.info('Running basic zeta analysis...')
+            column_characterization.zeta_analysis(
+                self.graph,
+                starting_index,
+                self.graph.vertices[starting_index].zeta,
+                use_n=False,
+                method='separation'
+            )
+            logger.info('zeta\'s set.')
+
+        elif search_type == 5:
             # Advanced zeta
-            logger.info('Running zeta analysis with n...')
+            logger.info('Running advanced zeta...')
             column_characterization.zeta_analysis(
                 self.graph,
                 starting_index,
@@ -459,12 +471,6 @@ class Project:
                 use_n=True,
                 method='partners'
             )
-            logger.info('zeta\'s set.')
-
-        elif search_type == 5:
-            # Zeta analysis
-            logger.info('Running zeta analysis....')
-            column_characterization.zeta_analysis(self.graph, starting_index, self.graph.vertices[starting_index].zeta)
             logger.info('zeta\'s set.')
 
         elif search_type == 6:
@@ -536,28 +542,24 @@ class Project:
             logger.info('{} literal intersections still remain'.format(len(intersections)))
 
         elif search_type == 15:
-            # Experimental symmetry analysis
-            logger.info('Running experimental symmetry characterization...')
-            column_characterization.symmetry_characterization(self.graph, self.im_width, self.im_height, starting_index)
-            logger.info('Symmetry characterization complete.')
+            pass
 
         elif search_type == 16:
             # Run local graph mapping
             logger.info('Mapping vertex connectivity...')
-            self.graph.build_maps(out_selection_type='zeta')
+            self.graph.build_local_maps(build_out=True)
+            self.graph.build_local_zeta_maps(build_out=True)
             logger.info('Vertices mapped.')
 
         elif search_type == 17:
             # Run local graph mapping
             logger.info('Mapping vertex connectivity...')
-            self.graph.build_maps(out_selection_type='district')
+            self.graph.build_local_maps(build_out=False)
+            self.graph.build_local_zeta_maps(build_out=False)
             logger.info('Vertices mapped.')
 
         elif search_type == 18:
-            # Run local graph mapping
-            logger.info('Mapping vertex connectivity...')
-            self.graph.build_maps(out_selection_type='separation')
-            logger.info('Vertices mapped.')
+            pass
 
         elif search_type == 19:
             pass
