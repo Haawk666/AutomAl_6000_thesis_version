@@ -970,58 +970,6 @@ class ControlWindow(QtWidgets.QWidget):
         self.draw_histogram()
 
         # -------------------------------------------------------------------------
-        # Control-group categories:
-        # -------------------------------------------------------------------------
-
-        # - Project controls
-        # -- Labels
-        # -- Checkboxes
-        # -- Set buttons
-        # -- Buttons
-
-        # - Image controls
-        # -- Labels
-        # -- Checkboxes
-        # -- Set buttons
-        # -- Buttons
-
-        # - Column detection controls
-        # -- Labels
-        # -- Checkboxes
-        # -- Set buttons
-        # -- Buttons
-
-        # - Column characterization controls
-        # -- Labels
-        # -- Checkboxes
-        # -- Set buttons
-        # -- Buttons
-
-        # - Selected column controls
-        # -- Labels
-        # -- Checkboxes
-        # -- Set buttons
-        # -- Buttons
-
-        # - Atomic graph controls
-        # -- Labels
-        # -- Checkboxes
-        # -- Set buttons
-        # -- Buttons
-
-        # - Overlay controls
-        # -- Labels
-        # -- Checkboxes
-        # -- Set buttons
-        # -- Buttons
-
-        # - Debug controls
-        # -- Labels
-        # -- Checkboxes
-        # -- Set buttons
-        # -- Buttons
-
-        # -------------------------------------------------------------------------
         # Define control widgets:
         # -------------------------------------------------------------------------
 
@@ -1215,16 +1163,82 @@ class ControlWindow(QtWidgets.QWidget):
         btn_project_layout.addLayout(layout)
 
         # - Image controls
+        btn_image_btns_layout = QtWidgets.QHBoxLayout()
+        btn_image_btns_layout.addWidget(self.btn_show_stats)
+        btn_image_btns_layout.addWidget(self.btn_show_source)
+        btn_image_btns_layout.addWidget(self.btn_align_views)
+        btn_image_btns_layout.addStretch()
 
         # - Column detection controls
+        btn_alg_1_btns_layout = QtWidgets.QHBoxLayout()
+        btn_alg_1_btns_layout.addWidget(self.btn_start_alg_1)
+        btn_alg_1_btns_layout.addWidget(self.btn_reset_alg_1)
+        btn_alg_1_btns_layout.addWidget(self.btn_redraw_search_mat)
+        btn_alg_1_btns_layout.addStretch()
 
         # - Column characterization controls
+        btn_alg_2_btns_layout = QtWidgets.QHBoxLayout()
+        btn_alg_2_btns_layout.addWidget(self.btn_start_alg_2)
+        btn_alg_2_btns_layout.addWidget(self.btn_reset_alg_2)
+        btn_alg_2_btns_layout.addWidget(self.btn_invert_lvl_alg_2)
+        btn_alg_2_btns_layout.addStretch()
 
         # - Selected column controls
+        btn_move_control_layout = QtWidgets.QHBoxLayout()
+        btn_move_control_layout.addWidget(self.chb_move)
+        btn_move_control_layout.addWidget(self.btn_cancel_move)
+        btn_move_control_layout.addWidget(self.btn_set_move)
+        btn_move_control_layout.addStretch()
+        btn_column_btns_layout_1 = QtWidgets.QHBoxLayout()
+        btn_column_btns_layout_1.addWidget(self.btn_new)
+        btn_column_btns_layout_1.addWidget(self.btn_deselect)
+        btn_column_btns_layout_1.addWidget(self.btn_delete)
+        btn_column_btns_layout_1.addStretch()
+        btn_column_btns_layout_2 = QtWidgets.QHBoxLayout()
+        btn_column_btns_layout_2.addWidget(self.btn_print_details)
+        btn_column_btns_layout_2.addWidget(self.btn_snap)
+        btn_column_btns_layout_2.addWidget(self.btn_set_variant)
+        btn_column_btns_layout_2.addStretch()
+        btn_column_btns_layout = QtWidgets.QVBoxLayout()
+        btn_column_btns_layout.addLayout(btn_column_btns_layout_1)
+        btn_column_btns_layout.addLayout(btn_column_btns_layout_2)
 
         # - Atomic graph controls
+        btn_graph_btns_layout = QtWidgets.QHBoxLayout()
+        btn_graph_btns_layout.addWidget(self.btn_refresh_graph)
+        btn_graph_btns_layout.addWidget(self.btn_print_distances)
+        btn_graph_btns_layout.addWidget(self.btn_refresh_mesh)
+        btn_graph_btns_layout.addStretch()
+        btn_sub_graphs_layout = QtWidgets.QHBoxLayout()
+        btn_sub_graphs_layout.addWidget(self.btn_sub)
+        btn_sub_graphs_layout.addStretch()
+        btn_anti_graph_layout = QtWidgets.QHBoxLayout()
+        btn_anti_graph_layout.addWidget(self.btn_build_anti_graph)
+        btn_anti_graph_layout.addStretch()
+        btn_info_graph_layout = QtWidgets.QHBoxLayout()
+        btn_info_graph_layout.addWidget(self.btn_build_info_graph)
+        btn_info_graph_layout.addStretch()
+
+        # - Data and export controls
+        btn_analysis_layout_1 = QtWidgets.QHBoxLayout()
+        btn_analysis_layout_1.addWidget(self.btn_plot)
+        btn_analysis_layout_1.addWidget(self.btn_pca)
+        btn_analysis_layout_1.addWidget(self.btn_export)
+        btn_analysis_layout_1.addStretch()
+        btn_analysis_layout_2 = QtWidgets.QHBoxLayout()
+        btn_analysis_layout_2.addWidget(self.btn_calc_models)
+        btn_analysis_layout_2.addWidget(self.btn_plot_models)
+        btn_analysis_layout_2.addStretch()
+        btn_analysis_layout = QtWidgets.QVBoxLayout()
+        btn_analysis_layout.addLayout(btn_analysis_layout_1)
+        btn_analysis_layout.addLayout(btn_analysis_layout_2)
 
         # - Overlay controls
+        btn_overlay_btns_layout = QtWidgets.QHBoxLayout()
+        btn_overlay_btns_layout.addWidget(self.btn_set_style)
+        btn_overlay_btns_layout.addWidget(self.btn_show_all)
+        btn_overlay_btns_layout.addWidget(self.btn_hide_all)
+        btn_overlay_btns_layout.addStretch()
         overlay_layout_left = QtWidgets.QVBoxLayout()
         overlay_layout_left.addWidget(self.chb_raw_image)
         overlay_layout_left.addWidget(self.chb_structures)
@@ -1255,6 +1269,11 @@ class ControlWindow(QtWidgets.QWidget):
         overlay_layout.addStretch()
 
         # - Debug controls
+        btn_debug_btns_layout = QtWidgets.QHBoxLayout()
+        btn_debug_btns_layout.addWidget(self.btn_set_indices)
+        btn_debug_btns_layout.addWidget(self.btn_test)
+        btn_debug_btns_layout.addWidget(self.btn_crash)
+        btn_debug_btns_layout.addStretch()
 
         # -------------------------------------------------------------------------
         # Set up default behaviour
@@ -1343,6 +1362,8 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_show_level_0.toggled.connect(self.ui_obj.chb_show_level_0_trigger)
         self.chb_show_level_1.toggled.connect(self.ui_obj.chb_show_level_1_trigger)
 
+        # - Data and export controls
+
         # - Overlay controls
         self.chb_raw_image.toggled.connect(self.ui_obj.chb_raw_image_trigger)
         self.chb_black_background.toggled.connect(self.ui_obj.chb_black_background_trigger)
@@ -1369,93 +1390,11 @@ class ControlWindow(QtWidgets.QWidget):
 
         # - Debug controls
 
+        # -------------------------------------------------------------------------
+        # Set up group-boxes:
+        # -------------------------------------------------------------------------
 
-
-        # Button layouts
-
-
-        btn_move_control_layout = QtWidgets.QHBoxLayout()
-        btn_move_control_layout.addWidget(self.chb_move)
-        btn_move_control_layout.addWidget(self.btn_cancel_move)
-        btn_move_control_layout.addWidget(self.btn_set_move)
-        btn_move_control_layout.addStretch()
-
-        btn_debug_btns_layout = QtWidgets.QHBoxLayout()
-        btn_debug_btns_layout.addWidget(self.btn_set_indices)
-        btn_debug_btns_layout.addWidget(self.btn_test)
-        btn_debug_btns_layout.addWidget(self.btn_crash)
-        btn_debug_btns_layout.addStretch()
-
-        btn_image_btns_layout = QtWidgets.QHBoxLayout()
-        btn_image_btns_layout.addWidget(self.btn_show_stats)
-        btn_image_btns_layout.addWidget(self.btn_show_source)
-        btn_image_btns_layout.addWidget(self.btn_align_views)
-        btn_image_btns_layout.addStretch()
-
-        btn_alg_1_btns_layout = QtWidgets.QHBoxLayout()
-        btn_alg_1_btns_layout.addWidget(self.btn_start_alg_1)
-        btn_alg_1_btns_layout.addWidget(self.btn_reset_alg_1)
-        btn_alg_1_btns_layout.addWidget(self.btn_redraw_search_mat)
-        btn_alg_1_btns_layout.addStretch()
-
-        btn_alg_2_btns_layout = QtWidgets.QHBoxLayout()
-        btn_alg_2_btns_layout.addWidget(self.btn_start_alg_2)
-        btn_alg_2_btns_layout.addWidget(self.btn_reset_alg_2)
-        btn_alg_2_btns_layout.addWidget(self.btn_invert_lvl_alg_2)
-        btn_alg_2_btns_layout.addStretch()
-
-        btn_column_btns_layout_1 = QtWidgets.QHBoxLayout()
-        btn_column_btns_layout_1.addWidget(self.btn_new)
-        btn_column_btns_layout_1.addWidget(self.btn_deselect)
-        btn_column_btns_layout_1.addWidget(self.btn_delete)
-        btn_column_btns_layout_1.addStretch()
-        btn_column_btns_layout_2 = QtWidgets.QHBoxLayout()
-        btn_column_btns_layout_2.addWidget(self.btn_print_details)
-        btn_column_btns_layout_2.addWidget(self.btn_snap)
-        btn_column_btns_layout_2.addWidget(self.btn_set_variant)
-        btn_column_btns_layout_2.addStretch()
-        btn_column_btns_layout = QtWidgets.QVBoxLayout()
-        btn_column_btns_layout.addLayout(btn_column_btns_layout_1)
-        btn_column_btns_layout.addLayout(btn_column_btns_layout_2)
-
-        btn_overlay_btns_layout = QtWidgets.QHBoxLayout()
-        btn_overlay_btns_layout.addWidget(self.btn_set_style)
-        btn_overlay_btns_layout.addWidget(self.btn_show_all)
-        btn_overlay_btns_layout.addWidget(self.btn_hide_all)
-        btn_overlay_btns_layout.addStretch()
-
-        btn_graph_btns_layout = QtWidgets.QHBoxLayout()
-        btn_graph_btns_layout.addWidget(self.btn_refresh_graph)
-        btn_graph_btns_layout.addWidget(self.btn_print_distances)
-        btn_graph_btns_layout.addWidget(self.btn_refresh_mesh)
-        btn_graph_btns_layout.addStretch()
-
-        btn_sub_graphs_layout = QtWidgets.QHBoxLayout()
-        btn_sub_graphs_layout.addWidget(self.btn_sub)
-        btn_sub_graphs_layout.addStretch()
-
-        btn_anti_graph_layout = QtWidgets.QHBoxLayout()
-        btn_anti_graph_layout.addWidget(self.btn_build_anti_graph)
-        btn_anti_graph_layout.addStretch()
-
-        btn_info_graph_layout = QtWidgets.QHBoxLayout()
-        btn_info_graph_layout.addWidget(self.btn_build_info_graph)
-        btn_info_graph_layout.addStretch()
-
-        btn_analysis_layout_1 = QtWidgets.QHBoxLayout()
-        btn_analysis_layout_1.addWidget(self.btn_plot)
-        btn_analysis_layout_1.addWidget(self.btn_pca)
-        btn_analysis_layout_1.addWidget(self.btn_export)
-        btn_analysis_layout_1.addStretch()
-        btn_analysis_layout_2 = QtWidgets.QHBoxLayout()
-        btn_analysis_layout_2.addWidget(self.btn_calc_models)
-        btn_analysis_layout_2.addWidget(self.btn_plot_models)
-        btn_analysis_layout_2.addStretch()
-        btn_analysis_layout = QtWidgets.QVBoxLayout()
-        btn_analysis_layout.addLayout(btn_analysis_layout_1)
-        btn_analysis_layout.addLayout(btn_analysis_layout_2)
-
-        # Group boxes
+        # - Project controls
         self.project_box_layout = QtWidgets.QVBoxLayout()
         self.project_box_layout.addLayout(btn_project_layout)
         self.project_box_layout.addWidget(self.lbl_filename)
@@ -1464,6 +1403,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.project_box = GUI_custom_components.GroupBox('Active project', menu_action=self.ui_obj.menu.toggle_project_control_action)
         self.project_box.setLayout(self.project_box_layout)
 
+        # - Image controls
         self.image_box_layout = QtWidgets.QVBoxLayout()
         self.image_box_layout.addLayout(btn_image_btns_layout)
         self.image_box_layout.addWidget(self.chb_lock_views)
@@ -1473,12 +1413,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.image_box = GUI_custom_components.GroupBox('Image', menu_action=self.ui_obj.menu.toggle_image_control_action)
         self.image_box.setLayout(self.image_box_layout)
 
-        self.debug_box_layout = QtWidgets.QVBoxLayout()
-        self.debug_box_layout.addLayout(btn_debug_btns_layout)
-        self.debug_box_layout.addLayout(self.btn_set_start_layout)
-        self.debug_box = GUI_custom_components.GroupBox('Advanced debug mode', menu_action=self.ui_obj.menu.advanced_debug_mode_action)
-        self.debug_box.setLayout(self.debug_box_layout)
-
+        # - Column detection controls
         self.alg_1_box_layout = QtWidgets.QVBoxLayout()
         self.alg_1_box_layout.addLayout(btn_alg_1_btns_layout)
         self.alg_1_box_layout.addWidget(self.lbl_search_matrix_peak)
@@ -1493,6 +1428,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.alg_1_box = GUI_custom_components.GroupBox('Column detection', menu_action=self.ui_obj.menu.toggle_alg_1_control_action)
         self.alg_1_box.setLayout(self.alg_1_box_layout)
 
+        # - Column characterization controls
         self.alg_2_box_layout = QtWidgets.QVBoxLayout()
         self.alg_2_box_layout.addLayout(btn_alg_2_btns_layout)
         self.alg_2_box_layout.addLayout(self.btn_set_alloy_layout)
@@ -1500,6 +1436,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.alg_2_box = GUI_custom_components.GroupBox('Column characterization', menu_action=self.ui_obj.menu.toggle_alg_2_control_action)
         self.alg_2_box.setLayout(self.alg_2_box_layout)
 
+        # - selected column controls
         self.column_box_layout = QtWidgets.QVBoxLayout()
         self.column_box_layout.addLayout(btn_column_btns_layout)
         self.column_box_layout.addLayout(self.btn_find_column_layout)
@@ -1518,6 +1455,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.column_box = GUI_custom_components.GroupBox('Selected column', menu_action=self.ui_obj.menu.toggle_column_control_action)
         self.column_box.setLayout(self.column_box_layout)
 
+        # - Atomic graph controls
         self.graph_box_layout = QtWidgets.QVBoxLayout()
         self.graph_box_layout.addLayout(btn_graph_btns_layout)
         self.graph_box_layout.addWidget(self.chb_perturb_mode)
@@ -1547,18 +1485,29 @@ class ControlWindow(QtWidgets.QWidget):
         self.info_graph_box = GUI_custom_components.GroupBox('Info-graph', menu_action=self.ui_obj.menu.toggle_info_graph_control_action)
         self.info_graph_box.setLayout(self.info_graph_box_layout)
 
+        # - Data and export controls
         self.analysis_box_layout = QtWidgets.QVBoxLayout()
         self.analysis_box_layout.addLayout(btn_analysis_layout)
         self.analysis_box = GUI_custom_components.GroupBox('Data-analysis', menu_action=self.ui_obj.menu.toggle_analysis_control_action)
         self.analysis_box.setLayout(self.analysis_box_layout)
 
+        # - Overlay controls
         self.overlay_box_layout = QtWidgets.QVBoxLayout()
         self.overlay_box_layout.addLayout(btn_overlay_btns_layout)
         self.overlay_box_layout.addLayout(overlay_layout)
         self.overlay_box = GUI_custom_components.GroupBox('Overlay settings', menu_action=self.ui_obj.menu.toggle_overlay_control_action)
         self.overlay_box.setLayout(self.overlay_box_layout)
 
-        # Top level layout
+        # - Debug controls
+        self.debug_box_layout = QtWidgets.QVBoxLayout()
+        self.debug_box_layout.addLayout(btn_debug_btns_layout)
+        self.debug_box_layout.addLayout(self.btn_set_start_layout)
+        self.debug_box = GUI_custom_components.GroupBox('Advanced debug mode',menu_action=self.ui_obj.menu.advanced_debug_mode_action)
+        self.debug_box.setLayout(self.debug_box_layout)
+
+        # -------------------------------------------------------------------------
+        # Set up top-level layout:
+        # -------------------------------------------------------------------------
         self.info_display_layout = QtWidgets.QVBoxLayout()
         self.info_display_layout.addWidget(self.project_box)
         self.info_display_layout.addWidget(self.image_box)

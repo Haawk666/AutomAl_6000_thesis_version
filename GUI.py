@@ -1283,6 +1283,8 @@ class MainUI(QtWidgets.QMainWindow):
             eval(string)
         except:
             logger.info('The input\n    {}\n    threw an exception!'.format(string))
+        else:
+            logger.info('User input: {}'.format(string))
 
     # ----------
     # Checkbox triggers:
