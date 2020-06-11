@@ -219,8 +219,11 @@ class Project:
         """Column detection algorithm.
 
         """
-        peak_values = []
-        non_edge_peak_values = []
+        time_1 = time.time()
+        search_peak_values = []
+        search_avg_values = []
+        actual_peak_values = []
+        avg_values = []
         if len(self.graph.vertices) == 0:
             logger.info('Starting column detection. Search mode is \'{}\''.format(search_type))
             self.search_mat = copy.deepcopy(self.im_mat)
@@ -243,7 +246,9 @@ class Project:
                 for vertex in self.graph.get_non_void_vertices():
                     if vertex.peak_gamma > self.threshold:
                         self.num_columns += 1
-                        peak_values.append(vertex.peak_gamma)
+                        search_peak_values.append(self.search_mat.max())
+                        actual_peak_values.append(vertex.peak_gamma)
+                        avg_values.append(vertex.avg_gamma)
                         new_graph.add_vertex(vertex)
                         self.search_mat = utils.delete_pixels(
                             self.search_mat,
@@ -256,19 +261,18 @@ class Project:
             else:
                 self.redraw_search_mat()
                 for vertex in self.graph.vertices:
-                    peak_values.append(vertex.peak_gamma)
+                    actual_peak_values.append(vertex.peak_gamma)
+                    avg_values.append(vertex.avg_gamma)
                 cont = True
 
         counter = self.num_columns
         original_counter = copy.deepcopy(counter)
 
-        time_1 = time.time()
-
         while cont:
 
             pos = np.unravel_index(self.search_mat.argmax(), (self.im_height, self.im_width))
             max_val = self.search_mat[pos]
-            peak_values.append(max_val)
+            search_peak_values.append(max_val)
 
             x_fit, y_fit = utils.cm_fit(self.im_mat, pos[1], pos[0], self.r)
             x_fit_int = int(x_fit)
@@ -278,18 +282,10 @@ class Project:
 
             vertex = graph_2.Vertex(counter, x_fit, y_fit, self.r, self.scale, parent_graph=self.graph)
             vertex.avg_gamma, vertex.peak_gamma = utils.circular_average(self.im_mat, x_fit_int, y_fit_int, self.r)
-            if not max_val == vertex.peak_gamma:
-                logger.debug(
-                    'Vertex {}\n    Pos: ({}, {})\n    Fit: ({}, {})\n    max_val: {}\n    peak_gamma: {}\n'.format(
-                        counter,
-                        pos[1],
-                        pos[0],
-                        x_fit,
-                        y_fit,
-                        max_val,
-                        vertex.peak_gamma
-                    )
-                )
+            actual_peak_values.append(vertex.peak_gamma)
+            avg_values.append(vertex.avg_gamma)
+            search_avg_values.append(self.calc_avg_search_pixel_value())
+
             self.graph.add_vertex(vertex)
 
             self.num_columns += 1
@@ -307,9 +303,6 @@ class Project:
         self.summarize_stats()
 
         self.find_edge_columns()
-        for vertex in self.graph.vertices:
-            if not vertex.is_edge_column:
-                non_edge_peak_values.append(vertex.peak_gamma)
 
         time_2 = time.time()
 
@@ -320,70 +313,43 @@ class Project:
 
         if plot:
             fig = plt.figure(constrained_layout=True)
-            gs = GridSpec(4, 1, figure=fig)
+            gs = GridSpec(1, 1, figure=fig)
             ax_values = fig.add_subplot(gs[0, 0])
-            ax_slope = fig.add_subplot(gs[1, 0])
-            ax_cum_var = fig.add_subplot(gs[2, 0])
-            ax_cum_var_slope = fig.add_subplot(gs[3, 0])
 
             ax_values.plot(
-                range(0, len(peak_values)),
-                peak_values,
+                range(0, len(search_peak_values)),
+                search_peak_values,
                 c='k',
-                label='Column peak intensity'
+                label='Search mat peak intensity'
+            )
+            ax_values.plot(
+                range(0, len(search_peak_values)),
+                actual_peak_values,
+                c='r',
+                label='Vertex peak intensity'
+            )
+            ax_values.plot(
+                range(0, len(search_peak_values)),
+                avg_values,
+                c='b',
+                label='Vertex average intensity'
+            )
+            ax_values.plot(
+                range(0, len(search_peak_values)),
+                [self.pixel_average] * len(search_peak_values),
+                c='g',
+                label='Average pixel intensitiy'
+            )
+            ax_values.plot(
+                range(0, len(search_peak_values)),
+                search_avg_values,
+                c='m',
+                label='Average search matrix intensitiy'
             )
             ax_values.set_title('Column detection summary')
             ax_values.set_xlabel('# Column')
-            ax_values.set_ylabel('Peak intensity')
+            ax_values.set_ylabel('Pixel intensity')
             ax_values.legend()
-
-            slope = [0]
-            for ind in range(1, len(peak_values)):
-                slope.append(peak_values[ind] - peak_values[ind - 1])
-
-            ax_slope.plot(
-                range(0, len(peak_values)),
-                slope,
-                c='b',
-                label='2 point slope of peak intensity'
-            )
-            ax_slope.set_title('Slope')
-            ax_slope.set_xlabel('# Column')
-            ax_slope.set_ylabel('slope')
-            ax_slope.legend()
-
-            cumulative_slope_variance = [0]
-            cum_slp_var_slp = [0]  # lol
-            for ind in range(1, len(peak_values)):
-                cumulative_slope_variance.append(utils.variance(slope[0:ind]))
-                cum_slp_var_slp.append(cumulative_slope_variance[ind] - cumulative_slope_variance[ind - 1])
-
-            ax_cum_var.plot(
-                range(0, len(non_edge_peak_values)),
-                non_edge_peak_values,
-                c='r',
-                label='None edge peak values'
-            )
-            ax_cum_var.set_title('Cumulative variance')
-            ax_cum_var.set_xlabel('# Column')
-            ax_cum_var.set_ylabel('$\\sigma^2$')
-            ax_cum_var.legend()
-
-            ax_cum_var_slope.plot(
-                range(0, len(peak_values)),
-                cum_slp_var_slp,
-                c='g',
-                label='Slope of cumulative slope variance'
-            )
-            ax_cum_var_slope.set_title('Variance slope')
-            ax_cum_var_slope.set_xlabel('# Column')
-            ax_cum_var_slope.set_ylabel('2-point slope approximation')
-            ax_cum_var_slope.legend()
-
-            inflection_points = []
-            for ind in range(1, len(cum_slp_var_slp)):
-                if cum_slp_var_slp[ind] > cum_slp_var_slp[ind - 1]:
-                    inflection_points.append(ind)
 
             plt.show()
 
@@ -434,18 +400,17 @@ class Project:
             self.column_characterization(starting_index, search_type=4, ui_obj=ui_obj)
             # Map connectivity:
             self.column_characterization(starting_index, search_type=16, ui_obj=ui_obj)
-            # Basic zeta analysis:
-            self.column_characterization(starting_index, search_type=5, ui_obj=ui_obj)
+            # Advanced zeta analysis:
+            self.column_characterization(starting_index, search_type=6, ui_obj=ui_obj)
+            # Map connectivity
+            self.column_characterization(starting_index, search_type=16, ui_obj=ui_obj)
             # Alpha model:
             self.column_characterization(starting_index, search_type=7, ui_obj=ui_obj)
             # Find particle:
             self.column_characterization(starting_index, search_type=8, ui_obj=ui_obj)
             # Calc gamma:
             self.column_characterization(starting_index, search_type=9, ui_obj=ui_obj)
-            # Advanced zeta analysis:
-            self.column_characterization(starting_index, search_type=6, ui_obj=ui_obj)
-            # Map connectivity
-            self.column_characterization(starting_index, search_type=16, ui_obj=ui_obj)
+
             # Composite model:
             # self.column_characterization(starting_index, search_type=11, ui_obj=ui_obj)
             logger.info('Basics done')
@@ -639,6 +604,14 @@ class Project:
                 pixel_avg += self.im_mat[j, i]
         pixel_avg /= self.im_width * self.im_height
         self.pixel_average = pixel_avg
+
+    def calc_avg_search_pixel_value(self):
+        pixel_avg = 0
+        for i in range(0, self.im_width):
+            for j in range(0, self.im_height):
+                pixel_avg += self.search_mat[j, i]
+        pixel_avg /= self.im_width * self.im_height
+        return pixel_avg
 
     def summarize_stats(self):
         """Summarize current stats about the project file.

@@ -821,8 +821,7 @@ class MainUI(QtWidgets.QMainWindow):
                 if index < self.project_instance.num_columns:
                     self.gs_atomic_positions.interactive_position_objects[index].mouseReleaseEvent(QtWidgets.QGraphicsEllipseItem.mouseReleaseEvent)
 
-    def btn_set_species_trigger(self):
-        """Btn-trigger: Run 'set species' dialog."""
+    def btn_set_advanced_species_trigger(self):
         if self.project_instance is not None and not self.selected_column == -1:
             items = []
             for item in self.project_instance.species_dict:
@@ -1385,7 +1384,7 @@ class MainUI(QtWidgets.QMainWindow):
         if self.project_instance is not None and self.project_instance.num_columns > 0:
             self.sys_message('Working...')
             for vertex in self.project_instance.graph.vertices:
-                if vertex.h_index == 0:
+                if vertex.atomic_species =='Si':
                     vertex.show_in_overlay = state
             for graphic_item in self.gs_overlay_composition.interactive_overlay_objects:
                 graphic_item.set_style()
@@ -1395,7 +1394,7 @@ class MainUI(QtWidgets.QMainWindow):
         if self.project_instance is not None and self.project_instance.num_columns > 0:
             self.sys_message('Working...')
             for vertex in self.project_instance.graph.vertices:
-                if vertex.h_index == 1:
+                if vertex.atomic_species =='Cu':
                     vertex.show_in_overlay = state
             for graphic_item in self.gs_overlay_composition.interactive_overlay_objects:
                 graphic_item.set_style()
@@ -1415,7 +1414,7 @@ class MainUI(QtWidgets.QMainWindow):
         if self.project_instance is not None and self.project_instance.num_columns > 0:
             self.sys_message('Working...')
             for vertex in self.project_instance.graph.vertices:
-                if vertex.h_index == 4:
+                if vertex.atomic_species =='Ag':
                     vertex.show_in_overlay = state
             for graphic_item in self.gs_overlay_composition.interactive_overlay_objects:
                 graphic_item.set_style()
@@ -1425,7 +1424,7 @@ class MainUI(QtWidgets.QMainWindow):
         if self.project_instance is not None and self.project_instance.num_columns > 0:
             self.sys_message('Working...')
             for vertex in self.project_instance.graph.vertices:
-                if vertex.h_index == 5:
+                if vertex.atomic_species == 'Mg':
                     vertex.show_in_overlay = state
             for graphic_item in self.gs_overlay_composition.interactive_overlay_objects:
                 graphic_item.set_style()
@@ -1435,7 +1434,17 @@ class MainUI(QtWidgets.QMainWindow):
         if self.project_instance is not None and self.project_instance.num_columns > 0:
             self.sys_message('Working...')
             for vertex in self.project_instance.graph.vertices:
-                if vertex.h_index == 6:
+                if vertex.atomic_species == 'Un':
+                    vertex.show_in_overlay = state
+            for graphic_item in self.gs_overlay_composition.interactive_overlay_objects:
+                graphic_item.set_style()
+            self.sys_message('Ready.')
+
+    def chb_edge_trigger(self, state):
+        if self.project_instance is not None and self.project_instance.num_columns > 0:
+            self.sys_message('Working...')
+            for vertex in self.project_instance.graph.vertices:
+                if vertex.is_edge_column:
                     vertex.show_in_overlay = state
             for graphic_item in self.gs_overlay_composition.interactive_overlay_objects:
                 graphic_item.set_style()

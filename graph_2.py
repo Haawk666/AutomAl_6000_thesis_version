@@ -115,12 +115,9 @@ class Vertex:
         self.in_semi_partners = set()
 
         self.projected_separation_district = []
-        self.separation_district = []
         self.zeta_district = []
 
         self.local_zeta_map = copy.deepcopy(Vertex.empty_map)
-        self.local_projected_separation_map = {}
-        self.local_separation_map = {}
 
         # Graph parameters
         self.n = n
