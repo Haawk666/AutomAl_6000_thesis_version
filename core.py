@@ -81,12 +81,15 @@ class Project:
         self.debug_mode = False
 
         self.im_meta_data = {}
+        self.has_been_up_sampled = False
         if not (filename_full == 'Empty' or filename_full == 'empty'):
             dm3f = dm3.DM3(self.filename_full)
             self.im_mat = dm3f.imagedata
             (self.scale, _) = dm3f.pxsize
             self.scale = 1000 * self.scale  # Scale is now in nm/pixel
             if self.scale > 7.0:
+                logger.info('Up-sampling image to prevent over-granulation in column detection!')
+                self.has_been_up_sampled = True
                 self.im_mat = scipy.ndimage.zoom(self.im_mat, 2, order=1)
                 self.scale = self.scale / 2
             (self.im_height, self.im_width) = self.im_mat.shape
@@ -98,6 +101,8 @@ class Project:
 
         # Counting and statistical variables.
         self.num_columns = 0
+        self.pixel_average = 0
+        self.calc_avg_pixel_value()
 
         # These are hyper-parameters of the algorithms. See the documentation.
         self.threshold = 0.2586
@@ -123,6 +128,9 @@ class Project:
             string += '    ' + line
         string += '    General:\n'
         string += '        Number of columns: {}\n'.format(self.num_columns)
+        string += '    Image:\n'
+        string += '        Dimension (height, width): ({}, {})\n'.format(self.im_height, self.im_width)
+        string += '        Average pixel intensitiy: {}\n'.format(self.pixel_average)
 
         if supress_log:
             return string
@@ -423,10 +431,10 @@ class Project:
             # Spatial map:
             self.column_characterization(starting_index, search_type=3, ui_obj=ui_obj)
             # Detect edges:
-            self.column_characterization(starting_index, search_type=6, ui_obj=ui_obj)
+            self.column_characterization(starting_index, search_type=4, ui_obj=ui_obj)
             # Map connectivity:
             self.column_characterization(starting_index, search_type=16, ui_obj=ui_obj)
-            # Zeta analysis:
+            # Basic zeta analysis:
             self.column_characterization(starting_index, search_type=5, ui_obj=ui_obj)
             # Alpha model:
             self.column_characterization(starting_index, search_type=7, ui_obj=ui_obj)
@@ -434,8 +442,10 @@ class Project:
             self.column_characterization(starting_index, search_type=8, ui_obj=ui_obj)
             # Calc gamma:
             self.column_characterization(starting_index, search_type=9, ui_obj=ui_obj)
-            # Map connectivity:
-            self.column_characterization(starting_index, search_type=4, ui_obj=ui_obj)
+            # Advanced zeta analysis:
+            self.column_characterization(starting_index, search_type=6, ui_obj=ui_obj)
+            # Map connectivity
+            self.column_characterization(starting_index, search_type=16, ui_obj=ui_obj)
             # Composite model:
             # self.column_characterization(starting_index, search_type=11, ui_obj=ui_obj)
             logger.info('Basics done')
@@ -450,6 +460,15 @@ class Project:
             logger.info('Spatial mapping complete.')
 
         elif search_type == 4:
+            # Identify edge columns
+            logger.info('Finding edge columns....')
+            column_characterization.find_edge_columns(self.graph, self.im_width, self.im_height)
+            for vertex in self.graph.vertices:
+                if vertex.is_edge_column:
+                    self.graph.set_species(vertex.i, 'Al_1')
+            logger.info('Edge columns found.')
+
+        elif search_type == 5:
             # Basic zeta
             logger.info('Running basic zeta analysis...')
             column_characterization.zeta_analysis(
@@ -461,7 +480,7 @@ class Project:
             )
             logger.info('zeta\'s set.')
 
-        elif search_type == 5:
+        elif search_type == 6:
             # Advanced zeta
             logger.info('Running advanced zeta...')
             column_characterization.zeta_analysis(
@@ -472,15 +491,6 @@ class Project:
                 method='partners'
             )
             logger.info('zeta\'s set.')
-
-        elif search_type == 6:
-            # Identify edge columns
-            logger.info('Finding edge columns....')
-            column_characterization.find_edge_columns(self.graph, self.im_width, self.im_height)
-            for vertex in self.graph.vertices:
-                if vertex.is_edge_column:
-                    self.graph.set_species(vertex.i, 'Al_1')
-            logger.info('Edge columns found.')
 
         elif search_type == 7:
             # Applying alpha model
@@ -621,6 +631,14 @@ class Project:
                     int(vertex.im_coor_y),
                     self.r
                 )
+
+    def calc_avg_pixel_value(self):
+        pixel_avg = 0
+        for i in range(0, self.im_width):
+            for j in range(0, self.im_height):
+                pixel_avg += self.im_mat[j, i]
+        pixel_avg /= self.im_width * self.im_height
+        self.pixel_average = pixel_avg
 
     def summarize_stats(self):
         """Summarize current stats about the project file.

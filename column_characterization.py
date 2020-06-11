@@ -96,6 +96,8 @@ def zeta_analysis(graph_obj, starting_index, starting_zeta=0, method='district',
                     candidates = vertex.projected_separation_district[0:n]
                 elif method == 'partners':
                     candidates = list(vertex.partners)
+                elif method == 'out_neighbours':
+                    candidates = list(vertex.out_neighbourhood)
                 else:
                     candidates = vertex.district[0:n]
                 if vertex.is_edge_column:
