@@ -1031,132 +1031,13 @@ class ControlWindow(QtWidgets.QWidget):
         self.lbl_location = QtWidgets.QLabel('Location: ')
         self.lbl_model = QtWidgets.QLabel('Associated model: ')
         # -- Set buttons
-        self.btn_set_model_layout = GUI_custom_components.SetButtonLayout(
-            obj=self,
-            trigger_func=self.ui_obj.btn_set_model_trigger,
-            label=self.lbl_model
-        )
+        self.btn_set_model_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_model_trigger, label=self.lbl_model)
         # -- Buttons
-
-        self.btn_new_project = GUI_custom_components.MediumButton(
-            'Import dm3',
-            self,
-            trigger_func=self.ui_obj.btn_new_project_trigger
-        )
-        self.btn_open_project = GUI_custom_components.MediumButton(
-            'Open',
-            self,
-            trigger_func=self.ui_obj.btn_open_project_trigger
-        )
-        self.btn_save_project = GUI_custom_components.MediumButton(
-            'Save', self,
-            trigger_func=self.ui_obj.btn_save_project_trigger)
-        self.btn_close_project = GUI_custom_components.MediumButton(
-            'Close', self,
-            trigger_func=self.ui_obj.btn_close_project_trigger)
-        self.btn_configure_classes = GUI_custom_components.MediumButton(
-            'Categories', self,
-            trigger_func=self.ui_obj.btn_configure_classes_trigger)
-
-        self.btn_show_stats = GUI_custom_components.MediumButton(
-            'Stats', self,
-            trigger_func=self.ui_obj.btn_show_stats_trigger)
-        self.btn_show_source = GUI_custom_components.MediumButton(
-            'Source', self,
-            trigger_func=self.ui_obj.btn_view_image_title_trigger)
-        self.btn_align_views = GUI_custom_components.MediumButton(
-            'Align views', self,
-            trigger_func=self.ui_obj.btn_align_views_trigger)
-        self.btn_export = GUI_custom_components.MediumButton(
-            'Export data', self,
-            trigger_func=self.ui_obj.btn_export_overlay_image_trigger)
-        self.btn_start_alg_1 = GUI_custom_components.MediumButton(
-            'Start', self,
-            trigger_func=self.ui_obj.btn_continue_detection_trigger)
-        self.btn_reset_alg_1 = GUI_custom_components.MediumButton(
-            'Reset', self,
-            trigger_func=self.ui_obj.btn_restart_detection_trigger)
-        self.btn_redraw_search_mat = GUI_custom_components.MediumButton(
-            'Redraw search mat', self,
-            trigger_func=self.ui_obj.btn_redraw_search_mat_trigger)
-        self.btn_start_alg_2 = GUI_custom_components.MediumButton(
-            'Start', self,
-            trigger_func=self.ui_obj.btn_continue_analysis_trigger)
-        self.btn_reset_alg_2 = GUI_custom_components.MediumButton(
-            'Reset', self,
-            trigger_func=self.ui_obj.btn_restart_analysis_trigger)
-        self.btn_invert_lvl_alg_2 = GUI_custom_components.MediumButton(
-            'Invert lvl', self,
-            trigger_func=self.ui_obj.btn_invert_levels_trigger)
-        self.btn_set_variant = GUI_custom_components.MediumButton(
-            'Set variant', self,
-            trigger_func=self.ui_obj.btn_set_variant_trigger)
-        self.btn_delete = GUI_custom_components.MediumButton(
-            'Delete', self,
-            trigger_func=self.ui_obj.btn_delete_trigger)
-        self.btn_print_details = GUI_custom_components.MediumButton(
-            'Print', self,
-            trigger_func=self.ui_obj.btn_print_details_trigger)
-        self.btn_snap = GUI_custom_components.MediumButton(
-            'Show', self, trigger_func=self.ui_obj.btn_snap_trigger)
-        self.btn_sub = GUI_custom_components.MediumButton(
-            'Build sub-graph', self,
-            trigger_func=self.ui_obj.btn_gen_sub_graph)
-        self.btn_refresh_graph = GUI_custom_components.MediumButton(
-            'Refresh', self,
-            trigger_func=self.ui_obj.btn_refresh_graph_trigger)
-        self.btn_refresh_mesh = GUI_custom_components.MediumButton(
-            'Refresh mesh', self,
-            trigger_func=self.ui_obj.btn_refresh_mesh_trigger)
-        self.btn_deselect = GUI_custom_components.MediumButton(
-            'Deselect', self,
-            trigger_func=self.ui_obj.btn_deselect_trigger)
-        self.btn_new = GUI_custom_components.MediumButton(
-            'New', self, trigger_func=self.ui_obj.btn_new_column_trigger)
-        self.btn_set_style = GUI_custom_components.MediumButton(
-            'Configure', self,
-            trigger_func=self.ui_obj.btn_set_style_trigger)
-        self.btn_set_indices = GUI_custom_components.MediumButton(
-            'Set neighbours', self,
-            trigger_func=self.ui_obj.btn_set_indices_trigger)
-        self.btn_test = GUI_custom_components.MediumButton(
-            'Test', self, trigger_func=self.ui_obj.btn_test_trigger)
-        self.btn_crash = GUI_custom_components.MediumButton(
-            'Crash program', self,
-            trigger_func=self.ui_obj.btn_crash_trigger)
-        self.btn_plot = GUI_custom_components.MediumButton(
-            'Make plots', self,
-            trigger_func=self.ui_obj.btn_make_plot_trigger)
-        self.btn_print_distances = GUI_custom_components.MediumButton(
-            'Print distances', self,
-            trigger_func=self.ui_obj.btn_print_distances_trigger)
-        self.btn_build_anti_graph = GUI_custom_components.MediumButton(
-            'Build anti-graph', self,
-            trigger_func=self.ui_obj.btn_build_anti_graph_trigger
-        )
-        self.btn_build_info_graph = GUI_custom_components.MediumButton(
-            'Build info-graph', self,
-            trigger_func=self.ui_obj.btn_build_info_graph_trigger
-        )
-        self.btn_pca = GUI_custom_components.MediumButton(
-            'Perform PCA', self, trigger_func=self.ui_obj.btn_pca_trigger
-        )
-        self.btn_calc_models = GUI_custom_components.MediumButton(
-            'Calculate model', self,
-            trigger_func=self.ui_obj.btn_calc_models_trigger
-        )
-        self.btn_plot_models = GUI_custom_components.MediumButton(
-            'Plot model', self,
-            trigger_func=self.ui_obj.btn_plot_models_trigger
-        )
-        self.btn_show_all = GUI_custom_components.MediumButton(
-            'Show all', self,
-            trigger_func=self.ui_obj.btn_show_all_trigger
-        )
-        self.btn_hide_all = GUI_custom_components.MediumButton(
-            'Hide all', self,
-            trigger_func=self.ui_obj.btn_hide_all_trigger
-        )
+        self.btn_new_project = GUI_custom_components.MediumButton('Import dm3', self, trigger_func=self.ui_obj.btn_new_project_trigger)
+        self.btn_open_project = GUI_custom_components.MediumButton('Open', self, trigger_func=self.ui_obj.btn_open_project_trigger)
+        self.btn_save_project = GUI_custom_components.MediumButton('Save', self, trigger_func=self.ui_obj.btn_save_project_trigger)
+        self.btn_close_project = GUI_custom_components.MediumButton('Close', self, trigger_func=self.ui_obj.btn_close_project_trigger)
+        self.btn_configure_classes = GUI_custom_components.MediumButton('Categories', self, trigger_func=self.ui_obj.btn_configure_classes_trigger)
 
         # - Image controls
         # -- Labels
@@ -1167,6 +1048,9 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_lock_views = QtWidgets.QCheckBox('Lock views')
         # -- Set buttons
         # -- Buttons
+        self.btn_show_stats = GUI_custom_components.MediumButton('Stats', self, trigger_func=self.ui_obj.btn_show_stats_trigger)
+        self.btn_show_source = GUI_custom_components.MediumButton('Source', self, trigger_func=self.ui_obj.btn_view_image_title_trigger)
+        self.btn_align_views = GUI_custom_components.MediumButton('Align views', self, trigger_func=self.ui_obj.btn_align_views_trigger)
 
         # - Column detection controls
         # -- Labels
@@ -1182,22 +1066,13 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_automatic_threshold = QtWidgets.QCheckBox('Use automatic thresholding')
         self.chb_toggle_positions = QtWidgets.QCheckBox('Show column position overlay')
         # -- Set buttons
-        self.btn_set_threshold_layout = GUI_custom_components.SetButtonLayout(
-            obj=self,
-            trigger_func=self.ui_obj.btn_set_threshold_trigger,
-            label=self.lbl_detection_threshold
-        )
-        self.btn_set_search_size_layout = GUI_custom_components.SetButtonLayout(
-            obj=self,
-            trigger_func=self.ui_obj.btn_set_search_size_trigger,
-            label=self.lbl_search_size
-        )
-        self.btn_set_scale_layout = GUI_custom_components.SetButtonLayout(
-            obj=self,
-            trigger_func=self.ui_obj.btn_set_scale_trigger,
-            label=self.lbl_scale
-        )
+        self.btn_set_threshold_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_threshold_trigger, label=self.lbl_detection_threshold)
+        self.btn_set_search_size_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_search_size_trigger, label=self.lbl_search_size)
+        self.btn_set_scale_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_scale_trigger, label=self.lbl_scale)
         # -- Buttons
+        self.btn_start_alg_1 = GUI_custom_components.MediumButton('Start', self, trigger_func=self.ui_obj.btn_continue_detection_trigger)
+        self.btn_reset_alg_1 = GUI_custom_components.MediumButton('Reset', self, trigger_func=self.ui_obj.btn_restart_detection_trigger)
+        self.btn_redraw_search_mat = GUI_custom_components.MediumButton('Redraw search mat', self, trigger_func=self.ui_obj.btn_redraw_search_mat_trigger)
 
         # - Column characterization controls
         # -- Labels
@@ -1205,12 +1080,11 @@ class ControlWindow(QtWidgets.QWidget):
         # -- Checkboxes
         self.chb_show_graphic_updates = QtWidgets.QCheckBox('Show graphic updates (slow)')
         # -- Set buttons
-        self.btn_set_alloy_layout = GUI_custom_components.SetButtonLayout(
-            obj=self,
-            trigger_func=self.ui_obj.btn_set_alloy_trigger,
-            label=self.lbl_alloy
-        )
+        self.btn_set_alloy_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_alloy_trigger, label=self.lbl_alloy)
         # -- Buttons
+        self.btn_start_alg_2 = GUI_custom_components.MediumButton('Start', self, trigger_func=self.ui_obj.btn_continue_analysis_trigger)
+        self.btn_reset_alg_2 = GUI_custom_components.MediumButton('Reset', self, trigger_func=self.ui_obj.btn_restart_analysis_trigger)
+        self.btn_invert_lvl_alg_2 = GUI_custom_components.MediumButton('Invert lvl', self, trigger_func=self.ui_obj.btn_invert_levels_trigger)
 
         # - Selected column controls
         # -- Labels
@@ -1234,33 +1108,19 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_show = QtWidgets.QCheckBox('Show in overlay')
         self.chb_move = QtWidgets.QCheckBox('Enable move')
         # -- Set buttons
-        self.btn_find_column_layout = GUI_custom_components.SetButtonLayout(
-            obj=self,
-            trigger_func=self.ui_obj.btn_find_column_trigger,
-            label=self.lbl_column_index
-        )
-        self.btn_set_species_layout = GUI_custom_components.SetButtonLayout(
-            obj=self,
-            trigger_func=self.ui_obj.btn_set_species_trigger,
-            label=self.lbl_column_species
-        )
-        self.btn_set_level_layout = GUI_custom_components.SetButtonLayout(
-            obj=self,
-            trigger_func=self.ui_obj.btn_set_level_trigger,
-            label=self.lbl_column_level
-        )
+        self.btn_find_column_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_find_column_trigger, label=self.lbl_column_index)
+        self.btn_set_species_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_species_trigger, label=self.lbl_column_species)
+        self.btn_set_level_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_level_trigger, label=self.lbl_column_level)
         # -- Buttons
-        self.btn_cancel_move = GUI_custom_components.SmallButton(
-            'Cancel',
-            self,
-            trigger_func=self.ui_obj.btn_cancel_move_trigger
-        )
+        self.btn_cancel_move = GUI_custom_components.SmallButton('Cancel', self, trigger_func=self.ui_obj.btn_cancel_move_trigger)
 
-        self.btn_set_move = GUI_custom_components.SmallButton(
-            'Accept',
-            self,
-            trigger_func=self.ui_obj.btn_set_position_trigger
-        )
+        self.btn_set_move = GUI_custom_components.SmallButton('Accept', self, trigger_func=self.ui_obj.btn_set_position_trigger)
+        self.btn_set_variant = GUI_custom_components.MediumButton('Set variant', self, trigger_func=self.ui_obj.btn_set_variant_trigger)
+        self.btn_delete = GUI_custom_components.MediumButton('Delete', self, trigger_func=self.ui_obj.btn_delete_trigger)
+        self.btn_print_details = GUI_custom_components.MediumButton('Print', self, trigger_func=self.ui_obj.btn_print_details_trigger)
+        self.btn_snap = GUI_custom_components.MediumButton('Show', self, trigger_func=self.ui_obj.btn_snap_trigger)
+        self.btn_deselect = GUI_custom_components.MediumButton('Deselect', self, trigger_func=self.ui_obj.btn_deselect_trigger)
+        self.btn_new = GUI_custom_components.MediumButton('New', self, trigger_func=self.ui_obj.btn_new_column_trigger)
 
         # - Atomic graph controls
         # -- Labels
@@ -1279,17 +1139,23 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_show_level_0 = QtWidgets.QCheckBox('Show level 0 plane')
         self.chb_show_level_1 = QtWidgets.QCheckBox('Show level 1 plane')
         # -- Set buttons
-        self.btn_set_sub_graph_type_layout = GUI_custom_components.SetButtonLayout(
-            obj=self,
-            trigger_func=self.ui_obj.btn_set_sub_graph_type_trigger,
-            label=self.lbl_sub_graph_type
-        )
-        self.btn_set_sub_graph_order_layout = GUI_custom_components.SetButtonLayout(
-            obj=self,
-            trigger_func=self.ui_obj.btn_set_sub_graph_order_trigger,
-            label=self.lbl_sub_graph_order
-        )
+        self.btn_set_sub_graph_type_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_sub_graph_type_trigger, label=self.lbl_sub_graph_type)
+        self.btn_set_sub_graph_order_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_sub_graph_order_trigger, label=self.lbl_sub_graph_order)
         # -- Buttons
+        self.btn_sub = GUI_custom_components.MediumButton('Build sub-graph', self, trigger_func=self.ui_obj.btn_gen_sub_graph)
+        self.btn_refresh_graph = GUI_custom_components.MediumButton('Refresh', self, trigger_func=self.ui_obj.btn_refresh_graph_trigger)
+        self.btn_refresh_mesh = GUI_custom_components.MediumButton('Refresh mesh', self, trigger_func=self.ui_obj.btn_refresh_mesh_trigger)
+        self.btn_build_anti_graph = GUI_custom_components.MediumButton('Build anti-graph', self, trigger_func=self.ui_obj.btn_build_anti_graph_trigger)
+        self.btn_build_info_graph = GUI_custom_components.MediumButton('Build info-graph', self, trigger_func=self.ui_obj.btn_build_info_graph_trigger)
+
+        # - Data and export controls
+        # -- Buttons
+        self.btn_export = GUI_custom_components.MediumButton('Stats', self, trigger_func=self.ui_obj.menu_export_data_trigger)
+        self.btn_plot = GUI_custom_components.MediumButton('Make plots', self, trigger_func=self.ui_obj.btn_make_plot_trigger)
+        self.btn_print_distances = GUI_custom_components.MediumButton('Print distances', self, trigger_func=self.ui_obj.btn_print_distances_trigger)
+        self.btn_pca = GUI_custom_components.MediumButton('Perform PCA', self, trigger_func=self.ui_obj.btn_pca_trigger)
+        self.btn_calc_models = GUI_custom_components.MediumButton('Calculate model', self, trigger_func=self.ui_obj.btn_calc_models_trigger)
+        self.btn_plot_models = GUI_custom_components.MediumButton('Plot model', self, trigger_func=self.ui_obj.btn_plot_models_trigger)
 
         # - Overlay controls
         # -- Checkboxes
@@ -1316,23 +1182,37 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_0_plane = QtWidgets.QCheckBox('0 Plane')
         self.chb_1_plane = QtWidgets.QCheckBox('1/2 Plane')
         # -- Buttons
+        self.btn_set_style = GUI_custom_components.MediumButton('Configure', self, trigger_func=self.ui_obj.btn_set_style_trigger)
+        self.btn_show_all = GUI_custom_components.MediumButton('Show all', self, trigger_func=self.ui_obj.btn_show_all_trigger)
+        self.btn_hide_all = GUI_custom_components.MediumButton('Hide all', self, trigger_func=self.ui_obj.btn_hide_all_trigger)
 
         # - Debug controls
         # -- Labels
         self.lbl_starting_index = QtWidgets.QLabel('Default starting index: ')
         # -- Set buttons
-        self.btn_set_start_layout = GUI_custom_components.SetButtonLayout(
-            obj=self,
-            trigger_func=self.ui_obj.btn_set_start_trigger,
-            label=self.lbl_starting_index
-        )
+        self.btn_set_start_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_start_trigger,label=self.lbl_starting_index)
         # -- Buttons
+        self.btn_set_indices = GUI_custom_components.MediumButton('Set neighbours', self, trigger_func=self.ui_obj.btn_set_indices_trigger)
+        self.btn_test = GUI_custom_components.MediumButton('Test', self, trigger_func=self.ui_obj.btn_test_trigger)
+        self.btn_crash = GUI_custom_components.MediumButton('Crash program', self, trigger_func=self.ui_obj.btn_crash_trigger)
 
         # -------------------------------------------------------------------------
         # Internal layouts
         # -------------------------------------------------------------------------
 
         # - Project controls
+        btn_project_layout = QtWidgets.QVBoxLayout()
+        layout = QtWidgets.QHBoxLayout()
+        layout.addWidget(self.btn_new_project)
+        layout.addWidget(self.btn_open_project)
+        layout.addWidget(self.btn_save_project)
+        layout.addStretch()
+        btn_project_layout.addLayout(layout)
+        layout = QtWidgets.QHBoxLayout()
+        layout.addWidget(self.btn_close_project)
+        layout.addWidget(self.btn_configure_classes)
+        layout.addStretch()
+        btn_project_layout.addLayout(layout)
 
         # - Image controls
 
@@ -1492,18 +1372,7 @@ class ControlWindow(QtWidgets.QWidget):
 
 
         # Button layouts
-        btn_project_layout = QtWidgets.QVBoxLayout()
-        layout = QtWidgets.QHBoxLayout()
-        layout.addWidget(self.btn_new_project)
-        layout.addWidget(self.btn_open_project)
-        layout.addWidget(self.btn_save_project)
-        layout.addStretch()
-        btn_project_layout.addLayout(layout)
-        layout = QtWidgets.QHBoxLayout()
-        layout.addWidget(self.btn_close_project)
-        layout.addWidget(self.btn_configure_classes)
-        layout.addStretch()
-        btn_project_layout.addLayout(layout)
+
 
         btn_move_control_layout = QtWidgets.QHBoxLayout()
         btn_move_control_layout.addWidget(self.chb_move)
