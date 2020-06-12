@@ -303,10 +303,10 @@ class Vertex:
     def shift_pos_j_pos_k(self, pos_j, pos_k):
         if pos_k == len(self.district) - 1 or pos_k == -1:
             new_district = self.district[:pos_j - 1] + self.district[pos_j + 1:pos_k] +\
-                           self.district[pos_j]
+                           [self.district[pos_j]]
         else:
             new_district = self.district[:pos_j - 1] + self.district[pos_j + 1:pos_k] + \
-                           self.district[pos_j] + self.district[pos_k + 1:-1]
+                           [self.district[pos_j]] + self.district[pos_k + 1:-1]
         self.district = new_district
         return True
 

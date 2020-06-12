@@ -992,12 +992,12 @@ class MainUI(QtWidgets.QMainWindow):
                 '15 - Not in use',
                 '16 - Map vertex connectivity',
                 '17 - Map vertex in-connectivity',
-                '18 - Not in use',
+                '18 - Untangling algorithm',
                 '19 - Not in use',
                 '20 - Not in use',
                 '21 - Not in use',
                 '22 - Not in use',
-                '23 - Not in use'
+                '23 - Plot gamma'
             ]
 
             string, ok_pressed = QtWidgets.QInputDialog.getItem(self, "Set", "Search step", strings, 0, False)

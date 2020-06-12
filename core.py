@@ -7,6 +7,7 @@ import graph_op
 import compatibility
 import legacy_items
 import untangling
+import column_detection
 import column_characterization
 import statistics
 # External imports:
@@ -284,7 +285,6 @@ class Project:
             vertex.avg_gamma, vertex.peak_gamma = utils.circular_average(self.im_mat, x_fit_int, y_fit_int, self.r)
             actual_peak_values.append(vertex.peak_gamma)
             avg_values.append(vertex.avg_gamma)
-            search_avg_values.append(self.calc_avg_search_pixel_value())
 
             self.graph.add_vertex(vertex)
 
@@ -340,12 +340,6 @@ class Project:
                 c='g',
                 label='Average pixel intensitiy'
             )
-            ax_values.plot(
-                range(0, len(search_peak_values)),
-                search_avg_values,
-                c='m',
-                label='Average search matrix intensitiy'
-            )
             ax_values.set_title('Column detection summary')
             ax_values.set_xlabel('# Column')
             ax_values.set_ylabel('Pixel intensity')
@@ -400,12 +394,12 @@ class Project:
             self.column_characterization(starting_index, search_type=4, ui_obj=ui_obj)
             # Map connectivity:
             self.column_characterization(starting_index, search_type=16, ui_obj=ui_obj)
+            # Alpha model:
+            self.column_characterization(starting_index, search_type=7, ui_obj=ui_obj)
             # Advanced zeta analysis:
             self.column_characterization(starting_index, search_type=6, ui_obj=ui_obj)
             # Map connectivity
             self.column_characterization(starting_index, search_type=16, ui_obj=ui_obj)
-            # Alpha model:
-            self.column_characterization(starting_index, search_type=7, ui_obj=ui_obj)
             # Find particle:
             self.column_characterization(starting_index, search_type=8, ui_obj=ui_obj)
             # Calc gamma:
@@ -534,7 +528,10 @@ class Project:
             logger.info('Vertices mapped.')
 
         elif search_type == 18:
-            pass
+            # Untangle
+            logger.info('Running untangling algorithm')
+            column_characterization.untangle(self.graph, ui_obj=ui_obj)
+            logger.info('Untnangling complete')
 
         elif search_type == 19:
             pass
@@ -549,7 +546,7 @@ class Project:
             pass
 
         elif search_type == 23:
-            pass
+            column_detection.plot_gamma(self)
 
         else:
             logger.error('No such search type!')

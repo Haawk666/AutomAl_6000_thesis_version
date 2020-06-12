@@ -3,3 +3,41 @@ GUI: GUI version: 0.0.2
 GUI: core version: 0.1.0
 GUI: Build version: Alpha 1.0
 ------------------------
+GUI: Opening file C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/0_Large_L_phase_columns
+core: Loaded C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/0_Large_L_phase_columns
+core: Doing the basics...
+core: Mapping spatial locality...
+column_characterization: Districts mapped in 18.100142002105713 seconds with matrix method.
+    Distance calculations took 17.8401997089386 seconds.
+    Sorting took 0.25994229316711426 seconds.
+core: Spatial mapping complete.
+core: Finding edge columns....
+column_characterization: Detecting edge columns
+column_characterization: Found edge columns in 0.008119583129882812 seconds
+core: Edge columns found.
+core: Mapping vertex connectivity...
+core: Vertices mapped.
+core: Calculating probabilities from alpha attributes...
+core: Calculated probabilities from alpha attributes.
+core: Running advanced zeta...
+column_characterization: Starting zeta analysis
+column_characterization: Zeta analysis completed in 8.716575860977173 seconds
+core: zeta's set.
+core: Mapping vertex connectivity...
+core: Vertices mapped.
+core: Finding particle...
+core: Found particle.
+core: Finding normalized intensities...
+core: Found intensities.
+core: Basics done
+core: Saved C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/0_Large_L_phase_basics
+core: Running untangling algorithm
+core: Untnangling complete
+core: Running advanced zeta...
+column_characterization: Starting zeta analysis
+column_characterization: Zeta analysis completed in 8.673614025115967 seconds
+core: zeta's set.
+core: Mapping vertex connectivity...
+core: Vertices mapped.
+core: Running untangling algorithm
+core: Untnangling complete
