@@ -3,10 +3,7 @@
 # Program imports:
 import utils
 import graph_2
-import graph_op
 import compatibility
-import legacy_items
-import untangling
 import column_detection
 import column_characterization
 import statistics
@@ -390,39 +387,28 @@ class Project:
             logger.info('Doing the basics...')
             # Spatial map:
             self.column_characterization(starting_index, search_type=3, ui_obj=ui_obj)
-            print('Spatial: {}'.format(len(self.graph.vertices[1434].district)))
             # Detect edges:
             self.column_characterization(starting_index, search_type=4, ui_obj=ui_obj)
-            print('Edge detection: {}'.format(len(self.graph.vertices[1434].district)))
             # Map connectivity:
             self.column_characterization(starting_index, search_type=16, ui_obj=ui_obj)
-            print('Connectivity mapping: {}'.format(len(self.graph.vertices[1434].district)))
             # Advanced zeta analysis:
             self.column_characterization(starting_index, search_type=6, ui_obj=ui_obj)
-            print('Advanced zeta: {}'.format(len(self.graph.vertices[1434].district)))
             # Alpha model:
             self.column_characterization(starting_index, search_type=7, ui_obj=ui_obj)
-            print('Alpha: {}'.format(len(self.graph.vertices[1434].district)))
             # Map connectivity
             self.column_characterization(starting_index, search_type=16, ui_obj=ui_obj)
-            print('Connectivity mapping: {}'.format(len(self.graph.vertices[1434].district)))
             # Advanced zeta analysis:
             self.column_characterization(starting_index, search_type=6, ui_obj=ui_obj)
-            print('Advanced zeta: {}'.format(len(self.graph.vertices[1434].district)))
             # Find particle:
             self.column_characterization(starting_index, search_type=8, ui_obj=ui_obj)
-            print('Particle: {}'.format(len(self.graph.vertices[1434].district)))
             # Calc gamma:
             self.column_characterization(starting_index, search_type=9, ui_obj=ui_obj)
-            print('Calc gamma: {}'.format(len(self.graph.vertices[1434].district)))
             # Untangle
             self.column_characterization(starting_index, search_type=18, ui_obj=ui_obj)
-            print('Untangle: {}'.format(len(self.graph.vertices[1434].district)))
             # Advanced zeta analysis:
             self.column_characterization(starting_index, search_type=6, ui_obj=ui_obj)
-            print('Advanced zeta: {}'.format(len(self.graph.vertices[1434].district)))
             # Composite model:
-            # self.column_characterization(starting_index, search_type=11, ui_obj=ui_obj)
+            self.column_characterization(starting_index, search_type=11, ui_obj=ui_obj)
             logger.info('Basics done')
 
         elif search_type == 2:

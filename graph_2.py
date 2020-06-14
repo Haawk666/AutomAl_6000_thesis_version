@@ -314,7 +314,7 @@ class Vertex:
         if j in self.district:
             pos_j = self.district.index(j)
             if pos_j < self.n - 1:
-                self.shift_pos_j_pos_k(pos_j, self.n - 1)
+                self.permute_pos_j_pos_k(pos_j, self.n - 1)
             elif pos_j == self.n - 1:
                 pass
             else:
@@ -326,7 +326,7 @@ class Vertex:
         if j in self.district:
             pos_j = self.district.index(j)
             if pos_j > self.n:
-                self.shift_pos_j_pos_k(pos_j, self.n)
+                self.permute_pos_j_pos_k(pos_j, self.n)
             elif pos_j == self.n:
                 pass
             else:
@@ -1319,10 +1319,11 @@ class AtomicGraph:
                 if vertex.atomic_species == 'Si':
                     sub_graph = self.get_column_centered_subgraph(vertex.i)
                     for mesh in sub_graph.meshes:
-                        if mesh.vertices[1].atomic_species == 'Mg' and mesh.vertices[2].atomic_species == 'Cu' and mesh.vertices[3].atomic_species == 'Mg':
-                            if not vertex.advanced_species == 'Si_2':
-                                self.set_species(vertex.i, 'Si_2')
-                            break
+                        if len(mesh.vertices) > 3:
+                            if mesh.vertices[1].atomic_species == 'Mg' and mesh.vertices[2].atomic_species == 'Cu' and mesh.vertices[3].atomic_species == 'Mg':
+                                if not vertex.advanced_species == 'Si_2':
+                                    self.set_species(vertex.i, 'Si_2')
+                                break
                     else:
                         if not vertex.advanced_species == 'Si_1':
                             self.set_species(vertex.i, 'Si_1')
