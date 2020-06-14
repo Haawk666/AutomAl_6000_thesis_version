@@ -215,7 +215,7 @@ def determine_sub_graph_configuration(atomic_graph, sub_graphs):
                 sub_graph.configuration = 'E_1'
 
 
-def resolve(graph_obj, sub_graphs, ui_obj=None):
+def weak_resolve(graph_obj, sub_graphs, ui_obj=None):
     for sub_graph in sub_graphs:
         separation_cut_off = 350
 
@@ -413,5 +413,95 @@ def resolve(graph_obj, sub_graphs, ui_obj=None):
                         if graph_obj.permute_j_k(j, k, i):
                             if ui_obj is not None:
                                 ui_obj.gs_atomic_graph.perturb_edge(j, k, i, permute_data=False, center_view=True)
+
+
+def strong_resolve(graph_obj, sub_graphs, ui_obj=None):
+    for sub_graph in sub_graphs:
+        if sub_graph.class_ == 1:
+            i = sub_graph.meshes[0].vertex_indices[0]
+            j = sub_graph.meshes[0].vertex_indices[1]
+            a = sub_graph.meshes[0].vertex_indices[2]
+            b = sub_graph.meshes[1].vertex_indices[2]
+
+            if sub_graph.configuration == 'A_1':
+                graph_obj.strong_remove_arc(i, j)
+            elif sub_graph.configuration == 'B_1':
+                pass
+            elif sub_graph.configuration == 'B_2':
+                pass
+            elif sub_graph.configuration == 'C_1':
+                pass
+            elif sub_graph.configuration == 'C_2':
+                pass
+            elif sub_graph.configuration == 'D_1':
+                pass
+            elif sub_graph.configuration == 'D_2':
+                pass
+            elif sub_graph.configuration == 'E_1' or sub_graph.configuration == 'E_2':
+                pass
+            elif sub_graph.configuration == 'F_1' or sub_graph.configuration == 'F_2':
+                graph_obj.strong_remove_arc(i, j)
+            elif sub_graph.configuration == 'G_1':
+                pass
+            elif sub_graph.configuration == 'G_2':
+                pass
+            elif sub_graph.configuration == 'H_1':
+                pass
+            elif sub_graph.configuration == 'H_2':
+                pass
+
+        elif sub_graph.class_ == 2:
+            i = sub_graph.meshes[0].vertex_indices[0]
+            j = sub_graph.meshes[0].vertex_indices[1]
+            a = sub_graph.meshes[0].vertex_indices[2]
+            b = sub_graph.meshes[0].vertex_indices[3]
+
+            if sub_graph.configuration == 'A_1':
+                pass
+            elif sub_graph.configuration == 'B_1':
+                if graph_obj.vertices[i].partner_query(j) and graph_obj.vertices[a].partner_query(b):
+                    graph_obj.permute_j_k(i, j, a)
+                    graph_obj.permute_j_k(a, b, i)
+
+        elif sub_graph.class_ == 3:
+            i = sub_graph.meshes[0].vertex_indices[0]
+            j = sub_graph.meshes[0].vertex_indices[1]
+            b = sub_graph.meshes[1].vertex_indices[2]
+            c = sub_graph.meshes[1].vertex_indices[3]
+
+            if sub_graph.configuration == 'A_1':
+                pass
+            elif sub_graph.configuration == 'B_1':
+                if graph_obj.vertices[i].partner_query(j) and graph_obj.vertices[c].partner_query(b):
+                    graph_obj.permute_j_k(i, j, c)
+                    graph_obj.permute_j_k(c, b, i)
+
+        elif sub_graph.class_ == 4:
+            i = sub_graph.meshes[0].vertex_indices[0]
+            j = sub_graph.meshes[0].vertex_indices[1]
+            d = sub_graph.meshes[1].vertex_indices[4]
+
+            if sub_graph.configuration == 'A_1':
+                if graph_obj.vertices[i].partner_query(j):
+                    graph_obj.permute_j_k(i, j, d)
+
+        elif sub_graph.class_ == 5:
+            i = sub_graph.meshes[0].vertex_indices[0]
+            j = sub_graph.meshes[0].vertex_indices[1]
+            a = sub_graph.meshes[0].vertex_indices[2]
+
+            if sub_graph.configuration == 'A_1':
+                if graph_obj.vertices[i].partner_query(j):
+                    graph_obj.permute_j_k(i, j, a)
+
+        elif sub_graph.class_ == 6:
+            i = sub_graph.meshes[0].vertex_indices[0]
+            j = sub_graph.meshes[0].vertex_indices[1]
+
+            if sub_graph.configuration == 'A_1' or sub_graph.configuration == 'B_1' or \
+                    sub_graph.configuration == 'B_2' or sub_graph.configuration == 'C_1' or \
+                    sub_graph.configuration == 'D_1' or \
+                    sub_graph.configuration == 'D_2' or sub_graph.configuration == 'E_1':
+                graph_obj.strong_preserve_arc(i, j)
 
 

@@ -259,23 +259,24 @@ def untangle(graph_obj, ui_obj=None):
     for vertex in graph_obj.vertices:
         if not vertex.is_edge_column and not vertex.void:
             if len(vertex.out_semi_partners) > 0:
-                exhausted = False
-                emer_counter = 0
-                while not exhausted:
-                    for citizen in vertex.district:
-                        if citizen in vertex.out_semi_partners:
-                            sub_graph = graph_obj.get_arc_centered_subgraph(vertex.i, citizen)
-                            untangling_2.determine_sub_graph_class([sub_graph])
-                            untangling_2.determine_sub_graph_configuration(graph_obj, [sub_graph])
-                            untangling_2.resolve(graph_obj, [sub_graph], ui_obj=ui_obj)
-                            break
-                    else:
-                        exhausted = True
-                    emer_counter += 1
-                    if emer_counter > 9:
-                        exhausted = True
+                district_copy = copy.deepcopy(vertex.district)
+                for citizen in district_copy:
+                    if citizen in vertex.out_semi_partners:
+                        sub_graph = graph_obj.get_arc_centered_subgraph(vertex.i, citizen)
+                        untangling_2.determine_sub_graph_class([sub_graph])
+                        untangling_2.determine_sub_graph_configuration(graph_obj, [sub_graph])
+                        untangling_2.weak_resolve(graph_obj, [sub_graph], ui_obj=ui_obj)
 
-
+    for vertex in graph_obj.vertices:
+        if not vertex.is_edge_column and not vertex.void:
+            if len(vertex.out_semi_partners) > 0:
+                district_copy = copy.deepcopy(vertex.district)
+                for citizen in district_copy:
+                    if citizen in vertex.out_semi_partners:
+                        sub_graph = graph_obj.get_arc_centered_subgraph(vertex.i, citizen)
+                        untangling_2.determine_sub_graph_class([sub_graph])
+                        untangling_2.determine_sub_graph_configuration(graph_obj, [sub_graph])
+                        untangling_2.strong_resolve(graph_obj, [sub_graph], ui_obj=ui_obj)
 
 
 

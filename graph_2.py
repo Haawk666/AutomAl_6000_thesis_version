@@ -310,6 +310,30 @@ class Vertex:
         self.district = new_district
         return True
 
+    def put_j_last(self, j):
+        if j in self.district:
+            pos_j = self.district.index(j)
+            if pos_j < self.n - 1:
+                self.shift_pos_j_pos_k(pos_j, self.n - 1)
+            elif pos_j == self.n - 1:
+                pass
+            else:
+                pass
+        else:
+            pass
+
+    def put_j_above_last(self, j):
+        if j in self.district:
+            pos_j = self.district.index(j)
+            if pos_j > self.n:
+                self.shift_pos_j_pos_k(pos_j, self.n)
+            elif pos_j == self.n:
+                pass
+            else:
+                pass
+        else:
+            pass
+
     def partner_query(self, j):
         if j in self.district[:self.n]:
             return True
@@ -1086,6 +1110,14 @@ class AtomicGraph:
                 break
 
         return k
+
+    def strong_remove_arc(self, i, j):
+        self.vertices[i].put_j_last(j)
+        self.vertices[i].decrement_n()
+
+    def strong_preserve_arc(self, i, j):
+        self.vertices[j].put_j_above_last(i)
+        self.vertices[j].increment_n()
 
     def find_intersections(self):
 

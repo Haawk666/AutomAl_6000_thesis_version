@@ -3,41 +3,117 @@ GUI: GUI version: 0.0.2
 GUI: core version: 0.1.0
 GUI: Build version: Alpha 1.0
 ------------------------
-GUI: Opening file C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/0_Large_L_phase_columns
-core: Loaded C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/0_Large_L_phase_columns
+core: Generated instance from C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/0_Large_L_phase.dm3
+core: Saved C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/0_Large_L_phase_initial
+core: Starting column detection. Search mode is 't'
+core: Column detection complete! Found 1780 columns in 48.8985378742218 seconds.
+core: Saved C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/0_Large_L_phase_columns
 core: Doing the basics...
 core: Mapping spatial locality...
-column_characterization: Districts mapped in 18.100142002105713 seconds with matrix method.
-    Distance calculations took 17.8401997089386 seconds.
-    Sorting took 0.25994229316711426 seconds.
+column_characterization: Districts mapped in 24.205029010772705 seconds with matrix method.
+    Distance calculations took 23.934736490249634 seconds.
+    Sorting took 0.2702925205230713 seconds.
 core: Spatial mapping complete.
 core: Finding edge columns....
 column_characterization: Detecting edge columns
-column_characterization: Found edge columns in 0.008119583129882812 seconds
+column_characterization: Found edge columns in 0.0 seconds
 core: Edge columns found.
 core: Mapping vertex connectivity...
 core: Vertices mapped.
-core: Calculating probabilities from alpha attributes...
-core: Calculated probabilities from alpha attributes.
 core: Running advanced zeta...
 column_characterization: Starting zeta analysis
-column_characterization: Zeta analysis completed in 8.716575860977173 seconds
+column_characterization: Zeta analysis completed in 7.461123943328857 seconds
 core: zeta's set.
+core: Calculating probabilities from alpha attributes...
+core: Calculated probabilities from alpha attributes.
 core: Mapping vertex connectivity...
 core: Vertices mapped.
+core: Running advanced zeta...
+column_characterization: Starting zeta analysis
+column_characterization: Zeta analysis completed in 9.010054349899292 seconds
+core: zeta's set.
 core: Finding particle...
 core: Found particle.
 core: Finding normalized intensities...
 core: Found intensities.
-core: Basics done
-core: Saved C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/0_Large_L_phase_basics
 core: Running untangling algorithm
 core: Untnangling complete
 core: Running advanced zeta...
 column_characterization: Starting zeta analysis
-column_characterization: Zeta analysis completed in 8.673614025115967 seconds
+column_characterization: Zeta analysis completed in 8.467499494552612 seconds
 core: zeta's set.
-core: Mapping vertex connectivity...
-core: Vertices mapped.
+core: Basics done
+core: Calculating probabilities from alpha attributes...
+core: Calculated probabilities from alpha attributes.
+core: Running advanced zeta...
+column_characterization: Starting zeta analysis
+column_characterization: Zeta analysis completed in 8.318108081817627 seconds
+core: zeta's set.
 core: Running untangling algorithm
 core: Untnangling complete
+core: Saved C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/0_Large_L_phase_control
+core: Running untangling algorithm
+core: Untnangling complete
+core: Running untangling algorithm
+core: Untnangling complete
+core: Vertex 1434:
+    General:
+        Image position (x, y) = (1665.210, 639.495)
+        Pixel position (x, y) = (1665, 639)
+        Spatial relative position in pm (x, y, z) = (10619.312, 4078.161, 0.000)
+        Peak gamma = 0.3622
+        Average gamma = 0.2091
+        Atomic species: Si
+        Advanced species: Si_1
+        Symmetry: 3
+    Analysis:
+        Probability vector: {
+            Si: 0.259
+            Cu: 0.123
+            Al: 0.247
+            Mg: 0.247
+            Un: 0.123
+        }
+            Prediction: Si
+            Confidence: 0
+    Graph parameters:
+        In-degree: 3
+        Out-degree: 3
+        Degree: 4
+        Alpha angles: [ 3.863 1.584 0.837 ]
+            Max: 3.863
+            Min: 0.837
+        Theta angles: [ ]
+            Max: 0.000
+            Min: 0.000
+            Variance: 0.000
+            Mean: 0.000
+        Normalized peak gamma: 0.184
+        Normalized average gamma: 0.225
+        Redshift: 0.000
+        Average central separation: 0
+    Local graph mapping:
+        District: [1595, 1687, 1662, 1663, 1525, 1292, 32]
+        In-neighbourhood: {1770, 1662, 1687}
+        Out-neighbourhood: {1595, 1662, 1687}
+        Neighbourhood: {1687, 1770, 1595, 1662}
+        Anti-Neighbourhood: {32, 1292, 1525, 1663}
+        Partners: {1662, 1687}
+        Semi-partners: {1770, 1595}
+        Out-semi-partners: {1595}
+        In-semi-partners: {1770}
+    Settings:
+        Is in precipitate: True
+        Is edge column: False
+        Is set by user: True
+        Show in overlay: True
+        Is void: False
+        Flag 1: False
+        Flag 2: False
+        Flag 3: False
+        Flag 4: False
+        Flag 5: False
+        Flag 6: False
+        Flag 7: False
+        Flag 8: False
+        Flag 9: False
