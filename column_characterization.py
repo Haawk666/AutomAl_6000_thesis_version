@@ -242,8 +242,6 @@ def apply_composite_model(graph_obj, model=None, alpha_selection_type='zeta'):
             dict_ = {
                 'alpha_max': vertex.alpha_max,
                 'alpha_min': vertex.alpha_min,
-                'theta_max': vertex.theta_max,
-                'theta_min': vertex.theta_min,
                 'theta_angle_mean': vertex.theta_angle_mean,
                 'normalized_peak_gamma': vertex.normalized_peak_gamma,
                 'normalized_avg_gamma': vertex.normalized_peak_gamma

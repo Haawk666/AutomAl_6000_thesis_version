@@ -109,17 +109,11 @@ def normal_dist(x, mean, var):
 def multivariate_normal_dist(x, means, covar_determinant, inverse_covar_matrix):
     """All arguments assumed to be python lists"""
     k = len(x)
-    # print(covar_determinant)
     deviance_vector = np.array([a - b for a, b in zip(x, means)])
     result = np.matmul(deviance_vector.T, np.array(inverse_covar_matrix))
-    # print(result)
     result = np.matmul(result, deviance_vector)
-    # print(result)
     result = np.exp(-0.5 * result)
-    # print(result)
     result = result / np.sqrt(((2 * np.pi) ** k) * covar_determinant)
-    # print(result)
-    # print('---------')
     return float(result)
 
 
@@ -133,10 +127,15 @@ def normalize_dict(in_dict, norm_sum=1):
     sum = 0
     for value in in_dict.values():
         sum += value
-    factor = norm_sum / sum
-    new_dict = {}
-    for key, value in in_dict.items():
-        new_dict[key] = value * factor
+    if sum == 0:
+        new_dict = {}
+        for key, value in in_dict.items():
+            new_dict[key] = 1 / len(in_dict)
+    else:
+        factor = norm_sum / sum
+        new_dict = {}
+        for key, value in in_dict.items():
+            new_dict[key] = value * factor
     return new_dict
 
 

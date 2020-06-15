@@ -74,23 +74,18 @@ class MultivariateNormalDist:
                 self.covar_matrix[dimension_1, dimension_2] = covar
 
         self.covar_matrix_determinant = np.linalg.det(self.covar_matrix)
+        self.covar_matrix_rank = np.linalg.matrix_rank(self.covar_matrix)
+        self.inverse_covar_matrix = np.linalg.inv(self.covar_matrix)
         if self.covar_matrix_determinant < 1.0 * 10 ** (-10):
             logger.warning('The covariant matrix determinant for the category {} is extremely low,\n'
                            'indicating a poor choice of attributes for this model.\n'
-                           'See automal.org for more information.\n'
-                           'Setting determinant artifically!')
-            self.covar_matrix_determinant = 0.0001
-        self.covar_matrix_rank = np.linalg.matrix_rank(self.covar_matrix)
-        self.inverse_covar_matrix = np.linalg.inv(self.covar_matrix)
+                           'See automal.org for more information.')
         self.covar_matrix_eigenvalues, self.covar_matrix_eigenvectors = np.linalg.eig(self.covar_matrix)
         idx = np.argsort(self.covar_matrix_eigenvalues)[::-1]
         self.covar_matrix_eigenvalues = self.covar_matrix_eigenvalues[idx]
         self.covar_matrix_eigenvectors = self.covar_matrix_eigenvectors[:, idx]
 
-        self.get_max_probability()
-
     def prediction(self, dict_):
-        print('Predicting {} from dict {}:'.format(self.category_title, dict_))
         args = []
         for k, key in enumerate(self.attribute_keys):
             if key in dict_:
@@ -471,9 +466,7 @@ class VertexDataManager:
         prediction = {}
         for c, category in enumerate(self.category_list):
             prediction[category] = self.composite_model[c].prediction(dict_)
-        print(prediction)
         prediction = utils.normalize_dict(prediction, 1)
-        print(prediction)
         return prediction
 
     def single_plot(self, attr):

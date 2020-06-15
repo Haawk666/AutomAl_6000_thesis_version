@@ -219,7 +219,6 @@ class Project:
         """
         time_1 = time.time()
         search_peak_values = []
-        search_avg_values = []
         actual_peak_values = []
         avg_values = []
         if len(self.graph.vertices) == 0:
