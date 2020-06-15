@@ -657,11 +657,18 @@ class AtomicGraph:
 
         return alpha
 
-    def get_theta_angles(self, i):
-        sub_graph = self.get_column_centered_subgraph(i)
-        theta = []
-        for mesh in sub_graph.meshes:
-            theta.append(mesh.angles[0])
+    def get_theta_angles(self, i, selection_type='normal'):
+        if selection_type == 'normal':
+            sub_graph = self.get_column_centered_subgraph(i)
+            theta = []
+            for mesh in sub_graph.meshes:
+                theta.append(mesh.angles[0])
+        else:
+            sub_graph = self.get_column_centered_subgraph(i)
+            theta = []
+            for mesh in sub_graph.meshes:
+                if mesh.order == 4:
+                    theta.append(mesh.angles[0])
         return theta
 
     def get_redshift(self, i, j):
@@ -1176,7 +1183,7 @@ class AtomicGraph:
         else:
             vertex.alpha_max = 0
             vertex.alpha_min = 0
-        vertex.theta_angles = self.get_theta_angles(i)
+        vertex.theta_angles = self.get_theta_angles(i, selection_type='selective')
         if vertex.theta_angles is not None and not len(vertex.theta_angles) == 0:
             vertex.theta_max = max(vertex.theta_angles)
             vertex.theta_min = min(vertex.theta_angles)

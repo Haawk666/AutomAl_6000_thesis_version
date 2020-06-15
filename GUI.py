@@ -7,6 +7,8 @@ import core
 import GUI_elements
 import GUI_settings
 import utils
+import test_module
+import statistics
 # External imports:
 from PyQt5 import QtWidgets, QtGui, QtCore
 import sys
@@ -1160,11 +1162,48 @@ class MainUI(QtWidgets.QMainWindow):
     def btn_hide_all_trigger(self):
         pass
 
-    def btn_set_indices_trigger(self):
-        pass
-
     def btn_test_trigger(self):
         pass
+
+    def btn_test_data_manager_trigger(self):
+        test_module.test_statistical_basics()
+
+    def btn_show_model_prediction_trigger(self):
+        if not self.selected_column == -1:
+            vertex = self.project_instance.graph.vertices[self.selected_column]
+            model = statistics.VertexDataManager.load(self.project_instance.graph.active_model)
+            alpha_dict_ = {
+                'alpha_max': vertex.alpha_max,
+                'alpha_min': vertex.alpha_min
+            }
+            dict_ = {
+                'alpha_max': vertex.alpha_max,
+                'alpha_min': vertex.alpha_min,
+                'theta_max': vertex.theta_max,
+                'theta_min': vertex.theta_min,
+                'theta_angle_mean': vertex.theta_angle_mean,
+                'normalized_peak_gamma': vertex.normalized_peak_gamma,
+                'normalized_avg_gamma': vertex.normalized_avg_gamma,
+            }
+            alpha_prediction = model.calc_prediction(alpha_dict_)
+            full_prediction = model.calc_prediction(dict_)
+
+            string = 'Model prediction for vertex {}:\n'.format(vertex.i)
+            string += '    Attributes:\n'
+            string += '        Alpha max: {}\n'.format(vertex.alpha_max)
+            string += '        Alpha min: {}\n'.format(vertex.alpha_min)
+            string += '        Theta max: {}\n'.format(vertex.theta_max)
+            string += '        Theta min: {}\n'.format(vertex.theta_min)
+            string += '        Theta mean: {}\n'.format(vertex.theta_angle_mean)
+            string += '        Normalized peak gamma: {}\n'.format(vertex.normalized_peak_gamma)
+            string += '        Normalized avg gamma: {}\n'.format(vertex.normalized_avg_gamma)
+            string += '    Alpha prediction:\n'
+            for key, value in alpha_prediction.items():
+                string += '        {}: {}\n'.format(key, value)
+            string += '    Full prediction:\n'
+            for key, value in full_prediction.items():
+                string += '        {}: {}\n'.format(key, value)
+            logger.info(string)
 
     def btn_crash_trigger(self):
         raise IndexError

@@ -29,82 +29,80 @@ class MultivariateNormalDist:
 
         # The mean of each dimension
         self.means = []
+        for a, attribute in enumerate(self.attribute_keys):
+            self.means.append(utils.mean_val(data[a, :]))
         # The variance of each dimension
         self.variances = []
+        for a, attribute in enumerate(self.attribute_keys):
+            self.variances.append(utils.variance(data[a, :]))
+        # Standardize data
+        self.standardized_data = self.standardize(data)
         # The covariance matrix
         self.covar_matrix = np.zeros([self.k, self.k], dtype=np.float64)
         # The inverse of the covariance matrix
         self.inverse_covar_matrix = np.zeros([self.k, self.k], dtype=np.float64)
         # Determinant of the covariance matrix
         self.covar_matrix_determinant = 0
+        self.covar_matrix_rank = 0
         # Eigen-things of the covariance matrix
         self.covar_matrix_eigenvalues = None
         self.covar_matrix_eigenvectors = None
 
         if self.n > 1:
-            self.calc_params(data)
+            self.calc_params(self.standardized_data)
         else:
             self.means = [0] * self.k
             self.variances = [1] * self.k
 
+    def standardize(self, data):
+        standardized_data = copy.deepcopy(data)
+        for a, attribute in enumerate(self.attribute_keys):
+            for index in range(0, self.n):
+                standardized_data[a, index] = (standardized_data[a, index] - self.means[a]) / np.sqrt(self.variances[a])
+        return standardized_data
+
     def calc_params(self, data):
         """Two pass algorithm"""
-        self.means = []
-        self.variances = []
-        for dimension in range(0, self.k):
-            mean = utils.mean_val(data[dimension, :])
-            var = utils.variance(data[dimension, :])
-            self.means.append(mean)
-            self.variances.append(var)
-
         for dimension_1 in range(0, self.k):
             for dimension_2 in range(0, self.k):
                 covar = 0
                 for data_index in range(0, self.n):
-                    factor_1 = data[dimension_1, data_index] - self.means[dimension_1]
-                    factor_2 = data[dimension_2, data_index] - self.means[dimension_2]
+                    factor_1 = data[dimension_1, data_index]
+                    factor_2 = data[dimension_2, data_index]
                     covar += factor_1 * factor_2
                 covar /= self.n - 1
-                if dimension_1 == dimension_2 and covar < 0.0000000001:
-                    covar = 0.0001
                 self.covar_matrix[dimension_1, dimension_2] = covar
 
         self.covar_matrix_determinant = np.linalg.det(self.covar_matrix)
-        if not self.covar_matrix_determinant == 0:
-            self.inverse_covar_matrix = np.linalg.inv(self.covar_matrix)
-        else:
-            self.inverse_covar_matrix = copy.deepcopy(self.covar_matrix)
+        if self.covar_matrix_determinant < 1.0 * 10 ** (-10):
+            logger.warning('The covariant matrix determinant for the category {} is extremely low,\n'
+                           'indicating a poor choice of attributes for this model.\n'
+                           'See automal.org for more information.\n'
+                           'Setting determinant artifically!')
+            self.covar_matrix_determinant = 0.0001
+        self.covar_matrix_rank = np.linalg.matrix_rank(self.covar_matrix)
+        self.inverse_covar_matrix = np.linalg.inv(self.covar_matrix)
         self.covar_matrix_eigenvalues, self.covar_matrix_eigenvectors = np.linalg.eig(self.covar_matrix)
         idx = np.argsort(self.covar_matrix_eigenvalues)[::-1]
         self.covar_matrix_eigenvalues = self.covar_matrix_eigenvalues[idx]
         self.covar_matrix_eigenvectors = self.covar_matrix_eigenvectors[:, idx]
 
-    def get_partial_model(self, attr_indices):
-        new_means = []
-        for attr_index in attr_indices:
-            new_means.append(self.means[attr_index])
-        new_covar_matrix = np.array(self.covar_matrix[np.ix_(attr_indices, attr_indices)])
-        new_inverse_covar_matrix = np.linalg.inv(new_covar_matrix)
-        new_covar_matrix_determinant = np.linalg.det(new_covar_matrix)
-        return new_means, new_covar_matrix_determinant, new_inverse_covar_matrix
+        self.get_max_probability()
 
     def prediction(self, dict_):
+        print('Predicting {} from dict {}:'.format(self.category_title, dict_))
         args = []
-        kwargs = []
-        attr_indices = []
-        for key in self.attribute_keys:
+        for k, key in enumerate(self.attribute_keys):
             if key in dict_:
-                args.append(dict_[key])
-                kwargs.append(key)
-                attr_indices.append(self.attribute_keys.index(key))
-        if len(kwargs) == len(self.attribute_keys):
-            print(self.covar_matrix_determinant)
-            prob = utils.multivariate_normal_dist(args, self.means, self.covar_matrix_determinant, self.inverse_covar_matrix)
-            print(prob)
-        else:
-            new_means, new_covar_matrix_determinant, new_inverse_covar_matrix = self.get_partial_model(attr_indices)
-            prob = utils.multivariate_normal_dist(args, new_means, new_covar_matrix_determinant, new_inverse_covar_matrix)
+                args.append((dict_[key] - self.means[k]) / np.sqrt(self.variances[k]))
+            else:
+                args.append(0)
+        prob = utils.multivariate_normal_dist(args, [0] * self.k, self.covar_matrix_determinant, self.inverse_covar_matrix)
         return prob
+
+    def get_max_probability(self):
+        logger.info('Max theoretical distribution value: {}'.format(1 / np.sqrt(((2 * np.pi) ** self.k) * self.covar_matrix_determinant)))
+        logger.info('Calculated maximum: {}'.format(utils.multivariate_normal_dist(self.means, self.means, self.covar_matrix_determinant, self.inverse_covar_matrix)))
 
 
 class VertexDataManager:
@@ -270,11 +268,18 @@ class VertexDataManager:
             self.filter_ = filter_
 
         if attr_keys is None:
-            self.keys = ['alpha_max', 'alpha_min', 'theta_max', 'theta_min',
-                         'theta_angle_mean', 'normalized_peak_gamma', 'normalized_avg_gamma']
+            self.attribute_keys = [
+                'alpha_max',
+                'alpha_min',
+                'theta_max',
+                'theta_min',
+                'theta_angle_mean',
+                'normalized_peak_gamma',
+                'normalized_avg_gamma'
+            ]
         else:
-            self.keys = attr_keys
-        self.attribute_keys, self.attribute_units = self.determine_attribute_keys()
+            self.attribute_keys = attr_keys
+        self.attribute_units = self.determine_attribute_units()
         self.k = len(self.attribute_keys)
         self.pc_keys = []
         for i in range(0, self.k):
@@ -291,6 +296,72 @@ class VertexDataManager:
 
         self.category_key = category_key
 
+        # ------------------
+
+        self.n = 0
+        self.original_dict_data = None
+        self.category_list = None
+        self.num_data_categories = 0
+        self.matrix_data = None
+        self.composite_model = None
+        self.concatenated_matrix_data = None
+        self.uncategorized_normal_dist = None
+        self.normalized_concatenated_matrix_data = None
+        self.normalized_matrix_data = None
+        self.normalized_uncategorized_normal_dist = None
+        self.pca_feature_vector = None
+        self.composed_uncategorized_data = None
+        self.composed_data = None
+        self.composed_uncategorized_normal_dist = None
+        self.composed_normal_dist = None
+
+    def __str__(self):
+        return self.report()
+
+    def report(self):
+        string = ''
+        string += 'General:\n'
+        string += '    Number of attributes (k): {}\n'.format(self.k)
+        string += '    Number of data points (n): {}\n'.format(self.n)
+        string += '    Number of categories: {}\n'.format(self.num_data_categories)
+        string += '    Category key: {}\n'.format(self.category_key)
+        string += '    Categories:\n'
+        for category in self.category_list:
+            string += '        {}\n'.format(category)
+        string += '    Attributes:\n'
+        for attribute, unit in zip(self.attribute_keys, self.attribute_units):
+            string += '        {} ({})\n'.format(attribute, unit)
+        string += 'Uncategorized data:\n'
+        for a, attribute in enumerate(self.attribute_keys):
+            string += '    Attribute {}:\n'.format(attribute)
+            string += '        Mean: {}\n'.format(self.uncategorized_normal_dist.means[a])
+            string += '        Variance: {}\n'.format(self.uncategorized_normal_dist.variances[a])
+        string += '    Covariance matrix:\n'
+        for row in self.uncategorized_normal_dist.covar_matrix:
+            string += '        {}\n'.format(row.tolist())
+        string += '    Inverse covariance matrix:\n'
+        for row in self.uncategorized_normal_dist.inverse_covar_matrix:
+            string += '        {}\n'.format(row.tolist())
+        string += '    Covariance determinant: {}\n'.format(self.uncategorized_normal_dist.covar_matrix_determinant)
+        string += 'Categorized data:\n'
+        for c, category in enumerate(self.category_list):
+            string += '    Category ({}):\n'.format(category)
+            string += '        Max prediction: {}\n'.format(1 / np.sqrt(((2 * np.pi) ** self.composite_model[c].k) * self.composite_model[c].covar_matrix_determinant))
+            string += '        Attribute list: {}\n'.format(self.composite_model[c].attribute_keys)
+            for a, attribute in enumerate(self.attribute_keys):
+                string += '        Attribute {}:\n'.format(attribute)
+                string += '            Mean: {}\n'.format(self.composite_model[c].means[a])
+                string += '            Variance: {}\n'.format(self.composite_model[c].variances[a])
+            string += '        Covariance matrix:\n'
+            for row in self.composite_model[c].covar_matrix:
+                string += '            {}\n'.format(row.tolist())
+            string += '        Inverse covariance matrix:\n'
+            for row in self.composite_model[c].inverse_covar_matrix:
+                string += '            {}\n'.format(row.tolist())
+            string += '        Covariance determinant: {}\n'.format(self.composite_model[c].covar_matrix_determinant)
+        return string
+
+    def process_data(self):
         self.original_dict_data, self.category_list = self.collect_data()
         self.n = len(self.original_dict_data)
 
@@ -299,64 +370,53 @@ class VertexDataManager:
         self.matrix_data = self.vectorize_data()
         self.composite_model = []
         for c, category_data in enumerate(self.matrix_data):
-            self.composite_model.append(MultivariateNormalDist(category_data, self.category_list[c], self.attribute_keys))
+            self.composite_model.append(
+                MultivariateNormalDist(category_data, self.category_list[c], self.attribute_keys))
 
         self.concatenated_matrix_data = self.concatenate_categories()
-        self.uncategorized_normal_dist = MultivariateNormalDist(self.concatenated_matrix_data, 'All categories', self.attribute_keys)
+        self.uncategorized_normal_dist = MultivariateNormalDist(self.concatenated_matrix_data, 'All categories',
+                                                                self.attribute_keys)
 
         self.normalized_concatenated_matrix_data = np.array(self.concatenated_matrix_data)
         self.normalized_matrix_data = []
         for category_data in self.matrix_data:
             self.normalized_matrix_data.append(np.array(category_data))
         self.norm_data()
-        self.normalized_uncategorized_normal_dist = MultivariateNormalDist(self.normalized_concatenated_matrix_data, 'All categories', self.attribute_keys)
+        self.normalized_uncategorized_normal_dist = MultivariateNormalDist(self.normalized_concatenated_matrix_data,
+                                                                           'All categories', self.attribute_keys)
         self.pca_feature_vector = self.normalized_uncategorized_normal_dist.covar_matrix_eigenvectors.T
         self.composed_uncategorized_data = np.matmul(self.pca_feature_vector, self.normalized_concatenated_matrix_data)
         self.composed_data = []
         for normalized_category_data in self.normalized_matrix_data:
             self.composed_data.append(np.matmul(self.pca_feature_vector, normalized_category_data))
-        self.composed_uncategorized_normal_dist = MultivariateNormalDist(self.composed_uncategorized_data, 'Column', self.pc_keys)
+        self.composed_uncategorized_normal_dist = MultivariateNormalDist(self.composed_uncategorized_data, 'Column',
+                                                                         self.pc_keys)
         self.composed_normal_dist = []
         for c, composed_category_data in enumerate(self.composed_data):
-            self.composed_normal_dist.append(MultivariateNormalDist(composed_category_data, self.category_list[c], self.pc_keys))
+            self.composed_normal_dist.append(
+                MultivariateNormalDist(composed_category_data, self.category_list[c], self.pc_keys))
 
-    def determine_attribute_keys(self):
-        attributes = []
+    def determine_attribute_units(self):
         units = []
-        if 'alpha_max' in self.keys:
-            attributes.append('alpha_max')
-            units.append('(radians)')
-        if 'alpha_min' in self.keys:
-            attributes.append('alpha_min')
-            units.append('(radians)')
-        if 'theta_max' in self.keys:
-            attributes.append('theta_max')
-            units.append('(radians)')
-        if 'theta_min' in self.keys:
-            attributes.append('theta_min')
-            units.append('(radians)')
-        if 'theta_angle_variance' in self.keys:
-            attributes.append('theta_angle_variance')
-            units.append('(radians)')
-        if 'theta_angle_mean' in self.keys:
-            attributes.append('theta_angle_mean')
-            units.append('(radians)')
-        if 'normalized_peak_gamma' in self.keys:
-            attributes.append('normalized_peak_gamma')
-            units.append('(normalized intensity)')
-        if 'normalized_avg_gamma' in self.keys:
-            attributes.append('normalized_avg_gamma')
-            units.append('(normalized intensity)')
-        if 'avg_central_separation' in self.keys:
-            attributes.append('avg_central_separation')
-            units.append('nm')
-        if 'redshift' in self.keys:
-            attributes.append('redshift')
-            units.append('nm')
-        if 'avg_redshift' in self.keys:
-            attributes.append('avg_redshift')
-            units.append('nm')
-        return attributes, units
+        radians = [
+            'alpha_min',
+            'alpha_max',
+            'theta_min',
+            'theta_max',
+            'theta_angle_mean'
+        ]
+        unitless = [
+            'normalized_peak_gamma',
+            'normalized_avg_gamma'
+        ]
+        for key in self.attribute_keys:
+            if key in radians:
+                units.append('radians')
+            elif key in unitless:
+                units.append('')
+            else:
+                units.append('Unknown unit')
+        return units
 
     def collect_data(self):
         data = []
@@ -375,10 +435,10 @@ class VertexDataManager:
 
     def vectorize_data(self):
         data = []
-        for category in range(0, self.num_data_categories):
+        for c, category in enumerate(self.category_list):
             data.append([])
-            for attribute in range(0, self.k):
-                data[category].append([])
+            for attribute in self.attribute_keys:
+                data[c].append([])
         for data_item in self.original_dict_data:
             for h, attribute in enumerate(self.attribute_keys):
                 data[self.category_list.index(data_item[self.category_key])][h].append(data_item[attribute])
@@ -411,7 +471,9 @@ class VertexDataManager:
         prediction = {}
         for c, category in enumerate(self.category_list):
             prediction[category] = self.composite_model[c].prediction(dict_)
+        print(prediction)
         prediction = utils.normalize_dict(prediction, 1)
+        print(prediction)
         return prediction
 
     def single_plot(self, attr):

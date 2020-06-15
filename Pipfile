@@ -9,9 +9,8 @@ verify_ssl = true
 numpy = "*"
 pillow = "*"
 matplotlib = "*"
-pyqt5 = "*"
-scipy-ndimage = "*"
 scipy = "*"
+pyqt5 = "*"
 
 [requires]
 python_version = "3.8"

@@ -6,6 +6,7 @@ import numpy as np
 from copy import deepcopy
 from PIL import Image
 import os.path
+import decimal
 import logging
 # Instantiate logger:
 logger = logging.getLogger(__name__)
@@ -108,15 +109,17 @@ def normal_dist(x, mean, var):
 def multivariate_normal_dist(x, means, covar_determinant, inverse_covar_matrix):
     """All arguments assumed to be python lists"""
     k = len(x)
-
+    # print(covar_determinant)
     deviance_vector = np.array([a - b for a, b in zip(x, means)])
     result = np.matmul(deviance_vector.T, np.array(inverse_covar_matrix))
+    # print(result)
     result = np.matmul(result, deviance_vector)
+    # print(result)
     result = np.exp(-0.5 * result)
-    if not (np.sqrt(((2 * np.pi) ** k) * covar_determinant)) == 0:
-        result = result / (np.sqrt(((2 * np.pi) ** k) * covar_determinant))
-    else:
-        result = result / (np.sqrt(((2 * np.pi) ** k) * covar_determinant) + 0.00001)
+    # print(result)
+    result = result / np.sqrt(((2 * np.pi) ** k) * covar_determinant)
+    # print(result)
+    # print('---------')
     return float(result)
 
 
@@ -178,7 +181,7 @@ def mean_val(data):
 
 
 def variance(data):
-    """Return the mean of the given data
+    """Return the var of the given data
 
     :param data: list or 1-d np.array with data values
     :type data: [float] or np.array
@@ -195,7 +198,7 @@ def variance(data):
         if len(data) > 1:
             var = sum_ / (len(data) - 1)
         else:
-            var = 0
+            var = 1
         return var
     elif type(data) is type(np.array([1, 2, 3])):
         var = 0
@@ -204,13 +207,11 @@ def variance(data):
         if not data.shape[0] < 2:
             var = var / (data.shape[0] - 1)
         else:
-            var = np.infty
-        if var < 0.00000000001:
-            var = 0.001
+            var = 1
         return var
     else:
-        logger.warning('Unknown data format, returning 0..')
-        return 0
+        logger.warning('Unknown data format, returning 1..')
+        return 1
 
 
 def covariance(data_1, data_2):
@@ -224,7 +225,7 @@ def covariance(data_1, data_2):
         sum_ += (item_1 - mean_1) * (item_2 - mean_2)
 
     if len(data_1) > 2:
-        covar = sum_ / len(data_1)
+        covar = sum_ / (len(data_1) - 1)
     else:
         covar = 0
 

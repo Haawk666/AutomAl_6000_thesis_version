@@ -1139,9 +1139,10 @@ class ControlWindow(QtWidgets.QWidget):
         # -- Set buttons
         self.btn_set_start_layout = GUI_custom_components.SetButtonLayout(obj=self, trigger_func=self.ui_obj.btn_set_start_trigger,label=self.lbl_starting_index)
         # -- Buttons
-        self.btn_set_indices = GUI_custom_components.MediumButton('Set neighbours', self, trigger_func=self.ui_obj.btn_set_indices_trigger)
         self.btn_test = GUI_custom_components.MediumButton('Test', self, trigger_func=self.ui_obj.btn_test_trigger)
         self.btn_crash = GUI_custom_components.MediumButton('Crash program', self, trigger_func=self.ui_obj.btn_crash_trigger)
+        self.btn_test_data_manager = GUI_custom_components.MediumButton('Test data-manager', self, trigger_func=self.ui_obj.btn_test_data_manager_trigger)
+        self.btn_show_model_prediction = GUI_custom_components.MediumButton('Show model prediction', self, trigger_func=self.ui_obj.btn_show_model_prediction_trigger)
 
         # -------------------------------------------------------------------------
         # Internal layouts
@@ -1268,11 +1269,17 @@ class ControlWindow(QtWidgets.QWidget):
         overlay_layout.addStretch()
 
         # - Debug controls
-        btn_debug_btns_layout = QtWidgets.QHBoxLayout()
-        btn_debug_btns_layout.addWidget(self.btn_set_indices)
-        btn_debug_btns_layout.addWidget(self.btn_test)
-        btn_debug_btns_layout.addWidget(self.btn_crash)
-        btn_debug_btns_layout.addStretch()
+        btn_debug_btns_layout = QtWidgets.QVBoxLayout()
+        layout = QtWidgets.QHBoxLayout()
+        layout.addWidget(self.btn_test_data_manager)
+        layout.addWidget(self.btn_test)
+        layout.addWidget(self.btn_crash)
+        layout.addStretch()
+        btn_debug_btns_layout.addLayout(layout)
+        layout = QtWidgets.QHBoxLayout()
+        layout.addWidget(self.btn_show_model_prediction)
+        layout.addStretch()
+        btn_debug_btns_layout.addLayout(layout)
 
         # -------------------------------------------------------------------------
         # Set up default behaviour
@@ -1580,7 +1587,6 @@ class ControlWindow(QtWidgets.QWidget):
         self.btn_list.append(self.btn_set_style)
         self.btn_list.append(self.btn_show_all)
         self.btn_list.append(self.btn_hide_all)
-        self.btn_list.append(self.btn_set_indices)
         self.btn_list.append(self.btn_test)
         self.btn_list.append(self.btn_crash)
         self.btn_list.append(self.btn_plot)
@@ -2912,6 +2918,7 @@ class CalcModels(QtWidgets.QDialog):
                 attr_keys=attr_keys,
                 category_key=cat_key
             )
+            manager.process_data()
             manager.save()
             GUI.logger.info('Successfully saved model parameters to {}'.format(filename[0]))
         self.ui_obj.sys_message('Ready.')
@@ -3015,6 +3022,8 @@ class PlotModels(QtWidgets.QDialog):
         self.btn_plot_all_pca.clicked.connect(self.btn_plot_all_pca_trigger)
         self.btn_plot_single = QtWidgets.QPushButton('Plot')
         self.btn_plot_single.clicked.connect(self.btn_plot_single_trigger)
+        self.btn_print_details = QtWidgets.QPushButton('Print details')
+        self.btn_print_details.clicked.connect(self.btn_print_details_trigger)
 
         self.cmb_attribute_1 = QtWidgets.QComboBox()
         self.cmb_attribute_2 = QtWidgets.QComboBox()
@@ -3148,6 +3157,7 @@ class PlotModels(QtWidgets.QDialog):
 
         grp_general_layout = QtWidgets.QVBoxLayout()
         grp_general_layout.addWidget(self.lbl_size)
+        grp_general_layout.addWidget(self.btn_print_details)
         grp_general.setLayout(grp_general_layout)
 
         # Set top layout:
@@ -3200,6 +3210,9 @@ class PlotModels(QtWidgets.QDialog):
 
     def btn_plot_single_trigger(self):
         self.model.single_plot(self.cmb_single_attribute.currentText())
+
+    def btn_print_details_trigger(self):
+        logger.info(self.model.report())
 
     def btn_quit_trigger(self):
         self.close()

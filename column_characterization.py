@@ -226,7 +226,7 @@ def apply_composite_model(graph_obj, model=None, alpha_selection_type='zeta'):
         else:
             vertex.alpha_max = 0
             vertex.alpha_min = 0
-        vertex.theta_angles = graph_obj.get_theta_angles(vertex.i)
+        vertex.theta_angles = graph_obj.get_theta_angles(vertex.i, selection_type='selective')
         if vertex.theta_angles is not None and not len(vertex.theta_angles) == 0:
             vertex.theta_max = max(vertex.theta_angles)
             vertex.theta_min = min(vertex.theta_angles)
@@ -239,7 +239,7 @@ def apply_composite_model(graph_obj, model=None, alpha_selection_type='zeta'):
             vertex.theta_angle_mean = 0
     for vertex in graph_obj.vertices:
         if not vertex.is_edge_column and not vertex.void and not vertex.is_set_by_user:
-            vertex.advanced_probability_vector = this_model.calc_prediction({
+            dict_ = {
                 'alpha_max': vertex.alpha_max,
                 'alpha_min': vertex.alpha_min,
                 'theta_max': vertex.theta_max,
@@ -247,10 +247,18 @@ def apply_composite_model(graph_obj, model=None, alpha_selection_type='zeta'):
                 'theta_angle_mean': vertex.theta_angle_mean,
                 'normalized_peak_gamma': vertex.normalized_peak_gamma,
                 'normalized_avg_gamma': vertex.normalized_peak_gamma
-            })
+            }
+            keys_to_pop = []
+            for key, value in dict_.items():
+                if value == 0:
+                    keys_to_pop.append(key)
+            for key in keys_to_pop:
+                dict_.pop(key)
+            vertex.advanced_probability_vector = this_model.calc_prediction(dict_)
             vertex.advanced_probability_vector['Un_1'] = 0.0
             vertex.determine_species_from_probability_vector()
     graph_obj.build_local_maps()
+    graph_obj.build_local_zeta_maps()
 
 
 def untangle(graph_obj, ui_obj=None):

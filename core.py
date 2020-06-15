@@ -409,6 +409,14 @@ class Project:
             self.column_characterization(starting_index, search_type=6, ui_obj=ui_obj)
             # Composite model:
             self.column_characterization(starting_index, search_type=11, ui_obj=ui_obj)
+            # Find particle:
+            self.column_characterization(starting_index, search_type=8, ui_obj=ui_obj)
+            # Calc gamma:
+            self.column_characterization(starting_index, search_type=9, ui_obj=ui_obj)
+            # Untangle
+            self.column_characterization(starting_index, search_type=18, ui_obj=ui_obj)
+            # Advanced zeta analysis:
+            self.column_characterization(starting_index, search_type=6, ui_obj=ui_obj)
             logger.info('Basics done')
 
         elif search_type == 2:
