@@ -76,10 +76,7 @@ class MultivariateNormalDist:
         self.covar_matrix_determinant = np.linalg.det(self.covar_matrix)
         self.covar_matrix_rank = np.linalg.matrix_rank(self.covar_matrix)
         self.inverse_covar_matrix = np.linalg.inv(self.covar_matrix)
-        if self.covar_matrix_determinant < 1.0 * 10 ** (-10):
-            logger.warning('The covariant matrix determinant for the category {} is extremely low,\n'
-                           'indicating a poor choice of attributes for this model.\n'
-                           'See automal.org for more information.')
+
         self.covar_matrix_eigenvalues, self.covar_matrix_eigenvectors = np.linalg.eig(self.covar_matrix)
         idx = np.argsort(self.covar_matrix_eigenvalues)[::-1]
         self.covar_matrix_eigenvalues = self.covar_matrix_eigenvalues[idx]
@@ -153,7 +150,7 @@ class VertexDataManager:
     :code:`'spatial_coor_x'`                    :code:`vertex.spatial_coor_x` - float                       No                      No
     :code:`'spatial_coor_y'`                    :code:`vertex.spatial_coor_y` - float                       No                      No
     :code:`'spatial_coor_z'`                    :code:`vertex.spatial_coor_z` - float                       No                      No
-    ========================================== =========================================================== ======================= ============
+    =========================================== =========================================================== ======================= ============
 
 
 
@@ -367,11 +364,20 @@ class VertexDataManager:
         for c, category_data in enumerate(self.matrix_data):
             self.composite_model.append(
                 MultivariateNormalDist(category_data, self.category_list[c], self.attribute_keys))
+            if self.composite_model[-1].covar_matrix_determinant < 0.00000001:
+                logger.warning('The covariant matrix determinant for the category {} is extremely low,\n'
+                               'indicating a poor choice of attributes for this model.\n'
+                               'See automal.org for more information.\n'
+                               '    Covariance matrix determinant: {}'.format(
+                    self.composite_model[-1].category_title,
+                    self.composite_model[-1].covar_matrix_determinant)
+                )
 
         self.concatenated_matrix_data = self.concatenate_categories()
         self.uncategorized_normal_dist = MultivariateNormalDist(self.concatenated_matrix_data, 'All categories',
                                                                 self.attribute_keys)
 
+    def process_pca_data(self):
         self.normalized_concatenated_matrix_data = np.array(self.concatenated_matrix_data)
         self.normalized_matrix_data = []
         for category_data in self.matrix_data:
@@ -651,6 +657,7 @@ class VertexDataManager:
         plt.show()
 
     def plot_pca(self, show_category=True):
+        self.process_pca_data()
         attr_1_key = 'PC 1'
         attr_1_index = 0
         attr_2_key = 'PC 2'
@@ -756,7 +763,7 @@ class VertexDataManager:
         plt.show()
 
     def plot_all_pc(self):
-
+        self.process_pca_data()
         fig = plt.figure(constrained_layout=True)
         gs = GridSpec(3, 3, figure=fig)
         ax = [

@@ -8,7 +8,7 @@ import GUI_settings
 import GUI_tooltips
 import GUI
 import utils
-import statistics
+import data_module
 # External imports:
 import configparser
 import copy
@@ -2492,7 +2492,7 @@ class DataExportWizard(QtWidgets.QDialog):
             if self.cmb_categorization.currentText() == 'simple' and 'species_index' not in export_keys:
                 keys.append('species_index')
             # Initate manager
-            manager = statistics.VertexDataManager(files, filter_=filter_, save_filename=filename[0], recalc=self.chb_recalculate_graphs.isChecked(), attr_keys=keys)
+            manager = data_module.VertexDataManager(files, filter_=filter_, save_filename=filename[0], recalc=self.chb_recalculate_graphs.isChecked(), attr_keys=keys)
             manager.export_csv(filename[0] + filename[1], export_keys)
             GUI.logger.info('Successfully exported data to {}'.format(filename[0]))
         self.ui_obj.sys_message('Ready.')
@@ -2688,17 +2688,20 @@ class CalcModels(QtWidgets.QDialog):
         self.list_2.addItems([
             'peak_gamma',
             'avg_gamma',
-            'normalized_peak_gamma',
-            'normalized_avg_gamma',
-            'alpha_min',
-            'alpha_max',
             'theta_min',
             'theta_max',
-            'theta_angle_mean',
             'theta_angle_variance',
             'redshift',
             'avg_redshift',
             'avg_central_separation'
+        ])
+
+        self.list_1.addItems([
+            'normalized_peak_gamma',
+            'normalized_avg_gamma',
+            'alpha_min',
+            'alpha_max',
+            'theta_angle_mean'
         ])
 
         h_layout = QtWidgets.QHBoxLayout()
@@ -2910,7 +2913,7 @@ class CalcModels(QtWidgets.QDialog):
             cat_key = self.cmb_nominal_data.currentText()
 
             # Initiate manager
-            manager = statistics.VertexDataManager(
+            manager = data_module.VertexDataManager(
                 files,
                 filter_=filter_,
                 save_filename=filename[0],
@@ -2990,9 +2993,9 @@ class PlotModels(QtWidgets.QDialog):
         self.setWindowTitle('Display model details')
 
         if model:
-            self.model = statistics.VertexDataManager.load(model)
+            self.model = data_module.VertexDataManager.load(model)
         else:
-            self.model = statistics.VertexDataManager.load('default_model')
+            self.model = data_module.VertexDataManager.load('default_model')
 
         self.lbl_viewing_model = QtWidgets.QLabel('')
         self.lbl_categories = QtWidgets.QLabel('')

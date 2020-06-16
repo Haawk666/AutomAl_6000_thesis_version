@@ -1,8 +1,8 @@
-
+"""This module contains the basic graph components of atomic graphs."""
 
 # Internal imports:
 import utils
-import statistics
+import data_module
 # External imports:
 import numpy as np
 import copy
@@ -15,6 +15,35 @@ logger.setLevel(logging.DEBUG)
 
 
 class Vertex:
+    """A vertex is object is an atomic graph component.
+
+    A vertex contains a lot of the local information of the parent atomic graph.
+
+    :ivar parent_graph: A reference to the AtomicGraph object that the vertex belongs to.
+    :vartype parent_graph: :code:`graph_2.AtomicGraph`
+
+    :param index: Index of the vertex. Must be unique.
+    :param im_coor_x: x-coordinate of the center of the column in the image which the vertex represents.
+    :param im_coor_y: y-coordinate of the center of the column in the image which the vertex represents.
+    :param r: The "approximate atomic radii" in pixels.
+    :param scale: The scale of the HAADF-STEM image in pm/pixel
+    :param zeta: (Optional) The initial zeta value of the vertex (0 or 1). Defaults to 0.
+    :param advanced_species: (Optional) The initial "advanced species category" of the vertex. Defaults to :code:`'Un_1'`.
+    :param atomic_species: (Optional) The initial "atomic species category" of the vertex. Defaults to :code:`'Un'`.
+    :param void: (Optional) Whether the vertex is void or not. Defaults to :code:`False`.
+    :param parent_graph: (Optional) A reference to the graph object that the vertex belongs to. Defaults to :code:`None`.
+    :type parent_graph: :code:`graph_2.AtomicGraph`
+    :type void: bool
+    :type atomic_species: str
+    :type advanced_species: str
+    :type zeta: int
+    :type scale: float
+    :type r: int
+    :type im_coor_y: float
+    :type im_coor_x: float
+    :type index: int
+
+    """
 
     al_lattice_const = 404.95
     empty_map = {
@@ -131,6 +160,12 @@ class Vertex:
         return self.report()
 
     def report(self):
+        """Create a report summarizing the contents of the vertex instance and return it as a string
+
+        :returns: A vertex summary
+        :rtype: str
+
+        """
         im_pos = self.im_pos()
         spatial_pos = self.spatial_pos()
         string = 'Vertex {}:\n'.format(self.i)
@@ -200,9 +235,19 @@ class Vertex:
         return string
 
     def im_pos(self):
+        """Returns a triple with the image coordinates of the vertex.
+
+        :return: (x, y, z), where x, y and z are the image coordinates of the vertex.
+        :rtype: (float, float, float)
+        """
         return self.im_coor_x, self.im_coor_y, self.im_coor_z
 
     def spatial_pos(self):
+        """Returns a triple with the spatial coordinates of the vertex.
+
+        :return: (x, y, z), where x, y and z are the spatial coordinates of the vertex.
+        :rtype: (float, float, float)
+        """
         return self.spatial_coor_x, self.spatial_coor_y, self.spatial_coor_z
 
     def set_probability_from_advanced(self):

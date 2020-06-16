@@ -1,6 +1,6 @@
-GUI.py
+untangling_2.py
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: GUI
+.. automodule:: untangling_2
    :members:
 

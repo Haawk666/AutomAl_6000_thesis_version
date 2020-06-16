@@ -8,7 +8,7 @@ import GUI_elements
 import GUI_settings
 import utils
 import test_module
-import statistics
+import data_module
 # External imports:
 from PyQt5 import QtWidgets, QtGui, QtCore
 import sys
@@ -1171,7 +1171,7 @@ class MainUI(QtWidgets.QMainWindow):
     def btn_show_model_prediction_trigger(self):
         if not self.selected_column == -1:
             vertex = self.project_instance.graph.vertices[self.selected_column]
-            model = statistics.VertexDataManager.load(self.project_instance.graph.active_model)
+            model = data_module.VertexDataManager.load(self.project_instance.graph.active_model)
             alpha_dict_ = {
                 'alpha_max': vertex.alpha_max,
                 'alpha_min': vertex.alpha_min

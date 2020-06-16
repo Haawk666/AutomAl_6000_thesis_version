@@ -1,6 +1,6 @@
-GUI.py
+column_detection.py
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: GUI
+.. automodule:: column_detection
    :members:
 

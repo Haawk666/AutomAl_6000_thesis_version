@@ -3,7 +3,7 @@
 # Internal imports
 import core
 import utils
-import statistics
+import data_module
 # External imports
 import csv
 from matplotlib import pyplot as plt
@@ -32,7 +32,7 @@ def test_vertex_data_manager(data=None):
             {'x': 1.1, 'y': 0.9, 'advanced_species': 'Si_1'}
         ]
 
-    data_manager_object = statistics.VertexDataManager(
+    data_manager_object = data_module.VertexDataManager(
         '',
         attr_keys=['x', 'y'],
         category_key='advanced_species',
@@ -49,30 +49,30 @@ def test_vertex_data_manager(data=None):
     data_manager_object.composite_model = []
     for c, category_data in enumerate(data_manager_object.matrix_data):
         data_manager_object.composite_model.append(
-            statistics.MultivariateNormalDist(category_data, data_manager_object.category_list[c], data_manager_object.attribute_keys))
+            data_module.MultivariateNormalDist(category_data, data_manager_object.category_list[c], data_manager_object.attribute_keys))
 
     data_manager_object.concatenated_matrix_data = data_manager_object.concatenate_categories()
-    data_manager_object.uncategorized_normal_dist = statistics.MultivariateNormalDist(data_manager_object.concatenated_matrix_data, 'All categories',
-                                                            data_manager_object.attribute_keys)
+    data_manager_object.uncategorized_normal_dist = data_module.MultivariateNormalDist(data_manager_object.concatenated_matrix_data, 'All categories',
+                                                                                       data_manager_object.attribute_keys)
 
     data_manager_object.normalized_concatenated_matrix_data = np.array(data_manager_object.concatenated_matrix_data)
     data_manager_object.normalized_matrix_data = []
     for category_data in data_manager_object.matrix_data:
         data_manager_object.normalized_matrix_data.append(np.array(category_data))
     data_manager_object.norm_data()
-    data_manager_object.normalized_uncategorized_normal_dist = statistics.MultivariateNormalDist(data_manager_object.normalized_concatenated_matrix_data,
+    data_manager_object.normalized_uncategorized_normal_dist = data_module.MultivariateNormalDist(data_manager_object.normalized_concatenated_matrix_data,
                                                                        'All categories', data_manager_object.attribute_keys)
     data_manager_object.pca_feature_vector = data_manager_object.normalized_uncategorized_normal_dist.covar_matrix_eigenvectors.T
     data_manager_object.composed_uncategorized_data = np.matmul(data_manager_object.pca_feature_vector, data_manager_object.normalized_concatenated_matrix_data)
     data_manager_object.composed_data = []
     for normalized_category_data in data_manager_object.normalized_matrix_data:
         data_manager_object.composed_data.append(np.matmul(data_manager_object.pca_feature_vector, normalized_category_data))
-    data_manager_object.composed_uncategorized_normal_dist = statistics.MultivariateNormalDist(data_manager_object.composed_uncategorized_data, 'Column',
-                                                                     data_manager_object.pc_keys)
+    data_manager_object.composed_uncategorized_normal_dist = data_module.MultivariateNormalDist(data_manager_object.composed_uncategorized_data, 'Column',
+                                                                                                data_manager_object.pc_keys)
     data_manager_object.composed_normal_dist = []
     for c, composed_category_data in enumerate(data_manager_object.composed_data):
         data_manager_object.composed_normal_dist.append(
-            statistics.MultivariateNormalDist(composed_category_data, data_manager_object.category_list[c], data_manager_object.pc_keys))
+            data_module.MultivariateNormalDist(composed_category_data, data_manager_object.category_list[c], data_manager_object.pc_keys))
 
     data_manager_object.dual_plot('x', 'y')
 

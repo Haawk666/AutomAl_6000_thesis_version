@@ -1,5 +1,5 @@
 # Internal imports:
-import statistics
+import data_module
 import utils
 import untangling_2
 # External imports:
@@ -191,7 +191,7 @@ def arc_intersection_denial(graph_obj):
 
 def apply_alpha_model(graph_obj, model=None, alpha_selection_type='zeta'):
     if model is None:
-        this_model = statistics.VertexDataManager.load(graph_obj.active_model)
+        this_model = data_module.VertexDataManager.load(graph_obj.active_model)
     else:
         this_model = model
     for vertex in graph_obj.vertices:
@@ -215,7 +215,7 @@ def apply_alpha_model(graph_obj, model=None, alpha_selection_type='zeta'):
 
 def apply_composite_model(graph_obj, model=None, alpha_selection_type='zeta'):
     if model is None:
-        this_model = statistics.VertexDataManager.load(graph_obj.active_model)
+        this_model = data_module.VertexDataManager.load(graph_obj.active_model)
     else:
         this_model = model
     for vertex in graph_obj.vertices:

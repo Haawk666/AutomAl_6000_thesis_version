@@ -6,7 +6,7 @@ import graph_2
 import compatibility
 import column_detection
 import column_characterization
-import statistics
+import data_module
 # External imports:
 from matplotlib import pyplot as plt
 from matplotlib.gridspec import GridSpec

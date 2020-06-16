@@ -1,6 +1,6 @@
-GUI.py
+graph_2.py
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: GUI
+.. automodule:: graph_2
    :members:
 

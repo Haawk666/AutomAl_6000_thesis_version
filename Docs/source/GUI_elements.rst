@@ -1,5 +1,6 @@
-mat_op.py
+GUI_elements.py
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: mat_op
+.. automodule:: GUI_elements
    :members:
+

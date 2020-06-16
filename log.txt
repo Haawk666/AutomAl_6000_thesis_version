@@ -3,119 +3,13 @@ GUI: GUI version: 0.0.2
 GUI: core version: 0.1.0
 GUI: Build version: Alpha 1.0
 ------------------------
-GUI: Opening file C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/0_Smart_aligned_Qprime_columns
-core: Loaded C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/0_Smart_aligned_Qprime_columns
-core: Doing the basics...
-core: Mapping spatial locality...
-column_characterization: Districts mapped in 80.11904525756836 seconds with matrix method.
-    Distance calculations took 79.21784734725952 seconds.
-    Sorting took 0.9011979103088379 seconds.
-core: Spatial mapping complete.
-core: Finding edge columns....
-column_characterization: Detecting edge columns
-column_characterization: Found edge columns in 0.013531684875488281 seconds
-core: Edge columns found.
-core: Mapping vertex connectivity...
-core: Vertices mapped.
-core: Running advanced zeta...
-column_characterization: Starting zeta analysis
-column_characterization: Zeta analysis completed in 21.856399536132812 seconds
-core: zeta's set.
-core: Calculating probabilities from alpha attributes...
-core: Calculated probabilities from alpha attributes.
-core: Mapping vertex connectivity...
-core: Vertices mapped.
-core: Running advanced zeta...
-column_characterization: Starting zeta analysis
-column_characterization: Zeta analysis completed in 23.48111844062805 seconds
-core: zeta's set.
-core: Finding particle...
-core: Found particle.
-core: Finding normalized intensities...
-core: Found intensities.
-core: Running untangling algorithm
-core: Untnangling complete
-core: Running advanced zeta...
-column_characterization: Starting zeta analysis
-column_characterization: Zeta analysis completed in 23.784008026123047 seconds
-core: zeta's set.
-core: Calculating probabilities from all attributes...
-core: Calculated probabilities from all attributes.
-core: Finding particle...
-core: Found particle.
-core: Finding normalized intensities...
-core: Found intensities.
-core: Running untangling algorithm
-core: Untnangling complete
-core: Running advanced zeta...
-column_characterization: Starting zeta analysis
-column_characterization: Zeta analysis completed in 23.912851095199585 seconds
-core: zeta's set.
-core: Basics done
-core: Saved C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/0_Smart_aligned_Qprime_control
-core: Mapping vertex connectivity...
-core: Vertices mapped.
-core: Vertex 3409:
-    General:
-        Image position (x, y) = (2001.920, 813.013)
-        Pixel position (x, y) = (2001, 813)
-        Spatial relative position in pm (x, y, z) = (11750.402, 4772.030, 0.000)
-        Peak gamma = 0.7013
-        Average gamma = 0.3311
-        Atomic species: Mg
-        Advanced species: Mg_1
-        Symmetry: 5
-    Analysis:
-        Probability vector: {
-            Al: 0.000
-            Cu: 0.000
-            Mg: 1.000
-            Si: 0.000
-            Un: 0.000
-        }
-            Prediction: Mg
-            Confidence: 0
-    Graph parameters:
-        In-degree: 5
-        Out-degree: 5
-        Degree: 6
-        Alpha angles: [ 1.454 2.452 2.377 ]
-            Max: 2.452
-            Min: 1.454
-        Theta angles: [ 1.361 1.091 0.866 1.340 ]
-            Max: 1.361
-            Min: 0.866
-            Variance: 0.055
-            Mean: 1.164
-        Normalized peak gamma: 0.285
-        Normalized average gamma: 0.230
-        Redshift: 0.000
-        Average central separation: 0
-    Local graph mapping:
-        District: [39, 2243, 2143, 3125, 3446, 3492, 1048, 3552, 3592, 3517]
-        In-neighbourhood: {3552, 2243, 39, 3446, 2143}
-        Out-neighbourhood: {2243, 39, 3125, 3446, 2143}
-        Neighbourhood: {3552, 2243, 39, 3125, 3446, 2143}
-        Anti-Neighbourhood: {1048, 3592, 3492, 3517}
-        Partners: {2143, 2243, 3446, 39}
-        Semi-partners: {3552, 3125}
-        Out-semi-partners: {3125}
-        In-semi-partners: {3552}
-    Settings:
-        Is in precipitate: True
-        Is edge column: False
-        Is set by user: False
-        Show in overlay: True
-        Is void: False
-        Flag 1: False
-        Flag 2: False
-        Flag 3: False
-        Flag 4: False
-        Flag 5: False
-        Flag 6: False
-        Flag 7: False
-        Flag 8: False
-        Flag 9: False
-
-core: Saved C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/0_Smart_aligned_Qprime_control
-core: Saved C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/0_Smart_aligned_Qprime_control
+core: Loaded C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/_model_0_Large_L_phase_control
+core: Loaded C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/_model_0_Medium_Qprime_control
+core: Loaded C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/_model_0_multi_phase_control
+core: Loaded C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/_model_0_Smart_aligned_Qprime_control
+GUI: Successfully saved model parameters to F:/AACC/default_model
+core: Up-sampling image to prevent over-granulation in column detection!
+core: Generated instance from C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/008.dm3
+core: Saved C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/008_initial
+core: Starting column detection. Search mode is 't'
+core: Column detection complete! Found 2347 columns in 137.6152744293213 seconds.
