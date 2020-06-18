@@ -1,6 +1,6 @@
 # By Haakon Tvedt @ NTNU
 """Module containing the Main Window class. This is the top-level GUI and contains the *business logic* of the
-interface."""
+GUI."""
 
 # Program imports:
 import core

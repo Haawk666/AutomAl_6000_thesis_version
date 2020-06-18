@@ -8,8 +8,125 @@ core: Loaded C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/_model_0_
 core: Loaded C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/_model_0_multi_phase_control
 core: Loaded C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/_model_0_Smart_aligned_Qprime_control
 GUI: Successfully saved model parameters to F:/AACC/default_model
-core: Up-sampling image to prevent over-granulation in column detection!
-core: Generated instance from C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/008.dm3
-core: Saved C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/008_initial
-core: Starting column detection. Search mode is 't'
-core: Column detection complete! Found 2347 columns in 137.6152744293213 seconds.
+GUI: Opening file C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/034_columns
+core: Loaded C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/034_columns
+core: Doing the basics...
+core: Mapping spatial locality...
+column_characterization: Districts mapped in 209.9492256641388 seconds with matrix method.
+    Distance calculations took 207.6671643257141 seconds.
+    Sorting took 2.2820613384246826 seconds.
+core: Spatial mapping complete.
+core: Finding edge columns....
+column_characterization: Detecting edge columns
+column_characterization: Found edge columns in 0.016983985900878906 seconds
+core: Edge columns found.
+core: Mapping vertex connectivity...
+core: Vertices mapped.
+core: Running advanced zeta...
+column_characterization: Starting zeta analysis
+column_characterization: Zeta analysis completed in 52.922181606292725 seconds
+core: zeta's set.
+core: Calculating probabilities from alpha attributes...
+core: Calculated probabilities from alpha attributes.
+core: Mapping vertex connectivity...
+core: Vertices mapped.
+core: Running advanced zeta...
+column_characterization: Starting zeta analysis
+column_characterization: Zeta analysis completed in 58.16256618499756 seconds
+core: zeta's set.
+core: Finding particle...
+core: Found particle.
+core: Finding normalized intensities...
+core: Found intensities.
+core: Running untangling algorithm
+core: Untnangling complete
+core: Running advanced zeta...
+column_characterization: Starting zeta analysis
+column_characterization: Zeta analysis completed in 57.15212869644165 seconds
+core: zeta's set.
+core: Calculating probabilities from all attributes...
+core: Calculated probabilities from all attributes.
+core: Finding particle...
+core: Found particle.
+core: Finding normalized intensities...
+core: Found intensities.
+core: Running untangling algorithm
+core: Untnangling complete
+core: Running advanced zeta...
+column_characterization: Starting zeta analysis
+column_characterization: Zeta analysis completed in 57.096601486206055 seconds
+core: zeta's set.
+core: Basics done
+core: Saved C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/034_result
+core: Running untangling algorithm
+core: Untnangling complete
+core: Saved C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/034_control
+core: Saved C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/034_control
+core: Saved C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/034_control
+core: Vertex 310:
+    General:
+        Image position (x, y) = (2559.223, 3569.481)
+        Pixel position (x, y) = (2559, 3569)
+        Spatial relative position in pm (x, y, z) = (9812.910, 13686.577, 0.000)
+        Peak gamma = 0.4659
+        Average gamma = 0.3326
+        Atomic species: Si
+        Advanced species: Si_1
+        Symmetry: 3
+    Analysis:
+        Probability vector: {
+            Si: 0.259
+            Cu: 0.123
+            Al: 0.247
+            Mg: 0.247
+            Un: 0.123
+        }
+            Prediction: Si
+            Confidence: 0
+    Graph parameters:
+        In-degree: 5
+        Out-degree: 3
+        Degree: 6
+        Alpha angles: [ 3.938 1.310 1.035 ]
+            Max: 3.938
+            Min: 1.035
+        Theta angles: [ 1.191 1.553 1.310 ]
+            Max: 1.553
+            Min: 1.191
+            Variance: 0.034
+            Mean: 1.352
+        Normalized peak gamma: 0.398
+        Normalized average gamma: 0.359
+        Redshift: 0.000
+        Average central separation: 0
+    Local graph mapping:
+        District: [958, 4812, 736, 2109, 5347, 8, 2601, 436, 4418, 476]
+        In-neighbourhood: {4418, 5347, 4812, 2109, 958}
+        Out-neighbourhood: {736, 4812, 958}
+        Neighbourhood: {736, 4418, 5347, 4812, 2109, 958}
+        Anti-Neighbourhood: {8, 2601, 476, 436}
+        Partners: {4812, 958}
+        Semi-partners: {736, 4418, 5347, 2109}
+        Out-semi-partners: {736}
+        In-semi-partners: {4418, 5347, 2109}
+    Settings:
+        Is in precipitate: False
+        Is edge column: False
+        Is set by user: True
+        Show in overlay: True
+        Is void: False
+        Flag 1: False
+        Flag 2: False
+        Flag 3: False
+        Flag 4: False
+        Flag 5: False
+        Flag 6: False
+        Flag 7: False
+        Flag 8: False
+        Flag 9: False
+
+core: Saved C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/034_control
+core: Running advanced zeta...
+column_characterization: Starting zeta analysis
+column_characterization: Zeta analysis completed in 56.26192784309387 seconds
+core: zeta's set.

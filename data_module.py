@@ -822,7 +822,7 @@ class VertexDataManager:
         :type filename_full: string
 
         :returns DataManager object:
-        :rtype :code:`<statistics.DataManager>`
+        :rtype :code:`<data_module.VertexDataManager>`
 
         """
         with open(filename_full, 'rb') as f:

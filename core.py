@@ -1,4 +1,4 @@
-"""Module for the 'SuchSoftware' class that handles a *project instance*."""
+"""Module for the 'Project' class that handles a *project instance*."""
 
 # Program imports:
 import utils

@@ -2,7 +2,6 @@
 """Module container for high-level custom GUI-elements"""
 
 # Program imports:
-import graph_op
 import GUI_custom_components
 import GUI_settings
 import GUI_tooltips
@@ -439,30 +438,7 @@ class InfoGraph(QtWidgets.QGraphicsScene):
             self.re_draw_mesh_details()
 
     def re_draw_vertices(self):
-        """Redraws all column elements."""
-        self.interactive_vertex_objects = []
-        if not len(self.ui_obj.project_instance.graph.find_intersects()) > 0:
-            self.ui_obj.project_instance.graph.map_friends()
-            for vertex in self.ui_obj.project_instance.graph.get_non_void_vertices():
-                if len(vertex.neighbour_indices) > 0:
-                    well_defined = True
-                    if not vertex.is_edge_column and not vertex.set_by_user:
-                        if not vertex.h_index == 6:
-                            model_predictions = graph_op.base_stat_score(self.ui_obj.project_instance.graph, vertex.i, get_individual_predictions=True)
-                            if model_predictions[0].index(max(model_predictions[0])) == model_predictions[8].index(max(model_predictions[8])):
-                                well_defined = True
-                            else:
-                                well_defined = False
-                        else:
-                            well_defined = False
-                else:
-                    well_defined = False
-                self.interactive_vertex_objects.append(GUI_custom_components.InteractiveGraphColumn(self.ui_obj, vertex.i, vertex.r, self.scale_factor))
-                if not well_defined:
-                    pen_red = QtGui.QPen(QtCore.Qt.red)
-                    pen_red.setWidth(3)
-                    self.interactive_vertex_objects[-1].setPen(pen_red)
-                self.addItem(self.interactive_vertex_objects[-1])
+        pass
 
     def re_draw_edges(self):
         """Redraws all edge elements."""
@@ -2660,10 +2636,10 @@ class CalcModels(QtWidgets.QDialog):
     def frame_1_layout(self):
 
         self.cmb_nominal_data.addItems([
-            'atomic_species',
             'advanced_species',
-            'n',
+            'atomic_species',
             'zeta',
+            'n',
             'flag_1',
             'flag_2',
             'flag_3',
