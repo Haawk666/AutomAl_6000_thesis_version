@@ -42,8 +42,8 @@ class InteractiveColumn(QtWidgets.QGraphicsEllipseItem):
             self.i = vertex.i
             self.center_coor = vertex.im_pos()
         else:
-            self.r = 5
-            self.i = -1
+            self.r = r
+            self.i = -2
             self.center_coor = (0, 0)
         self.scale_factor = scale_factor
         self.vertex = vertex
@@ -316,8 +316,199 @@ class ScaleBar(QtWidgets.QGraphicsItemGroup):
 
 class Legend(QtWidgets.QGraphicsItemGroup):
 
-    def __init__(self, *args):
+    def __init__(self, *args, ui_obj=None, backgroundcolor=QtGui.QColor(0, 0, 0), textcolor=QtGui.QColor(0, 0, 0)):
         super().__init__(*args)
+
+        self.ui_obj = ui_obj
+        self.backgroundcolor = backgroundcolor
+        self.textcolor = textcolor
+        self.font = QtGui.QFont('Helvetica [Cronyx]', 22)
+        self.pen = QtGui.QPen(textcolor)
+        self.brush = QtGui.QBrush(textcolor)
+        if self.ui_obj.project_instance is not None:
+            self.species_dict = self.ui_obj.project_instance.species_dict
+            self.scale = self.ui_obj.project_instance.scale
+        else:
+            self.species_dict = self.ui_obj.core.Project.default_dict
+            self.scale = 1
+        self.pen.setWidth(1)
+        self.make()
+
+    def make(self):
+
+        h_margin = 0
+        v_margin = 0
+        separation_margin = 10
+        head_line_width = 3
+
+        categories = {}
+        max_r = 0
+        max_text_width = 0
+
+        if self.ui_obj.display_mode == 'atomic_species':
+            for key, item in self.species_dict.items():
+                if item['atomic_species'] not in categories:
+
+                    r = item['atomic_radii'] / self.scale
+
+                    label = QtWidgets.QGraphicsSimpleTextItem()
+                    label.setText(item['atomic_species'])
+                    label.setFont(self.font)
+                    label.setPen(self.pen)
+                    label.setBrush(self.brush)
+
+                    q_color = QtGui.QColor(
+                        item['species_color'][0],
+                        item['species_color'][1],
+                        item['species_color'][2]
+                    )
+                    k_color = QtGui.QColor(0, 0, 0)
+                    pen = QtGui.QPen(q_color)
+                    pen.setWidth(int(30 / self.scale))
+
+                    object_0 = InteractiveOverlayColumn(
+                        ui_obj=self.ui_obj,
+                        selectable=False,
+                        r=r,
+                        pen=pen,
+                        brush=QtGui.QBrush(q_color)
+                    )
+
+                    object_1 = InteractiveOverlayColumn(
+                        ui_obj=self.ui_obj,
+                        selectable=False,
+                        r=r,
+                        pen=pen,
+                        brush=QtGui.QBrush(k_color)
+                    )
+
+                    categories[item['atomic_species']] = {
+                        'label': label,
+                        'item_0': object_0,
+                        'item_1': object_1,
+                    }
+
+                    if r > max_r:
+                        max_r = r
+                    text_width = label.boundingRect().width()
+                    if text_width > max_text_width:
+                        max_text_width = text_width
+        else:
+            for key, item in self.species_dict.items():
+                r = item['atomic_radii'] / self.scale
+
+                label = QtWidgets.QGraphicsSimpleTextItem()
+                label.setText(key)
+                label.setFont(self.font)
+                label.setPen(self.pen)
+                label.setBrush(self.brush)
+
+                q_color = QtGui.QColor(
+                    item['color'][0],
+                    item['color'][1],
+                    item['color'][2]
+                )
+                k_color = QtGui.QColor(0, 0, 0)
+                pen = QtGui.QPen(q_color)
+                pen.setWidth(int(30 / self.scale))
+
+                object_0 = InteractiveOverlayColumn(
+                    ui_obj=self.ui_obj,
+                    selectable=False,
+                    r=r,
+                    pen=pen,
+                    brush=QtGui.QBrush(q_color)
+                )
+
+                object_1 = InteractiveOverlayColumn(
+                    ui_obj=self.ui_obj,
+                    selectable=False,
+                    r=r,
+                    pen=pen,
+                    brush=QtGui.QBrush(k_color)
+                )
+
+                categories[key] = {
+                    'label': label,
+                    'item_0': object_0,
+                    'item_1': object_1
+                }
+
+                if r > max_r:
+                    max_r = r
+                text_width = label.boundingRect().width()
+                if text_width > max_text_width:
+                    max_text_width = text_width
+
+        max_r = 2 * max_r
+
+        zeta_text = QtWidgets.QGraphicsSimpleTextItem()
+        zeta_text.setText('zeta:')
+        zeta_text.setFont(self.font)
+        zeta_text.setPen(self.pen)
+        zeta_text.setBrush(self.brush)
+        zeta_text.setX(h_margin)
+        zeta_text.setY(v_margin)
+        self.addToGroup(zeta_text)
+        text_width = zeta_text.boundingRect().width()
+        if text_width > max_text_width:
+            max_text_width = text_width
+
+        zeta_text_0 = QtWidgets.QGraphicsSimpleTextItem()
+        zeta_text_0.setText('0')
+        zeta_text_0.setFont(self.font)
+        zeta_text_0.setPen(self.pen)
+        zeta_text_0.setBrush(self.brush)
+        zeta_text_0.setX(separation_margin + h_margin + max_text_width)
+        zeta_text_0.setY(v_margin)
+        self.addToGroup(zeta_text_0)
+
+        zeta_text_1 = QtWidgets.QGraphicsSimpleTextItem()
+        zeta_text_1.setText('1')
+        zeta_text_1.setFont(self.font)
+        zeta_text_1.setPen(self.pen)
+        zeta_text_1.setBrush(self.brush)
+        zeta_text_1.setX(separation_margin + 2 * h_margin + max_text_width + max_r)
+        zeta_text_1.setY(v_margin)
+        self.addToGroup(zeta_text_1)
+
+        text_height = zeta_text.boundingRect().height()
+
+        line = QtWidgets.QGraphicsLineItem(
+            0,
+            v_margin + text_height + head_line_width / 2,
+            2 * h_margin + max_text_width + separation_margin + 2 * max_r,
+            v_margin + text_height + head_line_width / 2
+        )
+        line_pen = QtGui.QPen(self.textcolor)
+        line_pen.setWidth(head_line_width)
+        line.setPen(line_pen)
+        self.addToGroup(line)
+
+        counter = 0
+        for item in categories.values():
+
+            text = item['label']
+            text.setX(h_margin)
+            text.setY(2 * v_margin + text_height + counter * (max_r + v_margin) + head_line_width)
+            self.addToGroup(text)
+
+            object_0 = item['item_0']
+            r = 2 * object_0.rect().height()
+            object_0.setX(separation_margin + h_margin + max_text_width)
+            object_0.setY(2 * v_margin + text_height + counter * (max_r + v_margin) + (max_r - r) / 2 + head_line_width)
+            self.addToGroup(object_0)
+
+            object_1 = item['item_1']
+            object_1.setX(separation_margin + 2 * h_margin + max_text_width + max_r)
+            object_1.setY(2 * v_margin + text_height + counter * (max_r + v_margin) + (max_r - r) / 2 + head_line_width)
+            self.addToGroup(object_1)
+
+            counter += 1
+
+        self.moveBy(30, 30)
+        self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, True)
+        self.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable, True)
 
 
 class MeshDetail(QtWidgets.QGraphicsItemGroup):

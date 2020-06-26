@@ -37,8 +37,8 @@ class MainUI(QtWidgets.QMainWindow):
         self.previous_selected_column = -1
         self.selection_history = []
         self.perturb_mode = False
-        self.map_type = 'district'
         self.lock_views = False
+        self.display_mode = 'atomic_species'
 
         # Create menu bar
         self.menu = GUI_elements.MenuBar(self.menuBar(), self)
@@ -1517,6 +1517,13 @@ class MainUI(QtWidgets.QMainWindow):
             for graphic_item in self.gs_overlay_composition.interactive_overlay_objects:
                 graphic_item.set_style()
             self.sys_message('Ready.')
+
+    def chb_legend_trigger(self, state):
+        if self.project_instance is not None:
+            if state:
+                self.gs_overlay_composition.legend.show()
+            else:
+                self.gs_overlay_composition.legend.hide()
 
     def chb_scale_bar_trigger(self, state):
         if self.project_instance is not None:

@@ -122,8 +122,17 @@ class OverlayComposition(QtWidgets.QGraphicsScene):
         self.zeta_0_brushes = []
         self.pens = []
         if self.ui_obj.project_instance is not None:
-            self.scale_bar = GUI_custom_components.ScaleBar(length=2, scale=self.ui_obj.project_instance.scale, r=self.ui_obj.project_instance.r, height=self.ui_obj.project_instance.im_height)
+            self.scale_bar = GUI_custom_components.ScaleBar(
+                length=2,
+                scale=self.ui_obj.project_instance.scale,
+                r=self.ui_obj.project_instance.r,
+                height=self.ui_obj.project_instance.im_height
+            )
             self.addItem(self.scale_bar)
+            self.legend = GUI_custom_components.Legend(
+                ui_obj=self.ui_obj
+            )
+            self.addItem(self.legend)
             self.scale_bar.setZValue(2)
             if self.ui_obj.control_window.chb_scalebar.isChecked():
                 self.scale_bar.show()
@@ -1365,7 +1374,7 @@ class ControlWindow(QtWidgets.QWidget):
         self.chb_columns.toggled.connect(self.ui_obj.chb_toggle_all_trigger)
         self.chb_al_mesh.toggled.connect(self.ui_obj.chb_matrix_trigger)
         self.chb_neighbours.toggled.connect(self.ui_obj.chb_placeholder_trigger)
-        self.chb_legend.toggled.connect(self.ui_obj.chb_placeholder_trigger)
+        self.chb_legend.toggled.connect(self.ui_obj.chb_legend_trigger)
         self.chb_scalebar.toggled.connect(self.ui_obj.chb_scale_bar_trigger)
         self.chb_0_plane.toggled.connect(self.ui_obj.chb_0_plane_trigger)
         self.chb_1_plane.toggled.connect(self.ui_obj.chb_1_plane_trigger)
