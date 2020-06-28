@@ -149,19 +149,19 @@ class Project:
         species = set()
         for sp in self.species_dict.values():
             species.add(sp['atomic_species'])
-        species.remove('Un')
+        species.discard('Un')
         if 'Al' in species:
             species_string += 'Al-'
-            species.remove('Al')
+            species.discard('Al')
         if 'Mg' in species:
             species_string += 'Mg-'
-            species.remove('Mg')
+            species.discard('Mg')
         if 'Si' in species:
             species_string += 'Si-'
-            species.remove('Si')
+            species.discard('Si')
         if 'Cu' in species:
             species_string += 'Cu-'
-            species.remove('Cu')
+            species.discard('Cu')
         for remaining in species:
             species_string += '{}-'.format(remaining)
         return species_string[:-1]
