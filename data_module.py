@@ -177,70 +177,22 @@ class VertexDataManager:
     """
 
     default_dict = {
-        'Si_1': {
-            'symmetry': 3,
-            'atomic_species': 'Si',
-            'atomic_radii': 117.50,
-            'color': (255, 0, 0),
-            'species_color': (255, 0, 0),
-            'description': 'Q-prime Si'
-        },
-        'Si_2': {
-            'symmetry': 3,
-            'atomic_species': 'Si',
-            'atomic_radii': 117.50,
-            'color': (235, 20, 20),
-            'species_color': (255, 0, 0),
-            'description': 'Beta-pprime Si'
-        },
-        'Cu_1': {
-            'symmetry': 3,
-            'atomic_species': 'Cu',
-            'atomic_radii': 127.81,
-            'color': (255, 255, 0),
-            'species_color': (255, 255, 0),
-            'description': ''
-        },
-        'Al_1': {
-            'symmetry': 4,
-            'atomic_species': 'Al',
-            'atomic_radii': 143.00,
-            'color': (0, 255, 0),
-            'species_color': (0, 255, 0),
-            'description': ''
-        },
-        'Al_2': {
-            'symmetry': 4,
-            'atomic_species': 'Al',
-            'atomic_radii': 143.00,
-            'color': (20, 235, 20),
-            'species_color': (0, 255, 0),
-            'description': ''
-        },
-        'Mg_1': {
-            'symmetry': 5,
-            'atomic_species': 'Mg',
-            'atomic_radii': 160.00,
-            'color': (138, 43, 226),
-            'species_color': (138, 43, 226),
-            'description': ''
-        },
-        'Mg_2': {
-            'symmetry': 5,
-            'atomic_species': 'Mg',
-            'atomic_radii': 160.00,
-            'color': (118, 63, 206),
-            'species_color': (138, 43, 226),
-            'description': ''
-        },
-        'Un_1': {
-            'symmetry': 3,
-            'atomic_species': 'Un',
-            'atomic_radii': 100.00,
-            'color': (0, 0, 255),
-            'species_color': (0, 0, 255),
-            'description': ''
-        }
+        'Si_1': {'symmetry': 3, 'atomic_species': 'Si', 'atomic_radii': 117.50, 'color': (255, 20, 20),
+                 'species_color': (255, 20, 20), 'description': 'Q-prime Si'},
+        'Si_2': {'symmetry': 3, 'atomic_species': 'Si', 'atomic_radii': 117.50, 'color': (160, 40, 40),
+                 'species_color': (255, 20, 20), 'description': 'Beta-pprime Si'},
+        'Cu_1': {'symmetry': 3, 'atomic_species': 'Cu', 'atomic_radii': 127.81, 'color': (180, 180, 0),
+                 'species_color': (180, 180, 0), 'description': ''},
+        'Al_1': {'symmetry': 4, 'atomic_species': 'Al', 'atomic_radii': 143.00, 'color': (20, 255, 20),
+                 'species_color': (20, 255, 20), 'description': ''},
+        'Al_2': {'symmetry': 4, 'atomic_species': 'Al', 'atomic_radii': 143.00, 'color': (40, 140, 40),
+                 'species_color': (20, 255, 20), 'description': ''},
+        'Mg_1': {'symmetry': 5, 'atomic_species': 'Mg', 'atomic_radii': 160.00, 'color': (138, 43, 226),
+                 'species_color': (138, 43, 226), 'description': ''},
+        'Mg_2': {'symmetry': 5, 'atomic_species': 'Mg', 'atomic_radii': 160.00, 'color': (76, 24, 151),
+                 'species_color': (138, 43, 226), 'description': ''},
+        'Un_1': {'symmetry': 3, 'atomic_species': 'Un', 'atomic_radii': 100.00, 'color': (20, 20, 255),
+                 'species_color': (20, 20, 255), 'description': ''}
     }
 
     def __init__(self, files, filter_=None, attr_keys=None, category_key='advanced_species', save_filename='model', recalc=False, species_dict=None):
@@ -585,13 +537,9 @@ class VertexDataManager:
         ax = [
             fig.add_subplot(gs[0, 0]),
             fig.add_subplot(gs[0, 1]),
-            fig.add_subplot(gs[0, 2]),
             fig.add_subplot(gs[1, 0]),
             fig.add_subplot(gs[1, 1]),
-            fig.add_subplot(gs[1, 2]),
-            fig.add_subplot(gs[2, 0]),
-            fig.add_subplot(gs[2, 1]),
-            fig.add_subplot(gs[2, 2])
+            fig.add_subplot(gs[2, 0])
         ]
         ax = ax[0:len(self.attribute_keys)]
 
