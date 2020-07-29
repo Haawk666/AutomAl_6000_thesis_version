@@ -118,7 +118,7 @@ def zeta_analysis(graph_obj, starting_index, starting_zeta=0, method='district',
             vertex.zeta = 1
 
     graph_obj.build_local_zeta_maps()
-    graph_obj.build_local_maps()
+    # graph_obj.build_local_maps()
 
     time_2 = time.time()
     logger.info('Zeta analysis completed in {} seconds'.format(time_2 - time_1))
@@ -210,7 +210,7 @@ def apply_alpha_model(graph_obj, model=None, alpha_selection_type='zeta'):
             })
             vertex.advanced_probability_vector['Un_1'] = 0.0
             vertex.determine_species_from_probability_vector()
-    graph_obj.build_local_maps()
+    # graph_obj.build_local_maps()
 
 
 def apply_composite_model(graph_obj, model=None, alpha_selection_type='zeta'):

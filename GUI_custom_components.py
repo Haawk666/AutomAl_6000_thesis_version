@@ -316,7 +316,7 @@ class ScaleBar(QtWidgets.QGraphicsItemGroup):
 
 class Legend(QtWidgets.QGraphicsItemGroup):
 
-    def __init__(self, *args, ui_obj=None, backgroundcolor=QtGui.QColor(0, 0, 0), textcolor=QtGui.QColor(0, 0, 0)):
+    def __init__(self, *args, ui_obj=None, backgroundcolor=QtGui.QColor(0, 0, 0), textcolor=QtGui.QColor(255, 255, 255)):
         super().__init__(*args)
 
         self.ui_obj = ui_obj
@@ -333,6 +333,10 @@ class Legend(QtWidgets.QGraphicsItemGroup):
             self.scale = 1
         self.pen.setWidth(1)
         self.make()
+        if not self.ui_obj.control_window.chb_legend.isChecked():
+            self.hide()
+        else:
+            self.show()
 
     def make(self):
 
@@ -509,6 +513,7 @@ class Legend(QtWidgets.QGraphicsItemGroup):
         self.moveBy(30, 30)
         self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, True)
         self.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable, True)
+        self.setZValue(100)
 
 
 class MeshDetail(QtWidgets.QGraphicsItemGroup):
