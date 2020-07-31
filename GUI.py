@@ -660,6 +660,23 @@ class MainUI(QtWidgets.QMainWindow):
                 else:
                     logger.error('Could not export image!')
 
+    def menu_export_zeta_graph_trigger(self):
+        if self.project_instance is not None:
+            filename = QtWidgets.QFileDialog.getSaveFileName(self, "Save image", '', "PNG (*.png);;BMP Files (*.bmp);;JPEG (*.JPEG)")
+            if filename[0]:
+                self.update_graph()
+                rect_f = self.gs_zeta_graph.sceneRect()
+                img = QtGui.QImage(rect_f.size().toSize(), QtGui.QImage.Format_ARGB32)
+                img.fill(QtCore.Qt.white)
+                p = QtGui.QPainter(img)
+                self.gs_zeta_graph.render(p, target=QtCore.QRectF(img.rect()), source=rect_f)
+                p.end()
+                saved = img.save(filename[0])
+                if saved:
+                    logger.info('Successfully exported graph image to file!')
+                else:
+                    logger.error('Could not export image!')
+
     def menu_toggle_debug_mode_trigger(self, state):
         if state:
             self.control_window.debug_box.set_visible()

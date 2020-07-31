@@ -751,6 +751,179 @@ class VertexDataManager:
 
         plt.show()
 
+    def thesis_plot(self):
+
+        fig = plt.figure(constrained_layout=True)
+        gs = GridSpec(2, 2, figure=fig)
+        ax_attr_1 = fig.add_subplot(gs[0, 0])
+        ax_attr_2 = fig.add_subplot(gs[0, 1])
+        ax_z_1 = fig.add_subplot(gs[1, 0])
+        ax_z_2 = fig.add_subplot(gs[1, 1])
+
+        line = np.linspace(1.0, 2.4, 1000)
+        attr_key = 'alpha_min'
+        attr_index = self.attribute_keys.index(attr_key)
+
+        c = self.category_list.index('Si_1')
+        category = 'Si_1'
+
+        mean = self.composite_model[c].means[attr_index]
+        var = self.composite_model[c].variances[attr_index]
+        ax_attr_1.plot(
+            line,
+            utils.normal_dist(line, mean, var),
+            c=np.array(utils.norm_rgb_tuple(self.species_dict[category]['color'])),
+            label='{} ($\mu = ${:.2f}, $\sigma^2 = ${:.2f})'.format(category, mean, var)
+        )
+        ax_z_1.scatter(
+            self.matrix_data[c][attr_index, :],
+            utils.z_score(self.matrix_data[c][attr_index, :], mean, var),
+            c=np.array(utils.norm_rgb_tuple(self.species_dict[category]['color'])),
+            label='{}'.format(category),
+            s=1
+        )
+
+        c = self.category_list.index('Si_2')
+        category = 'Si_2'
+
+        mean = self.composite_model[c].means[attr_index]
+        var = self.composite_model[c].variances[attr_index]
+        ax_attr_1.plot(
+            line,
+            utils.normal_dist(line, mean, var),
+            c=np.array(utils.norm_rgb_tuple(self.species_dict[category]['color'])),
+            label='{} ($\mu = ${:.2f}, $\sigma^2 = ${:.2f})'.format(category, mean, var)
+        )
+        ax_z_1.scatter(
+            self.matrix_data[c][attr_index, :],
+            utils.z_score(self.matrix_data[c][attr_index, :], mean, var),
+            c=np.array(utils.norm_rgb_tuple(self.species_dict[category]['color'])),
+            label='{}'.format(category),
+            s=1
+        )
+
+        category = 'Si'
+
+        custom_data = []
+        for data_item in self.original_dict_data:
+            if data_item['advanced_species'] == 'Si_1' or data_item['advanced_species'] == 'Si_2':
+                custom_data.append(data_item['alpha_min'])
+
+        mean = utils.mean_val(custom_data)
+        var = utils.variance(custom_data)
+
+        ax_attr_1.plot(
+            line,
+            utils.normal_dist(line, mean, var),
+            c='k',
+            label='{} ($\mu = ${:.2f}, $\sigma^2 = ${:.2f})'.format(category, mean, var)
+        )
+        ax_z_1.scatter(
+            custom_data,
+            utils.z_score(custom_data, mean, var),
+            c='k',
+            label='{}'.format(category),
+            s=1
+        )
+
+        ax_attr_1.set_title('{} fitted density'.format(attr_key))
+        ax_attr_1.set_xlabel('{} {}'.format(attr_key, self.attribute_units[attr_index]))
+        ax_attr_1.legend()
+
+        ax_z_1.set_title('{} z-scores'.format(attr_key))
+        ax_z_1.set_xlabel('{}'.format(attr_key))
+        ax_z_1.legend()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        line = np.linspace(1.6, 5.5, 1000)
+        attr_key = 'alpha_max'
+        attr_index = self.attribute_keys.index(attr_key)
+
+        c = self.category_list.index('Mg_1')
+        category = 'Mg_1'
+
+        mean = self.composite_model[c].means[attr_index]
+        var = self.composite_model[c].variances[attr_index]
+        ax_attr_2.plot(
+            line,
+            utils.normal_dist(line, mean, var),
+            c=np.array(utils.norm_rgb_tuple(self.species_dict[category]['color'])),
+            label='{} ($\mu = ${:.2f}, $\sigma^2 = ${:.2f})'.format(category, mean, var)
+        )
+        ax_z_2.scatter(
+            self.matrix_data[c][attr_index, :],
+            utils.z_score(self.matrix_data[c][attr_index, :], mean, var),
+            c=np.array(utils.norm_rgb_tuple(self.species_dict[category]['color'])),
+            label='{}'.format(category),
+            s=1
+        )
+
+        c = self.category_list.index('Mg_2')
+        category = 'Mg_2'
+
+        mean = self.composite_model[c].means[attr_index]
+        var = self.composite_model[c].variances[attr_index]
+        ax_attr_2.plot(
+            line,
+            utils.normal_dist(line, mean, var),
+            c=np.array(utils.norm_rgb_tuple(self.species_dict[category]['color'])),
+            label='{} ($\mu = ${:.2f}, $\sigma^2 = ${:.2f})'.format(category, mean, var)
+        )
+        ax_z_2.scatter(
+            self.matrix_data[c][attr_index, :],
+            utils.z_score(self.matrix_data[c][attr_index, :], mean, var),
+            c=np.array(utils.norm_rgb_tuple(self.species_dict[category]['color'])),
+            label='{}'.format(category),
+            s=1
+        )
+
+        category = 'Mg'
+
+        custom_data = []
+        for data_item in self.original_dict_data:
+            if data_item['advanced_species'] == 'Mg_1' or data_item['advanced_species'] == 'Mg_2':
+                custom_data.append(data_item['alpha_max'])
+
+        mean = utils.mean_val(custom_data)
+        var = utils.variance(custom_data)
+
+        ax_attr_2.plot(
+            line,
+            utils.normal_dist(line, mean, var),
+            c='k',
+            label='{} ($\mu = ${:.2f}, $\sigma^2 = ${:.2f})'.format(category, mean, var)
+        )
+        ax_z_2.scatter(
+            custom_data,
+            utils.z_score(custom_data, mean, var),
+            c='k',
+            label='{}'.format(category),
+            s=1
+        )
+
+        ax_attr_2.set_title('{} fitted density'.format(attr_key))
+        ax_attr_2.set_xlabel('{} {}'.format(attr_key, self.attribute_units[attr_index]))
+        ax_attr_2.legend()
+
+        ax_z_2.set_title('{} z-scores'.format(attr_key))
+        ax_z_2.set_xlabel('{}'.format(attr_key))
+        ax_z_2.legend()
+
+        plt.show()
+
     def export_csv(self, filename, kwargs):
         with open(filename, mode='w', newline='') as csv_file:
             writer = csv.DictWriter(csv_file, kwargs, delimiter=',', extrasaction='ignore')

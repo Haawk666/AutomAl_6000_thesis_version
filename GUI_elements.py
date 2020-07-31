@@ -1962,6 +1962,7 @@ class MenuBar:
         export_column_position_image_action = QtWidgets.QAction('Export column position image', self.ui_obj)
         export_overlay_image_action = QtWidgets.QAction('Export overlay image', self.ui_obj)
         export_atomic_graph_action = QtWidgets.QAction('Export atomic graph', self.ui_obj)
+        export_zeta_graph_action = QtWidgets.QAction('Export zeta graph', self.ui_obj)
         make_plots_action = QtWidgets.QAction('Make plots', self.ui_obj)
         # - Debug
         self.advanced_debug_mode_action = QtWidgets.QAction('Advanced debug mode', self.ui_obj)
@@ -2029,6 +2030,7 @@ class MenuBar:
         image.addAction(export_column_position_image_action)
         image.addAction(export_overlay_image_action)
         image.addAction(export_atomic_graph_action)
+        image.addAction(export_zeta_graph_action)
         # - Debug
         debug.addAction(self.advanced_debug_mode_action)
         debug.addAction(add_mark_action)
@@ -2086,6 +2088,7 @@ class MenuBar:
         export_column_position_image_action.triggered.connect(self.ui_obj.menu_export_column_position_image_trigger)
         export_overlay_image_action.triggered.connect(self.ui_obj.menu_export_overlay_image_trigger)
         export_atomic_graph_action.triggered.connect(self.ui_obj.menu_export_atomic_graph_trigger)
+        export_zeta_graph_action.triggered.connect(self.ui_obj.menu_export_zeta_graph_trigger)
         # - debug
         self.advanced_debug_mode_action.triggered.connect(self.ui_obj.menu_toggle_debug_mode_trigger)
         add_mark_action.triggered.connect(self.ui_obj.menu_add_mark_trigger)
@@ -3012,6 +3015,8 @@ class PlotModels(QtWidgets.QDialog):
         self.btn_plot_single.clicked.connect(self.btn_plot_single_trigger)
         self.btn_print_details = QtWidgets.QPushButton('Print details')
         self.btn_print_details.clicked.connect(self.btn_print_details_trigger)
+        self.btn_custom = QtWidgets.QPushButton('Custom')
+        self.btn_custom.clicked.connect(self.btn_custom_trigger)
 
         self.cmb_attribute_1 = QtWidgets.QComboBox()
         self.cmb_attribute_2 = QtWidgets.QComboBox()
@@ -3139,6 +3144,7 @@ class PlotModels(QtWidgets.QDialog):
         layout = QtWidgets.QHBoxLayout()
         layout.addStretch()
         layout.addWidget(self.btn_plot_single)
+        layout.addWidget(self.btn_custom)
         layout.addStretch()
         grp_single_plot_layout.addLayout(layout)
         grp_single_plot.setLayout(grp_single_plot_layout)
@@ -3198,6 +3204,9 @@ class PlotModels(QtWidgets.QDialog):
 
     def btn_plot_single_trigger(self):
         self.model.single_plot(self.cmb_single_attribute.currentText())
+
+    def btn_custom_trigger(self):
+        self.model.thesis_plot()
 
     def btn_print_details_trigger(self):
         logger.info(self.model.report())

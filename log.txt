@@ -3,85 +3,22 @@ GUI: GUI version: 0.0.2
 GUI: core version: 0.1.0
 GUI: Build version: Alpha 1.0
 ------------------------
-GUI: Opening file C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/023_columns
-core: Loaded C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/023_columns
+GUI: Opening file C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/0_Medium_Qprime.png
+core: Failed to load save-file!
+GUI: File was not loaded. Something must have gone wrong!
+GUI: Opening file C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/0_Medium_Qprime_control
+core: Loaded C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/0_Medium_Qprime_control
+GUI: Successfully exported overlay image to file!
+GUI: Successfully exported graph image to file!
+GUI: Successfully exported graph image to file!
+core: Saved C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/0_Medium_Qprime_thesis
 core: Mapping spatial locality...
-column_characterization: Districts mapped in 29.701144218444824 seconds with matrix method.
-    Distance calculations took 29.30237317085266 seconds.
-    Sorting took 0.3987710475921631 seconds.
+column_characterization: Districts mapped in 37.8900101184845 seconds with matrix method.
+    Distance calculations took 37.42629146575928 seconds.
+    Sorting took 0.4637186527252197 seconds.
 core: Spatial mapping complete.
-core: Finding edge columns....
-column_characterization: Detecting edge columns
-column_characterization: Found edge columns in 0.006996631622314453 seconds
-core: Edge columns found.
-GUI: Successfully exported overlay image to file!
-GUI: Successfully exported graph image to file!
 core: Mapping vertex connectivity...
 core: Vertices mapped.
-GUI: Successfully exported overlay image to file!
 GUI: Successfully exported graph image to file!
-core: Running advanced zeta...
-column_characterization: Starting zeta analysis
-column_characterization: Zeta analysis completed in 9.002501964569092 seconds
-core: zeta's set.
-GUI: Successfully exported overlay image to file!
+core: Saved C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/0_Medium_Qprime_thesis
 GUI: Successfully exported graph image to file!
-core: Calculating probabilities from alpha attributes...
-core: Calculated probabilities from alpha attributes.
-GUI: Successfully exported overlay image to file!
-GUI: Successfully exported graph image to file!
-core: Mapping vertex connectivity...
-core: Vertices mapped.
-GUI: Successfully exported overlay image to file!
-GUI: Successfully exported graph image to file!
-core: Running advanced zeta...
-column_characterization: Starting zeta analysis
-column_characterization: Zeta analysis completed in 10.31009554862976 seconds
-core: zeta's set.
-GUI: Successfully exported overlay image to file!
-GUI: Successfully exported graph image to file!
-GUI: Successfully exported graph image to file!
-core: Finding particle...
-core: Found particle.
-GUI: Successfully exported overlay image to file!
-GUI: Successfully exported graph image to file!
-core: Finding normalized intensities...
-core: Found intensities.
-core: Running untangling algorithm
-core: Untnangling complete
-GUI: Successfully exported overlay image to file!
-GUI: Successfully exported graph image to file!
-core: Running advanced zeta...
-column_characterization: Starting zeta analysis
-column_characterization: Zeta analysis completed in 10.426230430603027 seconds
-core: zeta's set.
-GUI: Successfully exported overlay image to file!
-GUI: Successfully exported graph image to file!
-core: Saved C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/023_alg_12
-core: Calculating probabilities from all attributes...
-core: Calculated probabilities from all attributes.
-GUI: Successfully exported overlay image to file!
-GUI: Successfully exported graph image to file!
-core: Finding particle...
-core: Found particle.
-core: Finding normalized intensities...
-core: Found intensities.
-core: Running untangling algorithm
-core: Untnangling complete
-core: Running advanced zeta...
-column_characterization: Starting zeta analysis
-column_characterization: Zeta analysis completed in 10.415541172027588 seconds
-core: zeta's set.
-GUI: Successfully exported overlay image to file!
-GUI: Successfully exported graph image to file!
-core: Saved C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/023_result
-core: Saved C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/023_control
-core: Saved C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/023_control
-core: Saved C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/023_control
-GUI: Permute mode is on!
-GUI: Permute mode is off!
-GUI: Permute mode is on!
-core: Saved C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/023_control
-GUI: Successfully exported overlay image to file!
-GUI: Successfully exported graph image to file!
-core: Saved C:/Users/One of seven/OneDrive/NTNU/TFY4900 Master/Data_b/023_control
